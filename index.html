@@ -2285,7 +2285,7 @@ function invHTML(){
   const low=ST.products.filter(isLow),out=ST.products.filter(p=>p.avail<=0),appr=(ST.pos||[]).filter(p=>p.status==='for approval');
   const val=mgr?ST.products.reduce((s,p)=>s+Math.max(0,p.avail)*(p.cost||0),0):0;
   return `<div class="shead"><div><h2>🗃️ Inventory</h2><div class="unit">One stock count for the shop. It goes up with <b>Receiving</b> and <b>Production</b>, and down with <b>POS sales</b> (walk-in and delivery orders cashed out by the cashier) and <b>online orders</b>. Prepared orders are <b>not</b> taken out until the cashier rings them up.${mgr?'':' <b>View only</b> — the Manager changes products and counts.'}</div></div>
-    <div class="sbtns">${mgr?'<button class="go sm" data-padd>+ Add product</button>':''}<button class="btn sm" data-sref>↻ Refresh</button></div></div>
+    <div class="sbtns">${mgr?'<button class="go sm" data-padd>+ Add product</button><button class="btn sm" data-pimp>⬆ Import</button>':''}<button class="btn sm" data-sref>↻ Refresh</button></div></div>
     <div class="kpis"><div><b>${ST.products.length}</b><span>products</span></div><div class="${low.length?'warn':''}"><b>${low.length}</b><span>low stock</span></div><div class="${out.length?'bad':''}"><b>${out.length}</b><span>out of stock</span></div>${mgr?`<div><b>${peso(val)}</b><span>stock value (cost)</span></div>`:''}</div>
     ${mgr&&appr.length?`<div class="snote violet">⚠ <b>${appr.length}</b> receiving(s) don't match the P.O. and wait for your approval. <button class="btn sm" data-sview="po">Open P.O.</button></div>`:''}
     ${mgr&&ST.unmatched&&ST.unmatched.length?`<div class="snote">🔎 These order names did not match a product, so dispatch could not take them out of stock: <b>${ST.unmatched.map(esc).join(', ')}</b>. Edit the product and add the name under <b>Other names</b>.</div>`:''}
@@ -2296,6 +2296,126 @@ function invHTML(){
       ${ST.moves.slice(0,120).map(m=>`<tr><td>${stamp(m.at)}</td><td>${esc(m.type)}</td><td>${esc(m.name)}</td><td class="r"><b style="color:${m.q<0?'var(--rose)':'var(--green)'}">${m.q>0?'+':''}${qf(m.q)}</b> ${esc(m.unit)}</td><td class="r">${qf(m.after)}</td><td class="unit">${esc(m.ref)}${m.note?' — '+esc(m.note):''}</td><td>${esc(m.by)}</td></tr>`).join('')||'<tr><td colspan="7" class="empty">No movements yet.</td></tr>'}</tbody></table></div></details>`:''}`}
 function stBox(){let box=$('#stm');if(!box){box=document.createElement('div');box.className='modal';box.id='stm';box.innerHTML='<div class="sheet" id="stb"></div>';document.body.appendChild(box);
   box.addEventListener('click',e=>{if(e.target===box||e.target.closest('[data-x]'))box.classList.remove('on')})}return box}
+/* ---------- IMPORT products & stock counts from a file (manager) ---------- */
+const XLSX_URL='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+function loadXlsx(){if(window.XLSX)return Promise.resolve(window.XLSX);return new Promise((res,rej)=>{const s=document.createElement('script');s.src=XLSX_URL;s.onload=()=>res(window.XLSX);s.onerror=()=>rej(new Error('Could not load the Excel reader — check the internet'));document.head.appendChild(s)})}
+const IMP_COLS=[['code',/^(code|item ?code|product ?code|sku|barcode)/],['name',/^(product|item|description|name)/],['cat',/^categ/],['unit',/^(unit|uom)\b/],
+  ['retail',/^(retail|price|selling)/],['wholesale',/^wholesale/],['qty',/^(available|qty|quantity|stock|count|on ?hand)/],['on',/^(show online|online)/],
+  ['notes',/^note/],['kg',/^weight/],['cost',/^(cost|unit ?cost)/],['reorder',/^reorder/],['alias',/^(other names|alias)/]];
+const cellS=v=>String(v??'').trim(),isNum=v=>v!==''&&v!==null&&!isNaN(parseFloat(String(v).replace(/[₱,\s]/g,'')));
+const nOf=v=>parseFloat(String(v).replace(/[₱,\s]/g,''));
+function packKg(name,unit){if(/^kg$/i.test(unit))return '';const m=String(name).match(/(\d+(?:\.\d+)?)\s*(kg|g)\b/i);return m?(/kg/i.test(m[2])?+m[1]:+m[1]/1000):''}
+// turns the rows of the first sheet into products. Knows two layouts: our product list (with a header row), and the BitPOS "Inventory Valuation Report".
+/* small built-in reader: .xlsx (zip + xml) and .csv -> rows of cells. Old .xls uses the SheetJS reader from cdnjs. */
+async function unzipEntries(buf){const dv=new DataView(buf),u8=new Uint8Array(buf);let e=-1;
+  for(let i=buf.byteLength-22;i>=Math.max(0,buf.byteLength-66000);i--)if(dv.getUint32(i,true)===0x06054b50){e=i;break}
+  if(e<0)throw new Error('This is not an Excel (.xlsx) file');
+  const n=dv.getUint16(e+10,true);let p=dv.getUint32(e+16,true);const out={},td=new TextDecoder();
+  for(let k=0;k<n;k++){const meth=dv.getUint16(p+10,true),csz=dv.getUint32(p+20,true),fl=dv.getUint16(p+28,true),xl=dv.getUint16(p+30,true),cl=dv.getUint16(p+32,true),lo=dv.getUint32(p+42,true);
+    const name=td.decode(u8.subarray(p+46,p+46+fl));p+=46+fl+xl+cl;
+    out[name]=async()=>{const s=lo+30+dv.getUint16(lo+26,true)+dv.getUint16(lo+28,true),raw=u8.subarray(s,s+csz);
+      if(meth===0)return td.decode(raw);
+      if(meth!==8||typeof DecompressionStream==='undefined')throw new Error('This device cannot open Excel files — save the file as CSV and try again');
+      return await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).text()}}
+  return out}
+async function readXlsx(buf){const z=await unzipEntries(buf),X=s=>new DOMParser().parseFromString(s,'application/xml');
+  const tag=(el,t)=>[...el.getElementsByTagName(t)];
+  const ss=z['xl/sharedStrings.xml']?tag(X(await z['xl/sharedStrings.xml']()),'si').map(si=>tag(si,'t').map(t=>t.textContent).join('')):[];
+  let sheets=Object.keys(z).filter(n=>/^xl\/worksheets\/sheet\d+\.xml$/.test(n)).sort((a,b)=>parseInt(a.match(/\d+/))-parseInt(b.match(/\d+/)));
+  try{const wb=X(await z['xl/workbook.xml']()),rel=X(await z['xl/_rels/workbook.xml.rels']()),map={};tag(rel,'Relationship').forEach(r=>map[r.getAttribute('Id')]=r.getAttribute('Target').replace(/^\/?(xl\/)?/,'xl/'));
+    const ord=tag(wb,'sheet').map(s=>map[s.getAttribute('r:id')||s.getAttributeNS('http://schemas.openxmlformats.org/officeDocument/2006/relationships','id')]).filter(n=>z[n]);if(ord.length)sheets=ord}catch(_){}
+  const col=r=>{let n=0;for(const ch of r.replace(/\d+/g,''))n=n*26+ch.charCodeAt(0)-64;return n-1};
+  const out=[];for(const n of sheets){const d=X(await z[n]()),rows=[];
+    tag(d,'row').forEach(r=>{const ri=(+r.getAttribute('r')||rows.length+1)-1,row=rows[ri]=[];
+      tag(r,'c').forEach((c,ci)=>{const t=c.getAttribute('t'),v=c.getElementsByTagName('v')[0],ref=c.getAttribute('r');let val='';
+        if(t==='s')val=v?ss[+v.textContent]??'':'';else if(t==='inlineStr')val=tag(c,'t').map(x=>x.textContent).join('');else if(t==='b')val=v&&v.textContent==='1'?'TRUE':'FALSE';
+        else if(v){val=v.textContent;if(t!=='str'&&t!=='e'&&val!==''&&!isNaN(+val))val=+val}
+        row[ref?col(ref):ci]=val})});
+    out.push(Array.from(rows,r=>Array.from(r||[],x=>x??'')))}
+  return out}
+function readCsv(text){text=text.replace(/^﻿/,'');const d=(text.split('\n')[0].match(/\t/g)||[]).length>(text.split('\n')[0].match(/,/g)||[]).length?'\t':',';
+  const rows=[];let row=[],f='',q=false;
+  for(let i=0;i<text.length;i++){const c=text[i];
+    if(q){if(c==='"'){if(text[i+1]==='"'){f+='"';i++}else q=false}else f+=c}
+    else if(c==='"')q=true;else if(c===d){row.push(f);f=''}else if(c==='\n'){row.push(f.replace(/\r$/,''));rows.push(row);row=[];f=''}else f+=c}
+  if(f||row.length){row.push(f.replace(/\r$/,''));rows.push(row)}
+  return [rows]}
+async function readSheets(file){const name=file.name.toLowerCase(),buf=await file.arrayBuffer();
+  if(/\.(csv|txt|tsv)$/.test(name))return readCsv(new TextDecoder().decode(buf));
+  const u=new Uint8Array(buf);
+  if(u[0]===0x50&&u[1]===0x4B)return readXlsx(buf);
+  if(u[0]===0xD0&&u[1]===0xCF){const X=await loadXlsx(),wb=X.read(buf,{type:'array'});return wb.SheetNames.map(n=>X.utils.sheet_to_json(wb.Sheets[n],{header:1,raw:true,defval:''}))}   // old .xls
+  return readCsv(new TextDecoder().decode(buf))}
+function downloadCsv(rows,fname){const q=v=>{v=String(v??'');return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
+  const blob=new Blob(['﻿'+rows.map(r=>r.map(q).join(',')).join('\r\n')],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fname;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000)}
+function parseImport(aoa){
+  const rows=aoa.map(r=>(r||[]).map(cellS));
+  // BitPOS / POS valuation report: header has UOM + Quantity + Unit Cost
+  const hb=rows.findIndex(r=>r.some(c=>/^uom$/i.test(c))&&r.some(c=>/^quantity$/i.test(c)));
+  if(hb>=0){const h=rows[hb].map(c=>c.toLowerCase()),iU=h.indexOf('uom'),iQ=h.indexOf('quantity'),iC=h.findIndex(c=>/unit cost/.test(c));
+    let cat='Others';const out=[];
+    rows.slice(hb+1).forEach(r=>{const a=r[0],b=r[1]||'';if(!a&&!b)return;if(/^(grand )?total$/i.test(a)||/^(grand )?total$/i.test(b))return;
+      if(!r[iU]&&!isNum(r[iQ])&&/^\d+$/.test(a)&&b){cat=b.charAt(0)+b.slice(1).toLowerCase();return}       // "1  PORK" = category line
+      if(!b||!r[iU])return;
+      const unit=/^k/i.test(r[iU])?'Kg':/^(pcs?|piece|pieces)$/i.test(r[iU])?'Pc':'Pack';
+      out.push({code:'',name:b,cat,unit,qty:isNum(r[iQ])?nOf(r[iQ]):'',cost:iC>=0&&isNum(r[iC])?Math.round(nOf(r[iC])*1e4)/1e4:'',kg:packKg(b,unit),notes:a?'Old code '+a:''})});
+    return {kind:'POS inventory report (new products get codes 000001, 000002 …)',rows:out}}
+  // our layout: a header row with Product / Code …
+  const hi=rows.slice(0,15).findIndex(r=>r.some(c=>/^(product|item|description|name)/i.test(c)));
+  if(hi<0)throw new Error('No header row found. The first row needs column names like Code, Product, Category, Unit, Qty, Cost.');
+  const map={};rows[hi].forEach((c,i)=>{const t=c.toLowerCase();for(const [k,re] of IMP_COLS){if(re.test(t)&&!(k in map)){map[k]=i;break}}});
+  if(!('name' in map))throw new Error('Could not find the Product column');
+  const out=rows.slice(hi+1).filter(r=>r[map.name]).map(r=>{const o={};Object.keys(map).forEach(k=>o[k]=r[map[k]]);return o});
+  return {kind:'Product list',rows:out}}
+function importDialog(){const box=stBox(),hasSample=ST.products.some(p=>/^[PCS]00\d$/.test(p.code));
+  let parsed=null,fname='',smOn=true;
+  const slugc=s=>String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'');
+  const fix=c=>/^\d{1,5}$/.test(cellS(c))?('000000'+cellS(c)).slice(-6):cellS(c);
+  const isSample=p=>hasSample&&smOn&&/^[PCS]00\d$/.test(p.code);
+  const match=r=>{const live=ST.products.filter(p=>!isSample(p)),c=fix(r.code),k=slugc(r.name);
+    const byName=live.find(p=>slugc(p.name)===k||(p.alias||'').split(',').some(a=>slugc(a)===k));
+    if(c){const p=live.find(p=>p.code.toLowerCase()===c.toLowerCase());if(p&&byName&&byName!==p){r.clash=`code ${c} is ${p.name}, but this name is ${byName.code}`;return null}return p}
+    return byName};
+  const rematch=()=>parsed&&parsed.rows.forEach(r=>{r.clash='';r.m=match(r);if(r.clash)r.on2=false});
+  function draw(){
+    let body='';
+    if(parsed){const rs=parsed.rows,nNew=rs.filter(r=>r.on2&&!r.m).length,nUp=rs.filter(r=>r.on2&&r.m).length;
+      body=`<div class="snote">📄 <b>${esc(fname)}</b> — ${esc(parsed.kind)}. <b>${rs.length}</b> rows: <b>${nNew}</b> new, <b>${nUp}</b> update existing. Untick any row you don't want.</div>
+      <div class="sc" style="max-height:46vh;overflow:auto;border:1px solid var(--line,#E5D9D7);border-radius:10px"><table class="stbl"><thead><tr><th><input type="checkbox" id="im-all" checked></th><th>Code</th><th>Product</th><th>Category</th><th>Unit</th><th class="r">Stock now</th><th class="r">Stock from file</th><th class="r">Cost</th></tr></thead><tbody>
+      ${rs.map((r,i)=>{const q=r.qty===''||r.qty===undefined?null:nOf(r.qty),neg=q!==null&&q<0;
+        return `<tr class="${neg?'rout':''}"><td><input type="checkbox" data-imr="${i}"${r.on2?' checked':''}></td><td>${r.m?esc(r.m.code):fix(r.code)?esc(fix(r.code)):'<span class="unit">new</span>'}</td><td><b>${esc(r.name)}</b>${r.clash?'<br>'+badge('⚠ '+esc(r.clash),'red'):r.m?'':' '+badge('NEW','green')}</td><td>${esc(r.cat||(r.m?r.m.cat:''))}</td><td>${esc(r.unit||(r.m?r.m.unit:''))}</td>
+        <td class="r">${r.m?qf(r.m.avail):'—'}</td><td class="r"><b>${q===null?'—':qf(q)}</b>${neg?'<br>'+badge('NEGATIVE','red'):''}</td><td class="r">${isNum(r.cost)?peso(nOf(r.cost)):'—'}</td></tr>`}).join('')}</tbody></table></div>
+      ${hasSample?`<label class="chk2" style="margin:10px 0;display:block"><input type="checkbox" id="im-sm"${smOn?' checked':''}> Remove the sample products (P001 – S002)</label>`:''}
+      <div class="unit" style="margin:6px 0 10px">The stock from the file becomes the stock count. Every change is saved in <b>Stock Moves</b> as “Import count”. Blank cells keep what is already there (e.g. prices).</div>
+      <div class="row-end"><button class="btn" data-x>Cancel</button><button class="go" id="im-go">⬆ Import ${nNew+nUp} products</button></div>`}
+    $('#stb').innerHTML=`<h2>⬆ Import products & stock</h2>
+      <div class="unit" style="margin-bottom:10px">Choose an <b>Excel (.xlsx / .xls)</b> or <b>CSV</b> file: your POS <b>Inventory Valuation Report</b>, or a product list with columns <i>Code, Product, Category, Unit, Qty, Cost, Retail price …</i></div>
+      <div class="row-end" style="justify-content:flex-start;flex-wrap:wrap;gap:8px"><label class="go" style="cursor:pointer">📂 Choose file<input type="file" id="im-f" accept=".xlsx,.xls,.csv,.txt,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv,text/plain" hidden></label>
+        <button class="btn" id="im-tpl">⬇ Download product list (CSV)</button></div>
+      <div id="im-msg" class="unit" style="margin:8px 0"></div>${body}`;
+    $('#im-f').onchange=async e=>{const f=e.target.files[0];if(!f)return;fname=f.name;$('#im-msg').textContent='Reading the file…';
+      try{const sheets=await readSheets(f);let p=null,err=null;
+        for(const aoa of sheets){try{p=parseImport(aoa);if(p.rows.length)break}catch(x){err=x}}
+        if(!p||!p.rows.length)throw err||new Error('No products found in the file');
+        parsed=p;p.rows.forEach(r=>r.on2=true);rematch();draw()}
+      catch(x){$('#im-msg').innerHTML='<b style="color:var(--rose)">⚠ '+esc(errMsg(x))+'</b>'}};
+    $('#im-tpl').onclick=()=>{
+      const H=['Code','Product','Category','Unit (Kg / Pack / Pc)','Retail price (₱)','Wholesale price (₱)','Qty (stock count)','Show online (Y/N)','Notes','Weight per pack / pc (kg)','Cost (₱ per unit)','Reorder level','Other names used in orders (comma)'];
+      downloadCsv([H].concat(ST.products.map(p=>[p.code,p.name,p.cat,p.unit,p.retail||'',p.wholesale||'',p.avail,p.on?'Y':'N','',p.unit==='Kg'?'':p.kg||'',p.cost||'',p.reorder||'',p.alias||''])),'3FMS-products-'+new Date().toISOString().slice(0,10)+'.csv')};
+    if(!parsed)return;
+    $('#im-all').onchange=e=>{parsed.rows.forEach(r=>r.on2=e.target.checked);draw()};
+    if($('#im-sm'))$('#im-sm').onchange=e=>{smOn=e.target.checked;rematch();draw()};
+    $('#stb').querySelectorAll('[data-imr]').forEach(c=>c.onchange=()=>{parsed.rows[+c.dataset.imr].on2=c.checked;draw()});
+    $('#im-go').onclick=async()=>{const pick=parsed.rows.filter(r=>r.on2);if(!pick.length)return;
+      const negs=pick.filter(r=>isNum(r.qty)&&nOf(r.qty)<0).length;
+      if(!confirm(`Import ${pick.length} products?`+(negs?`\n\n${negs} of them have NEGATIVE stock in the file. They will be imported as they are — recount them later.`:'')))return;
+      const b=$('#im-go');b.disabled=true;b.textContent='Importing…';
+      try{const send=pick.map(r=>{const o={};['code','name','cat','unit','retail','wholesale','qty','on','notes','kg','cost','reorder','alias'].forEach(k=>{if(r[k]!==undefined&&r[k]!=='')o[k]=r[k]});return o});
+        ST=await api('api_importProducts',session.token,send,{removeSamples:hasSample&&smOn});ST.offline=false;stCache();
+        const r=ST.imported||{};box.classList.remove('on');drawStock();
+        alert(`✅ Import done\n\n${r.added||0} new products added\n${r.updated||0} products updated\n${r.counted||0} stock counts changed`+(r.skipped&&r.skipped.length?`\n\nSkipped:\n${r.skipped.slice(0,10).join('\n')}`:''))}
+      catch(x){alert(errMsg(x));b.disabled=false;b.textContent='⬆ Import'}}}
+  draw();box.classList.add('on')}
 function productDialog(code){const p=code?pBy(code):{code:'',name:'',cat:'',unit:'Kg',retail:0,wholesale:0,cost:0,reorder:0,kg:0,alias:'',on:false,avail:0},isNew=!code,box=stBox();
   const cats=[...new Set(ST.products.map(x=>x.cat))];
   $('#stb').innerHTML=`<h2>${isNew?'+ Add product':'✎ '+esc(p.name)}</h2>
@@ -2496,6 +2616,7 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const tr=e.target.
   if(d.sview){view=d.sview;render();return}
   if(d.icat!==undefined){invCat=d.icat;drawStock();return}
   if('padd' in d){productDialog('');return}
+  if('pimp' in d){importDialog();return}
   if(d.pedit){productDialog(d.pedit);return}
   // P.O.
   if('ponew' in d){poEdit={supplier:'',expected:'',note:'',items:[{code:'',qty:'',cost:''}]};drawStock();return}
