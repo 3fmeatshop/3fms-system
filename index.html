@@ -2154,7 +2154,8 @@ $('#ph-in').onchange=async e=>{const f=e.target.files[0];if(!f)return;const o=fi
   try{P.at=Date.now();
     P.data=await stampPhoto(f,[(P.kind==='dispatch'?'DISPATCHED':'DELIVERED')+' · '+o.customer+' · Deliver '+day(o.delivery),fullStamp(P.at)+' · by '+me.name]);
     $('#ph-img').src=P.data;$('#ph-img').hidden=false;$('#ph-cam').hidden=true;$('#ph-retake').hidden=false;$('#ph-ok').disabled=false;$('#ph-time').textContent=fullStamp(P.at)}
-  catch(err){toast(photoErr(err))}};
+  catch(err){let hd='';try{hd=Array.from(new Uint8Array(await f.slice(0,12).arrayBuffer())).map(b=>b>31&&b<127?String.fromCharCode(b):'.').join('')}catch(_){}
+    toast(photoErr(err)+` [${Math.round((f.size||0)/1024)} KB · ${f.type||'no type'} · ${hd||'?'} · ${String(err&&err.message||err)}]`)}};
 $('#ph-retake').onclick=()=>$('#ph-in').click();
 $('#ph-ok').onclick=async()=>{if(!P||!P.data)return;const o=find(P.oid),pid='p'+uid();
   if(!o){toast('This order changed — please try again');$('#ph').classList.remove('on');return}
