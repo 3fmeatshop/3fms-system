@@ -550,6 +550,19 @@ header h1 .tt small{display:block;font-size:11px;color:var(--sky2);letter-spacin
 .shead{display:flex;gap:12px;justify-content:space-between;align-items:flex-start;flex-wrap:wrap}.sbtns{display:flex;gap:8px;flex-wrap:wrap}
 .stoff{background:var(--abg);color:var(--amber);padding:8px 12px;border-radius:10px;font-weight:700}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.cc-oth{display:grid;grid-template-columns:1fr 130px 40px;gap:8px;margin-bottom:6px;align-items:center}
+.cc-sum{display:flex;justify-content:space-between;align-items:baseline;padding:8px 2px;border-top:1px dashed var(--line);margin-top:8px}.cc-sum span{font-weight:700;color:var(--muted)}.cc-sum b{font-size:17px}
+.cc-sum.big span{color:var(--ink);font-weight:800}.cc-sum.big b{font-size:24px;color:var(--navy)}.cc-tot{border:2px solid var(--gold,#F5C518)}
+.td-due{background:#15803D;color:#fff;border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;margin-bottom:12px}.td-due span{font-weight:700;opacity:.85}.td-due b{font-size:40px;font-family:ui-monospace,monospace;line-height:1.1}.td-due small{opacity:.9}
+.td-m{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}.td-m button{border:2px solid var(--line);background:#fff;border-radius:12px;padding:10px 4px;font-weight:800;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}.td-m button span{font-size:24px}.td-m button.on{border-color:var(--navy);background:#FDF2F2;color:var(--navy)}.td-m button:disabled{opacity:.4;cursor:default}
+.td-l{display:flex;flex-direction:column;font-weight:700;gap:4px}.td-in{font-size:26px!important;text-align:right;padding:10px 12px!important}
+.td-q{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.td-q button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 12px;font-weight:700;cursor:pointer}
+.td-chg{font-size:24px;font-weight:800;text-align:right;color:#15803D;padding:6px 2px}.td-chg.bad{color:var(--rose)}.td-btn{font-size:18px!important}
+@media(max-width:500px){.td-m{grid-template-columns:repeat(2,1fr)}}
+.posx-tools{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}.posx-tools button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:7px 10px;font-weight:700;font-size:13px;cursor:pointer;color:var(--ink)}
+.posx-tools button:disabled{opacity:.45;cursor:default}.posx-tools button i{font-style:normal;background:var(--rose);color:#fff;border-radius:10px;padding:0 6px;margin-left:3px}.posx-tools .sp{flex:1}.posx-tools .zr{background:#1F2937;color:#fff;border-color:#1F2937}
+.pdiscb{width:100%;text-align:left;white-space:normal}.dkinds{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:10px}.dkinds button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px;font-weight:700;cursor:pointer}.dkinds button.on{border-color:var(--navy);background:#FDF2F2;color:var(--navy)}
+.opencash{max-width:560px;margin:0 auto}.den .stbl input{text-align:right}
 .possw{display:inline-flex;gap:4px;background:#F6F1F0;border:1px solid var(--line);border-radius:12px;padding:4px;margin:0 0 12px}.possw button{border:0;background:transparent;border-radius:9px;padding:9px 16px;font-weight:800;font-size:15px;color:var(--muted);cursor:pointer}.possw button.on{background:#fff;color:var(--navy);box-shadow:0 1px 4px rgba(0,0,0,.12)}
 .srrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}.srrow label{display:flex;flex-direction:column;font-size:12px;font-weight:700;color:var(--muted);gap:4px;min-width:0;flex:1 1 140px}
 tr.srclick{cursor:pointer}tr.srclick:hover td{background:#FFF7E0}tr.srtot td{border-top:2px solid var(--line);background:#FAF6F5}
@@ -731,6 +744,8 @@ details.sec .tile .ic{width:36px;height:36px}details.sec .tile .due{display:none
 /* OPERATIONS task tabs */
 #seg.opsseg{display:block!important;background:transparent;box-shadow:none;border:0;padding:0}
 .opstabs{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.mgrtabs .otab{padding:16px 6px 14px!important}.mgrtabs .ot-ic{font-size:40px}
+@media(max-width:760px){.opstabs.mgrtabs{grid-template-columns:repeat(2,minmax(0,1fr))}.opstabs.mgrtabs .otab{flex-direction:row;justify-content:flex-start;gap:10px;padding:10px 12px!important}.opstabs.mgrtabs .ot-ic{font-size:28px}.opstabs.mgrtabs .ot-t{font-size:16px}.opstabs.mgrtabs .ot-n{top:-8px;right:6px;font-size:12px}}
 .otab{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;border:1px solid var(--line)!important;border-radius:16px!important;background:#fff!important;padding:14px 8px 12px!important;cursor:pointer;color:var(--ink)!important;border-bottom:4px solid var(--oc)!important;box-shadow:0 2px 6px rgba(0,0,0,.05);transition:transform .12s}
 .otab:hover{transform:translateY(-2px)}
 .otab .ot-ic{font-size:36px;line-height:1.1}.otab .ot-t{font-size:17px;font-weight:800;color:var(--oc)}.otab .ot-d{font-size:12px;color:var(--muted);font-weight:500;white-space:normal;text-align:center}
@@ -756,7 +771,7 @@ details.sec .tile .ic{width:36px;height:36px}details.sec .tile .due{display:none
 
 <div class="wrap">
   <div class="bar">
-    <button class="big" id="newbtn">+ Paste Order</button>
+    <button class="big" id="newbtn">📋 Customer Orders</button>
     <div class="seg" id="seg"></div>
   </div>
   <div id="list"></div>
@@ -772,7 +787,7 @@ details.sec .tile .ic{width:36px;height:36px}details.sec .tile .due{display:none
 <div id="login"><div class="lhd"><div class="in"><div class="b3 logo3f">3F</div><div class="ttl"><h1>3FMS SYSTEM</h1><div class="sub" id="lsub">3F Meatshop</div></div><div class="hclock"><b id="lclk">--:--</b><span id="lclkd"></span></div></div></div><div class="lg" id="lg"></div></div>
 
 <div class="modal" id="m"><div class="sheet">
-  <h2>Paste Order</h2>
+  <h2>📋 Customer Orders</h2>
   <div class="lbl">1. Customer</div>
   <div class="chips" id="custs"></div>
   <div class="lbl">2. Type of order</div>
@@ -785,7 +800,7 @@ details.sec .tile .ic{width:36px;height:36px}details.sec .tile .due{display:none
     <label>Dispatch by <input type="time" id="addtime" class="edit-in" style="width:auto"></label>
     <span class="unit">Used when the message has no date. Late after this time = 🔴 Critical.</span>
   </div>
-  <div class="lbl">3. Paste the message (whole week is OK)</div>
+  <div class="lbl">3. Order items — type or paste the customer's message (whole week is OK)</div>
   <textarea id="txt" placeholder="DELIVERY DATE:    Oct. 17
 DATE: USE-     Oct. 18-19
 40kg    Pork Ribs
@@ -868,7 +883,7 @@ const CAN={online:['manager','sales'],paste:['manager'],edit:['manager'],weigh:[
   dispatch:['manager','ops'],deliver:['manager','rider'],undo:['manager'],admin:['manager'],report:['manager','ops','sales'],dash:['manager'],
   inv:['manager','ops','cashier','sales'],invEdit:['manager'],srep:['manager'],po:['manager'],recv:['manager','ops'],prod:['manager','ops'],pos:['manager','cashier']};
 // the 4 processes on the opening screen (+ 2 reports). Each opens a PIN screen for the people allowed in it.
-const PROCS={paste:{n:1,ic:'📋',t:'Input list of items to prepare',s:'Copy-paste the customer\'s order',roles:['manager'],view:'prep'},
+const PROCS={paste:{n:1,ic:'📋',t:'Customer Orders',s:'Enter the customer\'s order',roles:['manager'],view:'prep'},
   prep:{n:2,ic:'⚖️',t:'Prepare items for delivery',s:'Prepare the day before delivery',roles:['ops','manager'],view:'prep'},
   disp:{n:3,ic:'🚚',t:'Dispatch prepared items',s:'Delivery day: double-check & dispatch',roles:['ops','manager'],view:'disp'},
   mon:{n:4,ic:'🛵',t:'Monitor deliveries',s:'On the way, delivered, undelivered',roles:['manager','ops'],view:'way'},
@@ -1409,7 +1424,18 @@ function render(){
     opsSeg=`<div class="opstabs">${MAIN.map(([k,ic,t,d,n,c])=>`<button data-view="${k}" class="otab${view===k?' on':''}" style="--oc:${c}"><span class="ot-ic">${ic}</span><span class="ot-t">${t}</span><span class="ot-d">${d}</span>${n?`<span class="ot-n">${n}</span>`:''}</button>`).join('')}</div>
       <div class="opsmore">${MORE.map(([k,t,n])=>`<button data-view="${k}" class="${view===k?'on':''}">${t}${n?' ('+n+')':''}</button>`).join('')}</div>`;
   }
-  if(!tabs.some(t=>t[0]===view)&&!(view==='srep'&&can('srep')))view=tabs[0][0];   // Sales & profit opens from inside POS
+  // MANAGER: big task tiles (like Operations) + ONE Reports tile; the reports switch with small buttons under the tiles
+  const REPV=[['srep','📈 Sales & profit'],['mgr','📊 Dashboard'],['month','📦 Monthly'],['delivered','✅ '+delLbl],['undel','↩ Undelivered'],['points','⭐ Points']];
+  if(me.role==='manager'){
+    const n=summary||{},onP=onl.filter(o=>o.online.status==='pending').length,out=INV?INV.list.filter(p=>p.q<=0).length:0,poA=(ST&&ST.pos?ST.pos.filter(p=>p.status==='for approval').length:0)+retList('for approval').length;
+    const MAIN=[['online','🛒','Online',onP,'#7C3AED'],['prep','⚖️','Prepare',prepTodo.length,'#D97706'],['disp','✅','Dispatch',dispTodo.length,'#1D4ED8'],['way','🛵','Deliveries',way.length,'#0369A1'],['pos','🧾','POS',0,'#B91C1C'],
+      ['inv','📦','Inventory',out?out+' out':0,'#0E7490'],['po','📝','P.O.',poA,'#9333EA'],['recv','📥','Receiving',0,'#15803D'],['prod','🏭','Production',0,'#C2410C'],['srep','📊','Reports',0,'#334155']];
+    const isRep=REPV.some(r=>r[0]===view);
+    tabs.length=0;MAIN.forEach(m=>tabs.push([m[0],m[2],null]));REPV.forEach(r=>tabs.push([r[0],r[1],null]));
+    opsSeg=`<div class="opstabs mgrtabs">${MAIN.map(([k,ic,t,c2,c])=>`<button data-view="${k}" class="otab${view===k||(k==='srep'&&isRep)?' on':''}" style="--oc:${c}"><span class="ot-ic">${ic}</span><span class="ot-t">${t}</span>${c2?`<span class="ot-n">${c2}</span>`:''}</button>`).join('')}</div>
+      ${isRep?`<div class="opsmore">${REPV.map(([k,t])=>`<button data-view="${k}" class="${view===k?'on':''}">${t}</button>`).join('')}</div>`:''}`;
+  }
+  if(!tabs.some(t=>t[0]===view))view=tabs[0][0];
   if(me.role==='ops'&&view==='recv'&&!ST)loadStock().then(()=>{if(view==='recv')renderStock('recv',true)}).catch(()=>{});
   $('#seg').style.display=tabs.length<2?'none':'';$('#seg').classList.toggle('opsseg',!!opsSeg);
   if(opsSeg)$('#seg').innerHTML=opsSeg;else $('#seg').innerHTML=tabs.map(([k,l,a])=>`<button data-view="${k}" class="${view===k||(k==='pos'&&view==='srep')?'on':''}">${l}${a?` (${a.length})`:''}${k==='delivered'&&nFail?` <small style="color:var(--rose)">· ↩ ${nFail}</small>`:''}</button>`).join('');
@@ -1422,7 +1448,7 @@ function render(){
       if(tod.length){const n={std:0,ok:0,crit:0};tod.forEach(o=>{const r=rating(o);if(r)n[r]++});if(n.std+n.ok+n.crit)banner2=`<div class="daybar"><b>🕗 Today</b><span class="unit">dispatch before ${t24(settings.stdBefore)}</span><span style="flex:1"></span>${n.std?`<em class="dtag dt-std">🟢 ${n.std} Standard</em>`:''}${n.ok?`<em class="dtag dt-ok">🟡 ${n.ok} OK</em>`:''}${n.crit?`<em class="dtag dt-crit">🔴 ${n.crit} Critical</em>`:''}</div>`}}
     const af=document.activeElement&&document.activeElement.id==='wq',cp=af?document.activeElement.selectionStart:0;
     $('#list').innerHTML=banner2+wayHTML(way);fillPhotos();const wq=$('#wq');if(wq){wq.oninput=()=>{wayQ=wq.value;render()};if(af){wq.focus();try{wq.setSelectionRange(cp,cp)}catch(e){}}}return}
-  const full={prep:me.role==='ops'?prepTodo:prep,disp:dispTodo,way,delivered:del}[view];
+  const full={prep:me.role==='ops'||me.role==='manager'?prepTodo:prep,disp:dispTodo,way,delivered:del}[view];
   const dts=[...new Set(full.map(o=>o.delivery))].sort();if(view==='delivered')dts.reverse();
   if(dateF&&!dts.includes(dateF))dateF='';
   const list=dateF?full.filter(o=>o.delivery===dateF):full;
@@ -2298,7 +2324,7 @@ function srAgg(lines,keyF){const m=new Map();lines.forEach(l=>{const k=keyF(l);l
 function srepHTML(){
   const key=SRF.from+'|'+SRF.to;if((!SR||SR.key!==key)&&!SRerr)srLoad();
   const P=[['today','Today'],['yday','Yesterday'],['week','This week'],['month','This month'],['last','Last month'],['year','This year']];
-  const head=posSw('srep')+`<div class="shead"><div><h2>📈 Sales & profit</h2><div class="unit">Per customer, per day or month. Sales = walk-in + delivery (DR) receipts + delivered online orders, less returns and discounts. <b>Profit = sales − product cost.</b></div></div>
+  const head=posSw('srep')+`<div class="shead"><div><h2>📈 Sales & profit</h2><div class="unit"><b>Profit = sales − product cost</b></div></div>
     <div class="sbtns"><button class="btn sm" data-srcsv${SR&&SR.key===key?'':' disabled'}>⬇ Download (CSV)</button><button class="btn sm" data-srre>↻ Refresh</button></div></div>
     <div class="sfilt"><div class="chips2">${P.map(([k,t])=>`<button class="${SRF.pre===k?'on':''}" data-srp="${k}">${t}</button>`).join('')}</div>
     <div class="srrow"><label>From <input type="date" class="edit-in" data-srf="from" value="${SRF.from}"></label><label>To <input type="date" class="edit-in" data-srf="to" value="${SRF.to}"></label>
@@ -2507,8 +2533,66 @@ function productDialog(code){const p=code?pBy(code):{code:'',name:'',cat:'',unit
 
 /* ---------- PURCHASE ORDERS (manager) ---------- */
 function poLines(){return poEdit.items.map((l,k)=>{const p=pBy(l.code);return `<tr><td>${uSel(l.code,'','data-pol="'+k+'"')}</td><td><input class="edit-in nq" type="number" step="0.001" inputmode="decimal" data-poq="${k}" data-k="poq${k}" value="${l.qty}" placeholder="Qty"></td><td>${p?esc(p.unit):''}</td><td><input class="edit-in nq" type="number" step="0.01" inputmode="decimal" data-poc="${k}" data-k="poc${k}" value="${l.cost}" placeholder="Cost ₱"></td><td class="r" data-pa="${k}">${peso((+l.qty||0)*(+l.cost||0))}</td><td><button class="del" data-podel="${k}">✕</button></td></tr>`}).join('')}
+/* ---------- LIVE PIG / CARCASS P.O. & RECEIVING ---------- */
+const PIG_CUTS=['Pork Skull','Pork Belly','Pork Pigue','Pork Kasim','Pork Lomo','Pork Ribs','Pork Pata','Pork Fats','Pork Tail','Pork Bone','Pork Mask','Pork Kidney','Pork Liver','Pork Heart','Igado','Large Intestine','Pork Lungs','Small Intestine','Porkchop','Pork Laman'];
+let rcC=null;   // carcass receiving form {id, lw, exp, cuts:[{name,code,kg}]}
+const sl=s=>String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'');
+const tk=s=>String(s||'').toLowerCase().replace(/\(.*?\)/g,' $& ').split(/[^a-z0-9]+/).filter(Boolean).map(w=>w.replace(/s$/,''));
+function matchCut(name){const P=ST.products,n=sl(name),fresh=L=>L.sort((a,b)=>(/fresh/i.test(b.name)-/fresh/i.test(a.name))||(/frozen/i.test(a.name)-/frozen/i.test(b.name))||a.name.length-b.name.length)[0];
+  let L=P.filter(p=>sl(p.name)===n||(p.alias||'').split(',').some(a=>sl(a)===n));if(L.length)return fresh(L);
+  L=P.filter(p=>sl(p.name.replace(/\(.*?\)/g,''))===n);if(L.length)return fresh(L);
+  const want=tk(name).filter(w=>w!=='pork');
+  L=P.filter(p=>{const have=tk(p.name);return want.length&&want.every(w=>have.includes(w))&&(/pork/i.test(p.cat)||/pork/i.test(p.name)||want.length>1)});
+  return L.length?fresh(L):null}
+const expTot=e=>e?(+e.transport||0)+(+e.butcher||0)+(+e.slaughter||0)+(e.others||[]).reduce((s,x)=>s+(+x.amt||0),0):0;
+function ccMoney(cc,rc){const lw=rc&&+rc.lw?+rc.lw:+cc.lw||0,pay=r2(lw*(+cc.price||0)),et=r2(expTot(rc&&rc.exp?rc.exp:cc.exp));return {lw,pay,et,total:r2(pay+et)}}
+function ccSplit(cc,rc){const m=ccMoney(cc,rc),cuts=(rc.cuts||[]).filter(k=>+k.kg>0&&k.code);const kgAll=cuts.reduce((s,k)=>s+(+k.kg),0),avg=kgAll?m.total/kgAll:0;let val=0;
+  const rows=cuts.map(k=>{const p=pBy(k.code),pk=p?(p.retail>0?p.retail:p.cost>0?p.cost:0):0;return {code:k.code,name:p?p.name:k.name,kg:+k.kg,pk:pk||avg}});
+  rows.forEach(r=>{r.v=r.kg*r.pk;val+=r.v});rows.forEach(r=>{r.costAmt=val?r2(m.total*r.v/val):0;r.costKg=r.kg?r2(r.costAmt/r.kg):0});
+  return {rows,kgAll:r2(kgAll),yieldPct:m.lw?Math.round(kgAll/m.lw*1000)/10:0,...m}}
+const setPath=(o,path,v)=>{const ks=path.split('.');let x=o;ks.slice(0,-1).forEach(k=>x=x[k]);x[ks[ks.length-1]]=v};
+const ccIn=(t,path,val,ph,step)=>`<input class="edit-in nq" type="number" step="${step||'0.01'}" inputmode="decimal" data-cft="${t}" data-cf="${path}" data-k="cf${t}${path}" value="${esc(val??'')}" placeholder="${ph||''}">`;
+function expHTML(t,e){return `<div class="panel cc-exp"><h3 style="margin:0 0 6px">💸 Expenses <small class="unit">always paid in cash</small></h3><div class="fgrid">
+    <label>Transportation fee (₱)${ccIn(t,'exp.transport',e.transport,'0')}</label><label>Butcher fee (₱)${ccIn(t,'exp.butcher',e.butcher,'0')}</label><label>Slaughter fee (₱)${ccIn(t,'exp.slaughter',e.slaughter,'0')}</label></div>
+    <div class="unit" style="margin:8px 0 4px"><b>Other fees</b> — say what each one is for</div>
+    ${e.others.map((x,k)=>`<div class="cc-oth"><input class="edit-in" data-cft="${t}" data-cf="exp.others.${k}.desc" data-k="cfo${t}${k}" value="${esc(x.desc)}" placeholder="e.g. Ice, Permit, Meat inspection">${ccIn(t,'exp.others.'+k+'.amt',x.amt,'₱')}<button class="del" data-ccodel="${t}:${k}" aria-label="Remove">✕</button></div>`).join('')}
+    <button class="btn sm" data-ccoadd="${t}">+ Add other fee</button>
+    <div class="cc-sum"><span>Total expenses</span><b id="cc-${t}-et">${peso(expTot(e))}</b></div></div>`}
+function carcassPOForm(){const c=poEdit.carcass,m=ccMoney(c);
+  return `<div class="shead"><div><h2>🐖 ${poEdit.id?'Edit '+esc(poEdit.no):'New P.O. — live pig / carcass'}</h2><div class="unit">Payment = liveweight × price per kg. <b>Total cost (COGS) = payment + expenses</b> — this cost goes into the cuts when Operations receives and weighs them.</div></div></div>
+    <div class="panel"><div class="fgrid"><label>Supplier<input class="edit-in" id="po-sup" data-k="pos" value="${esc(poEdit.supplier)}" placeholder="Supplier / hog raiser"></label><label>Expected delivery<input class="edit-in" type="date" id="po-exp" value="${esc(poEdit.expected)}"></label>
+      <label>No. of heads (pc)${ccIn('po','heads',c.heads,'1','1')}</label><label>Liveweight (kg)${ccIn('po','lw',c.lw,'e.g. 95','0.01')}</label><label>Price per kg liveweight (₱)${ccIn('po','price',c.price,'e.g. 180')}</label>
+      <label>Payment<select class="edit-in" data-cft="po" data-cf="pay"><option value="cash"${c.pay==='cash'?' selected':''}>💵 Cash</option><option value="charge"${c.pay==='charge'?' selected':''}>🧾 Charge (pay later)</option></select></label>
+      ${c.pay==='charge'?`<label>Due date<input class="edit-in" type="date" data-cft="po" data-cf="due" value="${esc(c.due)}"></label>`:`<label>OR / receipt no.<input class="edit-in" data-cft="po" data-cf="orNo" data-k="cforno" value="${esc(c.orNo)}" placeholder="optional"></label>`}
+      <label class="full">Note<input class="edit-in" id="po-note" data-k="pon" value="${esc(poEdit.note)}"></label></div>
+      <div class="cc-sum big"><span>TOTAL PAYMENT <small>(${c.pay==='charge'?'charge':'cash'})</small></span><b id="cc-po-pay">${peso(m.pay)}</b></div></div>
+    ${expHTML('po',c.exp)}
+    <div class="panel cc-tot"><div class="cc-sum"><span>Payment</span><b id="cc-po-pay2">${peso(m.pay)}</b></div><div class="cc-sum"><span>+ Expenses</span><b id="cc-po-et2">${peso(m.et)}</b></div>
+      <div class="cc-sum big"><span>TOTAL COST (COGS)</span><b id="cc-po-tot">${peso(m.total)}</b></div><div class="unit" id="cc-po-pkg">${m.lw?'= '+peso(m.total/m.lw)+' per kg liveweight':''}</div>
+      <div class="row-end"><button class="btn" data-pocancel>Cancel</button><button class="go" data-posave>💾 Save P.O.</button></div></div>`}
+function ccLine(p){const c=p.carcass,rc=p.recv&&p.recv.carcass,m=ccMoney(c,rc);
+  return `🐖 <b>${c.heads} pc live pig</b> · ${qf(m.lw)} kg × ${peso(c.price)} = <b>${peso(m.pay)}</b> ${c.pay==='charge'?(c.paid?badge('Charge · PAID','green'):badge('Charge · unpaid · due '+day(c.due),'amber')):badge('Cash','green')} · expenses ${peso(m.et)} · <b>total cost ${peso(m.total)}</b>`}
+function cutTable(rc,cc){const s=rc.alloc?{rows:rc.alloc,kgAll:r2(rc.alloc.reduce((a,k)=>a+k.kg,0)),yieldPct:rc.yieldPct,total:rc.total,lw:rc.lw}:ccSplit(cc,rc);
+  return `<div class="sc"><table class="stbl"><thead><tr><th>Cut</th><th class="r">kg</th><th class="r">Cost / kg</th><th class="r">Cost</th></tr></thead><tbody>${s.rows.map(r=>`<tr><td>${esc(r.name)}</td><td class="r">${qf(r.kg)}</td><td class="r"><b>${peso(r.costKg)}</b></td><td class="r">${peso(r.costAmt)}</td></tr>`).join('')}
+    <tr class="srtot"><td><b>Total</b> <span class="unit">· yield ${s.yieldPct}% of ${qf(s.lw)} kg liveweight</span></td><td class="r"><b>${qf(s.kgAll)}</b></td><td></td><td class="r"><b>${peso(s.total)}</b></td></tr></tbody></table></div>`}
+function carcassRecvForm(po){const c=po.carcass;
+  if(!rcC||rcC.id!==po.id)rcC={id:po.id,lw:'',exp:JSON.parse(JSON.stringify(c.exp)),cuts:PIG_CUTS.map(n=>{const p=matchCut(n);return {name:n,code:p?p.code:'',kg:''}})};
+  if(!rcC.exp.others.length)rcC.exp.others.push({desc:'',amt:''});
+  return `<div class="shead"><div><h2>📥 Receive ${esc(po.no)} · ${esc(po.supplier)}</h2><div class="unit">${ccLine(po)}<br>1) Type the <b>actual liveweight</b>. 2) Check the expenses. 3) Weigh each cut and type the kg — leave blank what you didn't get. The cost of each cut is worked out by selling value.</div></div></div>
+    <div class="panel"><div class="fgrid"><label>Actual liveweight (kg) <small class="unit">P.O.: ${qf(c.lw)} kg</small>${ccIn('rc','lw',rcC.lw,qf(c.lw))}</label></div></div>
+    ${expHTML('rc',rcC.exp)}
+    <div class="panel"><h3 style="margin:0 0 6px">🔪 Cuts — weigh and type the kg</h3><div class="sc"><table class="stbl"><thead><tr><th>Cut</th><th>Product in inventory</th><th style="width:120px">kg</th><th></th></tr></thead><tbody>
+      ${rcC.cuts.map((k,i)=>`<tr><td><b>${esc(k.name||'Other cut')}</b></td><td>${uSel(k.code,'','data-cutp="'+i+'"')}</td><td>${ccIn('rc','cuts.'+i+'.kg',k.kg,'kg','0.001')}</td><td><button class="del" data-cutdel="${i}" aria-label="Remove">✕</button></td></tr>`).join('')}</tbody></table></div>
+      <button class="btn sm" data-cutadd>+ Add cut</button></div>
+    <div class="panel"><h3 style="margin:0 0 6px">🧮 Cost per cut <small class="unit">updates as you type</small></h3><div id="cc-split">${cutTable(rcC,c)}</div>
+      <div class="fgrid"><label class="full">Note<input class="edit-in" id="rc-note" data-k="rcn"></label><label class="full">📷 Photo of the receipt (optional)<input type="file" accept="image/*" capture="environment" id="rc-ph"></label></div><div id="rc-prev" class="unit">${recvPhoto?'✓ Photo ready':''}</div>
+      <div class="row-end"><button class="btn" data-rcback>Back</button><button class="go" data-rcsave="${po.id}">✓ Save receiving</button></div></div>`}
+function ccLive(t){if(t==='po'){const c=poEdit.carcass,m=ccMoney(c);[['pay',m.pay],['pay2',m.pay],['et2',m.et],['tot',m.total]].forEach(([k,v])=>{const e=$('#cc-po-'+k);if(e)e.textContent=peso(v)});
+    const e=$('#cc-po-et');if(e)e.textContent=peso(m.et);const pk=$('#cc-po-pkg');if(pk)pk.textContent=m.lw?'= '+peso(m.total/m.lw)+' per kg liveweight':''}
+  else{const po=(ST.pos||[]).find(p=>p.id===rcC.id);const e=$('#cc-rc-et');if(e)e.textContent=peso(expTot(rcC.exp));const s=$('#cc-split');if(s&&po)s.innerHTML=cutTable(rcC,po.carcass)}}
 function poHTML(){
   const all=ST.pos||[],appr=all.filter(p=>p.status==='for approval');
+  if(poEdit&&poEdit.kind==='carcass')return carcassPOForm();
   if(poEdit){const tot=poEdit.items.reduce((s,l)=>s+(+l.qty||0)*(+l.cost||0),0);
     return `<div class="shead"><div><h2>📝 ${poEdit.id?'Edit '+esc(poEdit.no):'New purchase order'}</h2><div class="unit">Operations receives the delivery against this P.O. If what arrives is different, it waits for your approval.</div></div></div>
     <div class="panel"><div class="fgrid"><label>Supplier<input class="edit-in" data-k="pos" id="po-sup" value="${esc(poEdit.supplier)}" placeholder="Supplier name"></label><label>Expected delivery<input class="edit-in" type="date" id="po-exp" value="${esc(poEdit.expected)}"></label>
@@ -2517,14 +2601,17 @@ function poHTML(){
       <tfoot><tr><td colspan="4"><button class="btn sm" data-poadd>+ Add line</button></td><td class="r"><b id="potot">${peso(tot)}</b></td><td></td></tr></tfoot></table></div>
       <div class="row-end"><button class="btn" data-pocancel>Cancel</button><button class="go" data-posave>💾 Save P.O.</button></div></div>`}
   const row=p=>`<div class="pocard"><div class="poh"><b>${esc(p.no)}</b> · ${esc(p.supplier)} ${poBadge(p)}<span style="flex:1"></span><span class="unit">made ${stamp(p.madeAt)} by ${esc(p.madeBy)}${p.expected?' · expected '+day(p.expected):''}</span></div>
-    <div class="unit">${p.items.map(i=>`${esc(i.name)} <b>${qf(i.qty)} ${esc(i.unit)}</b>${i.cost?' @ '+peso(i.cost):''}`).join(' · ')}${p.note?'<br>📝 '+esc(p.note):''}</div>
+    <div class="unit">${p.carcass?ccLine(p):p.items.map(i=>`${esc(i.name)} <b>${qf(i.qty)} ${esc(i.unit)}</b>${i.cost?' @ '+peso(i.cost):''}`).join(' · ')}${p.note?'<br>📝 '+esc(p.note):''}</div>
+    ${p.carcass&&p.recv&&p.recv.carcass&&p.status==='received'?`<details><summary class="unit"><b>🔪 Cuts received & cost per kg</b></summary>${cutTable(p.recv.carcass,p.carcass)}</details>`:''}
+    ${p.carcass&&p.carcass.pay==='charge'&&!p.carcass.paid&&p.status!=='cancelled'?`<div class="row-end" style="justify-content:flex-start"><button class="go sm" data-popay="${p.id}">💳 Mark as paid</button></div>`:''}
+    ${p.carcass&&p.carcass.paid?`<div class="unit">💳 Paid ${peso(p.carcass.paid.amount)} · ${stamp(p.carcass.paid.at)} by ${esc(p.carcass.paid.by)}${p.carcass.paid.ref?' · ref '+esc(p.carcass.paid.ref):''}</div>`:''}
     ${p.recv&&p.status!=='for approval'?`<div class="unit">📥 Received ${stamp(p.recv.at)} by ${esc(p.recv.by)}${p.recv.diff?' · <b>different from P.O.</b>':''}${p.approval&&p.recv.diff?' · approved by '+esc(p.approval.by):''}</div>`:''}
     ${p.status==='open'?`<div class="row-end" style="justify-content:flex-start"><button class="btn sm" data-poedit="${p.id}">✎ Edit</button><button class="btn sm" data-pokill="${p.id}" style="color:var(--rose)">✕ Cancel P.O.</button></div>`:''}</div>`;
   return `<div class="shead"><div><h2>📝 Purchase orders</h2><div class="unit">Make a P.O. for each supplier delivery. Operations counts what arrives in <b>📥 Receiving</b>. Stock goes up only when it matches — or when you approve the difference.</div></div>
-    <div class="sbtns"><button class="go sm" data-ponew>+ New P.O.</button><button class="btn sm" data-sref>↻ Refresh</button></div></div>
+    <div class="sbtns"><button class="go sm" data-ponew>+ New P.O.</button><button class="go sm" data-ponewc>🐖 + Live pig P.O.</button><button class="btn sm" data-sref>↻ Refresh</button></div></div>
     ${retApproveHTML()}
     ${appr.length?`<div class="panel apprp"><h3>⚠ Waiting for your approval <small>what arrived is different from the P.O.</small></h3>${appr.map(p=>`<div class="pocard"><div class="poh"><b>${esc(p.no)}</b> · ${esc(p.supplier)}<span style="flex:1"></span><span class="unit">received ${stamp(p.recv.at)} by <b>${esc(p.recv.by)}</b></span></div>
-      ${recvTable(p.recv.lines)}${p.recv.note?`<div class="unit">📝 ${esc(p.recv.note)}</div>`:''}${p.recv.photo?`<button class="btn sm" data-rphoto="${esc(p.recv.photo)}">📷 Delivery receipt photo</button>`:''}
+      ${p.carcass?ccRecvDiff(p):recvTable(p.recv.lines)}${p.recv.note?`<div class="unit">📝 ${esc(p.recv.note)}</div>`:''}${p.recv.photo?`<button class="btn sm" data-rphoto="${esc(p.recv.photo)}">📷 Delivery receipt photo</button>`:''}
       <div class="fgrid"><label class="full">Note (optional)<input class="edit-in" data-anote="${p.id}"></label></div>
       <div class="row-end"><button class="btn" data-poreject="${p.id}">↩ Send back — receive again</button><button class="go" data-poapprove="${p.id}">✓ Approve — add received qty to stock</button></div></div>`).join('')}</div>`:''}
     <div class="panel"><h3>Purchase orders</h3>${all.filter(p=>p.status!=='for approval').map(row).join('')||'<div class="empty">'+(appr.length?'No other P.O.':'No P.O. yet. Tap <b>+ New P.O.</b>')+'</div>'}</div>`}
@@ -2538,6 +2625,8 @@ function retApproveHTML(){const L=retList('for approval');if(!L.length)return ''
   return `<div class="panel apprp"><h3>↩ Returns waiting for your approval <small>any amount</small></h3>${L.map(({o,r})=>`<div class="pocard"><div class="poh"><b>${o.dr?esc(o.dr.no)+' · ':''}${esc(o.customer)}</b><span class="unit">· ${esc(r.reason)} · checked by ${esc(r.check.by)}</span>${o.posSale?`<span class="sb sb-amber">billed ${esc(o.posSale.no)} → return receipt</span>`:'<span class="sb sb-gray">not billed yet</span>'}</div>
     <table class="stbl"><thead><tr><th>Product</th><th class="r">Returned</th><th class="r">Came back</th><th>Condition</th></tr></thead><tbody>${r.check.lines.map(l=>`<tr><td>${esc(l.product)}</td><td class="r">${fmt(l.qty)} ${esc(l.unit)}</td><td class="r"><b>${fmt(l.got)}</b> ${esc(l.unit)}</td><td>${l.cond==='spoiled'?badge('Spoiled — write-off','red'):badge('Good — back to stock','green')}</td></tr>`).join('')}</tbody></table>
     <div class="row-end"><button class="btn" data-rapp="${o.id}:${r.id}:0">Not approved</button><button class="go" data-rapp="${o.id}:${r.id}:1">✓ Approve return</button></div></div>`).join('')}</div>`}
+function ccRecvDiff(p){const c=p.carcass,rc=p.recv.carcass,a=ccMoney(c),b=ccMoney(c,rc),row=(t,x,y,f)=>`<tr class="${r2(x)!==r2(y)?'rlow':''}"><td>${t}</td><td class="r">${f(x)}</td><td class="r"><b>${f(y)}</b></td></tr>`;
+  return `<div class="sc"><table class="stbl"><thead><tr><th></th><th class="r">P.O.</th><th class="r">Received</th></tr></thead><tbody>${row('Liveweight',a.lw,b.lw,v=>qf(v)+' kg')}${row('Payment',a.pay,b.pay,peso)}${row('Expenses',a.et,b.et,peso)}${row('<b>Total cost</b>',a.total,b.total,peso)}</tbody></table></div>${cutTable(rc,c)}`}
 function recvTable(lines){return `<div class="sc"><table class="stbl"><thead><tr><th>Product</th><th class="r">P.O. qty</th><th class="r">Received</th><th class="r">Difference</th></tr></thead><tbody>${lines.map(l=>{const d=r2(l.qty-l.ordered);
   return `<tr class="${d?'rlow':''}"><td>${esc(l.name)}</td><td class="r">${qf(l.ordered)} ${esc(l.unit)}</td><td class="r"><b>${qf(l.qty)}</b> ${esc(l.unit)}</td><td class="r">${d?`<b style="color:${d<0?'var(--rose)':'var(--amber)'}">${d>0?'+':''}${qf(d)}</b>`:'✓'}</td></tr>`}).join('')}</tbody></table></div>`}
 
@@ -2545,6 +2634,7 @@ function recvTable(lines){return `<div class="sc"><table class="stbl"><thead><tr
 function recvHTML(){
   const all=ST.pos||[],open=all.filter(p=>p.status==='open'),wait=all.filter(p=>p.status==='for approval'),done=all.filter(p=>p.status==='received').slice(0,10);
   const po=recvId&&open.find(p=>p.id===recvId);
+  if(po&&po.kind==='carcass')return carcassRecvForm(po);
   if(po){return `<div class="shead"><div><h2>📥 Receive ${esc(po.no)} · ${esc(po.supplier)}</h2><div class="unit">Weigh / count what arrived and type the <b>real qty</b>. Nothing came? Type <b>0</b>. If it's different from the P.O., the manager approves it before the stock changes.</div></div></div>
     <div class="panel"><div class="sc"><table class="stbl"><thead><tr><th>Product</th><th class="r">P.O. qty</th><th style="width:130px">Received qty</th><th class="r">Difference</th></tr></thead><tbody>
     ${po.items.map((i,k)=>`<tr><td><b>${esc(i.name)}</b></td><td class="r">${qf(i.qty)} ${esc(i.unit)}</td><td><input class="edit-in nq" type="number" step="0.001" inputmode="decimal" data-rq="${esc(i.code)}" data-k="rq${k}" data-ord="${i.qty}"></td><td class="r" id="rd-${k}">—</td></tr>`).join('')}</tbody></table></div>
@@ -2554,8 +2644,8 @@ function recvHTML(){
   return `<div class="shead"><div><h2>📥 Receiving</h2><div class="unit">Deliveries from suppliers are received <b>against the P.O. made by the Manager</b>. Tap <b>Receive</b> when the delivery arrives.</div></div><div class="sbtns"><button class="btn sm" data-sref>↻ Refresh</button></div></div>
     ${retCheckHTML()}
     <div class="panel"><h3>🚚 Waiting for delivery</h3>${open.map(p=>`<div class="pocard"><div class="poh"><b>${esc(p.no)}</b> · ${esc(p.supplier)}<span style="flex:1"></span>${p.expected?`<span class="unit">expected ${day(p.expected)}</span>`:''}<button class="go sm" data-rcopen="${p.id}">📥 Receive</button></div>
-      <div class="unit">${p.items.map(i=>`${esc(i.name)} <b>${qf(i.qty)} ${esc(i.unit)}</b>`).join(' · ')}${p.note?'<br>📝 '+esc(p.note):''}${p.rejected?`<br><b style="color:var(--rose)">↩ Sent back by ${esc(p.rejected[p.rejected.length-1].by)}${p.rejected[p.rejected.length-1].note?': '+esc(p.rejected[p.rejected.length-1].note):''} — please receive again</b>`:''}</div></div>`).join('')||'<div class="empty">No P.O. waiting for delivery.</div>'}</div>
-    ${wait.length?`<div class="panel"><h3>⏳ Waiting for manager approval</h3>${wait.map(p=>`<div class="pocard"><div class="poh"><b>${esc(p.no)}</b> · ${esc(p.supplier)}<span style="flex:1"></span><span class="unit">received by ${esc(p.recv.by)} ${stamp(p.recv.at)}</span></div>${recvTable(p.recv.lines)}</div>`).join('')}</div>`:''}
+      <div class="unit">${p.carcass?ccLine(p):p.items.map(i=>`${esc(i.name)} <b>${qf(i.qty)} ${esc(i.unit)}</b>`).join(' · ')}${p.note?'<br>📝 '+esc(p.note):''}${p.rejected?`<br><b style="color:var(--rose)">↩ Sent back by ${esc(p.rejected[p.rejected.length-1].by)}${p.rejected[p.rejected.length-1].note?': '+esc(p.rejected[p.rejected.length-1].note):''} — please receive again</b>`:''}</div></div>`).join('')||'<div class="empty">No P.O. waiting for delivery.</div>'}</div>
+    ${wait.length?`<div class="panel"><h3>⏳ Waiting for manager approval</h3>${wait.map(p=>`<div class="pocard"><div class="poh"><b>${esc(p.no)}</b> · ${esc(p.supplier)}<span style="flex:1"></span><span class="unit">received by ${esc(p.recv.by)} ${stamp(p.recv.at)}</span></div>${p.carcass?ccRecvDiff(p):recvTable(p.recv.lines)}</div>`).join('')}</div>`:''}
     ${done.length?`<div class="panel"><h3>✅ Recently received</h3>${done.map(p=>`<div class="unit" style="padding:4px 0"><b>${esc(p.no)}</b> · ${esc(p.supplier)} · ${stamp(p.recv.at)} by ${esc(p.recv.by)}</div>`).join('')}</div>`:''}`}
 
 /* ---------- PRODUCTION (operations) ---------- */
@@ -2572,13 +2662,109 @@ function prodHTML(){
 
 /* ---------- POS (cashier) — works offline, sends when online ---------- */
 const priceOf=p=>posPrice==='wholesale'?(p.wholesale||p.retail):p.retail;
-const cartTotal=()=>r2(cart.reduce((s,l)=>s+(+l.qty||0)*l.price,0)-(+posDisc||0));
+/* ---------- POS extras: hold / recall · discounts (SC, PWD, % , ₱) · change price · void item / sale · opening cash · X & Z reading ---------- */
+let posDiscO=null, posVoids=[];
+const DEN=[1000,500,200,100,50,20,10,5,1,0.25];
+const HOLDK='dp_pos_hold';
+const posHolds=()=>{try{return JSON.parse(localStorage.getItem(HOLDK)||'[]')}catch(e){return []}};
+const setHolds=L=>{try{localStorage.setItem(HOLDK,JSON.stringify(L))}catch(e){}};
+const subTotal=()=>r2(cart.reduce((s,l)=>s+(+l.qty||0)*l.price,0));
+function discAmt(){const D=posDiscO;if(!D)return 0;const base=D.on==='sel'?r2(cart.filter(l=>(D.codes||[]).includes(l.code)).reduce((s,l)=>s+(+l.qty||0)*l.price,0)):subTotal();
+  return r2(Math.min(base,D.pct?base*D.pct/100:+D.amt||0))}
+const DLBL={sc:'Senior Citizen 20%',pwd:'PWD 20%',pct:'Discount',amt:'Discount'};
+const discLabel=D=>D?(D.kind==='pct'?D.pct+'% discount':D.kind==='amt'?'₱ discount':DLBL[D.kind])+(D.on==='sel'?' (item)':'')+(D.name?' · '+D.name:'')+(D.idNo?' · ID '+D.idNo:''):'';
+function resetSale(){cart=[];posSel=-1;posDisc='';posDiscO=null;posVoids=[];posCash='';posRef='';posCust='';posOrder=null;posPrice='retail';posPay='cash'}
+function posTools(){const n=posHolds().length;
+  return `<div class="posx-tools"><button data-ptool="hold" ${cart.length?'':'disabled'}>⏸ Hold</button><button data-ptool="recall" ${n?'':'disabled'}>▶ Recall${n?` <i>${n}</i>`:''}</button>
+    <button data-ptool="disc" ${cart.length?'':'disabled'}>🏷 Discount</button><button data-ptool="price" ${cart.length?'':'disabled'}>✏️ Change price</button><button data-ptool="void" ${cart.length?'':'disabled'}>✕ Void item</button>
+    <span class="sp"></span><button data-ptool="x">🧾 X reading</button><button data-ptool="z" class="zr">🔒 Z reading</button></div>`}
+function denomHTML(){return `<div class="den"><table class="stbl"><thead><tr><th>Bills / coins</th><th style="width:110px">How many</th><th class="r">Amount</th></tr></thead><tbody>
+  ${DEN.map(v=>`<tr><td><b>₱${v<1?'0.25':v.toLocaleString()}</b> <small class="unit">${v>=20&&v!==20?'bill':v===20?'bill / coin':'coin'}</small></td><td><input class="edit-in nq" type="number" min="0" step="1" inputmode="numeric" data-den="${v}" placeholder="0"></td><td class="r" data-dena="${v}">—</td></tr>`).join('')}
+  <tr class="srtot"><td><b>TOTAL CASH</b></td><td></td><td class="r"><b id="den-t">₱0.00</b></td></tr></tbody></table></div>`}
+function denomRead(root){const o={};let t=0;root.querySelectorAll('[data-den]').forEach(i=>{const n=Math.max(0,Math.round(+i.value||0));if(n){o[i.dataset.den]=n;t+=n*(+i.dataset.den)}});return {denoms:o,total:r2(t)}}
+document.addEventListener('input',e=>{const i=e.target;if(!i.dataset||!i.dataset.den)return;const root=i.closest('.den');if(!root)return;const n=Math.max(0,Math.round(+i.value||0)),a=root.querySelector(`[data-dena="${i.dataset.den}"]`);if(a)a.textContent=n?peso(n*(+i.dataset.den)):'—';const t=root.querySelector('#den-t');if(t)t.textContent=peso(denomRead(root).total)});
+function denomWire(root){return;root.addEventListener('input',e=>{const i=e.target;if(!i.dataset.den)return;const n=Math.max(0,Math.round(+i.value||0)),a=root.querySelector(`[data-dena="${i.dataset.den}"]`);if(a)a.textContent=n?peso(n*(+i.dataset.den)):'—';const t=root.querySelector('#den-t');if(t)t.textContent=peso(denomRead(root).total)})}
+function openCashHTML(){return `<div class="panel opencash"><h2>💵 Open the cash drawer</h2><div class="unit">Count the opening cash (change fund) before the first sale.</div>${denomHTML()}
+  <div class="row-end"><button class="go" data-ptool="open">✓ Open drawer & start selling</button></div></div>`}
+function readingHTML(R){const L=(t,v,b)=>`<tr><td>${t}</td><td style="text-align:right">${b?'<b>':''}${v}${b?'</b>':''}</td></tr>`,P=n=>peso(n),tm=t=>new Date(t).toLocaleString('en-PH',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+  return `<div class="zrep" style="font-family:monospace;max-width:340px;margin:auto"><h3 style="margin:0;text-align:center">3F MEATSHOP</h3><p style="text-align:center;margin:2px 0;font-size:17px"><b>${R.kind==='Z'?'Z READING '+esc(R.z):'X READING'}</b></p>
+  <p style="text-align:center;margin:2px 0">${esc(R.shift)} · ${tm(R.from)} – ${tm(R.to)}<br>opened by ${esc(R.openBy)} · by ${esc(R.by)}</p><hr>
+  <table style="width:100%">${L('Receipts',R.receipts+(R.first?` (${esc(R.first)}–${esc(R.last)})`:''))}${L('Gross sales',P(R.gross))}${L('Less SC / PWD discount',P(R.scpwd))}${L('Less other discounts',P(R.otherDisc))}${L('Less returns',P(R.returns))}${L('NET SALES',P(R.net),1)}</table><hr>
+  <table style="width:100%"><tr><td colspan="2"><b>Payments</b></td></tr>${Object.keys(R.pay).map(k=>L(esc(k),P(R.pay[k]))).join('')||L('—','')}
+  ${Object.keys(R.collections).length?'<tr><td colspan="2"><b>Terms collected</b></td></tr>'+Object.keys(R.collections).map(k=>L(esc(k),P(R.collections[k]))).join(''):''}</table><hr>
+  <table style="width:100%">${L('Voided sales',R.voids+' · '+P(R.voidAmt))}${L('Voided items',R.lineVoids+' · '+P(R.lineVoidAmt))}${L('Price changes',R.priceChanges+' · '+P(R.priceChangeAmt)+' less')}${L('Refunds (cash)',P(R.refunds))}</table><hr>
+  <table style="width:100%"><tr><td colspan="2"><b>Cash drawer</b></td></tr>${L('Opening cash',P(R.opening))}${L('+ Cash sales',P(R.cashSales))}${L('+ Cash collected (terms)',P(R.cashColl))}${L('− Cash refunds',P(R.refunds))}${L('EXPECTED CASH',P(R.expected),1)}
+  ${R.kind==='Z'?L('Counted cash',P(R.counted),1)+`<tr><td><b>${R.overShort<0?'SHORT':R.overShort>0?'OVER':'BALANCED'}</b></td><td style="text-align:right"><b style="color:${R.overShort<0?'#B42318':R.overShort>0?'#B45309':'#15803D'}">${P(R.overShort)}</b></td></tr>`:''}</table>
+  ${R.note?`<p>Note: ${esc(R.note)}</p>`:''}</div>`}
+function holdSale(){if(!cart.length)return;const cu=(ST.bulk||[]).find(c=>c.id===posCust);
+  const lbl=prompt('Name for this held sale (customer / note):',cu?cu.name:'Customer '+(posHolds().length+1));if(lbl==null)return;
+  setHolds(posHolds().concat([{id:uid(),at:Date.now(),label:lbl||'Held sale',cart,posDiscO,posCust,posPrice,posOrder,posVoids,total:cartTotal()}]));resetSale();drawStock();toast('⏸ Sale held — ▶ Recall to continue')}
+function recallDialog(){const L=posHolds(),box=stBox();
+  $('#stb').innerHTML=`<h2>▶ Held sales</h2>${L.map(h=>`<div class="pocard"><div class="poh"><b>${esc(h.label)}</b><span class="unit">· ${stampShort(h.at)} · ${h.cart.length} item(s)</span><span style="flex:1"></span><b>${peso(h.total)}</b>
+    <button class="go sm" data-hrec="${h.id}">Recall</button><button class="del" data-hdel="${h.id}" aria-label="Delete">✕</button></div><div class="unit">${h.cart.map(l=>esc(l.name)+' '+fmt(+l.qty||0)+' '+esc(l.unit)).join(' · ')}</div></div>`).join('')||'<div class="empty">No held sale.</div>'}
+    <div class="row-end"><button class="btn" data-x>Close</button></div>`;box.classList.add('on');
+  $('#stb').onclick=e=>{const b=e.target.closest('button');if(!b)return;
+    if(b.dataset.hdel){if(!confirm('Delete this held sale?'))return;setHolds(posHolds().filter(h=>h.id!==b.dataset.hdel));recallDialog();drawStock();return}
+    if(b.dataset.hrec){const h=posHolds().find(x=>x.id===b.dataset.hrec);if(!h)return;
+      if(cart.length){if(!confirm('Hold the current sale first and recall this one?'))return;setHolds(posHolds().concat([{id:uid(),at:Date.now(),label:'Held sale',cart,posDiscO,posCust,posPrice,posOrder,posVoids,total:cartTotal()}]))}
+      setHolds(posHolds().filter(x=>x.id!==h.id));cart=h.cart;posDiscO=h.posDiscO;posCust=h.posCust;posPrice=h.posPrice;posOrder=h.posOrder;posVoids=h.posVoids||[];posSel=-1;box.classList.remove('on');$('#stb').onclick=null;drawStock();toast('▶ '+h.label+' recalled')}}}
+function discDialog(){const box=stBox(),sel=cart[posSel],D=posDiscO||{kind:'sc',on:'all'};
+  $('#stb').innerHTML=`<h2>🏷 Discount</h2><div class="dkinds">${[['sc','👴 Senior Citizen 20%'],['pwd','♿ PWD 20%'],['pct','% Percent'],['amt','₱ Amount']].map(([k,t])=>`<button data-dk="${k}" class="${D.kind===k?'on':''}">${t}</button>`).join('')}</div>
+    <div class="fgrid"><label id="dk-pct-l">Percent (%)<input class="edit-in nq" type="number" step="0.01" id="dk-pct" value="${D.kind==='pct'?D.pct:''}"></label><label id="dk-amt-l">Amount (₱)<input class="edit-in nq" type="number" step="0.01" id="dk-amt" value="${D.kind==='amt'?D.amt:''}"></label>
+      <label id="dk-nm-l">Name on ID<input class="edit-in" id="dk-nm" value="${esc(D.name||'')}"></label><label id="dk-id-l">ID no.<input class="edit-in" id="dk-id" value="${esc(D.idNo||'')}"></label>
+      <label class="full">Apply to<select class="edit-in" id="dk-on"><option value="all">Whole sale</option>${sel?`<option value="sel"${D.on==='sel'?' selected':''}>Selected item only — ${esc(sel.name)}</option>`:''}</select></label></div>
+    <div class="row-end">${posDiscO?'<button class="btn" id="dk-rm" style="color:var(--rose)">Remove discount</button>':''}<button class="btn" data-x>Cancel</button><button class="go" id="dk-ok">Apply</button></div>`;
+  let kind=D.kind;const show=()=>{document.querySelectorAll('#stb [data-dk]').forEach(b=>b.classList.toggle('on',b.dataset.dk===kind));$('#dk-pct-l').hidden=kind!=='pct';$('#dk-amt-l').hidden=kind!=='amt';$('#dk-nm-l').hidden=$('#dk-id-l').hidden=!/^(sc|pwd)$/.test(kind)};show();box.classList.add('on');
+  $('#stb').querySelectorAll('[data-dk]').forEach(b=>b.onclick=()=>{kind=b.dataset.dk;show()});
+  if($('#dk-rm'))$('#dk-rm').onclick=()=>{posDiscO=null;box.classList.remove('on');drawStock()};
+  $('#dk-ok').onclick=()=>{const o={kind,on:$('#dk-on').value,codes:$('#dk-on').value==='sel'&&sel?[sel.code]:[]};
+    if(kind==='sc'||kind==='pwd'){o.pct=20;o.name=$('#dk-nm').value.trim();o.idNo=$('#dk-id').value.trim();if(!o.name||!o.idNo)return alert('Type the name and ID no. on the '+(kind==='sc'?'Senior Citizen':'PWD')+' ID.')}
+    if(kind==='pct'){o.pct=+$('#dk-pct').value;if(!(o.pct>0&&o.pct<=100))return alert('Type the percent (1–100).')}
+    if(kind==='amt'){o.amt=+$('#dk-amt').value;if(!(o.amt>0))return alert('Type the discount amount.')}
+    posDiscO=o;box.classList.remove('on');drawStock();toast('🏷 '+discLabel(o)+' — '+peso(discAmt()))}}
+function priceDialog(){const k=posSel>=0?posSel:cart.length-1,l=cart[k];if(!l)return;const box=stBox();
+  $('#stb').innerHTML=`<h2>✏️ Change price — ${esc(l.name)}</h2><div class="unit">List price ${peso(l.orig??l.price)} / ${esc(l.unit)}</div>
+    <div class="fgrid"><label>New price (₱ / ${esc(l.unit)})<input class="edit-in nq" type="number" step="0.01" id="cp-p" value="${l.price}"></label>
+      <label>Reason<select class="edit-in" id="cp-r">${['Suki / bulk buyer price','Near expiry / damaged','Price adjustment','Price check — tag is different','Other'].map(x=>`<option${l.why===x?' selected':''}>${x}</option>`).join('')}</select></label></div>
+    <div class="row-end">${l.orig!=null?'<button class="btn" id="cp-back">Back to list price</button>':''}<button class="btn" data-x>Cancel</button><button class="go" id="cp-ok">Change price</button></div>`;box.classList.add('on');setTimeout(()=>{$('#cp-p').focus();$('#cp-p').select()},50);
+  if($('#cp-back'))$('#cp-back').onclick=()=>{l.price=l.orig;delete l.orig;delete l.why;box.classList.remove('on');drawStock()};
+  $('#cp-ok').onclick=()=>{const v=r2(+$('#cp-p').value);if(!(v>0))return alert('Type the new price.');const was=l.orig??l.price;
+    if(v===was){l.price=v;delete l.orig;delete l.why}else{l.orig=was;l.price=v;l.why=$('#cp-r').value}box.classList.remove('on');posSel=k;drawStock();toast('✏️ Price changed')}}
+function voidItem(k){const l=cart[k];if(!l)return;if(!confirm(`Void ${l.name} ${fmt(+l.qty||0)} ${l.unit}?`))return;
+  posVoids.push({code:l.code,name:l.name,unit:l.unit,qty:+l.qty||0,price:l.price,at:Date.now()});cart.splice(k,1);
+  if(posDiscO&&posDiscO.on==='sel'&&!cart.some(x=>(posDiscO.codes||[]).includes(x.code)))posDiscO=null;posSel=Math.min(posSel,cart.length-1);drawStock()}
+function voidSaleDialog(no){const box=stBox(),mgr=me.role==='manager';
+  $('#stb').innerHTML=`<h2>✕ Void sale ${esc(no)}</h2><div class="unit">The items go back to stock.${mgr?'':' The <b>manager</b> must approve with their PIN.'}</div>
+    <div class="fgrid"><label class="full">Reason<input class="edit-in" id="vs-r" placeholder="e.g. wrong item rung up"></label>${mgr?'':'<label>Manager PIN<input class="edit-in" type="password" inputmode="numeric" id="vs-p" autocomplete="off"></label>'}</div>
+    <div class="row-end"><button class="btn" data-x>Cancel</button><button class="go" id="vs-ok" style="background:var(--rose)">Void sale</button></div>`;box.classList.add('on');
+  $('#vs-ok').onclick=async()=>{const why=$('#vs-r').value.trim();if(!why)return alert('Type the reason.');const pin=mgr?'':$('#vs-p').value.trim();if(!mgr&&!pin)return alert('Manager PIN needed.');
+    $('#vs-ok').disabled=true;try{ST=await api('api_posVoid',session.token,no,why,pin);stCache();box.classList.remove('on');toast('Sale '+no+' voided');drawStock()}catch(e){alert(errMsg(e));$('#vs-ok').disabled=false}}}
+function showReading(R){const box=stBox();$('#stb').innerHTML=`<h2>${R.kind==='Z'?'🔒 Z reading '+esc(R.z)+' — drawer closed':'🧾 X reading'}</h2>${readingHTML(R)}
+  <div class="row-end"><button class="btn" id="zr-pr">🖨 Print</button><button class="go" data-x>Close</button></div>`;box.classList.add('on');$('#zr-pr').onclick=()=>{$('#print').innerHTML=readingHTML(R);window.print()}}
+async function zDialog(){if(posQueue().length){await posFlush();if(posQueue().length)return alert('Some sales are not sent yet. Connect to the internet first, then do the Z reading.')}
+  if(cart.length||posHolds().length)if(!confirm('There is a sale on screen or held. Close the day anyway?'))return;
+  let X;try{X=await api('api_posX',session.token)}catch(e){return alert(errMsg(e))}
+  const box=stBox();$('#stb').innerHTML=`<h2>🔒 Z reading — close the day</h2><div class="snote">Net sales <b>${peso(X.net)}</b> · ${X.receipts} receipt(s) · expected cash in drawer <b>${peso(X.expected)}</b></div>
+    <div class="unit" style="margin:6px 0">Count all the cash in the drawer:</div><div id="zden">${denomHTML()}</div>
+    <div class="fgrid"><label class="full">Note (optional)<input class="edit-in" id="z-n"></label></div>
+    <div class="row-end"><button class="btn" data-x>Cancel</button><button class="go" id="z-ok">🔒 Close day & print Z reading</button></div>`;box.classList.add('on');denomWire($('#zden'));
+  $('#z-ok').onclick=async()=>{const c=denomRead($('#zden'));if(!confirm(`Counted cash ${peso(c.total)} · expected ${peso(X.expected)}.\nClose the day now? Selling stops until the drawer is opened again.`))return;
+    $('#z-ok').disabled=true;try{const R=await api('api_posZ',session.token,c.denoms,$('#z-n').value);try{ST=await api('api_stock',session.token);ST.offline=false;stCache()}catch(_){}box.classList.remove('on');drawStock();showReading(R)}catch(e){alert(errMsg(e));$('#z-ok').disabled=false}}}
+async function posTool(t,b){
+  if(t==='hold')return holdSale();if(t==='recall')return recallDialog();if(t==='disc')return discDialog();if(t==='price')return priceDialog();
+  if(t==='void')return voidItem(posSel>=0?posSel:cart.length-1);
+  if(t==='x'){b.disabled=true;try{showReading(await api('api_posX',session.token))}catch(e){alert(errMsg(e))}b.disabled=false;return}
+  if(t==='z')return zDialog();
+  if(t==='open'){const c=denomRead(document.querySelector('.opencash'));if(!confirm(`Opening cash ${peso(c.total)}. Open the drawer?`))return;b.disabled=true;
+    try{ST=await api('api_posOpen',session.token,c.denoms);ST.offline=false;stCache();toast('💵 Drawer open — '+peso(c.total));drawStock()}catch(e){alert(errMsg(e));b.disabled=false}}}
+const cartTotal=()=>r2(subTotal()-discAmt());
 // POS screen laid out like the shop's cashier terminal: search bar on top, the sale as a big table (Qty · Product · Price · Total),
 // and on the right the amount due, sales information and sub totals — on a white background.
 let posSel=-1;
 function posSug(){const q=posQ.trim().toLowerCase();if(!q)return [];return ST.products.filter(p=>(p.name+' '+p.code+' '+(p.alias||'')).toLowerCase().includes(q)).slice(0,8)}
-const posSw=on=>can('srep')?`<div class="possw" role="tablist"><button class="${on==='pos'?'on':''}" data-sview="pos">🧾 Sell</button><button class="${on==='srep'?'on':''}" data-sview="srep">📈 Sales & profit report</button></div>`:'';
+const posSw=on=>false?`<div class="possw" role="tablist"><button class="${on==='pos'?'on':''}" data-sview="pos">🧾 Sell</button><button class="${on==='srep'?'on':''}" data-sview="srep">📈 Sales & profit report</button></div>`:'';
 function posHTML(){
+  if(!ST.shift&&!ST.offline)return openCashHTML();
   const Q=posQueue(),srv=(ST.sales||[]).filter(s=>s.status!=='void'),tot=srv.reduce((s,x)=>s+x.total,0)+Q.reduce((s,x)=>s+x.total,0);
   const sug=posSug(),ord=posOrder&&(ST.toCash||[]).find(x=>x.id===posOrder);
   const log=[...Q.map(s=>({at:s.at,no:'not sent',total:s.total,q:1})),...(ST.sales||[])].sort((a,b)=>b.at-a.at);
@@ -2590,24 +2776,24 @@ function posHTML(){
     <div class="posx-main">
       <div class="posx-left">
         ${ord?`<div class="posx-ord">🧾 <b>${esc(ord.dr)}</b> · ${esc(ord.customer)} · deliver ${day(ord.delivery)} <button class="btn sm" data-punlink>✕ Not this DR</button></div>`:''}
+        ${posTools()}
         <div class="posx-tw"><table class="posx-tbl"><thead><tr><th class="r" style="width:120px">Qty</th><th>Product</th><th class="r">Price</th><th class="r">Total</th><th style="width:44px"></th></tr></thead><tbody>
         ${cart.map((l,k)=>`<tr class="${k===posSel?'sel':''}" data-psel="${k}"><td class="r"><input class="posx-q" type="number" step="${l.unit==='Kg'?'0.001':'1'}" inputmode="decimal" data-cq="${k}" data-k="cq${k}" value="${l.qty}"> <small>${esc(l.unit)}</small></td>
-          <td><b>${esc(l.name)}</b></td><td class="r">${peso(l.price)}</td><td class="r" data-lt="${k}"><b>${peso((+l.qty||0)*l.price)}</b></td><td><button class="del" data-cdel="${k}" aria-label="Remove">✕</button></td></tr>`).join('')}
+          <td><b>${esc(l.name)}</b>${l.why?`<br><small class="unit">✏️ ${esc(l.why)}</small>`:''}</td><td class="r">${l.orig!=null?`<s class="unit">${peso(l.orig)}</s><br>`:''}${peso(l.price)}</td><td class="r" data-lt="${k}"><b>${peso((+l.qty||0)*l.price)}</b></td><td><button class="del" data-cdel="${k}" aria-label="Remove">✕</button></td></tr>`).join('')}
         </tbody></table>${cart.length?'':'<div class="posx-empty">Type a product above, or bill a DR below.</div>'}</div>
       </div>
       <div class="posx-right">
         <div class="posx-big" id="pbig">${fmt2(cartTotal())}</div>
-        <div class="posx-box"><h4>Sales information</h4><div class="posx-log">${log.slice(0,12).map(x=>`<div class="${x.status==='void'?'void':''}"><span>${stampShort(x.at)} ${esc(x.no)}${x.status==='void'?' VOID':''}</span><b>${fmt2(x.total)}</b>${can('invEdit')&&x.no!=='not sent'&&x.status!=='void'?`<i><button data-preprint="${esc(x.no)}" title="Reprint">🖨</button><button data-pvoid="${esc(x.no)}" title="Void">✕</button></i>`:''}</div>`).join('')||'<div><span>No sale yet today</span></div>'}
+        <div class="posx-box"><h4>Sales information</h4><div class="posx-log">${log.slice(0,12).map(x=>`<div class="${x.status==='void'?'void':''}"><span>${stampShort(x.at)} ${esc(x.no)}${x.status==='void'?' VOID':''}</span><b>${fmt2(x.total)}</b>${x.no!=='not sent'&&x.status!=='void'&&x.status!=='return'?`<i><button data-preprint="${esc(x.no)}" title="Reprint">🖨</button><button data-pvoid="${esc(x.no)}" title="Void">✕</button></i>`:''}</div>`).join('')||'<div><span>No sale yet today</span></div>'}
           <div class="tot"><span>${today()} Terminal sales</span><b>${fmt2(tot)}</b></div></div>
           <div class="posx-sync">${Q.length?`⏳ ${Q.length} sale(s) not sent yet <button class="btn sm" data-psend>Send now</button>`:'✓ All sales sent'}</div></div>
         <div class="posx-box" id="psel">${pselHTML()}</div>
         <div class="posx-box"><h4>Sales sub totals</h4><div id="ptot">${ptotHTML()}</div><div class="posx-row muted"><span>Last receipt no:</span><b>${last?esc(last.no):'—'}</b></div></div>
         <div class="posx-box posx-pay">
           <label>Customer<select class="edit-in" id="pc-cust"><option value="">Walk-in</option>${(ST.bulk||[]).map(c=>`<option value="${esc(c.id)}"${posCust===c.id?' selected':''}>⭐ ${esc(c.name)} (bulk — points)</option>`).join('')}</select></label>
-          <div class="posx-2"><label>Discount (₱)<input class="edit-in nq" type="number" step="0.01" data-k="pdisc" id="pc-disc" value="${esc(posDisc)}"></label>
-          <label>Payment<select class="edit-in" id="pc-pay">${[['cash','💵 Cash'],['gcash','📱 GCash / Maya'],['bank','🏦 Bank'],['terms','🗓 Terms']].map(([k,t])=>`<option value="${k}"${posPay===k?' selected':''}>${t}</option>`).join('')}</select></label></div>
-          ${posPay==='terms'?`<div class="unit">Unpaid — record payments later in 💳 Unpaid.</div>`:posPay==='cash'?`<label>Cash received (₱)<input class="edit-in nq posx-cash" type="number" step="0.01" inputmode="decimal" data-k="pcash" id="pc-cash" value="${esc(posCash)}"></label>`:`<label>Reference no.<input class="edit-in" data-k="pref" id="pc-ref" value="${esc(posRef)}"></label>`}
-          <div class="posx-btns"><button class="btn" data-pclear>Clear</button><button class="go" data-pdone ${cart.length?'':'disabled'}>✓ Complete sale</button></div></div>
+          <div class="posx-2"><label>Discount<button class="btn sm pdiscb" data-ptool="disc" ${cart.length?'':'disabled'}>${posDiscO?'🏷 '+esc(discLabel(posDiscO))+' −'+fmt2(discAmt()):'🏷 Add discount'}</button></label>
+          </div>
+          <div class="posx-btns"><button class="btn" data-pclear>Clear</button><button class="go td-btn" data-pdone ${cart.length?'':'disabled'}>💳 Tender ${cart.length?peso(cartTotal()):''}</button></div></div>
       </div>
     </div></div>
     ${toCashHTML()}`}
@@ -2632,32 +2818,59 @@ function payDialog(no){const x=(ST.unpaid||[]).find(z=>z.no===no);if(!x)return;c
 function ptotHTML(){const sub=r2(cart.reduce((s,l)=>s+(+l.qty||0)*l.price,0)),total=cartTotal(),chg=posPay==='cash'&&+posCash?r2(+posCash-total):null;
   const kg=r2(cart.filter(l=>l.unit==='Kg').reduce((s,l)=>s+(+l.qty||0),0)),pk=cart.filter(l=>l.unit!=='Kg').reduce((s,l)=>s+(+l.qty||0),0);
   return `<div class="posx-row"><span>Amount due:</span><b>${fmt2(sub)}</b></div><div class="posx-row"><span>Total quantity:</span><b>${cart.length} item(s)${kg?' · '+fmt(kg)+' kg':''}${pk?' · '+fmt(pk)+' pc/pk':''}</b></div>
-    <div class="posx-row"><span>Total discounts:</span><b>${fmt2(+posDisc||0)}</b></div><div class="posx-row pbg"><span>Total amount due:</span><b>${fmt2(total)}</b></div>
+    <div class="posx-row"><span>Total discounts:</span><b>${fmt2(discAmt())}</b></div><div class="posx-row pbg"><span>Total amount due:</span><b>${fmt2(total)}</b></div>
     ${chg!=null?`<div class="posx-row pbg ${chg<0?'bad':'ok'}"><span>${chg<0?'Short:':'Change:'}</span><b>${fmt2(Math.abs(chg))}</b></div>`:''}${(posCust||posOrder)&&total>=500?`<div class="posx-row"><span>⭐ Points:</span><b>${Math.floor(total/500)}</b></div>`:''}`}
-function posLive(){const t=$('#ptot');if(t)t.innerHTML=ptotHTML();const g=$('#pbig');if(g)g.textContent=fmt2(cartTotal());const ps=$('#psel');if(ps)ps.innerHTML=pselHTML();cart.forEach((l,k)=>{const c=document.querySelector(`[data-lt="${k}"]`);if(c)c.innerHTML='<b>'+peso((+l.qty||0)*l.price)+'</b>'})}
+function posLive(){const t=$('#ptot');if(t)t.innerHTML=ptotHTML();const tb=document.querySelector('.td-btn');if(tb)tb.textContent='💳 Tender '+(cart.length?peso(cartTotal()):'');const g=$('#pbig');if(g)g.textContent=fmt2(cartTotal());const ps=$('#psel');if(ps)ps.innerHTML=pselHTML();cart.forEach((l,k)=>{const c=document.querySelector(`[data-lt="${k}"]`);if(c)c.innerHTML='<b>'+peso((+l.qty||0)*l.price)+'</b>'})}
 function poLive(){poEdit.items.forEach((l,k)=>{const c=document.querySelector(`[data-pa="${k}"]`);if(c)c.textContent=peso((+l.qty||0)*(+l.cost||0))});const t=$('#potot');if(t)t.textContent=peso(poEdit.items.reduce((s,l)=>s+(+l.qty||0)*(+l.cost||0),0))}
 function addToCart(code){const p=pBy(code);if(!p)return;const pr=priceOf(p),l=cart.find(x=>x.code===code&&x.price===pr);
   if(l)l.qty=r2((+l.qty||0)+1);else cart.push({code:p.code,name:p.name,unit:p.unit,price:pr,qty:1});posSel=cart.findIndex(x=>x.code===code&&x.price===pr);posQ='';drawStock();
   const x=document.querySelector(`[data-cq="${posSel}"]`);if(x&&p.unit==='Kg'){x.focus();x.select()}else{const s=$('#posq');if(s)s.focus()}}
 function receiptHTML(s){return `<div style="font-family:monospace;max-width:300px"><h3 style="margin:0;text-align:center">3F MEATSHOP</h3>${s.dr?`<p style="text-align:center;margin:2px 0;font-size:18px"><b>${esc(s.dr)}</b></p>`:''}<p style="text-align:center;margin:2px 0">${s.no?(s.status==='return'?'RETURN RECEIPT ':'Receipt ')+esc(s.no):'Sale (not yet sent)'}${s.sale?'<br>for receipt '+esc(s.sale):''}<br>${fullStamp(s.at)}<br>Cashier: ${esc(s.cashier||me.name)}</p>
-  <table style="width:100%;border-collapse:collapse">${s.items.map(i=>`<tr><td>${esc(i.name)}<br>${qf(i.qty)} ${esc(i.unit)} × ${peso(i.price)}</td><td style="text-align:right;vertical-align:bottom">${peso(i.qty*i.price)}</td></tr>`).join('')}</table><hr>
-  ${s.discount?`<div>Discount: −${peso(s.discount)}</div>`:''}<div style="font-size:18px"><b>TOTAL ${peso(s.total)}</b></div><div>${/^terms/i.test(s.pay||'')?'<b>TERMS — UNPAID</b>':esc(s.pay)}${s.cash?` · cash ${peso(s.cash)} · change ${peso(Math.max(0,s.cash-s.total))}`:''}${s.ref?' · ref '+esc(s.ref):''}</div>
+  <table style="width:100%;border-collapse:collapse">${s.items.map(i=>`<tr><td>${esc(i.name)}<br>${qf(i.qty)} ${esc(i.unit)} × ${peso(i.price)}${i.orig!=null?' <s>'+peso(i.orig)+'</s>':''}</td><td style="text-align:right;vertical-align:bottom">${peso(i.qty*i.price)}</td></tr>`).join('')}</table><hr>
+  ${s.discount?`<div>${s.disc?esc(discLabel(s.disc)):'Discount'}: −${peso(s.discount)}</div>`:''}<div style="font-size:18px"><b>TOTAL ${peso(s.total)}</b></div><div>${/^terms/i.test(s.pay||'')?'<b>TERMS — UNPAID</b>':esc(s.pay)}${s.cash?` · cash ${peso(s.cash)} · change ${peso(Math.max(0,s.cash-s.total))}`:''}${s.ref?' · ref '+esc(s.ref):''}</div>
   <div>Customer: ${esc(s.customer||s.custName||'Walk-in')}${s.pts?` · ⭐ ${s.pts} point(s)`:''}</div><p style="text-align:center">Thank you!</p></div>`}
 function printReceipt(s){$('#print').innerHTML=receiptHTML(s);window.print()}
-function completeSale(){const total=cartTotal();
+/* ---------- TENDER: the cashier confirms how the customer pays before the sale is recorded ---------- */
+function tenderDialog(){const total=cartTotal();
+  if(!cart.length)return;
+  if(cart.some(l=>!(+l.qty>0)))return alert('Check the qty — every line needs a qty.');
+  if(total<0)return alert('The discount is bigger than the total.');
+  const short=cart.filter(l=>{const p=pBy(l.code);return p&&+l.qty>p.avail});
+  if(short.length&&!confirm('Stock in the system is lower for: '+short.map(l=>l.name).join(', ')+'. Sell anyway?'))return;
+  const box=stBox(),canTerms=!!(posOrder||posCust);let pay=posPay==='terms'&&!canTerms?'cash':posPay,cash=posCash,ref=posRef;
+  const quick=[...new Set([total,Math.ceil(total/50)*50,Math.ceil(total/100)*100,Math.ceil(total/500)*500,Math.ceil(total/1000)*1000,Math.ceil(total/1000)*1000+1000])].filter(v=>v>=total).slice(0,6);
+  const cu=(ST.bulk||[]).find(c=>c.id===posCust),ord=posOrder&&(ST.toCash||[]).find(x=>x.id===posOrder);
+  const draw=()=>{const chg=pay==='cash'&&cash!==''?r2(+cash-total):null;
+    $('#stb').innerHTML=`<h2>💳 Tender</h2>
+    <div class="td-due"><span>Amount due</span><b>${peso(total)}</b><small>${cart.length} item(s)${discAmt()?' · less '+esc(discLabel(posDiscO))+' '+peso(discAmt()):''} · ${esc(cu?cu.name:ord?ord.customer:'Walk-in')}${ord?' · '+esc(ord.dr):''}</small></div>
+    <div class="td-m">${[['cash','💵','Cash'],['gcash','📱','GCash / Maya'],['bank','🏦','Bank'],['terms','🗓','Terms']].map(([k,i,t])=>`<button data-tm="${k}" class="${pay===k?'on':''}" ${k==='terms'&&!canTerms?'disabled title="Terms is for a DR or a bulk buyer"':''}><span>${i}</span>${t}</button>`).join('')}</div>
+    ${pay==='cash'?`<label class="td-l">Cash tendered<input class="edit-in td-in" id="td-cash" type="number" step="0.01" inputmode="decimal" value="${esc(cash)}" placeholder="0.00"></label>
+      <div class="td-q">${quick.map(v=>`<button data-tq="${v}">${v===total?'Exact':peso(v)}</button>`).join('')}</div>
+      <div class="td-chg ${chg!=null&&chg<0?'bad':''}" id="td-chg">${chg==null?'Type the cash received':chg<0?'Short by '+peso(-chg):'CHANGE '+peso(chg)}</div>`
+    :pay==='terms'?`<div class="snote">🗓 <b>Unpaid — on terms.</b> The balance goes to 💳 Unpaid; record the payment when it comes.</div>`
+    :`<label class="td-l">Reference no. (${pay==='gcash'?'GCash / Maya':'bank transfer'})<input class="edit-in td-in" id="td-ref" value="${esc(ref)}" placeholder="required"></label><div class="unit">Check the payment on the phone / bank app before confirming.</div>`}
+    <div class="row-end"><button class="btn" data-x>Back</button><button class="go td-ok" id="td-ok">✓ Confirm tender</button></div>`;
+    const ok=()=>pay==='cash'?(cash!==''&&+cash>=total):pay==='terms'?true:!!String(ref).trim();$('#td-ok').disabled=!ok();
+    const ci=$('#td-cash'),ri=$('#td-ref');
+    if(ci){ci.oninput=()=>{cash=ci.value;const c=r2(+cash-total),el=$('#td-chg');el.className='td-chg'+(cash!==''&&c<0?' bad':'');el.textContent=cash===''?'Type the cash received':c<0?'Short by '+peso(-c):'CHANGE '+peso(c);$('#td-ok').disabled=!ok()};setTimeout(()=>{ci.focus();ci.select()},30)}
+    if(ri){ri.oninput=()=>{ref=ri.value;$('#td-ok').disabled=!ok()};setTimeout(()=>ri.focus(),30)}
+    $('#stb').querySelectorAll('[data-tm]').forEach(b=>b.onclick=()=>{pay=b.dataset.tm;draw()});
+    $('#stb').querySelectorAll('[data-tq]').forEach(b=>b.onclick=()=>{cash=String(b.dataset.tq);draw();setTimeout(()=>{const o=$('#td-ok');if(o)o.focus()},60)});
+    $('#stb').onkeydown=e=>{if(e.key==='Enter'&&!$('#td-ok').disabled){e.preventDefault();$('#td-ok').click()}};
+    $('#td-ok').onclick=()=>{if(!ok())return;$('#stb').onkeydown=null;posPay=pay;posCash=pay==='cash'?cash:'';posRef=pay==='cash'||pay==='terms'?'':ref;box.classList.remove('on');completeSale(true)}};
+  draw();box.classList.add('on')}
+function completeSale(ok){const total=cartTotal();if(!ok)return tenderDialog();
   if(cart.some(l=>!(+l.qty>0)))return alert('Check the qty — every line needs a qty.');
   if(total<0)return alert('The discount is bigger than the total.');
   if(posPay==='cash'&&posCash!==''&&+posCash<total)return alert('Cash received is less than the total.');
   if(posPay==='terms'&&!posOrder&&!posCust)return alert('Terms is for a DR or a bulk buyer account. Choose the customer first.');
-  const short=cart.filter(l=>{const p=pBy(l.code);return p&&+l.qty>p.avail});
-  if(short.length&&!confirm('Stock in the system is lower for: '+short.map(l=>l.name).join(', ')+'. Sell anyway?'))return;
   const cu=(ST.bulk||[]).find(c=>c.id===posCust),ord=posOrder&&(ST.toCash||[]).find(x=>x.id===posOrder);
-  const s={cid:'p'+uid()+uid(),at:Date.now(),order:ord?ord.id:'',items:cart.map(l=>({code:l.code,name:l.name,unit:l.unit,qty:+l.qty,price:l.price})),cust:posCust,custName:cu?cu.name:ord?ord.customer:'Walk-in',price:posPrice,discount:+posDisc||0,
+  const s={cid:'p'+uid()+uid(),at:Date.now(),order:ord?ord.id:'',items:cart.map(l=>({code:l.code,name:l.name,unit:l.unit,qty:+l.qty,price:l.price,...(l.orig!=null?{orig:l.orig,why:l.why}:{})})),disc:posDiscO?{...posDiscO,amount:discAmt()}:null,voidLines:posVoids,shift:ST.shift?ST.shift.id:'',cust:posCust,custName:cu?cu.name:ord?ord.customer:'Walk-in',price:posPrice,discount:discAmt(),
     pay:{cash:'Cash',gcash:'GCash / Maya',bank:'Bank',terms:'Terms'}[posPay],dr:ord?ord.dr:'',ref:posRef,cash:posPay==='cash'?+posCash||0:0,total,cashier:me.name,pts:cu?Math.floor(total/500):0};
   setPosQueue(posQueue().concat([s]));
   s.items.forEach(i=>{const p=pBy(i.code);if(p)p.avail=r2(p.avail-i.qty)});stCache();
   if(ord)ST.toCash=ST.toCash.filter(x=>x.id!==ord.id);
-  cart=[];posSel=-1;posDisc='';posCash='';posRef='';posCust='';posOrder=null;posPrice='retail';posPay='cash';drawStock();
+  resetSale();drawStock();
   showReceipt(s);posFlush()}
 function showReceipt(s){const box=stBox();$('#stb').innerHTML=`<h2>✅ Sale done — ${peso(s.total)}</h2>${s.cash&&s.cash>s.total?`<div class="snote" style="font-size:20px">Change: <b>${peso(s.cash-s.total)}</b></div>`:''}${receiptHTML(s)}
   <div class="row-end"><button class="btn" id="rc-pr">🖨 Print receipt</button><button class="go" data-x>Next customer</button></div>`;box.classList.add('on');$('#rc-pr').onclick=()=>printReceipt(s)}
@@ -2686,7 +2899,14 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const srr=e.target
   if(d.pedit){productDialog(d.pedit);return}
   // P.O.
   if('ponew' in d){poEdit={supplier:'',expected:'',note:'',items:[{code:'',qty:'',cost:''}]};drawStock();return}
-  if(d.poedit){const p=ST.pos.find(x=>x.id===d.poedit);poEdit=JSON.parse(J(p));drawStock();return}
+  if('ponewc' in d){poEdit={kind:'carcass',supplier:'',expected:'',note:'',items:[],carcass:{heads:1,lw:'',price:'',pay:'cash',due:'',orNo:'',exp:{transport:'',butcher:'',slaughter:'',others:[{desc:'',amt:''}]}}};drawStock();return}
+  if(d.ccoadd){const o=d.ccoadd==='po'?poEdit.carcass:rcC;o.exp.others.push({desc:'',amt:''});drawStock();return}
+  if(d.ccodel){const[t,k]=d.ccodel.split(':'),o=t==='po'?poEdit.carcass:rcC;o.exp.others.splice(+k,1);if(!o.exp.others.length)o.exp.others.push({desc:'',amt:''});drawStock();return}
+  if('cutadd' in d){rcC.cuts.push({name:'',code:'',kg:''});drawStock();return}
+  if(d.cutdel){rcC.cuts.splice(+d.cutdel,1);drawStock();return}
+  if(d.popay){const p=ST.pos.find(x=>x.id===d.popay),m=ccMoney(p.carcass,p.recv&&p.recv.carcass);const ref=prompt(`Mark ${p.no} as PAID — ${peso(m.pay)} to ${p.supplier}.\n\nReference / OR no. (optional):`,'');if(ref===null)return;
+    await busy(async()=>{ST=await api('api_payPO',session.token,p.id,ref);stCache();toast('💳 Marked as paid');drawStock()});return}
+  if(d.poedit){const p=ST.pos.find(x=>x.id===d.poedit);poEdit=JSON.parse(J(p));if(poEdit.carcass&&!poEdit.carcass.exp.others.length)poEdit.carcass.exp.others.push({desc:'',amt:''});drawStock();return}
   if('poadd' in d){poEdit.items.push({code:'',qty:'',cost:''});drawStock();return}
   if(d.podel){poEdit.items.splice(+d.podel,1);if(!poEdit.items.length)poEdit.items.push({code:'',qty:'',cost:''});drawStock();return}
   if('pocancel' in d){poEdit=null;drawStock();return}
@@ -2704,7 +2924,15 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const srr=e.target
   if(d.rapp){const[oid,rid,ok]=d.rapp.split(':');await busy(async()=>{if(await retCall('api_approveReturn',oid,rid,ok==='1','')){toast(ok==='1'?'✓ Return approved':'Return not approved');drawStock()}});return}
   // receiving
   if(d.rcopen){recvId=d.rcopen;recvPhoto='';drawStock();return}
-  if('rcback' in d){recvId=null;drawStock();return}
+  if('rcback' in d){recvId=null;rcC=null;drawStock();return}
+  if(d.rcsave&&rcC&&rcC.id===d.rcsave){
+    if(!(+rcC.lw>0)){alert('Type the actual liveweight (kg).');const x=document.querySelector('[data-cf="lw"]');if(x)x.focus();return}
+    const cuts=rcC.cuts.filter(k=>+k.kg>0);if(!cuts.length)return alert('Type the kg of the cuts.');
+    if(cuts.some(k=>!k.code))return alert('Choose the product in inventory for every cut with kg.');
+    if((rcC.exp.others||[]).some(x=>+x.amt&&!String(x.desc).trim()))return alert('Other fees: type what each fee is for.');
+    await busy(async()=>{let ph='';if(recvPhoto){ph='D'+await api('api_uploadPhoto',session.token,recvPhoto,'receiving-'+Date.now());await putPhoto(ph,recvPhoto)}
+      const r=await api('api_receive',session.token,d.rcsave,{lw:rcC.lw,exp:rcC.exp,cuts:cuts.map(k=>({code:k.code,kg:k.kg}))},$('#rc-note').value,ph);recvId=null;recvPhoto='';rcC=null;
+      toast(r.waiting?'⏳ Saved — liveweight / expenses differ from the P.O., the manager will approve':'✅ Received — cuts added to stock with their cost');await renderStock('recv',true)});return}
   if(d.rcsave){const lines=[...document.querySelectorAll('[data-rq]')].map(x=>({code:x.dataset.rq,qty:x.value.trim()}));
     const miss=lines.filter(l=>l.qty==='');if(miss.length){alert('Type the received qty of every product (0 if nothing came).');document.querySelector(`[data-rq="${miss[0].code}"]`).focus();return}
     await busy(async()=>{let ph='';if(recvPhoto){ph='D'+await api('api_uploadPhoto',session.token,recvPhoto,'receiving-'+Date.now());await putPhoto(ph,recvPhoto)}
@@ -2723,8 +2951,9 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const srr=e.target
   if(d.pcat!==undefined){posCat=d.pcat;drawStock();return}
   if(d.padd2){addToCart(d.padd2);return}
   if(d.pprice){posPrice=d.pprice;cart.forEach(l=>{const p=pBy(l.code);if(p)l.price=priceOf(p)});drawStock();return}
-  if(d.cdel){cart.splice(+d.cdel,1);posSel=Math.min(posSel,cart.length-1);drawStock();return}
-  if('pclear' in d){if(cart.length&&!confirm('Clear this sale?'))return;cart=[];posDisc='';posCash='';posRef='';posCust='';posOrder=null;drawStock();return}
+  if(d.cdel){voidItem(+d.cdel);return}
+  if('pclear' in d){if(cart.length&&!confirm('Clear this sale?'))return;resetSale();drawStock();return}
+  if(d.ptool){await posTool(d.ptool,b);return}
   if('punlink' in d){posOrder=null;drawStock();return}
   if('drgo' in d){const q=String(($('#drq')||{}).value||'').trim().toUpperCase().replace(/\s+/g,'');if(!q)return;const L=ST.toCash||[];
     const o=L.find(x=>x.dr.toUpperCase()===q)||L.find(x=>x.dr.toUpperCase().endsWith('-'+q.padStart(3,'0')))||L.find(x=>x.dr.toUpperCase().includes(q));
@@ -2734,21 +2963,22 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const srr=e.target
     $('#stb').innerHTML=`<h2>↩ Return receipt ${esc(r.no)}</h2>${r.refund?`<div class="snote" style="font-size:18px">Refund to customer: <b>${peso(r.refund)}</b></div>`:''}${r.fromBalance?`<div class="snote">Less from the unpaid balance: <b>${peso(r.fromBalance)}</b></div>`:''}${receiptHTML({...r,items:r.items,total:r.total,customer:r.customer})}
       <div class="row-end"><button class="btn" id="rc-pr">🖨 Print</button><button class="go" data-x>Done</button></div>`;box.classList.add('on');$('#rc-pr').onclick=()=>printReceipt(r)});return}
   if(d.pload){const o=(ST.toCash||[]).find(x=>x.id===d.pload);if(!o)return;if(cart.length&&!confirm('Replace the current sale with this order?'))return;
-    const bk=(ST.bulk||[]).find(b=>b.bulkName===String(o.customer).toUpperCase());posCust=bk?bk.id:'';posPrice=bk?'wholesale':'retail';posOrder=o.id;posDisc='';posCash='';posRef='';
+    const bk=(ST.bulk||[]).find(b=>b.bulkName===String(o.customer).toUpperCase());posCust=bk?bk.id:'';posPrice=bk?'wholesale':'retail';posOrder=o.id;posDisc='';posDiscO=null;posVoids=[];posCash='';posRef='';
     const miss=[];cart=[];o.items.forEach(i=>{const p=pBy(i.code);if(!p){miss.push(i.product);return}cart.push({code:p.code,name:p.name,unit:p.unit,price:priceOf(p),qty:i.qty})});posSel=cart.length?0:-1;
     drawStock();const x=document.querySelector('.cartc');if(x&&window.innerWidth<760)x.scrollIntoView({behavior:'smooth'});
     if(miss.length)alert('Not in the inventory list, add them by hand: '+miss.join(', '));return}
-  if('pdone' in d){completeSale();return}
+  if('pdone' in d){tenderDialog();return}
   if(false){const x=document.querySelector('.cartc');if(x)x.scrollIntoView({behavior:'smooth'});return}
   if('psend' in d){b.disabled=true;const ok=await posFlush();toast(ok?'✓ Sales sent':'Still offline — will send automatically');if(view==='pos')drawStock();return}
   if(d.preprint){const s=ST.sales.find(x=>x.no===d.preprint);if(s)printReceipt(s);return}
-  if(d.pvoid){const why=prompt('Void sale '+d.pvoid+'? The items go back to stock. Reason:');if(why==null)return;await busy(async()=>{ST=await api('api_posVoid',session.token,d.pvoid,why);stCache();toast('Sale voided');drawStock()});return}
+  if(d.pvoid){voidSaleDialog(d.pvoid);return}
 }
 function stockInput(e){if(!STOCKV.includes(view))return;const t=e.target,d=t.dataset;
   if(d.k==='invq'){invQ=t.value;drawStock();return}
   if(d.k==='posq'){posQ=t.value;drawStock();return}
   if(poEdit&&t.id==='po-sup'){poEdit.supplier=t.value;return}if(poEdit&&t.id==='po-exp'){poEdit.expected=t.value;return}if(poEdit&&t.id==='po-note'){poEdit.note=t.value;return}
   if(prodF&&t.id==='pr-note'){prodF.note=t.value;return}
+  if(d.cf){const o=d.cft==='po'?poEdit&&poEdit.carcass:rcC;if(!o)return;setPath(o,d.cf,t.value);if(t.tagName!=='SELECT'&&t.type!=='date')ccLive(d.cft);return}
   if(d.poq!==undefined){poEdit.items[+d.poq].qty=t.value;poLive();return}
   if(d.poc!==undefined){poEdit.items[+d.poc].cost=t.value;poLive();return}
   if(d.rq!==undefined){const k=t.dataset.k.slice(2),c=$('#rd-'+k);if(c){const v=t.value.trim();if(v===''){c.textContent='—';return}const df=r2(+v-+d.ord);c.innerHTML=df?`<b style="color:${df<0?'var(--rose)':'var(--amber)'}">${df>0?'+':''}${qf(df)}</b>`:'✓ same'}return}
@@ -2759,6 +2989,8 @@ function stockInput(e){if(!STOCKV.includes(view))return;const t=e.target,d=t.dat
   if(d.k==='pref'){posRef=t.value;return}
 }
 function stockChange(e){if(!STOCKV.includes(view))return;const t=e.target,d=t.dataset;
+  if(d.cf&&(t.tagName==='SELECT'||t.type==='date')){const o=d.cft==='po'?poEdit&&poEdit.carcass:rcC;if(o){setPath(o,d.cf,t.value);drawStock()}return}
+  if(d.cutp!==undefined){rcC.cuts[+d.cutp].code=t.value;const p=pBy(t.value);if(!rcC.cuts[+d.cutp].name&&p)rcC.cuts[+d.cutp].name=p.name;ccLive('rc');return}
   if(d.srf){SRF[d.srf]=t.value;if(d.srf==='from'||d.srf==='to')SRF.pre='';drawStock();return}
   if(d.pol!==undefined){const p=pBy(t.value),l=poEdit.items[+d.pol];l.code=t.value;if(p&&!l.cost&&p.cost)l.cost=p.cost;drawStock();return}
   if(d.prl!==undefined){const[k,i]=d.prl.split(':');prodF[k][+i].code=t.value;drawStock();return}
@@ -2832,7 +3064,7 @@ function helpDialog(){const G={
   dispatch:['🚚 Dispatch',['Open the order in <b>To Check & Dispatch</b>.','Put each item on the scale. Matches? <b>✓ Tally</b> (or <b>✓ All tally</b>). Wrong? <b>✎ Not tally</b> and type the right weight.','Short item? The manager decides (carry over / later today / forfeit).','Tap <b>🚚 DISPATCH</b>, choose the rider and take a photo of the boxes.']],
   sales:['💼 Sales',['Open <b>🛒 Online</b> → <b>⏳ To confirm</b> (oldest order on top).','<b>📞 Call</b> or <b>💬 Text</b> (message is ready, just send). Customer says yes → <b>✓ Confirm</b>. No answer → <b>📵 No answer</b> and try again later.','Bank / GCash: check the reference no. → <b>✓ Confirm</b>. Many to do? Tick the boxes → <b>Confirm selected</b>.','Orders placed today: confirm <b>tomorrow</b>. Confirmed orders go straight to today\'s preparation, in queue order.','After a bulk order is delivered, record the POS points in <b>⭐ Points</b>.']],
   rider:['🛵 Rider',['<b>🚚 To Deliver</b> lists your stops by date, numbered in order.','Tap <b>📞 Call</b> or <b>💬 Text</b> before you arrive. COD: collect the amount in red.','Handed over? <b>✅ Delivered · photo</b> — take a photo with the customer.','Customer did not accept some items at the door, or got a wrong item? <b>↩ Return items</b> — no returns after the customer receives, except a wrong item.','Not delivered? <b>❌ Not delivered</b> → choose <b>Returned</b> or <b>Cancelled</b> and the reason. No photo needed.']],
-  manager:['👔 Manager',['<b>+ Paste Order</b>: paste the customer message (advance or additional order).','Approve short items when asked (⚠ Manager approval).','<b>📊 Dashboard</b>: how the month is going, in plain words.','<b>Users & PINs</b>: staff, riders, bulk buyer accounts, time targets.','<b>📝 P.O.</b>: order from suppliers and approve receiving that does not match. <b>📦 Inventory</b>: prices, costs, reorder levels, stock counts.']]}[me.role]||['',[]];
+  manager:['👔 Manager',['<b>📋 Customer Orders</b>: enter the customer\'s order (advance or additional).','Approve short items when asked (⚠ Manager approval).','<b>📊 Dashboard</b>: how the month is going, in plain words.','<b>Users & PINs</b>: staff, riders, bulk buyer accounts, time targets.','<b>📝 P.O.</b>: order from suppliers and approve receiving that does not match. <b>📦 Inventory</b>: prices, costs, reorder levels, stock counts.']]}[me.role]||['',[]];
   let box=$('#helpm');if(!box){box=document.createElement('div');box.className='modal';box.id='helpm';box.innerHTML='<div class="sheet" id="helpb"></div>';document.body.appendChild(box);box.addEventListener('click',e=>{if(e.target===box||e.target.closest('[data-x]'))box.classList.remove('on')})}
   $('#helpb').innerHTML=`<h2>❓ How to use — ${G[0]}</h2><ol class="guide">${G[1].map(t=>`<li>${t}</li>`).join('')}</ol><div class="row-end"><button class="go" data-x>Got it 👍</button></div>`;box.classList.add('on');
   try{localStorage.setItem('dp_help_'+me.role,'1')}catch(e){}}
