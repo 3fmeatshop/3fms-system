@@ -563,6 +563,11 @@ header h1 .tt small{display:block;font-size:11px;color:var(--sky2);letter-spacin
 .td-q{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.td-q button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 12px;font-weight:700;cursor:pointer}
 .td-chg{font-size:24px;font-weight:800;text-align:right;color:#15803D;padding:6px 2px}.td-chg.bad{color:var(--rose)}.td-btn{font-size:18px!important}
 @media(max-width:500px){.td-m{grid-template-columns:repeat(2,1fr)}}
+#lcam{position:fixed;inset:0;z-index:200;background:#000;display:flex;flex-direction:column}#lcam video{flex:1;width:100%;min-height:0;object-fit:contain;background:#000}
+.lc-msg{position:absolute;top:40%;left:0;right:0;text-align:center;color:#fff;font-size:17px;padding:0 20px}.lc-msg .go{margin:14px auto 0;display:inline-block}
+.lc-bar{display:flex;align-items:center;justify-content:space-around;padding:18px 12px calc(18px + env(safe-area-inset-bottom,0px));background:#000}
+.lc-bar button{background:transparent;border:0;color:#fff;font-size:26px;width:72px;display:flex;flex-direction:column;align-items:center;cursor:pointer}.lc-bar small{font-size:12px}
+#lc-shot{width:76px;height:76px;border-radius:50%;background:#fff;border:6px solid #9CA3AF}#lc-shot:disabled{opacity:.4}
 .posx-tools{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}.posx-tools button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:7px 10px;font-weight:700;font-size:13px;cursor:pointer;color:var(--ink)}
 .posx-tools button:disabled{opacity:.45;cursor:default}.posx-tools button i{font-style:normal;background:var(--rose);color:#fff;border-radius:10px;padding:0 6px;margin-left:3px}.posx-tools .sp{flex:1}.posx-tools .zr{background:#1F2937;color:#fff;border-color:#1F2937}
 .pdiscb{width:100%;text-align:left;white-space:normal}.dkinds{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:10px}.dkinds button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px;font-weight:700;cursor:pointer}.dkinds button.on{border-color:var(--navy);background:#FDF2F2;color:var(--navy)}
@@ -2135,6 +2140,26 @@ function openProof(o,kind){
 }
 // open a photo from the camera / gallery — tries 3 ways because phones differ (big photos, content:// files from the app camera)
 function photoErr(e){const m=String(e&&e.message||e||'');return m==='EMPTY'?'The camera did not save the photo — please take it again':m==='HEIC'?'This photo is HEIC/HEIF. In the camera settings choose JPEG (or "Most compatible"), then take it again':'Could not open that photo — please take it again'}
+/* LIVE CAMERA inside the page: tapping a photo box opens the camera right here (no separate camera app).
+   Phones whose camera app sends back a broken file work the same way. Gallery / file is still one tap away. */
+let camBypass=false,camStream=null;
+document.addEventListener('click',e=>{const i=e.target&&e.target.closest&&e.target.closest('input[type=file]');
+  if(!i||camBypass||!/image/.test(i.accept||'')||!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia))return;
+  if(!/Android|iPhone|iPad|FMSApp/i.test(navigator.userAgent))return;      // PC: keep the normal file picker
+  e.preventDefault();e.stopPropagation();liveCam(i)},true);
+function camClose(){if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null}const o=document.getElementById('lcam');if(o)o.remove()}
+function camPick(i){camClose();camBypass=true;try{i.click()}finally{camBypass=false}}
+async function liveCam(input){camClose();
+  const o=document.createElement('div');o.id='lcam';o.innerHTML=`<video id="lc-v" autoplay playsinline muted></video><div class="lc-msg" id="lc-m">Opening camera…</div>
+    <div class="lc-bar"><button type="button" id="lc-x" aria-label="Close">✕</button><button type="button" id="lc-shot" aria-label="Take photo" disabled></button><button type="button" id="lc-g">🖼<small>Gallery</small></button></div>`;
+  document.body.appendChild(o);
+  $('#lc-x').onclick=camClose;$('#lc-g').onclick=()=>camPick(input);
+  try{camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}},audio:false});
+    const v=$('#lc-v');v.srcObject=camStream;await v.play().catch(()=>{});$('#lc-m').textContent='';$('#lc-shot').disabled=false;
+    $('#lc-shot').onclick=()=>{const w=v.videoWidth,h=v.videoHeight;if(!w||!h)return;const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(v,0,0,w,h);
+      c.toBlob(b=>{if(!b){toast('Could not take the photo — try again');return}const dt=new DataTransfer();dt.items.add(new File([b],'photo_'+Date.now()+'.jpg',{type:'image/jpeg'}));
+        camClose();input.files=dt.files;input.dispatchEvent(new Event('change',{bubbles:true}))},'image/jpeg',.9)}}
+  catch(err){$('#lc-m').innerHTML='📷 Camera not available here.<br><button type="button" class="go" id="lc-alt">Take / choose a photo the usual way</button>';$('#lc-alt').onclick=()=>camPick(input)}}
 // phone app v2+: the app hands the photo over as a ready JPEG; it goes into the file box that was tapped
 document.addEventListener('click',e=>{const i=e.target&&e.target.closest&&e.target.closest('input[type=file]');if(i)window.__lastFileIn=i},true);
 window.__nativePhoto=function(d){try{const i=window.__lastFileIn;if(!i)return false;const b=atob(String(d).split(',')[1]),u=new Uint8Array(b.length);for(let k=0;k<b.length;k++)u[k]=b.charCodeAt(k);
