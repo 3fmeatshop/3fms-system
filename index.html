@@ -550,6 +550,10 @@ header h1 .tt small{display:block;font-size:11px;color:var(--sky2);letter-spacin
 .shead{display:flex;gap:12px;justify-content:space-between;align-items:flex-start;flex-wrap:wrap}.sbtns{display:flex;gap:8px;flex-wrap:wrap}
 .stoff{background:var(--abg);color:var(--amber);padding:8px 12px;border-radius:10px;font-weight:700}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.ckt input{text-align:right}
+.ygrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.ygrid>div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column}.ygrid span{font-size:12px;color:var(--muted);font-weight:700}.ygrid b{font-size:20px}.ygrid small{color:var(--muted)}.ygrid .bad{border-color:var(--rose);background:#FEF2F2}
+.yrem{margin-top:8px;padding:8px 12px;border-radius:10px;font-size:15px}.y-vgood,.y-good{background:#ECFDF3;color:#166534}.y-bad{background:#FEF2F2;color:#B42318}
+@media(max-width:600px){.ygrid{grid-template-columns:repeat(2,1fr)}}.ckt input.ckm{border-color:var(--gold,#F5C518);background:#FFFBEA}
 .cc-oth{display:grid;grid-template-columns:1fr 130px 40px;gap:8px;margin-bottom:6px;align-items:center}
 .cc-sum{display:flex;justify-content:space-between;align-items:baseline;padding:8px 2px;border-top:1px dashed var(--line);margin-top:8px}.cc-sum span{font-weight:700;color:var(--muted)}.cc-sum b{font-size:17px}
 .cc-sum.big span{color:var(--ink);font-weight:800}.cc-sum.big b{font-size:24px;color:var(--navy)}.cc-tot{border:2px solid var(--gold,#F5C518)}
@@ -2534,6 +2538,9 @@ function productDialog(code){const p=code?pBy(code):{code:'',name:'',cat:'',unit
 /* ---------- PURCHASE ORDERS (manager) ---------- */
 function poLines(){return poEdit.items.map((l,k)=>{const p=pBy(l.code);return `<tr><td>${uSel(l.code,'','data-pol="'+k+'"')}</td><td><input class="edit-in nq" type="number" step="0.001" inputmode="decimal" data-poq="${k}" data-k="poq${k}" value="${l.qty}" placeholder="Qty"></td><td>${p?esc(p.unit):''}</td><td><input class="edit-in nq" type="number" step="0.01" inputmode="decimal" data-poc="${k}" data-k="poc${k}" value="${l.cost}" placeholder="Cost ₱"></td><td class="r" data-pa="${k}">${peso((+l.qty||0)*(+l.cost||0))}</td><td><button class="del" data-podel="${k}">✕</button></td></tr>`}).join('')}
 /* ---------- LIVE PIG / CARCASS P.O. & RECEIVING ---------- */
+const PIECE_CUTS=['Pork Skull'];   // counted per piece — not part of the weight / yield
+const YLOSS={good:17,band:0.5};    // lost weight 17% of liveweight = good (83% yield); below = very good; above = bad (needs a reason)
+function yRate(lossPct){return lossPct<YLOSS.good-YLOSS.band?{k:'vgood',t:'Very good yield',c:'green'}:lossPct<=YLOSS.good+YLOSS.band?{k:'good',t:'Good yield',c:'green'}:{k:'bad',t:'Bad yield — give the reason',c:'red'}}
 const PIG_CUTS=['Pork Skull','Pork Belly','Pork Pigue','Pork Kasim','Pork Lomo','Pork Ribs','Pork Pata','Pork Fats','Pork Tail','Pork Bone','Pork Mask','Pork Kidney','Pork Liver','Pork Heart','Igado','Large Intestine','Pork Lungs','Small Intestine','Porkchop','Pork Laman'];
 let rcC=null;   // carcass receiving form {id, lw, exp, cuts:[{name,code,kg}]}
 const sl=s=>String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'');
@@ -2546,10 +2553,11 @@ function matchCut(name){const P=ST.products,n=sl(name),fresh=L=>L.sort((a,b)=>(/
   return L.length?fresh(L):null}
 const expTot=e=>e?(+e.transport||0)+(+e.butcher||0)+(+e.slaughter||0)+(e.others||[]).reduce((s,x)=>s+(+x.amt||0),0):0;
 function ccMoney(cc,rc){const lw=rc&&+rc.lw?+rc.lw:+cc.lw||0,pay=r2(lw*(+cc.price||0)),et=r2(expTot(rc&&rc.exp?rc.exp:cc.exp));return {lw,pay,et,total:r2(pay+et)}}
-function ccSplit(cc,rc){const m=ccMoney(cc,rc),cuts=(rc.cuts||[]).filter(k=>+k.kg>0&&k.code);const kgAll=cuts.reduce((s,k)=>s+(+k.kg),0),avg=kgAll?m.total/kgAll:0;let val=0;
-  const rows=cuts.map(k=>{const p=pBy(k.code),pk=p?(p.retail>0?p.retail:p.cost>0?p.cost:0):0;return {code:k.code,name:p?p.name:k.name,kg:+k.kg,pk:pk||avg}});
+function ccSplit(cc,rc){const m=ccMoney(cc,rc),cuts=(rc.cuts||[]).filter(k=>+k.kg>0&&k.code);const kgAll=cuts.filter(k=>k.u!=='Pc').reduce((s,k)=>s+(+k.kg),0),qAll=cuts.reduce((s,k)=>s+(+k.kg),0),avg=qAll?m.total/qAll:0;let val=0;
+  const rows=cuts.map(k=>{const p=pBy(k.code),pk=p?(p.retail>0?p.retail:p.cost>0?p.cost:0):0;return {code:k.code,name:p?p.name:k.name,kg:+k.kg,u:k.u||'Kg',pk:pk||avg}});
   rows.forEach(r=>{r.v=r.kg*r.pk;val+=r.v});rows.forEach(r=>{r.costAmt=val?r2(m.total*r.v/val):0;r.costKg=r.kg?r2(r.costAmt/r.kg):0});
-  return {rows,kgAll:r2(kgAll),yieldPct:m.lw?Math.round(kgAll/m.lw*1000)/10:0,...m}}
+  const loss=r2(m.lw-kgAll),lossPct=m.lw?Math.round(loss/m.lw*1000)/10:0;
+  return {rows,kgAll:r2(kgAll),yieldPct:m.lw?Math.round(kgAll/m.lw*1000)/10:0,loss,lossPct,...m}}
 const setPath=(o,path,v)=>{const ks=path.split('.');let x=o;ks.slice(0,-1).forEach(k=>x=x[k]);x[ks[ks.length-1]]=v};
 const ccIn=(t,path,val,ph,step)=>`<input class="edit-in nq" type="number" step="${step||'0.01'}" inputmode="decimal" data-cft="${t}" data-cf="${path}" data-k="cf${t}${path}" value="${esc(val??'')}" placeholder="${ph||''}">`;
 function expHTML(t,e){return `<div class="panel cc-exp"><h3 style="margin:0 0 6px">💸 Expenses <small class="unit">always paid in cash</small></h3><div class="fgrid">
@@ -2572,24 +2580,54 @@ function carcassPOForm(){const c=poEdit.carcass,m=ccMoney(c);
       <div class="row-end"><button class="btn" data-pocancel>Cancel</button><button class="go" data-posave>💾 Save P.O.</button></div></div>`}
 function ccLine(p){const c=p.carcass,rc=p.recv&&p.recv.carcass,m=ccMoney(c,rc);
   return `🐖 <b>${c.heads} pc live pig</b> · ${qf(m.lw)} kg × ${peso(c.price)} = <b>${peso(m.pay)}</b> ${c.pay==='charge'?(c.paid?badge('Charge · PAID','green'):badge('Charge · unpaid · due '+day(c.due),'amber')):badge('Cash','green')} · expenses ${peso(m.et)} · <b>total cost ${peso(m.total)}</b>`}
-function cutTable(rc,cc){const s=rc.alloc?{rows:rc.alloc,kgAll:r2(rc.alloc.reduce((a,k)=>a+k.kg,0)),yieldPct:rc.yieldPct,total:rc.total,lw:rc.lw}:ccSplit(cc,rc);
-  return `<div class="sc"><table class="stbl"><thead><tr><th>Cut</th><th class="r">kg</th><th class="r">Cost / kg</th><th class="r">Cost</th></tr></thead><tbody>${s.rows.map(r=>`<tr><td>${esc(r.name)}</td><td class="r">${qf(r.kg)}</td><td class="r"><b>${peso(r.costKg)}</b></td><td class="r">${peso(r.costAmt)}</td></tr>`).join('')}
-    <tr class="srtot"><td><b>Total</b> <span class="unit">· yield ${s.yieldPct}% of ${qf(s.lw)} kg liveweight</span></td><td class="r"><b>${qf(s.kgAll)}</b></td><td></td><td class="r"><b>${peso(s.total)}</b></td></tr></tbody></table></div>`}
+function cutTable(rc,cc){const s=rc.alloc?{rows:rc.alloc,kgAll:rc.kgAll!=null?rc.kgAll:r2(rc.alloc.filter(k=>k.u!=='Pc').reduce((a,k)=>a+k.kg,0)),yieldPct:rc.yieldPct,loss:rc.loss,lossPct:rc.lossPct,total:rc.total,lw:rc.lw}:ccSplit(cc,rc);
+  const y=s.lossPct!=null?yRate(s.lossPct):null;
+  return `<div class="sc"><table class="stbl"><thead><tr><th>Cut</th><th class="r">Qty</th><th class="r">Cost / unit</th><th class="r">Cost</th></tr></thead><tbody>${s.rows.map(r=>`<tr><td>${esc(r.name)}</td><td class="r">${qf(r.kg)} ${r.u==='Pc'?'pc':'kg'}</td><td class="r"><b>${peso(r.costKg)}</b></td><td class="r">${peso(r.costAmt)}</td></tr>`).join('')}
+    <tr class="srtot"><td><b>Total</b></td><td class="r"><b>${qf(s.kgAll)} kg</b></td><td></td><td class="r"><b>${peso(s.total)}</b></td></tr></tbody></table></div>
+    ${s.lossPct!=null?`<div class="unit">⚖ Liveweight ${qf(s.lw)} kg · cuts ${qf(s.kgAll)} kg · <b>lost ${qf(s.loss)} kg (${s.lossPct}%)</b> · yield ${s.yieldPct}% ${badge(y.t.replace(' — give the reason',''),y.c)}${rc.lossWhy?' · reason: '+esc(rc.lossWhy):''}</div>`:''}`}
 function carcassRecvForm(po){const c=po.carcass;
-  if(!rcC||rcC.id!==po.id)rcC={id:po.id,lw:'',exp:JSON.parse(JSON.stringify(c.exp)),cuts:PIG_CUTS.map(n=>{const p=matchCut(n);return {name:n,code:p?p.code:'',kg:''}})};
+  if(!rcC||rcC.id!==po.id)rcC={id:po.id,lw:'',exp:JSON.parse(JSON.stringify(c.exp)),cuts:PIG_CUTS.map(n=>{const p=matchCut(n);return {name:n,code:p?p.code:'',kg:'',u:PIECE_CUTS.includes(n)||(p&&p.unit==='Pc')?'Pc':'Kg'}}),lossWhy:''};
   if(!rcC.exp.others.length)rcC.exp.others.push({desc:'',amt:''});
   return `<div class="shead"><div><h2>📥 Receive ${esc(po.no)} · ${esc(po.supplier)}</h2><div class="unit">${ccLine(po)}<br>1) Type the <b>actual liveweight</b>. 2) Check the expenses. 3) Weigh each cut and type the kg — leave blank what you didn't get. The cost of each cut is worked out by selling value.</div></div></div>
     <div class="panel"><div class="fgrid"><label>Actual liveweight (kg) <small class="unit">P.O.: ${qf(c.lw)} kg</small>${ccIn('rc','lw',rcC.lw,qf(c.lw))}</label></div></div>
     ${expHTML('rc',rcC.exp)}
-    <div class="panel"><h3 style="margin:0 0 6px">🔪 Cuts — weigh and type the kg</h3><div class="sc"><table class="stbl"><thead><tr><th>Cut</th><th>Product in inventory</th><th style="width:120px">kg</th><th></th></tr></thead><tbody>
-      ${rcC.cuts.map((k,i)=>`<tr><td><b>${esc(k.name||'Other cut')}</b></td><td>${uSel(k.code,'','data-cutp="'+i+'"')}</td><td>${ccIn('rc','cuts.'+i+'.kg',k.kg,'kg','0.001')}</td><td><button class="del" data-cutdel="${i}" aria-label="Remove">✕</button></td></tr>`).join('')}</tbody></table></div>
-      <button class="btn sm" data-cutadd>+ Add cut</button></div>
-    <div class="panel"><h3 style="margin:0 0 6px">🧮 Cost per cut <small class="unit">updates as you type</small></h3><div id="cc-split">${cutTable(rcC,c)}</div>
+    <div class="panel"><h3 style="margin:0 0 6px">🔪 Cuts — weigh (kg) or count (pc)</h3><div class="sc"><table class="stbl"><thead><tr><th>Cut</th><th>Product in inventory</th><th style="width:110px">Qty</th><th style="width:80px">Unit</th><th></th></tr></thead><tbody>
+      ${rcC.cuts.map((k,i)=>`<tr><td><b>${esc(k.name||'Other cut')}</b></td><td>${uSel(k.code,'','data-cutp="'+i+'"')}</td><td>${ccIn('rc','cuts.'+i+'.kg',k.kg,k.u==='Pc'?'pc':'kg',k.u==='Pc'?'1':'0.001')}</td>
+        <td><select class="edit-in" data-cutu="${i}"><option${k.u!=='Pc'?' selected':''}>Kg</option><option${k.u==='Pc'?' selected':''}>Pc</option></select></td><td><button class="del" data-cutdel="${i}" aria-label="Remove">✕</button></td></tr>`).join('')}</tbody></table></div>
+      <button class="btn sm" data-cutadd>+ Add cut</button><div class="unit" style="margin-top:6px">Per piece (pc) cuts like the skull are counted, not weighed — they are not part of the lost weight.</div></div>
+    <div class="panel" id="cc-yield">${yieldHTML(c)}</div>
+    <div class="panel"><h3 style="margin:0 0 6px">🧮 Cost per cut</h3><div id="cc-split">${ckHTML(c)}</div>
       <div class="fgrid"><label class="full">Note<input class="edit-in" id="rc-note" data-k="rcn"></label><label class="full">📷 Photo of the receipt (optional)<input type="file" accept="image/*" capture="environment" id="rc-ph"></label></div><div id="rc-prev" class="unit">${recvPhoto?'✓ Photo ready':''}</div>
       <div class="row-end"><button class="btn" data-rcback>Back</button><button class="go" data-rcsave="${po.id}">✓ Save receiving</button></div></div>`}
+function yieldHTML(cc){const s=ccSplit(cc,rcC);if(!(s.lw>0)||!s.kgAll)return '<h3 style="margin:0">⚖ Yield</h3><div class="unit">Type the liveweight and the kg of the cuts.</div>';const y=yRate(s.lossPct);
+  return `<h3 style="margin:0 0 6px">⚖ Yield</h3><div class="ygrid"><div><span>Liveweight</span><b>${qf(s.lw)} kg</b></div><div><span>Cuts (kg only)</span><b>${qf(s.kgAll)} kg</b></div><div class="${y.k==='bad'?'bad':''}"><span>Total lost weight</span><b>${qf(s.loss)} kg</b><small>${s.lossPct}% of liveweight</small></div><div><span>Yield</span><b>${s.yieldPct}%</b></div></div>
+    <div class="yrem y-${y.k}">${y.k==='bad'?'⚠':'✓'} <b>${y.t}</b> <span class="unit">· standard: 83% yield / 17% lost weight</span></div>
+    ${y.k==='bad'?`<label class="full" style="display:block;margin-top:8px"><b>Reason for the bad yield</b><input class="edit-in" id="rc-why" data-k="rcwhy" value="${esc(rcC.lossWhy||'')}" placeholder="e.g. pig was thin, long travel, heavy bleeding"></label>`:''}`}
+/* receiving a carcass: the cost per kg of each cut can be adjusted by hand; the total must equal the total cost (COGS) */
+function ckRows(cc){const sug=ccSplit(cc,rcC),byCode={};sug.rows.forEach(r=>byCode[r.code]=r);
+  const rows=rcC.cuts.map((k,i)=>({i,k})).filter(x=>+x.k.kg>0&&x.k.code).map(({i,k})=>{const s=byCode[k.code]||{costKg:0},ck=k.ckSet?+k.ck||0:s.costKg;return {i,code:k.code,name:(pBy(k.code)||{}).name||k.name,kg:+k.kg,u:k.u||'Kg',sug:s.costKg,ck,amt:r2(+k.kg*ck),manual:!!k.ckSet}});
+  const tot=r2(rows.reduce((a,r)=>a+r.amt,0));return {rows,tot,total:sug.total,diff:r2(sug.total-tot),kgAll:sug.kgAll,yieldPct:sug.yieldPct,lw:sug.lw}}
+function ckFoot(S){const ok=Math.abs(S.diff)<=1;
+  return `<tr class="srtot"><td><b>Total of cuts</b></td><td class="r"><b>${qf(S.kgAll)} kg</b></td><td></td><td class="r"><b id="ck-tot">${peso(S.tot)}</b></td></tr>
+    <tr><td colspan="3"><b>Total cost (COGS)</b></td><td class="r"><b>${peso(S.total)}</b></td></tr>
+    <tr class="${ok?'':'rout'}"><td colspan="3"><b id="ck-dl">${ok?'✓ Balanced':S.diff>0?'Still to assign':'Over the total cost by'}</b></td><td class="r"><b id="ck-df" style="color:${ok?'var(--green)':'var(--rose)'}">${ok?'₱0.00':peso(Math.abs(S.diff))}</b></td></tr>`}
+function ckHTML(cc){const S=ckRows(cc);if(!S.rows.length)return '<div class="unit">Type the kg of the cuts first.</div>';
+  return `<div class="sc"><table class="stbl ckt"><thead><tr><th>Cut</th><th class="r">Qty</th><th style="width:150px">Cost / unit (₱)</th><th class="r">Cost</th></tr></thead><tbody>
+    ${S.rows.map(r=>`<tr><td>${esc(r.name)}${r.manual?` <small class="unit">· suggested ${peso(r.sug)}</small>`:''}</td><td class="r">${qf(r.kg)} ${r.u==='Pc'?'pc':'kg'}</td>
+      <td><input class="edit-in nq${r.manual?' ckm':''}" type="number" step="0.01" inputmode="decimal" data-ck="${r.i}" data-k="ck${r.i}" value="${r.ck}"></td><td class="r" id="ck-a${r.i}">${peso(r.amt)}</td></tr>`).join('')}
+    </tbody><tfoot id="ck-ft">${ckFoot(S)}</tfoot></table></div>
+    <div class="row-end" style="justify-content:flex-start;flex-wrap:wrap;gap:8px"><button class="btn sm" data-ckbal>⚖ Balance the difference</button><button class="btn sm" data-ckauto>↺ Suggested prices (by selling value)</button></div>
+    <div class="unit">Adjust any cut's cost per kg. The total of all cuts must equal the total cost — <b>⚖ Balance</b> spreads what's left over the cuts you didn't change.</div>`}
+function ckLive(){const po=(ST.pos||[]).find(p=>p.id===rcC.id);if(!po)return;const S=ckRows(po.carcass);S.rows.forEach(r=>{const a=$('#ck-a'+r.i);if(a)a.textContent=peso(r.amt)});const f=$('#ck-ft');if(f)f.innerHTML=ckFoot(S)}
+function ckBalance(){const po=(ST.pos||[]).find(p=>p.id===rcC.id),S=ckRows(po.carcass);if(Math.abs(S.diff)<0.005)return;
+  let free=S.rows.filter(r=>!r.manual);if(!free.length)free=S.rows;const amtBase=free.reduce((a,r)=>a+r.amt,0),kgBase=free.reduce((a,r)=>a+r.kg,0);
+  S.rows.forEach(r=>{const c=rcC.cuts[r.i];c.ck=String(r.ck);c.ckSet=true});           // freeze every price…
+  free.forEach(r=>{const share=amtBase?r.amt/amtBase:r.kg/kgBase;rcC.cuts[r.i].ck=String(r2((r.amt+S.diff*share)/r.kg))});   // …then spread the difference
+  const T=ckRows(po.carcass);if(Math.abs(T.diff)>=0.005){const big=T.rows.slice().sort((a,b)=>b.kg-a.kg)[0];rcC.cuts[big.i].ck=String(r2((big.amt+T.diff)/big.kg))}
+  drawStock()}
 function ccLive(t){if(t==='po'){const c=poEdit.carcass,m=ccMoney(c);[['pay',m.pay],['pay2',m.pay],['et2',m.et],['tot',m.total]].forEach(([k,v])=>{const e=$('#cc-po-'+k);if(e)e.textContent=peso(v)});
     const e=$('#cc-po-et');if(e)e.textContent=peso(m.et);const pk=$('#cc-po-pkg');if(pk)pk.textContent=m.lw?'= '+peso(m.total/m.lw)+' per kg liveweight':''}
-  else{const po=(ST.pos||[]).find(p=>p.id===rcC.id);const e=$('#cc-rc-et');if(e)e.textContent=peso(expTot(rcC.exp));const s=$('#cc-split');if(s&&po)s.innerHTML=cutTable(rcC,po.carcass)}}
+  else{const po=(ST.pos||[]).find(p=>p.id===rcC.id);const e=$('#cc-rc-et');if(e)e.textContent=peso(expTot(rcC.exp));const s=$('#cc-split');if(s&&po)s.innerHTML=ckHTML(po.carcass);const yy=$('#cc-yield');if(yy&&po&&!(document.activeElement&&document.activeElement.id==='rc-why'))yy.innerHTML=yieldHTML(po.carcass)}}
 function poHTML(){
   const all=ST.pos||[],appr=all.filter(p=>p.status==='for approval');
   if(poEdit&&poEdit.kind==='carcass')return carcassPOForm();
@@ -2902,6 +2940,8 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const srr=e.target
   if('ponewc' in d){poEdit={kind:'carcass',supplier:'',expected:'',note:'',items:[],carcass:{heads:1,lw:'',price:'',pay:'cash',due:'',orNo:'',exp:{transport:'',butcher:'',slaughter:'',others:[{desc:'',amt:''}]}}};drawStock();return}
   if(d.ccoadd){const o=d.ccoadd==='po'?poEdit.carcass:rcC;o.exp.others.push({desc:'',amt:''});drawStock();return}
   if(d.ccodel){const[t,k]=d.ccodel.split(':'),o=t==='po'?poEdit.carcass:rcC;o.exp.others.splice(+k,1);if(!o.exp.others.length)o.exp.others.push({desc:'',amt:''});drawStock();return}
+  if('ckbal' in d){ckBalance();return}
+  if('ckauto' in d){rcC.cuts.forEach(c=>{delete c.ck;delete c.ckSet});drawStock();return}
   if('cutadd' in d){rcC.cuts.push({name:'',code:'',kg:''});drawStock();return}
   if(d.cutdel){rcC.cuts.splice(+d.cutdel,1);drawStock();return}
   if(d.popay){const p=ST.pos.find(x=>x.id===d.popay),m=ccMoney(p.carcass,p.recv&&p.recv.carcass);const ref=prompt(`Mark ${p.no} as PAID — ${peso(m.pay)} to ${p.supplier}.\n\nReference / OR no. (optional):`,'');if(ref===null)return;
@@ -2930,8 +2970,10 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const srr=e.target
     const cuts=rcC.cuts.filter(k=>+k.kg>0);if(!cuts.length)return alert('Type the kg of the cuts.');
     if(cuts.some(k=>!k.code))return alert('Choose the product in inventory for every cut with kg.');
     if((rcC.exp.others||[]).some(x=>+x.amt&&!String(x.desc).trim()))return alert('Other fees: type what each fee is for.');
+    {const pc=((ST.pos||[]).find(p=>p.id===rcC.id)||{}).carcass,Y=ccSplit(pc,rcC);if(yRate(Y.lossPct).k==='bad'&&!String(rcC.lossWhy||'').trim()){alert('Lost weight is '+Y.lossPct+'% (standard 17%). Type the reason for the bad yield.');const w=$('#rc-why');if(w)w.focus();return}}
+    {const S=ckRows(((ST.pos||[]).find(p=>p.id===rcC.id)||{}).carcass);if(Math.abs(S.diff)>1)return alert('The cost of the cuts ('+peso(S.tot)+') must equal the total cost ('+peso(S.total)+').\nAdjust the prices or tap ⚖ Balance the difference.');}
     await busy(async()=>{let ph='';if(recvPhoto){ph='D'+await api('api_uploadPhoto',session.token,recvPhoto,'receiving-'+Date.now());await putPhoto(ph,recvPhoto)}
-      const r=await api('api_receive',session.token,d.rcsave,{lw:rcC.lw,exp:rcC.exp,cuts:cuts.map(k=>({code:k.code,kg:k.kg}))},$('#rc-note').value,ph);recvId=null;recvPhoto='';rcC=null;
+      const r=await api('api_receive',session.token,d.rcsave,{lw:rcC.lw,exp:rcC.exp,lossWhy:rcC.lossWhy||'',cuts:cuts.map(k=>({code:k.code,kg:k.kg,u:k.u||'Kg',costKg:(ckRows(((ST.pos||[]).find(p=>p.id===rcC.id)||{}).carcass).rows.find(r=>r.i===rcC.cuts.indexOf(k))||{}).ck}))},$('#rc-note').value,ph);recvId=null;recvPhoto='';rcC=null;
       toast(r.waiting?'⏳ Saved — liveweight / expenses differ from the P.O., the manager will approve':'✅ Received — cuts added to stock with their cost');await renderStock('recv',true)});return}
   if(d.rcsave){const lines=[...document.querySelectorAll('[data-rq]')].map(x=>({code:x.dataset.rq,qty:x.value.trim()}));
     const miss=lines.filter(l=>l.qty==='');if(miss.length){alert('Type the received qty of every product (0 if nothing came).');document.querySelector(`[data-rq="${miss[0].code}"]`).focus();return}
@@ -2978,6 +3020,8 @@ function stockInput(e){if(!STOCKV.includes(view))return;const t=e.target,d=t.dat
   if(d.k==='posq'){posQ=t.value;drawStock();return}
   if(poEdit&&t.id==='po-sup'){poEdit.supplier=t.value;return}if(poEdit&&t.id==='po-exp'){poEdit.expected=t.value;return}if(poEdit&&t.id==='po-note'){poEdit.note=t.value;return}
   if(prodF&&t.id==='pr-note'){prodF.note=t.value;return}
+  if(t.id==='rc-why'&&rcC){rcC.lossWhy=t.value;return}
+  if(d.ck!==undefined&&rcC){const c=rcC.cuts[+d.ck];c.ck=t.value;c.ckSet=true;t.classList.add('ckm');ckLive();return}
   if(d.cf){const o=d.cft==='po'?poEdit&&poEdit.carcass:rcC;if(!o)return;setPath(o,d.cf,t.value);if(t.tagName!=='SELECT'&&t.type!=='date')ccLive(d.cft);return}
   if(d.poq!==undefined){poEdit.items[+d.poq].qty=t.value;poLive();return}
   if(d.poc!==undefined){poEdit.items[+d.poc].cost=t.value;poLive();return}
@@ -2990,7 +3034,8 @@ function stockInput(e){if(!STOCKV.includes(view))return;const t=e.target,d=t.dat
 }
 function stockChange(e){if(!STOCKV.includes(view))return;const t=e.target,d=t.dataset;
   if(d.cf&&(t.tagName==='SELECT'||t.type==='date')){const o=d.cft==='po'?poEdit&&poEdit.carcass:rcC;if(o){setPath(o,d.cf,t.value);drawStock()}return}
-  if(d.cutp!==undefined){rcC.cuts[+d.cutp].code=t.value;const p=pBy(t.value);if(!rcC.cuts[+d.cutp].name&&p)rcC.cuts[+d.cutp].name=p.name;ccLive('rc');return}
+  if(d.cutu!==undefined){rcC.cuts[+d.cutu].u=t.value;drawStock();return}
+  if(d.cutp!==undefined){rcC.cuts[+d.cutp].code=t.value;const p=pBy(t.value);if(p&&p.unit==='Pc')rcC.cuts[+d.cutp].u='Pc';if(!rcC.cuts[+d.cutp].name&&p)rcC.cuts[+d.cutp].name=p.name;ccLive('rc');return}
   if(d.srf){SRF[d.srf]=t.value;if(d.srf==='from'||d.srf==='to')SRF.pre='';drawStock();return}
   if(d.pol!==undefined){const p=pBy(t.value),l=poEdit.items[+d.pol];l.code=t.value;if(p&&!l.cost&&p.cost)l.cost=p.cost;drawStock();return}
   if(d.prl!==undefined){const[k,i]=d.prl.split(':');prodF[k][+i].code=t.value;drawStock();return}
