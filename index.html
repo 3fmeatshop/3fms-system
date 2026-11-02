@@ -2137,6 +2137,7 @@ function openProof(o,kind){
 function photoErr(e){const m=String(e&&e.message||e||'');return m==='EMPTY'?'The camera did not save the photo — please take it again':m==='HEIC'?'This photo is HEIC/HEIF. In the camera settings choose JPEG (or "Most compatible"), then take it again':'Could not open that photo — please take it again'}
 async function openPhoto(file){if(!file||!file.size)throw new Error('EMPTY');
   if(/hei[cf]/i.test(file.type||'')||/\.hei[cf]$/i.test(file.name||''))throw new Error('HEIC');
+  try{const hd=new TextDecoder('latin1').decode(new Uint8Array(await file.slice(0,32).arrayBuffer()));if(/ftyp(heic|heix|hevc|mif1|msf1)/.test(hd))throw new Error('HEIC')}catch(e){if(String(e.message)==='HEIC')throw e}
   if(window.createImageBitmap){try{return await createImageBitmap(file,{resizeWidth:1280,resizeQuality:'medium'})}catch(e){}try{return await createImageBitmap(file)}catch(e){}}
   const viaSrc=src=>new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=()=>rej(new Error('DECODE'));im.src=src});
   const url=URL.createObjectURL(file);try{return await viaSrc(url)}catch(e){}finally{setTimeout(()=>URL.revokeObjectURL(url),5000)}
