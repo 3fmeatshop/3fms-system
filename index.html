@@ -2135,6 +2135,10 @@ function openProof(o,kind){
 }
 // open a photo from the camera / gallery — tries 3 ways because phones differ (big photos, content:// files from the app camera)
 function photoErr(e){const m=String(e&&e.message||e||'');return m==='EMPTY'?'The camera did not save the photo — please take it again':m==='HEIC'?'This photo is HEIC/HEIF. In the camera settings choose JPEG (or "Most compatible"), then take it again':'Could not open that photo — please take it again'}
+// phone app v2+: the app hands the photo over as a ready JPEG; it goes into the file box that was tapped
+document.addEventListener('click',e=>{const i=e.target&&e.target.closest&&e.target.closest('input[type=file]');if(i)window.__lastFileIn=i},true);
+window.__nativePhoto=function(d){try{const i=window.__lastFileIn;if(!i)return false;const b=atob(String(d).split(',')[1]),u=new Uint8Array(b.length);for(let k=0;k<b.length;k++)u[k]=b.charCodeAt(k);
+  const dt=new DataTransfer();dt.items.add(new File([u],'photo_'+Date.now()+'.jpg',{type:'image/jpeg'}));i.files=dt.files;i.dispatchEvent(new Event('change',{bubbles:true}));return true}catch(e){toast('Photo hand-over failed: '+e.message);return false}};
 async function openPhoto(file){if(!file||!file.size)throw new Error('EMPTY');
   if(/hei[cf]/i.test(file.type||'')||/\.hei[cf]$/i.test(file.name||''))throw new Error('HEIC');
   try{const hd=new TextDecoder('latin1').decode(new Uint8Array(await file.slice(0,32).arrayBuffer()));if(/ftyp(heic|heix|hevc|mif1|msf1)/.test(hd))throw new Error('HEIC')}catch(e){if(String(e.message)==='HEIC')throw e}
@@ -2155,7 +2159,7 @@ $('#ph-in').onchange=async e=>{const f=e.target.files[0];if(!f)return;const o=fi
     P.data=await stampPhoto(f,[(P.kind==='dispatch'?'DISPATCHED':'DELIVERED')+' · '+o.customer+' · Deliver '+day(o.delivery),fullStamp(P.at)+' · by '+me.name]);
     $('#ph-img').src=P.data;$('#ph-img').hidden=false;$('#ph-cam').hidden=true;$('#ph-retake').hidden=false;$('#ph-ok').disabled=false;$('#ph-time').textContent=fullStamp(P.at)}
   catch(err){let hd='';try{hd=Array.from(new Uint8Array(await f.slice(0,12).arrayBuffer())).map(b=>b>31&&b<127?String.fromCharCode(b):'.').join('')}catch(_){}
-    toast(photoErr(err)+` [${Math.round((f.size||0)/1024)} KB · ${f.type||'no type'} · ${hd||'?'} · ${String(err&&err.message||err)}]`)}};
+    toast(photoErr(err)+` [${f.size||0} B · ${f.type||'no type'} · ${hd||'?'} · ${String(err&&err.message||err)} · ${(navigator.userAgent.match(/FMSApp\/\d+/)||['app: old'])[0]}]`)}};
 $('#ph-retake').onclick=()=>$('#ph-in').click();
 $('#ph-ok').onclick=async()=>{if(!P||!P.data)return;const o=find(P.oid),pid='p'+uid();
   if(!o){toast('This order changed — please try again');$('#ph').classList.remove('on');return}
