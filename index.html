@@ -550,6 +550,7 @@ header h1 .tt small{display:block;font-size:11px;color:var(--sky2);letter-spacin
 .shead{display:flex;gap:12px;justify-content:space-between;align-items:flex-start;flex-wrap:wrap}.sbtns{display:flex;gap:8px;flex-wrap:wrap}
 .stoff{background:var(--abg);color:var(--amber);padding:8px 12px;border-radius:10px;font-weight:700}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.possw{display:inline-flex;gap:4px;background:#F6F1F0;border:1px solid var(--line);border-radius:12px;padding:4px;margin:0 0 12px}.possw button{border:0;background:transparent;border-radius:9px;padding:9px 16px;font-weight:800;font-size:15px;color:var(--muted);cursor:pointer}.possw button.on{background:#fff;color:var(--navy);box-shadow:0 1px 4px rgba(0,0,0,.12)}
 .srrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}.srrow label{display:flex;flex-direction:column;font-size:12px;font-weight:700;color:var(--muted);gap:4px;min-width:0;flex:1 1 140px}
 tr.srclick{cursor:pointer}tr.srclick:hover td{background:#FFF7E0}tr.srtot td{border-top:2px solid var(--line);background:#FAF6F5}
 .kpis>div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px}.kpis b{display:block;font-size:22px;color:var(--navy)}.kpis span{color:var(--muted);font-size:13px}
@@ -880,7 +881,7 @@ const PROCS={paste:{n:1,ic:'📋',t:'Input list of items to prepare',s:'Copy-pas
   prod:{ic:'🏭',t:'Production',s:'Raw meat → longganisa, hamballs, siomai, samgyupsal…',roles:['ops','manager'],view:'prod'},
   inv:{ic:'🗃️',t:'Inventory',s:'Stock on hand · low stock',roles:['manager','ops','cashier','sales'],view:'inv'},
   po:{ic:'📝',t:'Purchase orders',s:'Order from suppliers · approve receiving',roles:['manager'],view:'po'},
-  srep:{ic:'📈',t:'Sales & profit report',s:'Per customer · daily / monthly · total profit',roles:['manager'],view:'srep'}};
+  srep:{ic:'📈',t:'POS · Sales & profit report',s:'Per customer · daily / monthly · total profit',roles:['manager'],view:'srep'}};
 let proc=null, summary=null, roleHint=null;
 const SH={carry:'Carry over',later:'Deliver later today',forfeit:'Forfeited'};
 const $=s=>document.querySelector(s);
@@ -1149,7 +1150,7 @@ const showInv=st=>st==='prep'&&!!INV&&me&&me.role!=='rider';
 // PREPARED qty of orders not yet cashed out at the POS -> subtracted from the stock ONLY on this screen (the real stock changes at the cashier)
 let PREPD={};
 function calcPrepd(){const r={};if(!INV)return r;
-  db.orders.forEach(o=>{if(o.online||o.posSale||(o.delivered&&o.delivered.result))return;
+  db.orders.forEach(o=>{if(o.online||o.posSale||o.dispatched||o.delivered)return;   // only orders still in Preparation; billed / dispatched / delivered ones are out of the count
     o.items.forEach(i=>{const v=i.wtReq?(isCR(i)?0:parseFloat(i.wt)||0):actualVal(i);if(!(v>0))return;const p=invOf(i);if(!p)return;r[p.c]=(r[p.c]||0)+v})});
   Object.keys(r).forEach(k=>r[k]=r2(r[k]));return r}
 function invCell(i,mobile){const p=invOf(i);
@@ -1388,7 +1389,7 @@ function render(){
   const tabs=me.role==='rider'?[['way','🚚 To Deliver',way],['delivered',delLbl,delOK]]:[['prep','To Prepare',prep],['way','Dispatched',way],['delivered',delLbl,delOK],['undel','Undelivered · '+MONN,und]];
   if(can('online'))tabs.splice(me.role==='sales'?0:1,0,['online','🛒 Online',onl.filter(o=>o.online.status==='pending'&&!placedToday(o))]);
   if(can('online'))tabs.push(['points','⭐ Points',null]);
-  if(can('report'))tabs.push(['month','📦 Monthly',null]);if(can('dash'))tabs.push(['mgr','📊 Dashboard',null]);if(can('srep'))tabs.push(['srep','📈 Sales & profit',null]);
+  if(can('report'))tabs.push(['month','📦 Monthly',null]);if(can('dash'))tabs.push(['mgr','📊 Dashboard',null]);
   if(can('pos'))tabs.push(['pos','🧾 POS',null]);if(can('inv'))tabs.push(['inv','🗃️ Inventory',null]);if(can('po'))tabs.push(['po','📝 P.O.',null]);
   if(can('recv'))tabs.push(['recv','📥 Receiving',null]);if(can('prod'))tabs.push(['prod','🏭 Production',null]);
   // keep only the tabs this role needs (simpler screen)
@@ -1408,10 +1409,10 @@ function render(){
     opsSeg=`<div class="opstabs">${MAIN.map(([k,ic,t,d,n,c])=>`<button data-view="${k}" class="otab${view===k?' on':''}" style="--oc:${c}"><span class="ot-ic">${ic}</span><span class="ot-t">${t}</span><span class="ot-d">${d}</span>${n?`<span class="ot-n">${n}</span>`:''}</button>`).join('')}</div>
       <div class="opsmore">${MORE.map(([k,t,n])=>`<button data-view="${k}" class="${view===k?'on':''}">${t}${n?' ('+n+')':''}</button>`).join('')}</div>`;
   }
-  if(!tabs.some(t=>t[0]===view))view=tabs[0][0];
+  if(!tabs.some(t=>t[0]===view)&&!(view==='srep'&&can('srep')))view=tabs[0][0];   // Sales & profit opens from inside POS
   if(me.role==='ops'&&view==='recv'&&!ST)loadStock().then(()=>{if(view==='recv')renderStock('recv',true)}).catch(()=>{});
   $('#seg').style.display=tabs.length<2?'none':'';$('#seg').classList.toggle('opsseg',!!opsSeg);
-  if(opsSeg)$('#seg').innerHTML=opsSeg;else $('#seg').innerHTML=tabs.map(([k,l,a])=>`<button data-view="${k}" class="${view===k?'on':''}">${l}${a?` (${a.length})`:''}${k==='delivered'&&nFail?` <small style="color:var(--rose)">· ↩ ${nFail}</small>`:''}</button>`).join('');
+  if(opsSeg)$('#seg').innerHTML=opsSeg;else $('#seg').innerHTML=tabs.map(([k,l,a])=>`<button data-view="${k}" class="${view===k||(k==='pos'&&view==='srep')?'on':''}">${l}${a?` (${a.length})`:''}${k==='delivered'&&nFail?` <small style="color:var(--rose)">· ↩ ${nFail}</small>`:''}</button>`).join('');
   if(STOCKV.includes(view)){if(!document.querySelector(`#list .rep[data-v="${view}"]`))renderStock(view);return}
   if(view==='points'){if(!document.querySelector('#list .rep[data-v="points"]'))renderPoints();return}
   if(view==='month'||view==='mgr'){if(!document.querySelector(`#list .rep[data-v="${view}"]`))renderReport();return}
@@ -2297,7 +2298,7 @@ function srAgg(lines,keyF){const m=new Map();lines.forEach(l=>{const k=keyF(l);l
 function srepHTML(){
   const key=SRF.from+'|'+SRF.to;if((!SR||SR.key!==key)&&!SRerr)srLoad();
   const P=[['today','Today'],['yday','Yesterday'],['week','This week'],['month','This month'],['last','Last month'],['year','This year']];
-  const head=`<div class="shead"><div><h2>📈 Sales & profit</h2><div class="unit">Per customer, per day or month. Sales = walk-in + delivery (DR) receipts + delivered online orders, less returns and discounts. <b>Profit = sales − product cost.</b></div></div>
+  const head=posSw('srep')+`<div class="shead"><div><h2>📈 Sales & profit</h2><div class="unit">Per customer, per day or month. Sales = walk-in + delivery (DR) receipts + delivered online orders, less returns and discounts. <b>Profit = sales − product cost.</b></div></div>
     <div class="sbtns"><button class="btn sm" data-srcsv${SR&&SR.key===key?'':' disabled'}>⬇ Download (CSV)</button><button class="btn sm" data-srre>↻ Refresh</button></div></div>
     <div class="sfilt"><div class="chips2">${P.map(([k,t])=>`<button class="${SRF.pre===k?'on':''}" data-srp="${k}">${t}</button>`).join('')}</div>
     <div class="srrow"><label>From <input type="date" class="edit-in" data-srf="from" value="${SRF.from}"></label><label>To <input type="date" class="edit-in" data-srf="to" value="${SRF.to}"></label>
@@ -2576,12 +2577,13 @@ const cartTotal=()=>r2(cart.reduce((s,l)=>s+(+l.qty||0)*l.price,0)-(+posDisc||0)
 // and on the right the amount due, sales information and sub totals — on a white background.
 let posSel=-1;
 function posSug(){const q=posQ.trim().toLowerCase();if(!q)return [];return ST.products.filter(p=>(p.name+' '+p.code+' '+(p.alias||'')).toLowerCase().includes(q)).slice(0,8)}
+const posSw=on=>can('srep')?`<div class="possw" role="tablist"><button class="${on==='pos'?'on':''}" data-sview="pos">🧾 Sell</button><button class="${on==='srep'?'on':''}" data-sview="srep">📈 Sales & profit report</button></div>`:'';
 function posHTML(){
   const Q=posQueue(),srv=(ST.sales||[]).filter(s=>s.status!=='void'),tot=srv.reduce((s,x)=>s+x.total,0)+Q.reduce((s,x)=>s+x.total,0);
   const sug=posSug(),ord=posOrder&&(ST.toCash||[]).find(x=>x.id===posOrder);
   const log=[...Q.map(s=>({at:s.at,no:'not sent',total:s.total,q:1})),...(ST.sales||[])].sort((a,b)=>b.at-a.at);
   const last=(ST.sales||[]).slice().sort((a,b)=>b.at-a.at)[0];
-  return `<div class="posx">
+  return posSw('pos')+`<div class="posx">
     <div class="posx-top"><div class="posx-search"><span aria-hidden="true">🔎</span><input id="posq" data-k="posq" autocomplete="off" placeholder="Type product name or code — Enter adds it" value="${esc(posQ)}"></div>
       <select class="posx-price" id="pc-price" aria-label="Price list"><option value="retail"${posPrice==='retail'?' selected':''}>Retail</option><option value="wholesale"${posPrice==='wholesale'?' selected':''}>Wholesale</option></select>
       ${sug.length?`<div class="posx-sug">${sug.map((p,k)=>`<button data-padd2="${esc(p.code)}" class="${k?'':'first'}${p.avail<=0?' pout':''}"><b>${esc(p.name)}</b><span>${peso(priceOf(p))} / ${esc(p.unit)}</span><small>stock ${qf(p.avail)}</small></button>`).join('')}</div>`:posQ.trim()?'<div class="posx-sug"><div class="unit" style="padding:10px">No product found.</div></div>':''}</div>
