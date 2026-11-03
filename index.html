@@ -2623,7 +2623,7 @@ function invHTML(){
   const low=ST.products.filter(isLow),out=ST.products.filter(p=>p.avail<=0),appr=(ST.pos||[]).filter(p=>p.status==='for approval');
   const val=mgr?ST.products.reduce((s,p)=>s+Math.max(0,p.avail)*(p.cost||0),0):0;
   return `<div class="shead"><div><h2>🗃️ Inventory</h2><div class="unit">One stock count for the shop. It goes up with <b>Receiving</b> and <b>Production</b>, and down with <b>POS sales</b> (walk-in and delivery orders cashed out by the cashier) and <b>online orders</b>. Prepared orders are <b>not</b> taken out until the cashier rings them up.${mgr?'':' <b>View only</b> — the Manager changes products and counts.'}</div></div>
-    <div class="sbtns">${mgr?'<button class="go sm" data-padd>+ Add product</button><button class="btn sm" data-pimp>⬆ Import</button>':''}<button class="btn sm" data-sref>↻ Refresh</button></div></div>
+    <div class="sbtns">${mgr?'<button class="go sm" data-padd>+ Add product</button><button class="btn sm" data-pimp>⬆ Import</button>':''}${mgr||me.role==='ops'?'<button class="btn sm" data-pconv>🔁 Convert</button>':''}<button class="btn sm" data-sref>↻ Refresh</button></div></div>
     <div class="kpis"><div><b>${ST.products.length}</b><span>products</span></div><div class="${low.length?'warn':''}"><b>${low.length}</b><span>low stock</span></div><div class="${out.length?'bad':''}"><b>${out.length}</b><span>out of stock</span></div>${mgr?`<div><b>${peso(val)}</b><span>stock value (cost)</span></div>`:''}</div>
     ${mgr&&appr.length?`<div class="snote violet">⚠ <b>${appr.length}</b> receiving(s) don't match the P.O. and wait for your approval. <button class="btn sm" data-sview="po">Open P.O.</button></div>`:''}
     ${mgr&&ST.unmatched&&ST.unmatched.length?`<div class="snote">🔎 These order names did not match a product, so dispatch could not take them out of stock: <b>${ST.unmatched.map(esc).join(', ')}</b>. Edit the product and add the name under <b>Other names</b>.</div>`:''}
@@ -2935,16 +2935,56 @@ function recvHTML(){
     ${done.length?`<div class="panel"><h3>✅ Recently received</h3>${done.map(p=>`<div class="unit" style="padding:4px 0"><b>${esc(p.no)}</b> · ${esc(p.supplier)} · ${stamp(p.recv.at)} by ${esc(p.recv.by)}</div>`).join('')}</div>`:''}`}
 
 /* ---------- PRODUCTION (operations) ---------- */
-function prodLines(kind){return prodF[kind].map((l,k)=>{const p=pBy(l.code);return `<tr><td>${uSel(l.code,'','data-prl="'+kind+':'+k+'"')}</td><td><input class="edit-in nq" type="number" step="0.001" inputmode="decimal" data-prq="${kind}:${k}" data-k="prq${kind}${k}" value="${l.qty}" placeholder="Qty"></td><td class="unit">${p?esc(p.unit)+'<br>stock '+qf(p.avail):''}${p&&kind==='used'&&+l.qty>p.avail?'<br><b style="color:var(--rose)">not enough</b>':''}</td><td><button class="del" data-prdel="${kind}:${k}">✕</button></td></tr>`}).join('')}
+function prodLines(kind,C){return prodF[kind].map((l,k)=>{const p=pBy(l.code);return `<tr><td>${uSel(l.code,'','data-prl="'+kind+':'+k+'"')}</td><td><input class="edit-in nq" type="number" step="0.001" inputmode="decimal" data-prq="${kind}:${k}" data-k="prq${kind}${k}" value="${l.qty}" placeholder="Qty"></td><td class="unit">${p?esc(p.unit)+'<br>stock '+qf(p.avail):''}${p&&kind==='used'&&+l.qty>p.avail?'<br><b style="color:var(--rose)">not enough</b>':''}</td>${kind==='made'&&me.role==='manager'?`<td class="r" id="prcu${k}">${C&&C.unit[k]!=null?peso(C.unit[k]):'—'}</td>`:''}<td><button class="del" data-prdel="${kind}:${k}">✕</button></td></tr>`}).join('')}
+/* ---------- INVENTORY: product conversion (pigue + belly -> laman, whole chicken -> cuts, kilo -> packs). Cost = same as the source. ---------- */
+let convF=null;
+function convCostJS(){const ok=l=>l.code&&+l.qty>0,kgOf=(p,q)=>/^kg$/i.test(p.unit)?q:(+p.kg>0?q*+p.kg:0);let total=0,inKg=0,inQ=0,outKg=0,allKg=true;
+  convF.from.filter(ok).forEach(l=>{const p=pBy(l.code);if(!p)return;total+=+l.qty*(p.cost||0);inQ+=+l.qty;const k=kgOf(p,+l.qty);if(!k)allKg=false;inKg+=k});
+  const T=convF.to.map(l=>ok(l)?{p:pBy(l.code),q:+l.qty}:null);T.forEach(x=>{if(x&&x.p){const k=kgOf(x.p,x.q);if(!k)allKg=false;outKg+=k}});
+  const perKg=inKg?total/inKg:0,perU=inQ?total/inQ:0;
+  return {total,inKg,outKg,perKg,allKg,loss:allKg&&inKg>0&&outKg?Math.round((inKg-outKg)/inKg*1000)/10:null,unit:T.map(x=>x&&x.p?r2(allKg?(/^kg$/i.test(x.p.unit)?perKg:perKg*+x.p.kg):perU):null)}}
+function convDialog(){if(!convF)convF={from:[{code:'',qty:''}],to:[{code:'',qty:''}],note:''};const box=stBox(),mgr=me.role==='manager';
+  const lines=(k,C)=>convF[k].map((l,i)=>{const p=pBy(l.code);return `<tr><td>${uSel(l.code,'','data-cvp="'+k+':'+i+'"')}</td><td><input class="edit-in nq" type="number" step="0.001" inputmode="decimal" data-cvq="${k}:${i}" value="${esc(l.qty)}" placeholder="Qty"></td>
+    <td class="unit">${p?esc(p.unit)+'<br>stock '+qf(p.avail):''}${p&&k==='from'&&+l.qty>p.avail?'<br><b style="color:var(--rose)">not enough</b>':''}</td>${mgr?`<td class="r" id="cvc-${k}${i}">${k==='from'?(p?peso(p.cost||0):'—'):(C.unit[i]!=null?peso(C.unit[i]):'—')}</td>`:''}<td><button class="del" data-cvdel="${k}:${i}">✕</button></td></tr>`}).join('');
+  const sum=C=>`${C.loss!=null?`⚖ ${qf(C.inKg)} kg → ${qf(C.outKg)} kg · ${C.loss>0?'loss <b>'+C.loss+'%</b>':C.loss<0?'<b>more out than in</b> — check the qty':'no loss'}`:''}${mgr&&C.total?` · 💰 cost ${peso(C.total)}${C.allKg&&C.inKg?' = <b>'+peso(r2(C.perKg))+'/kg</b>':''}`:''}`;
+  const tbl=(k,t,C)=>`<h3>${t}</h3><div class="sc"><table class="stbl lines pr"><thead><tr><th>Product</th><th style="width:100px">Qty</th><th>Unit</th>${mgr?'<th class="r">Cost / unit</th>':''}<th></th></tr></thead><tbody>${lines(k,C)}</tbody></table></div><button class="btn sm" data-cvadd="${k}">+ Add line</button>`;
+  const draw=()=>{const C=convCostJS();$('#stb').innerHTML=`<h2>🔁 Convert product</h2><div class="unit">e.g. <b>Pork Pigue + Pork Belly → Pork Laman</b>, whole chicken → cuts, kilo → packs. The new product gets the <b>same cost as the source</b>.</div>
+    ${tbl('from','⬅ From (taken out of stock)',C)}<div style="height:12px"></div>${tbl('to','➡ To (added to stock)',C)}
+    <div class="snote" id="cv-sum"${sum(C)?'':' hidden'}>${sum(C)}</div>
+    <label class="td-l">Note (optional)<input class="edit-in" id="cv-note" value="${esc(convF.note)}" placeholder="e.g. for KUI order"></label>
+    <div class="row-end"><button class="btn" data-x>Cancel</button><button class="go" id="cv-ok">✓ Convert</button></div>`;
+    const S=$('#stb');
+    S.querySelectorAll('[data-cvp]').forEach(e=>e.onchange=()=>{const[k,i]=e.dataset.cvp.split(':');convF[k][+i].code=e.value;draw()});
+    S.querySelectorAll('[data-cvq]').forEach(e=>e.oninput=()=>{const[k,i]=e.dataset.cvq.split(':');convF[k][+i].qty=e.value;const C=convCostJS();C.unit.forEach((u,j)=>{const c=document.getElementById('cvc-to'+j);if(c)c.textContent=u!=null?peso(u):'—'});const sm=$('#cv-sum'),t=sum(C);sm.innerHTML=t;sm.hidden=!t});
+    S.querySelectorAll('[data-cvadd]').forEach(b=>b.onclick=()=>{convF[b.dataset.cvadd].push({code:'',qty:''});draw()});
+    S.querySelectorAll('[data-cvdel]').forEach(b=>b.onclick=()=>{const[k,i]=b.dataset.cvdel.split(':');convF[k].splice(+i,1);if(!convF[k].length)convF[k].push({code:'',qty:''});draw()});
+    $('#cv-note').oninput=e=>{convF.note=e.target.value};
+    S.querySelector('[data-x]').onclick=()=>{convF=null;box.classList.remove('on')};
+    $('#cv-ok').onclick=async()=>{const ok=l=>l.code&&+l.qty>0,from=convF.from.filter(ok),to=convF.to.filter(ok);
+      if(!from.length)return alert('Choose the product to convert FROM and its qty.');if(!to.length)return alert('Choose the product to convert TO and its qty.');
+      if(to.some(t=>from.some(f=>f.code===t.code)))return alert('A product cannot be converted into itself.');
+      const over=from.filter(l=>+l.qty>pBy(l.code).avail);if(over.length&&!confirm('Stock in the system is lower for: '+over.map(l=>pBy(l.code).name).join(', ')+'. Convert anyway?'))return;
+      const C=convCostJS();if(C.loss!=null&&C.loss<0&&!confirm('More kg out than in. Convert anyway?'))return;
+      const b=$('#cv-ok');b.disabled=true;b.textContent='Converting…';try{const bt=await api('api_production',session.token,{kind:'conv',used:from,made:to,note:convF.note});convF=null;box.classList.remove('on');toast('🔁 '+bt.no+' converted — stock & cost updated');await renderStock(view,true)}catch(er){b.disabled=false;b.textContent='✓ Convert';alert(errMsg(er))}}};
+  draw();box.classList.add('on')}
+function prodCostJS(){const ok=l=>l.code&&+l.qty>0,U=prodF.used.filter(ok).map(l=>({p:pBy(l.code),q:+l.qty})).filter(x=>x.p),M=prodF.made.map(l=>({l,p:ok(l)?pBy(l.code):null,q:+l.qty||0}));
+  const kgOf=(p,q)=>/^kg$/i.test(p.unit)?q:(+p.kg>0?q*+p.kg:0);let total=+prodF.extra||0,inKg=0,outKg=0;U.forEach(x=>{total+=x.q*(x.p.cost||0);inKg+=kgOf(x.p,x.q)});
+  const val=M.map(x=>x.p?x.q*(+x.p.retail||0):0),sv=val.reduce((a,v)=>a+v,0),sq=M.reduce((a,x)=>a+(x.p?x.q:0),0);M.forEach(x=>{if(x.p)outKg+=kgOf(x.p,x.q)});
+  return {total,inKg,outKg,loss:inKg>0?Math.round((inKg-outKg)/inKg*1000)/10:null,unit:M.map((x,k)=>x.p&&x.q?r2((total*(sv>0?val[k]/sv:x.q/sq))/x.q):null)}}
+const prodSum=(C,mgr)=>mgr&&C.total?`<div class="snote">💰 Total cost <b>${peso(C.total)}</b> — split by selling price${C.loss!=null&&C.outKg?` · ⚖ in ${qf(C.inKg)} kg → out ${qf(C.outKg)} kg · loss <b>${C.loss}%</b>`:''}</div>`:C.loss!=null&&C.outKg?`<div class="snote">⚖ in ${qf(C.inKg)} kg → out ${qf(C.outKg)} kg · loss <b>${C.loss}%</b></div>`:'';
+function prodRefresh(){const C=prodCostJS(),mgr=me.role==='manager';C.unit.forEach((u,k)=>{const e=document.getElementById('prcu'+k);if(e)e.textContent=u!=null?peso(u):'—'});const s=document.getElementById('prsum');if(s)s.innerHTML=prodSum(C,mgr)}
 function prodHTML(){
-  if(!prodF)prodF={used:[{code:'',qty:''}],made:[{code:'',qty:''}],note:''};
-  const tab=(kind,t,s)=>`<h3>${t} <small>${s}</small></h3><div class="sc"><table class="stbl lines pr"><thead><tr><th>Product</th><th style="width:100px">Qty</th><th>Unit</th><th></th></tr></thead><tbody>${prodLines(kind)}</tbody></table></div><button class="btn sm" data-pradd="${kind}">+ Add line</button>`;
-  return `<div class="shead"><div><h2>🏭 Production</h2><div class="unit">Record every batch: the <b>raw meat used</b> goes out of stock and the <b>finished products made</b> (longganisa, hamballs, samgyupsal, siomai…) go in.</div></div><div class="sbtns"><button class="btn sm" data-sref>↻ Refresh</button></div></div>
-    <div class="panel">${tab('used','🥩 Raw used','taken out of stock')}<div style="height:14px"></div>${tab('made','📦 Finished made','added to stock')}
-      <div class="fgrid"><label class="full">Note (optional)<input class="edit-in" id="pr-note" data-k="prn" value="${esc(prodF.note)}" placeholder="e.g. 2 kg trimmings"></label></div>
-      <div class="row-end"><button class="btn" data-prclear>Clear</button><button class="go" data-prsave>✓ Save batch</button></div></div>
-    <div class="panel"><h3>Recent batches</h3>${(ST.prod||[]).map(b=>`<div class="pocard"><div class="poh"><b>${esc(b.no)}</b><span style="flex:1"></span><span class="unit">${stamp(b.at)} · ${esc(b.by)}</span></div>
-      <div class="unit">🥩 ${b.used.map(l=>esc(l.name)+' '+qf(l.qty)+' '+esc(l.unit)).join(', ')||'—'}<br>📦 <b>${b.made.map(l=>esc(l.name)+' '+qf(l.qty)+' '+esc(l.unit)).join(', ')}</b>${b.note?'<br>📝 '+esc(b.note):''}</div></div>`).join('')||'<div class="empty">No batch yet.</div>'}</div>`}
+  if(!prodF)prodF={kind:'prod',used:[{code:'',qty:''}],made:[{code:'',qty:''}],note:'',extra:''};
+  const cv=prodF.kind==='conv',mgr=me.role==='manager',C=prodCostJS();
+  const tab=(kind,t,s)=>`<h3>${t} <small>${s}</small></h3><div class="sc"><table class="stbl lines pr"><thead><tr><th>Product</th><th style="width:100px">Qty</th><th>Unit</th>${kind==='made'&&mgr?'<th class="r">Cost / unit</th>':''}<th></th></tr></thead><tbody>${prodLines(kind,C)}</tbody></table></div><button class="btn sm" data-pradd="${kind}">+ Add line</button>`;
+  return `<div class="shead"><div><h2>${cv?'🔁 Conversion':'🏭 Production'}</h2><div class="unit">${cv?'Change one product into another: <b>whole chicken → cuts</b>, <b>kilo → packs</b>, <b>box → pieces</b>.':'Raw meat used goes out of stock; finished products (longganisa, siomai…) go in.'} The cost moves to the new product.</div></div><div class="sbtns"><button class="btn sm" data-sref>↻ Refresh</button></div></div>
+    <div class="panel">${tab('used',cv?'⬅ From':'🥩 Raw used','taken out of stock')}<div style="height:14px"></div>${tab('made',cv?'➡ To':'📦 Finished made','added to stock')}
+      <div class="fgrid">${cv?'':`<label>Other costs ₱ <small>(casing, spices, packs)</small><input class="edit-in" type="number" step="0.01" inputmode="decimal" id="pr-extra" data-k="prx" value="${esc(prodF.extra)}" placeholder="0.00"></label>`}
+        <label class="${cv?'full':''}">Note (optional)<input class="edit-in" id="pr-note" data-k="prn" value="${esc(prodF.note)}" placeholder="${cv?'e.g. 10 kg whole chicken cut up':'e.g. 2 kg trimmings'}"></label></div>
+      <div id="prsum">${prodSum(C,mgr)}</div>
+      <div class="row-end"><button class="btn" data-prclear>Clear</button><button class="go" data-prsave>✓ Save ${cv?'conversion':'batch'}</button></div></div>
+    <div class="panel"><h3>Recent</h3>${(ST.prod||[]).map(b=>`<div class="pocard"><div class="poh"><b>${b.kind==='conv'?'🔁':'🏭'} ${esc(b.no)}</b><span style="flex:1"></span><span class="unit">${stamp(b.at)} · ${esc(b.by)}</span></div>
+      <div class="unit">${b.kind==='conv'?'⬅':'🥩'} ${b.used.map(l=>esc(l.name)+' '+qf(l.qty)+' '+esc(l.unit)).join(', ')||'—'}<br>${b.kind==='conv'?'➡':'📦'} <b>${b.made.map(l=>esc(l.name)+' '+qf(l.qty)+' '+esc(l.unit)+(mgr&&l.costU?' @ '+peso(l.costU):'')).join(', ')}</b>${b.lossPct!=null&&b.outKg?' · loss '+b.lossPct+'%':''}${b.note?'<br>📝 '+esc(b.note):''}</div></div>`).join('')||'<div class="empty">Nothing yet.</div>'}</div>`}
 
 /* ---------- POS (cashier) — works offline, sends when online ---------- */
 const priceOf=p=>posPrice==='wholesale'?(p.wholesale||p.retail):p.retail;
@@ -3315,11 +3355,13 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const srr=e.target
   if(d.pradd){prodF[d.pradd].push({code:'',qty:''});drawStock();return}
   if(d.prdel){const[k,i]=d.prdel.split(':');prodF[k].splice(+i,1);if(!prodF[k].length)prodF[k].push({code:'',qty:''});drawStock();return}
   if('prclear' in d){prodF=null;drawStock();return}
+  if('pconv' in d){convDialog();return}
+  if(d.prkind){prodF=prodF||{};const keep=prodF;prodF={kind:d.prkind,used:keep.used||[{code:'',qty:''}],made:keep.made||[{code:'',qty:''}],note:keep.note||'',extra:''};drawStock();return}
   if('prsave' in d){prodF.note=$('#pr-note').value;const ok=l=>l.code&&+l.qty>0,used=prodF.used.filter(ok),made=prodF.made.filter(ok);
     if(!made.length)return alert('Add the finished product made and its qty.');
     const over=used.filter(l=>{const p=pBy(l.code);return p&&+l.qty>p.avail});
     if(over.length&&!confirm('Stock in the system is lower than what you used for: '+over.map(l=>pBy(l.code).name).join(', ')+'. Save anyway?'))return;
-    await busy(async()=>{const bt=await api('api_production',session.token,{used,made,note:prodF.note});prodF=null;toast('🏭 Batch '+bt.no+' saved — stock updated');await renderStock('prod',true)});return}
+    await busy(async()=>{const bt=await api('api_production',session.token,{kind:prodF.kind,used,made,note:prodF.note,extra:prodF.extra});prodF=null;toast((bt.kind==='conv'?'🔁 Conversion ':'🏭 Batch ')+bt.no+' saved — stock & cost updated');await renderStock('prod',true)});return}
   // POS
   if(d.pcat!==undefined){posCat=d.pcat;drawStock();return}
   if(d.padd2){addToCart(d.padd2);return}
@@ -3351,13 +3393,14 @@ function stockInput(e){if(!STOCKV.includes(view))return;const t=e.target,d=t.dat
   if(d.k==='posq'){posQ=t.value;drawStock();return}
   if(poEdit&&t.id==='po-sup'){poEdit.supplier=t.value;return}if(poEdit&&t.id==='po-exp'){poEdit.expected=t.value;return}if(poEdit&&t.id==='po-note'){poEdit.note=t.value;return}
   if(prodF&&t.id==='pr-note'){prodF.note=t.value;return}
+  if(prodF&&t.id==='pr-extra'){prodF.extra=t.value;prodRefresh();return}
   if(t.id==='rc-why'&&rcC){rcC.lossWhy=t.value;return}
   if(d.ck!==undefined&&rcC){const c=rcC.cuts[+d.ck];c.ck=t.value;c.ckSet=true;t.classList.add('ckm');ckLive();return}
   if(d.cf){const o=d.cft==='po'?poEdit&&poEdit.carcass:rcC;if(!o)return;setPath(o,d.cf,t.value);if(t.tagName!=='SELECT'&&t.type!=='date')ccLive(d.cft);return}
   if(d.poq!==undefined){poEdit.items[+d.poq].qty=t.value;poLive();return}
   if(d.poc!==undefined){poEdit.items[+d.poc].cost=t.value;poLive();return}
   if(d.rq!==undefined){const k=t.dataset.k.slice(2),c=$('#rd-'+k);if(c){const v=t.value.trim();if(v===''){c.textContent='—';return}const df=r2(+v-+d.ord);c.innerHTML=df?`<b style="color:${df<0?'var(--rose)':'var(--amber)'}">${df>0?'+':''}${qf(df)}</b>`:'✓ same'}return}
-  if(d.prq!==undefined){const[k,i]=d.prq.split(':');prodF[k][+i].qty=t.value;return}
+  if(d.prq!==undefined){const[k,i]=d.prq.split(':');prodF[k][+i].qty=t.value;prodRefresh();return}
   if(d.cq!==undefined){cart[+d.cq].qty=t.value;posLive();return}
   if(d.k==='pdisc'){posDisc=t.value;posLive();return}
   if(d.k==='pcash'){posCash=t.value;posLive();return}
