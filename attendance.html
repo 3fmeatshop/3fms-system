@@ -58,24 +58,28 @@ function toast(m,ms){const t=$('#toast');t.textContent=m;t.classList.add('on');c
 async function api(fn,...args){if(!window.API_URL)throw new Error('config.js missing');const r=await fetch(window.API_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({fn,args})});const j=await r.json();if(j.err)throw new Error(j.err);return j.ok}
 async function sha(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}
 // today's punches for a person = server state (when last synced) + punches waiting on this device
-function state(p){const today=ymd(new Date()),t=S&&S.today===today?{...p.t}:{tin:'',bout:'',bin:'',tout:''};
-  Q.filter(x=>x.uid===p.id&&ymd(new Date(x.at))===today).forEach(x=>{const k={in:'tin',bout:'bout',bin:'bin',out:'tout'}[x.kind];if(!t[k])t[k]=hm(new Date(x.at))});return t}
-function next(t){return !t.tin?[['in','🟢 TIME IN','a-in']]:t.tout?[]:!t.bout?[['out','🔴 TIME OUT','a-out'],['bout','☕ START BREAK','a-b']]:!t.bin?[['bin','↩ BACK FROM BREAK','a-b']]:[['out','🔴 TIME OUT','a-out']]}
+function state(p){const today=ymd(new Date()),t=S&&S.today===today?{bout2:'',bin2:'',...p.t}:{tin:'',bout:'',bin:'',tout:'',bout2:'',bin2:''};
+  Q.filter(x=>x.uid===p.id&&ymd(new Date(x.at))===today).sort((a,b)=>a.at-b.at).forEach(x=>{const v=hm(new Date(x.at));
+    if(x.kind==='in'){if(!t.tin)t.tin=v}else if(x.kind==='out'){if(!t.tout)t.tout=v}else if(x.kind==='bout'){if(!t.bout)t.bout=v;else if(t.bin&&!t.bout2)t.bout2=v}else if(x.kind==='bin'){if(t.bout&&!t.bin)t.bin=v;else if(t.bout2&&!t.bin2)t.bin2=v}});return t}
+const onBrk=t=>(t.bout&&!t.bin)||(t.bout2&&!t.bin2);
+// up to 2 breaks a day (1 hour long + 30 min short, or all at once)
+function brkUsed(t){const m=h=>{const[H,M]=h.split(':').map(Number);return H*60+M},n=new Date(),nm=n.getHours()*60+n.getMinutes();let u=0;[[t.bout,t.bin],[t.bout2,t.bin2]].forEach(([o,i])=>{if(o)u+=Math.max(0,(i?m(i):nm)-m(o))});return u}
+function next(t){return !t.tin?[['in','🟢 TIME IN','a-in']]:t.tout?[]:onBrk(t)?[['bin','↩ END BREAK','a-b']]:[['out','🔴 TIME OUT','a-out']].concat(t.bout2||brkUsed(t)>=((S&&S.brk)||90)?[]:[['bout','☕ START BREAK','a-b']])}
 function draw(){
   $('#net').textContent=navigator.onLine?'● Online':'● Offline';$('#net').className='net'+(navigator.onLine?'':' off');
   $('#fst').textContent=faState==='ready'?' · 🙂 Face check on':faState==='loading'?' · Face check loading…':' · Face check off (needs internet once)';
   $('#pend').textContent=Q.length?`⏳ ${Q.length} time record(s) waiting to send`:(S?'✓ All sent':'');
   if(!K){$('#grid').innerHTML='<div class="empty">🔒 Open the Time Clock link from the manager (it ends with ?k=T…)</div>';return}
   if(!S){$('#grid').innerHTML='<div class="empty">'+(navigator.onLine?'Loading staff…':'📴 Connect to the internet once to load the staff list.')+'</div>';return}
-  $('#grid').innerHTML=S.staff.map(p=>{const t=state(p),c=t.tout?'out':t.bout&&!t.bin?'brk':t.tin?'in':'';
-    return `<button class="who ${c}" data-u="${p.id}"><i>${p.name.split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase()}</i><b>${p.name.replace(/</g,'&lt;')}</b><small>${p.f?'':'👤 no face yet · '}${t.tout?'out '+t12(t.tout):t.bout&&!t.bin?'on break':t.tin?'in '+t12(t.tin):'not in yet'}</small></button>`}).join('')}
+  $('#grid').innerHTML=S.staff.map(p=>{const t=state(p),c=t.tout?'out':onBrk(t)?'brk':t.tin?'in':'';
+    return `<button class="who ${c}" data-u="${p.id}"><i>${p.name.split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase()}</i><b>${p.name.replace(/</g,'&lt;')}</b><small>${p.f?'':'👤 no face yet · '}${t.tout?'out '+t12(t.tout):onBrk(t)?'on break':t.tin?'in '+t12(t.tin):'not in yet'}</small></button>`}).join('')}
 function tick(){const n=new Date();$('#t').textContent=n.toLocaleTimeString('en-PH',{hour:'numeric',minute:'2-digit'});$('#d').textContent=n.toLocaleDateString('en-PH',{weekday:'long',month:'long',day:'numeric',year:'numeric'})}
 function openPin(id){sel=S.staff.find(p=>p.id===id);pin='';drawPin();$('#sh').classList.add('on')}
 function drawPin(err){$('#box').innerHTML=`<h2>${sel.name.replace(/</g,'&lt;')}</h2><div style="color:var(--muted)">Type your PIN</div><div class="dots">${[0,1,2,3].map(i=>`<i class="${i<pin.length?'f':''}"></i>`).join('')}${pin.length>4?`<i class="f"></i>`.repeat(pin.length-4):''}</div><div class="err">${err||''}</div>
   <div class="pad">${[1,2,3,4,5,6,7,8,9,'✕',0,'OK'].map(k=>`<button data-k="${k}">${k}</button>`).join('')}</div><div class="acts"><button class="btn gray" data-close>Cancel</button></div>`}
 async function checkPin(){const h=await sha(S.salt+'|'+pin);if(h!==sel.h){pin='';drawPin('Wrong PIN');return}
   const t=state(sel),A=next(t);
-  $('#box').innerHTML=`<h2>${sel.name.replace(/</g,'&lt;')}</h2><div class="today"><div><span>In</span><b>${t12(t.tin)}</b></div><div><span>Break</span><b>${t.bout?t12(t.bout)+(t.bin?'–'+t12(t.bin):''):'—'}</b></div><div><span>Out</span><b>${t12(t.tout)}</b></div></div>
+  $('#box').innerHTML=`<h2>${sel.name.replace(/</g,'&lt;')}</h2><div class="today"><div><span>In</span><b>${t12(t.tin)}</b></div><div><span>Break</span><b>${t.bout?t12(t.bout)+(t.bin?'–'+t12(t.bin):''):'—'}${t.bout2?'<br>'+t12(t.bout2)+(t.bin2?'–'+t12(t.bin2):''):''}${t.tin?'<br><small>'+Math.max(0,((S&&S.brk)||90)-brkUsed(t))+' min left</small>':''}</b></div><div><span>Out</span><b>${t12(t.tout)}</b></div></div>
     ${A.length?`<div class="acts">${A.map(([k,l,c])=>`<button class="${c}" data-act="${k}" data-h="${h}">${l}</button>`).join('')}</div>`:'<div class="err" style="color:var(--green)">✅ Done for today</div>'}<div class="acts"><button class="btn gray" data-close>Close</button></div>`}
 // FACE CHECK — runs on the tablet (face-api, models saved on the device after the first load)
 const FA_URL='https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/dist/face-api.js',MODEL='https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/model/';
