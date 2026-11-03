@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#8E1B22">
+<title>3FMS Time Clock</title>
+<link rel="manifest" href="clock.webmanifest">
+<script src="config.js"></script>
+<style>
+:root{--red:#8E1B22;--red2:#B3191B;--gold:#F5C518;--ink:#2A1614;--muted:#6E5D5A;--line:#E5D9D7;--bg:#F6F1F0;--green:#15803D;--rose:#B42318}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+header{background:linear-gradient(90deg,var(--red),var(--red2));color:#fff;padding:12px 16px calc(12px);display:flex;align-items:center;gap:12px;border-bottom:4px solid var(--gold)}
+header h1{font-size:18px;margin:0;flex:1}header small{display:block;font-weight:500;opacity:.85}
+.net{border-radius:999px;padding:5px 12px;font-weight:800;font-size:13px;background:rgba(255,255,255,.18)}.net.off{background:#FDE68A;color:#78350F}
+main{max-width:860px;margin:0 auto;padding:16px}
+.clock{text-align:center;margin:8px 0 14px}.clock b{display:block;font-size:56px;color:var(--red);letter-spacing:1px}.clock span{color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.who{border:1px solid var(--line);background:#fff;border-radius:16px;padding:14px 10px;text-align:center;cursor:pointer;font:inherit;color:inherit}
+.who i{display:flex;width:56px;height:56px;margin:0 auto 6px;border-radius:50%;align-items:center;justify-content:center;font-style:normal;font-weight:800;font-size:20px;color:#fff;background:var(--red)}
+.who b{display:block}.who small{color:var(--muted)}.who.in i{background:var(--green)}.who.brk i{background:#D97706}.who.out i{background:#6B7280}
+.sheet{position:fixed;inset:0;background:rgba(30,10,10,.55);display:none;align-items:flex-end;justify-content:center;z-index:20}.sheet.on{display:flex}
+.box{background:#fff;width:100%;max-width:440px;border-radius:20px 20px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px));border-top:5px solid var(--gold)}
+@media(min-width:600px){.sheet{align-items:center}.box{border-radius:20px}}
+.box h2{margin:0 0 4px}.dots{display:flex;gap:10px;justify-content:center;margin:14px 0}.dots i{width:14px;height:14px;border-radius:50%;border:2px solid var(--red)}.dots i.f{background:var(--red)}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.pad button{font:800 26px system-ui;padding:16px 0;border-radius:14px;border:1px solid var(--line);background:#fff;cursor:pointer}
+.acts{display:grid;gap:8px;margin-top:10px}.acts button,.btn{font:800 20px system-ui;padding:16px;border-radius:14px;border:0;cursor:pointer;color:#fff}
+.a-in{background:var(--green)}.a-out{background:var(--red)}.a-b{background:#D97706}.btn.gray{background:#E5E7EB;color:var(--ink);font-size:16px;padding:12px}
+.today{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:10px 0}.today div{background:#F9FAFB;border-radius:10px;padding:6px;text-align:center}.today span{display:block;font-size:12px;color:var(--muted);font-weight:700}
+.err{color:var(--rose);font-weight:700;min-height:22px;text-align:center}
+.foot{margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;color:var(--muted);font-size:14px}.foot button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 12px;font:inherit;cursor:pointer}
+#cam{position:fixed;inset:0;background:#000;z-index:40;display:none;flex-direction:column}#cam.on{display:flex}#cam video{flex:1;min-height:0;width:100%;object-fit:cover;transform:scaleX(-1)}
+#cam .bar{display:flex;justify-content:space-around;align-items:center;padding:18px 12px calc(18px + env(safe-area-inset-bottom,0px))}#cam .bar button{background:none;border:0;color:#fff;font-size:22px;width:80px}
+#shot{width:78px!important;height:78px;border-radius:50%;background:#fff!important;border:6px solid #9CA3AF!important}#cam .msg{position:absolute;top:16px;left:0;right:0;text-align:center;color:#fff;font-weight:800;font-size:20px;text-shadow:0 1px 4px #000}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:14px 18px;border-radius:14px;font-weight:800;font-size:18px;display:none;z-index:60;max-width:90%;text-align:center}.toast.on{display:block}
+.empty{text-align:center;color:var(--muted);padding:40px 10px}
+</style>
+</head>
+<body>
+<header><h1>🕘 3FMS Time Clock<small>3F Meatshop</small></h1><span class="net" id="net">…</span></header>
+<main>
+  <div class="clock"><b id="t">--:--</b><span id="d"></span></div>
+  <div class="grid" id="grid"><div class="empty">Loading staff…</div></div>
+  <div class="foot"><span id="pend"></span><span id="fst"></span><span style="flex:1"></span><button id="enr">👤 Register faces</button><button id="fsb">⛶ Full screen</button><button id="sync">↻ Sync now</button></div>
+</main>
+<div class="sheet" id="sh"><div class="box" id="box"></div></div>
+<div id="cam"><div class="msg" id="cmsg"></div><video id="v" autoplay playsinline muted></video><div class="bar"><button id="cx">✕</button><button id="shot" aria-label="Take selfie"></button><button id="skip" style="font-size:14px">Skip<br>photo</button></div></div>
+<div class="toast" id="toast"></div>
+<script>
+(function(){
+const $=s=>document.querySelector(s),LS=window.localStorage;let K=new URLSearchParams(location.search).get('k')||'';try{if(K)LS.setItem('fms_clock_key',K);else K=LS.getItem('fms_clock_key')||''}catch(e){}
+const SK='fms_clock_staff',QK='fms_clock_queue';
+const get=(k,d)=>{try{return JSON.parse(LS.getItem(k)||'null')??d}catch(e){return d}},set=(k,v)=>{try{LS.setItem(k,JSON.stringify(v));return true}catch(e){return false}};
+let S=get(SK,null),Q=get(QK,[]),sel=null,pin='',syncing=false;
+const pad=n=>String(n).padStart(2,'0'),ymd=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()),hm=d=>pad(d.getHours())+':'+pad(d.getMinutes());
+const t12=h=>{if(!h)return '—';const[H,M]=h.split(':').map(Number);return ((H+11)%12+1)+':'+pad(M)+(H<12?' AM':' PM')};
+function toast(m,ms){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),ms||3000)}
+async function api(fn,...args){if(!window.API_URL)throw new Error('config.js missing');const r=await fetch(window.API_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({fn,args})});const j=await r.json();if(j.err)throw new Error(j.err);return j.ok}
+async function sha(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}
+// today's punches for a person = server state (when last synced) + punches waiting on this device
+function state(p){const today=ymd(new Date()),t=S&&S.today===today?{...p.t}:{tin:'',bout:'',bin:'',tout:''};
+  Q.filter(x=>x.uid===p.id&&ymd(new Date(x.at))===today).forEach(x=>{const k={in:'tin',bout:'bout',bin:'bin',out:'tout'}[x.kind];if(!t[k])t[k]=hm(new Date(x.at))});return t}
+function next(t){return !t.tin?[['in','🟢 TIME IN','a-in']]:t.tout?[]:!t.bout?[['out','🔴 TIME OUT','a-out'],['bout','☕ START BREAK','a-b']]:!t.bin?[['bin','↩ BACK FROM BREAK','a-b']]:[['out','🔴 TIME OUT','a-out']]}
+function draw(){
+  $('#net').textContent=navigator.onLine?'● Online':'● Offline';$('#net').className='net'+(navigator.onLine?'':' off');
+  $('#fst').textContent=faState==='ready'?' · 🙂 Face check on':faState==='loading'?' · Face check loading…':' · Face check off (needs internet once)';
+  $('#pend').textContent=Q.length?`⏳ ${Q.length} time record(s) waiting to send`:(S?'✓ All sent':'');
+  if(!K){$('#grid').innerHTML='<div class="empty">🔒 Open the Time Clock link from the manager (it ends with ?k=T…)</div>';return}
+  if(!S){$('#grid').innerHTML='<div class="empty">'+(navigator.onLine?'Loading staff…':'📴 Connect to the internet once to load the staff list.')+'</div>';return}
+  $('#grid').innerHTML=S.staff.map(p=>{const t=state(p),c=t.tout?'out':t.bout&&!t.bin?'brk':t.tin?'in':'';
+    return `<button class="who ${c}" data-u="${p.id}"><i>${p.name.split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase()}</i><b>${p.name.replace(/</g,'&lt;')}</b><small>${p.f?'':'👤 no face yet · '}${t.tout?'out '+t12(t.tout):t.bout&&!t.bin?'on break':t.tin?'in '+t12(t.tin):'not in yet'}</small></button>`}).join('')}
+function tick(){const n=new Date();$('#t').textContent=n.toLocaleTimeString('en-PH',{hour:'numeric',minute:'2-digit'});$('#d').textContent=n.toLocaleDateString('en-PH',{weekday:'long',month:'long',day:'numeric',year:'numeric'})}
+function openPin(id){sel=S.staff.find(p=>p.id===id);pin='';drawPin();$('#sh').classList.add('on')}
+function drawPin(err){$('#box').innerHTML=`<h2>${sel.name.replace(/</g,'&lt;')}</h2><div style="color:var(--muted)">Type your PIN</div><div class="dots">${[0,1,2,3].map(i=>`<i class="${i<pin.length?'f':''}"></i>`).join('')}${pin.length>4?`<i class="f"></i>`.repeat(pin.length-4):''}</div><div class="err">${err||''}</div>
+  <div class="pad">${[1,2,3,4,5,6,7,8,9,'✕',0,'OK'].map(k=>`<button data-k="${k}">${k}</button>`).join('')}</div><div class="acts"><button class="btn gray" data-close>Cancel</button></div>`}
+async function checkPin(){const h=await sha(S.salt+'|'+pin);if(h!==sel.h){pin='';drawPin('Wrong PIN');return}
+  const t=state(sel),A=next(t);
+  $('#box').innerHTML=`<h2>${sel.name.replace(/</g,'&lt;')}</h2><div class="today"><div><span>In</span><b>${t12(t.tin)}</b></div><div><span>Break</span><b>${t.bout?t12(t.bout)+(t.bin?'–'+t12(t.bin):''):'—'}</b></div><div><span>Out</span><b>${t12(t.tout)}</b></div></div>
+    ${A.length?`<div class="acts">${A.map(([k,l,c])=>`<button class="${c}" data-act="${k}" data-h="${h}">${l}</button>`).join('')}</div>`:'<div class="err" style="color:var(--green)">✅ Done for today</div>'}<div class="acts"><button class="btn gray" data-close>Close</button></div>`}
+// FACE CHECK — runs on the tablet (face-api, models saved on the device after the first load)
+const FA_URL='https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/dist/face-api.js',MODEL='https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/model/';
+let FA=null,faState='loading';const MATCH=0.5;
+function loadScript(u){return new Promise((res,rej)=>{if(window.faceapi)return res();const s=document.createElement('script');s.src=u;s.onload=res;s.onerror=()=>rej(new Error('load'));document.head.appendChild(s)})}
+async function faceInit(){try{await loadScript(FA_URL);const f=window.faceapi;await f.nets.tinyFaceDetector.loadFromUri(MODEL);await f.nets.faceLandmark68TinyNet.loadFromUri(MODEL);await f.nets.faceRecognitionNet.loadFromUri(MODEL);FA=f;faState='ready'}catch(e){faState='off'}draw()}
+async function faceDesc(cv){if(!FA)return null;try{const d=await FA.detectSingleFace(cv,new FA.TinyFaceDetectorOptions({inputSize:320,scoreThreshold:0.4})).withFaceLandmarks(true).withFaceDescriptor();return d?Array.from(d.descriptor):undefined}catch(e){return null}}
+const fdist=(a,b)=>Math.sqrt(a.reduce((s,x,i)=>s+(x-b[i])**2,0));
+// selfie with the front camera: {photo, desc} — desc: numbers of the face (undefined = no face found, null = no face check)
+let stream=null;
+function selfie(label,raw){return new Promise(async res=>{const c=$('#cam');$('#cmsg').textContent=label;
+  const fin=d=>{if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}c.classList.remove('on');res(d)};
+  try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:640}},audio:false})}catch(e){return res({photo:'',desc:null})}
+  c.classList.add('on');const v=$('#v');v.srcObject=stream;await v.play().catch(()=>{});$('#skip').style.visibility=raw?'hidden':'visible';
+  $('#cx').onclick=()=>fin(null);$('#skip').onclick=()=>fin({photo:'',desc:null});
+  $('#shot').onclick=async()=>{const w=v.videoWidth,h=v.videoHeight;if(!w)return;const s=Math.min(1,480/w),cv=document.createElement('canvas');cv.width=Math.round(w*s);cv.height=Math.round(h*s);
+    const g=cv.getContext('2d');g.translate(cv.width,0);g.scale(-1,1);g.drawImage(v,0,0,cv.width,cv.height);g.setTransform(1,0,0,1,0,0);
+    $('#cmsg').textContent='Checking face…';const desc=await faceDesc(cv);
+    if(raw)return fin({photo:'',desc});
+    const fs=Math.max(14,Math.round(cv.width/26));g.fillStyle='rgba(0,0,0,.6)';g.fillRect(0,cv.height-fs*2.4,cv.width,fs*2.4);g.fillStyle='#fff';g.font='bold '+fs+'px system-ui';g.fillText(label,fs*.5,cv.height-fs*1.3);g.font=Math.round(fs*.8)+'px system-ui';g.fillText(new Date().toLocaleString('en-PH'),fs*.5,cv.height-fs*.35);
+    fin({photo:cv.toDataURL('image/jpeg',.6),desc})}})}
+// MANAGER: register faces (3 photos per person)
+async function enroll(){const mg=(S&&S.staff||[]).filter(p=>p.role==='manager');if(!mg.length)return toast('No manager in the staff list');
+  if(!navigator.onLine)return toast('📴 Registering faces needs internet');if(!FA)return toast(faState==='loading'?'Face check is still loading — try again in a moment':'Face check could not load — needs internet the first time');
+  sel=mg[0];pin='';$('#box').innerHTML='';const askPin=()=>new Promise(r=>{let p='';const dr=e=>{$('#box').innerHTML=`<h2>👤 Register faces</h2><div style="color:var(--muted)">Manager PIN (${mg.map(m=>m.name).join(' / ')})</div><div class="dots">${[0,1,2,3].map(i=>`<i class="${i<p.length?'f':''}"></i>`).join('')}</div><div class="err">${e||''}</div><div class="pad">${[1,2,3,4,5,6,7,8,9,'✕',0,'OK'].map(k=>`<button data-ek="${k}">${k}</button>`).join('')}</div><div class="acts"><button class="btn gray" data-close>Cancel</button></div>`;
+      $('#box').querySelectorAll('[data-ek]').forEach(b=>b.onclick=async()=>{const k=b.dataset.ek;if(k==='✕'){p=p.slice(0,-1);return dr()}if(k!=='OK'){p+=k;return dr()}for(const m of mg){const h=await sha(S.salt+'|'+p);if(h===m.h)return r([m,h])}p='';dr('Wrong PIN')})};dr();$('#sh').classList.add('on')});
+  const [m,mh]=await askPin();
+  const pick=()=>{$('#box').innerHTML=`<h2>👤 Whose face?</h2><div class="grid" style="grid-template-columns:1fr 1fr">${S.staff.map(p=>`<button class="who" data-eu="${p.id}"><b>${p.name.replace(/</g,'&lt;')}</b><small>${p.f?'✓ registered — tap to redo':'not registered'}</small></button>`).join('')}</div><div class="acts"><button class="btn gray" data-close>Done</button></div>`;
+    $('#box').querySelectorAll('[data-eu]').forEach(b=>b.onclick=async()=>{const p=S.staff.find(x=>x.id===b.dataset.eu),D=[];$('#sh').classList.remove('on');
+      for(let i=1;i<=3;i++){const r=await selfie(`${p.name} — photo ${i} of 3 · look at the camera`,true);if(!r){$('#sh').classList.add('on');return pick()}if(!r.desc){toast('No face found — try again, face the camera in good light',3500);i--;continue}D.push(r.desc)}
+      try{const st=await api('api_kioskFace',K,m.id,mh,p.id,D);S={...S,staff:st.staff};set(SK,S);toast('✅ Face registered · '+p.name,3500)}catch(e){toast('⚠ '+e.message,4000)}$('#sh').classList.add('on');pick()})};
+  pick()}
+async function act(kind,h){const L={in:'TIME IN',bout:'BREAK',bin:'BACK FROM BREAK',out:'TIME OUT'}[kind],who=sel;$('#sh').classList.remove('on');
+  const sf=await selfie(L+' · '+who.name);if(sf===null)return;
+  let face={r:'nocheck'};if(sf.desc===undefined)face={r:'noface'};else if(sf.desc&&!who.f)face={r:'none'};else if(sf.desc&&who.f){const d=Math.min(...who.f.map(f=>fdist(sf.desc,f)));face={r:d<MATCH?'ok':'flag',d:Math.round(d*100)/100}}
+  const x={cid:'k'+Date.now().toString(36)+Math.random().toString(36).slice(2,7),uid:who.id,h,kind,at:Date.now(),photo:sf.photo,face};
+  Q.push(x);if(!set(QK,Q)){x.photo='';set(QK,Q)}draw();toast(face.r==='flag'?'⚠ '+L+' saved — face does not look like '+who.name+'. The manager will check.':face.r==='noface'?'⚠ '+L+' saved — no face in the photo. The manager will check.':'✅ '+L+' · '+who.name+' · '+t12(hm(new Date(x.at)))+(face.r==='ok'?' · face ✓':''),4500);sync()}
+async function sync(){if(syncing||!K||!navigator.onLine)return;syncing=true;
+  try{if(Q.length){const r=await api('api_kioskSync',K,Q.slice(0,10));const ok=new Set(r.done.map(d=>d.cid));const bad=r.done.filter(d=>d.err);Q=Q.filter(x=>!ok.has(x.cid));set(QK,Q);
+      S={...(S||{}),staff:r.staff,today:ymd(new Date())};set(SK,S);if(bad.length)toast('⚠ '+bad[0].err,5000);if(Q.length){syncing=false;return sync()}}
+    else{S=await api('api_kioskStaff',K);set(SK,S)}}
+  catch(e){if(/BADLINK/.test(e.message))$('#grid').innerHTML='<div class="empty">🔒 This link is not valid.</div>'}
+  syncing=false;draw()}
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.u){openPin(b.dataset.u);return}
+  if('close' in b.dataset){$('#sh').classList.remove('on');return}
+  if(b.dataset.k!==undefined){const k=b.dataset.k;if(k==='✕'){pin=pin.slice(0,-1);drawPin();return}if(k==='OK'){checkPin();return}if(pin.length<6){pin+=k;drawPin();if(pin.length>=4&&S)sha(S.salt+'|'+pin).then(h=>{if(h===sel.h)checkPin()})}return}
+  if(b.dataset.act){act(b.dataset.act,b.dataset.h);return}
+  if(b.id==='enr'){enroll();return}
+  if(b.id==='fsb'){const d=document.documentElement;(document.fullscreenElement?document.exitFullscreen():d.requestFullscreen&&d.requestFullscreen()).catch&&0;return}
+  if(b.id==='sync'){toast(navigator.onLine?'Syncing…':'📴 Offline — will send when the internet is back');sync()}});
+window.addEventListener('online',()=>{draw();sync()});window.addEventListener('offline',draw);
+setInterval(tick,1000);tick();faceInit();setInterval(()=>{if(navigator.onLine)sync()},60000);draw();sync();
+if('serviceWorker' in navigator)navigator.serviceWorker.register('clock-sw.js').catch(()=>{});
+})();
+</script>
+</body>
+</html>

@@ -475,7 +475,15 @@ header h1 .tt small{display:block;font-size:11px;color:var(--sky2);letter-spacin
   #print,#print *{visibility:visible}
   #print{display:block;position:absolute;inset:0;padding:10mm;color:#000;font-size:12px}
   #print td,#print th{border:1px solid #555;padding:5px;background:none;color:#000}
+  #print.rp{padding:0;width:72mm;left:0;right:auto;font-size:12px}#print.rp.p58{width:48mm;font-size:10.5px}
+  #print .rcpt{break-inside:avoid;page-break-after:always}#print .rcpt:last-child{page-break-after:auto}#print .rcut{display:none}
+  @page{margin:2mm}
 }
+.rcpt{font-family:'Courier New',ui-monospace,monospace;font-size:12.5px;line-height:1.35;color:#000;background:#fff;max-width:300px;margin:0 auto;padding:10px 6px}
+.rcpt .rl{display:block;width:80px;height:80px;margin:0 auto 4px;filter:grayscale(1) contrast(1.3)}.rcpt .rc{text-align:center}.rcpt .b{font-weight:800}.rcpt .rbig{font-size:15px}
+.rcpt .rr{display:flex;justify-content:space-between;gap:8px}.rcpt .rr span:last-child{text-align:right;white-space:nowrap}.rcpt .rr.h{font-weight:800}.rcpt .ri{font-weight:700;margin-top:2px}
+.rcpt .rd{border-top:1px dashed #000;margin:5px 0}.rcpt .rs{margin-top:8px}.rcpt .rcopy{text-align:center;margin-top:8px;font-weight:800;border:1px solid #000;padding:2px}.rcpt s{opacity:.7}
+.rcut{text-align:center;color:#888;margin:8px 0;font-family:monospace}
 .onadmin{display:flex;gap:8px;justify-content:flex-end;margin:0 0 10px}
 .btn.sm,.go.sm{padding:7px 11px;font-size:14px;min-height:0}
 .onrow .go,.onbulk .go{background:var(--navy,#8E1B22)!important;color:#fff!important;border:0;border-radius:10px;font-weight:800;margin-left:0}.onrow .go:hover,.onbulk .go:hover{background:var(--navy2,#B3191B)!important}.onbulk .go{padding:10px 18px;font-size:16px}
@@ -558,11 +566,15 @@ header h1 .tt small{display:block;font-size:11px;color:var(--sky2);letter-spacin
 .cc-sum{display:flex;justify-content:space-between;align-items:baseline;padding:8px 2px;border-top:1px dashed var(--line);margin-top:8px}.cc-sum span{font-weight:700;color:var(--muted)}.cc-sum b{font-size:17px}
 .cc-sum.big span{color:var(--ink);font-weight:800}.cc-sum.big b{font-size:24px;color:var(--navy)}.cc-tot{border:2px solid var(--gold,#F5C518)}
 .td-due{background:#15803D;color:#fff;border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;margin-bottom:12px}.td-due span{font-weight:700;opacity:.85}.td-due b{font-size:40px;font-family:ui-monospace,monospace;line-height:1.1}.td-due small{opacity:.9}
-.td-m{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}.td-m button{border:2px solid var(--line);background:#fff;border-radius:12px;padding:10px 4px;font-weight:800;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}.td-m button span{font-size:24px}.td-m button.on{border-color:var(--navy);background:#FDF2F2;color:var(--navy)}.td-m button:disabled{opacity:.4;cursor:default}
+.td-m{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:12px}.td-m button{border:2px solid var(--line);background:#fff;border-radius:12px;padding:10px 4px;font-weight:800;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}.td-m button span{font-size:24px}.td-m button.on{border-color:var(--navy);background:#FDF2F2;color:var(--navy)}.td-m button:disabled{opacity:.4;cursor:default}
 .td-l{display:flex;flex-direction:column;font-weight:700;gap:4px}.td-in{font-size:26px!important;text-align:right;padding:10px 12px!important}
 .td-q{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.td-q button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 12px;font-weight:700;cursor:pointer}
 .td-chg{font-size:24px;font-weight:800;text-align:right;color:#15803D;padding:6px 2px}.td-chg.bad{color:var(--rose)}.td-btn{font-size:18px!important}
-@media(max-width:500px){.td-m{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.td-m{grid-template-columns:repeat(3,1fr)}}
+.zsum{background:#F9FAFB;border:1px solid var(--line);border-radius:14px;padding:12px}.zs-net{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}.zs-net span{font-weight:700;color:var(--muted)}.zs-net b{font-size:26px}
+.zs-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin:10px 0}.zs-grid div{background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 10px;display:flex;flex-direction:column}.zs-grid span{font-size:12px;color:var(--muted);font-weight:700}.zs-grid b{font-size:16px}
+.zs-exp{background:#FFFBEA;border-radius:10px;padding:8px 10px}.zs-exp b{font-size:18px}
+.ztally{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;border-radius:12px;padding:12px 14px;margin:10px 0;font-size:15px}.ztally>b{font-size:20px}.ztally.ok{background:#ECFDF3;color:#166534}.ztally.bad{background:#FEF2F2;color:#B42318}.ztally.warn{background:#FFF7ED;color:#B45309}
 #lcam{position:fixed;inset:0;z-index:200;background:#000;display:flex;flex-direction:column}#lcam video{flex:1;width:100%;min-height:0;object-fit:contain;background:#000}
 .lc-msg{position:absolute;top:40%;left:0;right:0;text-align:center;color:#fff;font-size:17px;padding:0 20px}.lc-msg .go{margin:14px auto 0;display:inline-block}
 .lc-bar{display:flex;align-items:center;justify-content:space-around;padding:18px 12px calc(18px + env(safe-area-inset-bottom,0px));background:#000}
@@ -572,6 +584,15 @@ header h1 .tt small{display:block;font-size:11px;color:var(--sky2);letter-spacin
 .posx-tools button:disabled{opacity:.45;cursor:default}.posx-tools button i{font-style:normal;background:var(--rose);color:#fff;border-radius:10px;padding:0 6px;margin-left:3px}.posx-tools .sp{flex:1}.posx-tools .zr{background:#1F2937;color:#fff;border-color:#1F2937}
 .pdiscb{width:100%;text-align:left;white-space:normal}.dkinds{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:10px}.dkinds button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px;font-weight:700;cursor:pointer}.dkinds button.on{border-color:var(--navy);background:#FDF2F2;color:var(--navy)}
 .opencash{max-width:560px;margin:0 auto}.den .stbl input{text-align:right}
+.owtabs{margin:6px 0 12px}.rep.stk{min-width:0;max-width:100%}.rep.stk .sc{max-width:100%;overflow-x:auto}#list{min-width:0}.pyt td,.pyt th{white-space:nowrap}
+.attbox{max-width:480px;margin:0 auto 14px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;text-align:center}.att-clock{font-size:44px;font-weight:800;color:var(--navy)}
+.att-today{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}.att-today div{background:#F9FAFB;border-radius:12px;padding:8px}.att-today span{display:block;font-size:12px;color:var(--muted);font-weight:700}.att-today b{font-size:16px}
+.att-btn{width:100%;font-size:22px!important;padding:18px!important;margin:6px 0!important}.attbox .btn{width:100%;margin-bottom:6px}.owgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:12px}
+.owk{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:2px}.owk span{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase}.owk b{font-size:22px}.owk small{color:var(--muted);font-size:12.5px;line-height:1.5}
+.owk small b{font-size:inherit}@media(max-width:600px){.owgrid{grid-template-columns:1fr 1fr}.owk.big{grid-column:span 2;grid-row:auto}.owk b{font-size:18px}.owrow .stbl{font-size:13px}.owrow .stbl td,.owrow .stbl th{padding:6px 4px}}.owk.big{grid-row:span 2;background:linear-gradient(160deg,#FFFBEB,#fff)}.owk.big b{font-size:28px;color:var(--navy)}.owk.good b{color:#15803D}.owk.bad b{color:#B42318}.owk.warn{border-color:#F59E0B}
+.owrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px}.owbars{display:flex;align-items:flex-end;gap:10px;height:180px;padding:8px 4px 0}.owb{flex:1;display:flex;flex-direction:column;align-items:center;height:100%}
+.owb-c{flex:1;width:100%;display:flex;align-items:flex-end;justify-content:center;gap:3px}.owb-c i{width:28%;border-radius:4px 4px 0 0;min-height:2px}.owb span{font-size:12px;color:var(--muted);margin-top:4px}
+.owleg{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;margin-top:6px}.owleg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px}
 .possw{display:inline-flex;gap:4px;background:#F6F1F0;border:1px solid var(--line);border-radius:12px;padding:4px;margin:0 0 12px}.possw button{border:0;background:transparent;border-radius:9px;padding:9px 16px;font-weight:800;font-size:15px;color:var(--muted);cursor:pointer}.possw button.on{background:#fff;color:var(--navy);box-shadow:0 1px 4px rgba(0,0,0,.12)}
 .srrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}.srrow label{display:flex;flex-direction:column;font-size:12px;font-weight:700;color:var(--muted);gap:4px;min-width:0;flex:1 1 140px}
 tr.srclick{cursor:pointer}tr.srclick:hover td{background:#FFF7E0}tr.srtot td{border-top:2px solid var(--line);background:#FAF6F5}
@@ -753,7 +774,8 @@ details.sec .tile .ic{width:36px;height:36px}details.sec .tile .due{display:none
 /* OPERATIONS task tabs */
 #seg.opsseg{display:block!important;background:transparent;box-shadow:none;border:0;padding:0}
 .opstabs{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
-.mgrtabs .otab{padding:16px 6px 14px!important}.mgrtabs .ot-ic{font-size:40px}
+.mgrtabs .otab{padding:16px 6px 14px!important}
+.opstabs.mgrtabs{grid-template-columns:repeat(6,1fr)}.mgrtabs .ot-t{white-space:nowrap}.mgrtabs .ot-ic{font-size:40px}
 @media(max-width:760px){.opstabs.mgrtabs{grid-template-columns:repeat(2,minmax(0,1fr))}.opstabs.mgrtabs .otab{flex-direction:row;justify-content:flex-start;gap:10px;padding:10px 12px!important}.opstabs.mgrtabs .ot-ic{font-size:28px}.opstabs.mgrtabs .ot-t{font-size:16px}.opstabs.mgrtabs .ot-n{top:-8px;right:6px;font-size:12px}}
 .otab{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;border:1px solid var(--line)!important;border-radius:16px!important;background:#fff!important;padding:14px 8px 12px!important;cursor:pointer;color:var(--ink)!important;border-bottom:4px solid var(--oc)!important;box-shadow:0 2px 6px rgba(0,0,0,.05);transition:transform .12s}
 .otab:hover{transform:translateY(-2px)}
@@ -1220,7 +1242,7 @@ const NDR=['Customer not home / no answer','Customer refused the order','Wrong o
 const live=o=>!o.online||o.online.status==='confirmed';
 const PAY={cod:'💵 COD',bank:'🏦 Bank transfer',ewallet:'📱 GCash / Maya'};
 const onTot=ol=>ol.total!=null?peso(ol.total):peso(ol.subtotal)+' + fee';
-function peso(n){return '₱'+Number(n||0).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function peso(n){n=Number(n||0);return (n<-0.004?'−':'')+'₱'+Math.abs(n).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2})}
 
 /* ---------- reads the client's message ---------- */
 function cleanName(s){
@@ -1417,7 +1439,8 @@ function render(){
   if(can('pos'))tabs.push(['pos','🧾 POS',null]);if(can('inv'))tabs.push(['inv','🗃️ Inventory',null]);if(can('po'))tabs.push(['po','📝 P.O.',null]);
   if(can('recv'))tabs.push(['recv','📥 Receiving',null]);if(can('prod'))tabs.push(['prod','🏭 Production',null]);
   // keep only the tabs this role needs (simpler screen)
-  const KEEP={ops:['prep','way','delivered','undel','recv','prod','inv','month'],cashier:['pos','inv'],sales:['online','prep','way','delivered','points','month','inv'],rider:['way','delivered']}[me.role];
+  if(me.role!=='manager')tabs.push(['att','⏱ Attendance',null]);
+  const KEEP={ops:['prep','way','delivered','undel','recv','prod','inv','month','att'],cashier:['pos','inv','att'],sales:['online','prep','way','delivered','points','month','inv','att'],rider:['way','delivered','att']}[me.role];
   if(KEEP)for(let k=tabs.length-1;k>=0;k--)if(!KEEP.includes(tabs[k][0]))tabs.splice(k,1);
   const LBL={ops:{prep:'⚖️ Prepare · ✅ Check & Dispatch',way:'🚚 Out for delivery'},sales:{prep:'⚖️ Preparing',way:'🚚 Out for delivery'},manager:{prep:'⚖️ To Prepare',way:'🚚 Out for delivery'}}[me.role]||{};
   tabs.forEach(t=>{if(LBL[t[0]])t[1]=LBL[t[0]]});
@@ -1428,7 +1451,7 @@ function render(){
     const rc=(ST&&ST.pos?ST.pos.filter(p=>p.status==='open').length:0)+retList('to check').length,out=INV?INV.list.filter(p=>p.q<=0).length:0;
     const MAIN=[['recv','📥','Receiving','Supplier deliveries & returns',rc,'#15803D'],['prep','⚖️','Prepare','Weigh tomorrow\'s orders',prepTodo.length,'#D97706'],['disp','🚚','Dispatch','Check · bill · send out',dispTodo.length,'#1D4ED8'],
       ['prod','🏭','Production','Longganisa, siomai & more',0,'#C2410C'],['inv','📦','Inventory','Stock monitoring',out?out+' out':0,'#0E7490']];
-    const MORE=[['way','🛵 Out for delivery',way.length],['delivered','✅ '+delLbl,delOK.length],['undel','↩ Undelivered',und.length],['month','📊 Monthly',null]];
+    const MORE=[['way','🛵 Out for delivery',way.length],['delivered','✅ '+delLbl,delOK.length],['undel','↩ Undelivered',und.length],['month','📊 Monthly',null],['att','⏱ Attendance',null]];
     tabs.length=0;MAIN.forEach(m=>tabs.push([m[0],m[2],null]));MORE.forEach(m=>tabs.push([m[0],m[1],null]));
     opsSeg=`<div class="opstabs">${MAIN.map(([k,ic,t,d,n,c])=>`<button data-view="${k}" class="otab${view===k?' on':''}" style="--oc:${c}"><span class="ot-ic">${ic}</span><span class="ot-t">${t}</span><span class="ot-d">${d}</span>${n?`<span class="ot-n">${n}</span>`:''}</button>`).join('')}</div>
       <div class="opsmore">${MORE.map(([k,t,n])=>`<button data-view="${k}" class="${view===k?'on':''}">${t}${n?' ('+n+')':''}</button>`).join('')}</div>`;
@@ -1437,7 +1460,7 @@ function render(){
   const REPV=[['srep','📈 Sales & profit'],['mgr','📊 Dashboard'],['month','📦 Monthly'],['delivered','✅ '+delLbl],['undel','↩ Undelivered'],['points','⭐ Points']];
   if(me.role==='manager'){
     const n=summary||{},onP=onl.filter(o=>o.online.status==='pending').length,out=INV?INV.list.filter(p=>p.q<=0).length:0,poA=(ST&&ST.pos?ST.pos.filter(p=>p.status==='for approval').length:0)+retList('for approval').length;
-    const MAIN=[['online','🛒','Online',onP,'#7C3AED'],['prep','⚖️','Prepare',prepTodo.length,'#D97706'],['disp','✅','Dispatch',dispTodo.length,'#1D4ED8'],['way','🛵','Deliveries',way.length,'#0369A1'],['pos','🧾','POS',0,'#B91C1C'],
+    const MAIN=[['owner','👑','Owner',0,'#B45309'],['online','🛒','Online',onP,'#7C3AED'],['prep','⚖️','Prepare',prepTodo.length,'#D97706'],['disp','✅','Dispatch',dispTodo.length,'#1D4ED8'],['way','🛵','Deliveries',way.length,'#0369A1'],['pos','🧾','POS',0,'#B91C1C'],
       ['inv','📦','Inventory',out?out+' out':0,'#0E7490'],['po','📝','P.O.',poA,'#9333EA'],['recv','📥','Receiving',0,'#15803D'],['prod','🏭','Production',0,'#C2410C'],['srep','📊','Reports',0,'#334155']];
     const isRep=REPV.some(r=>r[0]===view);
     tabs.length=0;MAIN.forEach(m=>tabs.push([m[0],m[2],null]));REPV.forEach(r=>tabs.push([r[0],r[1],null]));
@@ -2154,7 +2177,7 @@ async function liveCam(input){camClose();
     <div class="lc-bar"><button type="button" id="lc-x" aria-label="Close">✕</button><button type="button" id="lc-shot" aria-label="Take photo" disabled></button><button type="button" id="lc-g">🖼<small>Gallery</small></button></div>`;
   document.body.appendChild(o);
   $('#lc-x').onclick=camClose;$('#lc-g').onclick=()=>camPick(input);
-  try{camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}},audio:false});
+  try{camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:input.getAttribute('capture')==='user'?'user':'environment'},width:{ideal:1920},height:{ideal:1080}},audio:false});
     const v=$('#lc-v');v.srcObject=camStream;await v.play().catch(()=>{});$('#lc-m').textContent='';$('#lc-shot').disabled=false;
     $('#lc-shot').onclick=()=>{const w=v.videoWidth,h=v.videoHeight;if(!w||!h)return;const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(v,0,0,w,h);
       c.toBlob(b=>{if(!b){toast('Could not take the photo — try again');return}const dt=new DataTransfer();dt.items.add(new File([b],'photo_'+Date.now()+'.jpg',{type:'image/jpeg'}));
@@ -2317,7 +2340,7 @@ $('#save').onclick=()=>{const res=preview();if(!cust)return alert('Pick a custom
    INVENTORY · P.O. · RECEIVING · PRODUCTION · POS
    One stock count for the shop (Products tab › Available qty).
    ================================================================ */
-var STOCKV=['inv','po','recv','prod','pos','srep'];
+var STOCKV=['inv','po','recv','prod','pos','srep','owner','att'];
 var STKEY='dp_stock_'+MODE, POSQ='dp_posq';
 let ST=null, cart=[], posCat='', posQ='', posPrice='retail', posCust='', posPay='cash', posDisc='', posCash='', posRef='';
 let posOrder=null, invQ='', invCat='', poEdit=null, recvId=null, recvPhoto='', prodF=null, posSending=false;
@@ -2339,7 +2362,7 @@ async function renderStock(v,force){
   if(view!==v)return;drawStock()}
 function drawStock(){const v=view;if(!STOCKV.includes(v))return;
   const a=document.activeElement,keep=a&&a.closest&&a.closest('#list')&&a.dataset&&a.dataset.k?{k:a.dataset.k,s:a.selectionStart}:null;
-  $('#list').innerHTML=`<div class="rep stk" data-v="${v}">${(ST.offline?'<div class="stoff">📴 Offline — showing the last saved data.</div>':'')+{inv:invHTML,po:poHTML,recv:recvHTML,prod:prodHTML,pos:posHTML,srep:srepHTML}[v]()}</div>`;
+  $('#list').innerHTML=`<div class="rep stk" data-v="${v}">${(ST.offline?'<div class="stoff">📴 Offline — showing the last saved data.</div>':'')+{inv:invHTML,po:poHTML,recv:recvHTML,prod:prodHTML,pos:posHTML,srep:srepHTML,owner:ownerHTML,att:attHTML}[v]()}</div>`;
   $('#list').onclick=stockClick;$('#list').oninput=stockInput;$('#list').onchange=stockChange;
   $('#list').onkeydown=e=>{if(view!=='pos'||e.key!=='Enter')return;const t=e.target;
     if(t.id==='posq'){e.preventDefault();const f=posSug()[0];if(f)addToCart(f.code);return}
@@ -2361,9 +2384,9 @@ function srLoad(){if(SRload)return;SRload=true;SRerr='';const k=SRF.from+'|'+SRF
   api('api_salesReport',session.token,SRF.from,SRF.to).then(r=>{SR=r;SR.key=k}).catch(e=>{SRerr=errMsg(e)}).finally(()=>{SRload=false;if(view==='srep')drawStock()})}
 const SMON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const srDay=d=>{const [y,m,dd]=d.split('-');return SMON[+m-1]+' '+(+dd)+', '+y},srMon=d=>{const [y,m]=d.split('-');return SMON[+m-1]+' '+y};
-const pct=(p,s)=>s?(Math.round(p/s*1000)/10)+'%':'—';
+const pct=(p,s)=>s?(Math.round(p/s*1000)/10)+'%':'—';const pctP=g=>pct(g.profit,g.sales-(g.pend||0));
 function srAgg(lines,keyF){const m=new Map();lines.forEach(l=>{const k=keyF(l);let g=m.get(k);if(!g){g={k,sales:0,cost:0,rc:new Set(),qty:0,unit:l.unit};m.set(k,g)}
-  g.sales+=l.amount;g.cost+=l.costAmt;if(l.ch!=='Return')g.rc.add(l.no);g.qty+=l.qty});return [...m.values()].map(g=>({...g,profit:g.sales-g.cost,n:g.rc.size}))}
+  g.sales+=l.amount;g.cost+=l.costAmt;if(l.pend)g.pend=(g.pend||0)+l.amount;if(l.ch!=='Return')g.rc.add(l.no);g.qty+=l.qty});return [...m.values()].map(g=>({...g,profit:g.sales-(g.pend||0)-g.cost,n:g.rc.size}))}
 function srepHTML(){
   const key=SRF.from+'|'+SRF.to;if((!SR||SR.key!==key)&&!SRerr)srLoad();
   const P=[['today','Today'],['yday','Yesterday'],['week','This week'],['month','This month'],['last','Last month'],['year','This year']];
@@ -2377,19 +2400,22 @@ function srepHTML(){
   if(SRerr)return head+`<div class="empty">⚠ ${esc(SRerr)}<br><br><button class="btn" data-srre>↻ Try again</button></div>`;
   if(!SR||SR.key!==key)return head+'<div class="empty">Loading sales…</div>';
   const L=SR.lines.filter(l=>(!SRF.ch||l.ch===SRF.ch)&&(!SRF.cust||l.customer===SRF.cust));
-  const sales=L.reduce((s,l)=>s+l.amount,0),cost=L.reduce((s,l)=>s+l.costAmt,0),prof=sales-cost;
+  const pendL=L.filter(l=>l.pend),pendS=pendL.reduce((s,l)=>s+l.amount,0);
+  const sales=L.reduce((s,l)=>s+l.amount,0),cost=L.reduce((s,l)=>s+l.costAmt,0),prof=sales-pendS-cost;
   const rc=new Set(L.filter(l=>l.ch!=='Return').map(l=>l.no)).size,cu=new Set(L.map(l=>l.customer)).size,ret=-L.filter(l=>l.ch==='Return').reduce((s,l)=>s+l.amount,0);
-  const est=L.filter(l=>l.est).length,zero=L.filter(l=>l.code&&!l.cost&&l.ch!=='Return').length;
-  const row=(lbl,g,extra='')=>`<td class="r">${g.n}</td><td class="r">${peso(g.sales)}</td><td class="r">${peso(g.cost)}</td><td class="r"><b style="color:${g.profit<0?'var(--rose)':'var(--green)'}">${peso(g.profit)}</b></td><td class="r">${pct(g.profit,g.sales)}</td>${extra}`;
+  const est=L.filter(l=>l.est).length,zero=L.filter(l=>l.code&&!l.cost&&!l.pend&&l.ch!=='Return').length;
+  const row=(lbl,g,extra='')=>`<td class="r">${g.n}</td><td class="r">${peso(g.sales)}</td><td class="r">${peso(g.cost)}</td><td class="r"><b style="color:${g.profit<0?'var(--rose)':'var(--green)'}">${peso(g.profit)}</b></td><td class="r">${pctP(g)}${g.pend?'<br><small class="unit">⏳ '+peso(g.pend)+' pending</small>':''}</td>${extra}`;
   const th=`<th class="r">Receipts</th><th class="r">Sales</th><th class="r">Cost</th><th class="r">Profit</th><th class="r">Margin</th>`;
-  const tot={n:rc,sales,cost,profit:prof};
+  const tot={n:rc,sales,cost,profit:prof,pend:pendS};
   const byC=srAgg(L,l=>l.customer).sort((a,b)=>b.sales-a.sales);
   const byP=srAgg(L,l=>SRF.group==='month'?l.d.slice(0,7):l.d).sort((a,b)=>a.k<b.k?-1:1);
   const byI=srAgg(L.filter(l=>l.code),l=>l.name).sort((a,b)=>b.sales-a.sales);
   return head+`
     <div class="kpis"><div><b>${peso(sales)}</b><span>net sales</span></div><div><b>${peso(cost)}</b><span>cost of goods</span></div>
-      <div class="${prof<0?'bad':''}"><b style="color:${prof<0?'var(--rose)':'var(--green)'}">${peso(prof)}</b><span>gross profit · ${pct(prof,sales)} margin</span></div>
+      <div class="${prof<0?'bad':''}"><b style="color:${prof<0?'var(--rose)':'var(--green)'}">${peso(prof)}</b><span>gross profit · ${pct(prof,sales-pendS)} margin</span></div>
       <div><b>${rc}</b><span>receipts · ${cu} customer${cu===1?'':'s'}</span></div>${ret?`<div class="warn"><b>${peso(ret)}</b><span>returns</span></div>`:''}</div>
+    ${pendL.length?`<details class="snote"><summary>⏳ <b>${peso(pendS)}</b> sold over stock — <b>profit not counted yet</b> (${pendL.length} line${pendL.length>1?'s':''}). It is counted when the stock is received.</summary>
+      <div class="sc"><table class="stbl"><thead><tr><th>Date</th><th>Receipt</th><th>Product</th><th class="r">Qty waiting</th><th class="r">Sales</th></tr></thead><tbody>${pendL.map(l=>`<tr><td>${srDay(l.d)}</td><td>${esc(l.no)}</td><td>${esc(l.name)}</td><td class="r">${qf(l.qty)} ${esc(l.unit||'')}</td><td class="r">${peso(l.amount)}</td></tr>`).join('')}</tbody></table></div></details>`:''}
     ${zero?`<div class="snote">⚠ <b>${zero}</b> item line(s) were sold with <b>₱0 cost</b>, so profit looks higher than it is. Add the cost in <b>Inventory › Edit</b>.</div>`:''}
     ${est?`<div class="snote">ℹ️ ${est} line(s) are from before costs were saved on each sale (or online orders) — today's product cost is used for those.</div>`:''}
     ${!L.length?'<div class="empty">No sales in these dates.</div>':`
@@ -2400,13 +2426,196 @@ function srepHTML(){
       ${byP.map(g=>`<tr><td><b>${SRF.group==='month'?srMon(g.k):srDay(g.k)}</b></td>${row(g.k,g)}</tr>`).join('')}
       <tr class="srtot"><td><b>Total</b></td>${row('',tot)}</tr></tbody></table></div></div>
     <details class="panel"${SRF.cust?' open':''}><summary><b>🥩 By product</b> <span class="unit">(${byI.length})</span></summary><div class="sc"><table class="stbl"><thead><tr><th>Product</th><th class="r">Qty</th><th class="r">Sales</th><th class="r">Cost</th><th class="r">Profit</th><th class="r">Margin</th></tr></thead><tbody>
-      ${byI.map(g=>`<tr><td><b>${esc(g.k)}</b></td><td class="r">${qf(g.qty)} ${esc(g.unit||'')}</td><td class="r">${peso(g.sales)}</td><td class="r">${peso(g.cost)}</td><td class="r"><b style="color:${g.profit<0?'var(--rose)':'var(--green)'}">${peso(g.profit)}</b></td><td class="r">${pct(g.profit,g.sales)}</td></tr>`).join('')}</tbody></table></div></details>
+      ${byI.map(g=>`<tr><td><b>${esc(g.k)}</b></td><td class="r">${qf(g.qty)} ${esc(g.unit||'')}</td><td class="r">${peso(g.sales)}</td><td class="r">${peso(g.cost)}</td><td class="r"><b style="color:${g.profit<0?'var(--rose)':'var(--green)'}">${peso(g.profit)}</b></td><td class="r">${pctP(g)}</td></tr>`).join('')}</tbody></table></div></details>
     <details class="panel"${SRF.cust?' open':''}><summary><b>🧾 Every item sold</b> <span class="unit">(${L.length} lines)</span></summary><div class="sc"><table class="stbl"><thead><tr><th>Date</th><th>Receipt</th><th>Customer</th><th>Type</th><th>Product</th><th class="r">Qty</th><th class="r">Price</th><th class="r">Amount</th><th class="r">Cost</th><th class="r">Profit</th></tr></thead><tbody>
-      ${L.slice().reverse().slice(0,400).map(l=>`<tr><td>${srDay(l.d)}</td><td>${esc(l.no)}${l.dr?'<br><small class="unit">'+esc(l.dr)+'</small>':''}</td><td>${esc(l.customer)}</td><td>${esc(l.ch)}</td><td>${esc(l.name)}</td><td class="r">${qf(l.qty)} ${esc(l.unit||'')}</td><td class="r">${peso(l.price)}</td><td class="r">${peso(l.amount)}</td><td class="r">${peso(l.costAmt)}${l.est?'*':''}</td><td class="r">${peso(l.amount-l.costAmt)}</td></tr>`).join('')}</tbody></table></div>
+      ${L.slice().reverse().slice(0,400).map(l=>`<tr><td>${srDay(l.d)}</td><td>${esc(l.no)}${l.dr?'<br><small class="unit">'+esc(l.dr)+'</small>':''}</td><td>${esc(l.customer)}</td><td>${esc(l.ch)}</td><td>${esc(l.name)}</td><td class="r">${qf(l.qty)} ${esc(l.unit||'')}</td><td class="r">${peso(l.price)}</td><td class="r">${peso(l.amount)}</td>${l.pend?'<td class="r" colspan="2"><b class="warn">⏳ cost pending</b></td>':`<td class="r">${peso(l.costAmt)}${l.est?'*':''}${l.settled?'<br><small class="unit">cost from '+esc(l.settled)+'</small>':''}</td><td class="r">${peso(l.amount-l.costAmt)}</td>`}</tr>`).join('')}</tbody></table></div>
       ${L.length>400?'<div class="unit">Showing the latest 400 — download the CSV for all.</div>':''}</details>`}`}
 function srCsv(){const L=SR.lines.filter(l=>(!SRF.ch||l.ch===SRF.ch)&&(!SRF.cust||l.customer===SRF.cust));
   downloadCsv([['Date','Receipt','DR','Customer','Sale type','Code','Product','Qty','Unit','Price','Amount','Cost per unit','Cost','Profit','Cashier','Payment']]
-    .concat(L.map(l=>[l.d,l.no,l.dr,l.customer,l.ch,l.code,l.name,l.qty,l.unit,l.price,l.amount,l.cost,l.costAmt,r2(l.amount-l.costAmt),l.cashier,l.pay])),'3FMS-sales-'+SRF.from+'-to-'+SRF.to+'.csv')}
+    .concat(L.map(l=>[l.d,l.no,l.dr,l.customer,l.ch,l.code,l.name,l.qty,l.unit,l.price,l.amount,l.pend?'PENDING':l.cost,l.pend?'PENDING':l.costAmt,l.pend?'PENDING':r2(l.amount-l.costAmt),l.cashier,l.pay])),'3FMS-sales-'+SRF.from+'-to-'+SRF.to+'.csv')}
+/* ---------- OWNER'S DASHBOARD (manager) ---------- */
+let OW=null,OWload=false,OWerr='',OWym='',OWtab='dash';
+function owLoad(){if(OWload)return;OWload=true;OWerr='';api('api_owner',session.token,OWym).then(r=>{OW=r;OWym=r.ym}).catch(e=>OWerr=errMsg(e)).finally(()=>{OWload=false;if(view==='owner')drawStock()})}
+const owAcc=id=>(OW.accounts.find(a=>a.id===id)||{}).name||'—';
+const ACCI={cash:'💵',bank:'🏦',ewallet:'📱'};
+const ymLbl=k=>{const[y,m]=k.split('-');return SMON[+m-1]+' '+y};
+function owBars(rows,keys){const mx=Math.max(1,...rows.flatMap(r=>keys.map(([k])=>Math.abs(r[k]||0))));
+  return `<div class="owbars">${rows.map(r=>`<div class="owb"><div class="owb-c">${keys.map(([k,c])=>`<i style="height:${Math.round(Math.abs(r[k]||0)/mx*100)}%;background:${(r[k]||0)<0?'#DC2626':c}" title="${k} ${peso(r[k]||0)}"></i>`).join('')}</div><span>${ymLbl(r.ym).slice(0,3)}</span></div>`).join('')}</div>
+    <div class="owleg">${keys.map(([k,c,t])=>`<span><i style="background:${c}"></i>${t}</span>`).join('')}</div>`}
+function ownerHTML(){
+  if(!OW&&!OWerr)owLoad();
+  const tabs=[['dash','📊 Dashboard'],['acc','💰 Accounts'],['exp','🧾 Expenses'],['pay','👥 Payroll'],['col','📥 Collect & pay'],['fa','🏢 Fixed assets'],['rep','📑 P&L · Balance sheet']];
+  const head=`<div class="shead"><div><h2>👑 Owner's Dashboard</h2></div><div class="sbtns"><input type="month" class="edit-in" data-owym value="${esc(OWym||(OW&&OW.ym)||today().slice(0,7))}" style="width:auto"><button class="btn sm" data-owre>↻ Refresh</button></div></div>
+    <div class="chips2 owtabs">${tabs.map(([k,t])=>`<button class="${OWtab===k?'on':''}" data-owtab="${k}">${t}</button>`).join('')}</div>`;
+  if(OWerr)return head+`<div class="empty">⚠ ${esc(OWerr)}<br><br><button class="btn" data-owre>↻ Try again</button></div>`;
+  if(!OW)return head+'<div class="empty">Loading…</div>';
+  return head+({dash:owDash,acc:owAccounts,exp:owExpenses,pay:owPayroll,col:owCollect,fa:owAssets,rep:owReports}[OWtab])()}
+function owDash(){const O=OW,P=O.pl,B=O.bs,arOver=O.ar.filter(a=>a.days>30),apDue=O.ap.filter(a=>a.due&&a.due<=iso(new Date(Date.now()+7*864e5)));
+  const k=(t,v,s,c)=>`<div class="owk ${c||''}"><span>${t}</span><b>${v}</b>${s?`<small>${s}</small>`:''}</div>`;
+  return `<div class="owgrid">
+    ${k('💰 Cash position',peso(B.cash),O.accounts.map(a=>`${ACCI[a.type]||''} ${esc(a.name)} ${peso(a.balance)}`).join('<br>'),'big')}
+    ${k('Sales today',peso(O.todaySales),'gross profit '+peso(O.todayGp))}
+    ${k('Net sales · '+ymLbl(O.ym),peso(P.net),'gross '+peso(P.gross))}
+    ${k('Gross profit',peso(P.gp),P.net?Math.round(P.gp/P.net*1000)/10+'% margin':'','')}
+    ${k('Net profit',peso(P.np),'before owner\'s pay · after: '+peso(P.npAfter),P.np<0?'bad':'good')}
+    ${k('Receivables (charge)',peso(B.ar),O.ar.length+' unpaid'+(arOver.length?` · <b style="color:var(--rose)">${arOver.length} over 30 days</b>`:''),arOver.length?'warn':'')}
+    ${k('Payables (suppliers)',peso(B.ap),O.ap.length+' unpaid'+(apDue.length?` · <b style="color:var(--rose)">${apDue.length} due this week</b>`:''),apDue.length?'warn':'')}
+    ${k('Inventory value',peso(B.inventory),O.lowStock+' low / out of stock'+(O.noCost?` · ${O.noCost} without cost`:''))}
+    ${k('Business worth (equity)',peso(B.equity),'assets '+peso(B.assets)+' − owed '+peso(B.liabilities))}
+  </div>
+  <div class="owrow"><div class="panel"><h3>📈 Last 6 months</h3>${owBars(O.trend,[['sales','#2563EB','Net sales'],['gp','#16A34A','Gross profit'],['np','#F59E0B','Net profit']])}</div>
+    <div class="panel"><h3>🥩 Gross profit by category · ${ymLbl(O.ym)}</h3>${O.byCat.length?`<table class="stbl"><thead><tr><th>Category</th><th class="r">Sales</th><th class="r">Gross profit</th><th class="r">Margin</th></tr></thead><tbody>${O.byCat.map(c=>`<tr><td><b>${esc(c.cat)}</b></td><td class="r">${peso(c.sales)}</td><td class="r">${peso(c.gp)}</td><td class="r">${c.sales?Math.round(c.gp/c.sales*1000)/10+'%':'—'}</td></tr>`).join('')}</tbody></table>`:'<div class="unit">No sales yet this month.</div>'}</div></div>
+  <div class="owrow"><div class="panel"><h3>🧾 Expenses · ${ymLbl(O.ym)} <small>% of net sales</small></h3>${Object.keys(P.expenses).length?`<table class="stbl"><tbody>${Object.entries(P.expenses).sort((a,b)=>b[1]-a[1]).map(([c,v])=>`<tr><td>${esc(c)}</td><td class="r">${peso(v)}</td><td class="r">${P.net?Math.round(v/P.net*1000)/10+'%':'—'}</td></tr>`).join('')}<tr class="srtot"><td><b>Total expenses</b></td><td class="r"><b>${peso(P.opex)}</b></td><td class="r">${P.net?Math.round(P.opex/P.net*1000)/10+'%':''}</td></tr>${P.owner?`<tr><td>Owner's salary</td><td class="r">${peso(P.owner)}</td><td class="r">${P.net?Math.round(P.owner/P.net*1000)/10+'%':''}</td></tr>`:''}</tbody></table>`:'<div class="unit">No expenses yet. Add them in 🧾 Expenses.</div>'}</div>
+    <div class="panel"><h3>⏰ To collect · to pay</h3>${O.ar.slice(0,6).map(a=>`<div class="posx-row"><span>${esc(a.customer)} <small class="unit">${esc(a.no)}${a.dr?' · '+esc(a.dr):''} · ${a.days} day(s)</small></span><b style="color:${a.days>30?'var(--rose)':'inherit'}">${peso(a.balance)}</b></div>`).join('')||'<div class="unit">Nothing to collect.</div>'}
+      <hr>${O.ap.map(a=>`<div class="posx-row"><span>${esc(a.supplier)} <small class="unit">${esc(a.no)} · due ${a.due?day(a.due):'—'}</small></span><b>${peso(a.amount)}</b></div>`).join('')||'<div class="unit">No supplier bill on charge.</div>'}</div></div>`}
+function owAccounts(){const O=OW;
+  return `<div class="panel"><div class="poh"><h3 style="margin:0">💰 Money accounts</h3><span style="flex:1"></span><button class="go sm" data-owadd="account">+ Account</button><button class="btn sm" data-owadd="move">⇄ Transfer / owner / loan</button></div>
+    <table class="stbl"><thead><tr><th>Account</th><th>Linked to</th><th class="r">Opening</th><th class="r">Balance now</th><th></th></tr></thead><tbody>
+    ${O.accounts.map(a=>`<tr><td><b>${ACCI[a.type]||''} ${esc(a.name)}</b><br><small class="unit">${esc(a.type)}${a.openDate?' · from '+day(a.openDate):''}</small></td><td class="unit">${({'pos-cash':'POS cash sales','gcash':'GCash sales','maya':'Maya sales','bank':'Bank transfer sales'})[a.link]||'—'}</td><td class="r">${peso(a.opening)}</td><td class="r"><b>${peso(a.balance)}</b></td><td><button class="btn sm" data-owedit="account:${a.id}">Edit</button></td></tr>`).join('')}
+    <tr class="srtot"><td colspan="3"><b>Total cash, bank & e-wallets</b></td><td class="r"><b>${peso(O.bs.cash)}</b></td><td></td></tr></tbody></table>
+    <div class="unit">Set each account's <b>opening balance</b> and the <b>date</b> you start counting. Sales, charge payments, drawer cash-outs, live pig payments, expenses and transfers then update the balances by themselves.</div></div>
+    <div class="panel"><h3>⇄ Transfers · owner's capital & drawings · loans · ${ymLbl(O.ym)}</h3>${O.moves.map(m=>`<div class="posx-row"><span>${day(m.d)} · <b>${esc(m.type)}</b> ${m.from?esc(owAcc(m.from)):''}${m.from&&m.to?' → ':''}${m.to?esc(owAcc(m.to)):''} <small class="unit">${esc(m.note)}</small></span><b>${peso(m.amt)} <button class="del" data-owdel="move:${m.id}">✕</button></b></div>`).join('')||'<div class="unit">None this month.</div>'}</div>
+    <details class="panel"><summary><b>🧾 Money in / out this month</b> <span class="unit">(latest ${O.flows.length})</span></summary><table class="stbl"><tbody>${O.flows.map(f=>`<tr><td>${day(f.d)}</td><td>${esc(owAcc(f.acc))}</td><td>${esc(f.what)}</td><td class="r" style="color:${f.amt<0?'var(--rose)':'var(--green)'}">${f.amt>0?'+':''}${peso(f.amt)}</td></tr>`).join('')}</tbody></table></details>`}
+function owExpenses(){const O=OW,tot=O.expenses.reduce((a,e)=>a+e.amt,0);
+  return `<div class="panel"><div class="poh"><h3 style="margin:0">🧾 Expenses · ${ymLbl(O.ym)}</h3><span style="flex:1"></span><button class="go sm" data-owadd="expense">+ Expense</button></div>
+    <table class="stbl"><thead><tr><th>Date</th><th>Category</th><th>Description</th><th>Paid from</th><th class="r">Amount</th><th></th></tr></thead><tbody>
+    ${O.expenses.map(e=>`<tr><td>${day(e.d)}</td><td><b>${esc(e.cat)}</b></td><td>${esc(e.desc)}</td><td>${esc(owAcc(e.from))}</td><td class="r">${peso(e.amt)}</td><td><button class="btn sm" data-owedit="expense:${e.id}">Edit</button></td></tr>`).join('')||'<tr><td colspan="6" class="empty">No expenses this month.</td></tr>'}
+    <tr class="srtot"><td colspan="4"><b>Total</b></td><td class="r"><b>${peso(tot)}</b></td><td></td></tr></tbody></table>
+    <div class="unit">Salaries (staff and your own), rent, electricity, water, fuel… Cash taken from the POS drawer with <b>💸 Cash out</b> is counted automatically — don't enter it twice.</div></div>`}
+function owAssets(){const O=OW,t=O.assets.reduce((a,f)=>a+f.book,0);
+  return `<div class="panel"><div class="poh"><h3 style="margin:0">🏢 Fixed assets</h3><span style="flex:1"></span><button class="go sm" data-owadd="asset">+ Asset</button></div>
+    <table class="stbl"><thead><tr><th>Asset</th><th>Bought</th><th class="r">Cost</th><th class="r">Depreciation / month</th><th class="r">Book value now</th><th></th></tr></thead><tbody>
+    ${O.assets.map(f=>`<tr><td><b>${esc(f.name)}</b><br><small class="unit">${esc(f.cat)} · ${f.life} yr life${f.disposed?' · disposed '+day(f.disposed):''}</small></td><td>${f.d?day(f.d):'—'}</td><td class="r">${peso(f.cost)}</td><td class="r">${peso(f.perMonth)}</td><td class="r"><b>${peso(f.book)}</b></td><td><button class="btn sm" data-owedit="asset:${f.id}">Edit</button></td></tr>`).join('')||'<tr><td colspan="6" class="empty">No assets yet — add your car, building, freezers, laptops…</td></tr>'}
+    <tr class="srtot"><td colspan="4"><b>Total book value</b></td><td class="r"><b>${peso(t)}</b></td><td></td></tr></tbody></table>
+    <div class="unit">Depreciation (straight line: cost − salvage ÷ useful life) is added to the monthly expenses automatically.</div></div>`}
+function owReports(){const O=OW,P=O.pl,B=O.bs,L=(t,v,b,i)=>`<tr${b?' class="srtot"':''}><td style="padding-left:${i?24:8}px">${b?'<b>':''}${t}${b?'</b>':''}</td><td class="r">${b?'<b>':''}${peso(v)}${b?'</b>':''}</td></tr>`;
+  return `<div class="owrow"><div class="panel"><h3>📑 Profit & Loss · ${ymLbl(O.ym)}</h3><table class="stbl"><tbody>
+    ${L('Gross sales',P.gross)}${L('Less discounts',-P.disc,0,1)}${L('Less returns',-P.ret,0,1)}${L('Net sales',P.net,1)}${L('Cost of goods sold (COGS)',-P.cogs)}${L('GROSS PROFIT',P.gp,1)}${P.pend?`<tr><td colspan="2"><small class="unit">⏳ ${peso(P.pend)} of sales were sold over stock — their cost is added when the stock is received, so gross profit will go down a bit.</small></td></tr>`:''}
+    ${Object.entries(P.expenses).map(([c,v])=>L(esc(c),-v,0,1)).join('')}${L('Total operating expenses',-P.opex,1)}${L('NET PROFIT (before owner\'s pay)',P.np,1)}${L("Owner's salary",-P.owner,0,1)}${L('NET PROFIT after owner\'s pay',P.npAfter,1)}</tbody></table>
+    <div class="unit">Margin: gross ${P.net?Math.round(P.gp/P.net*1000)/10:0}% · net ${P.net?Math.round(P.np/P.net*1000)/10:0}%</div></div>
+    <div class="panel"><h3>⚖️ Balance sheet · today</h3><table class="stbl"><tbody>
+    <tr><td colspan="2"><b>ASSETS</b></td></tr>${L('Cash, bank & e-wallets',B.cash,0,1)}${L('Accounts receivable',B.ar,0,1)}${L('Inventory',B.inventory,0,1)}${L('Fixed assets (book value)',B.fixed,0,1)}${B.advances?L('Staff cash advances',B.advances,0,1):''}${L('Total assets',B.assets,1)}
+    <tr><td colspan="2"><b>LIABILITIES</b></td></tr>${L('Accounts payable (suppliers)',B.ap,0,1)}${L('Loans',B.loans,0,1)}${B.contrib?L('SSS / PhilHealth / Pag-IBIG to remit',B.contrib,0,1):''}${L('Total liabilities',B.liabilities,1)}
+    <tr><td colspan="2"><b>OWNER'S EQUITY</b></td></tr>${L("Owner's capital",B.capital,0,1)}${L("Less owner's drawings",-B.drawings,0,1)}${L('Retained profit & opening values',B.retained,0,1)}${L("Total owner's equity",B.equity,1)}${L('Liabilities + equity',B.liabilities+B.equity,1)}</tbody></table>
+    <div class="unit">Management report from the app's data — for BIR filings, work with your accountant.</div></div></div>`}
+function owForm(kind,id){const O=OW,box=stBox(),acc=O.accounts,accSel=(k,v,empty)=>`<select class="edit-in" id="${k}">${empty?'<option value="">—</option>':''}${acc.map(a=>`<option value="${a.id}"${a.id===v?' selected':''}>${ACCI[a.type]||''} ${esc(a.name)}</option>`).join('')}</select>`;
+  const x=id?({account:O.accounts,expense:O.expenses,asset:O.assets}[kind]||[]).find(r=>r.id===id)||{}:{};
+  const T={account:'💰 Money account',expense:'🧾 Expense',move:'⇄ Transfer · owner · loan',asset:'🏢 Fixed asset'}[kind];
+  const F={account:`<label>Name<input class="edit-in" id="of-name" value="${esc(x.name||'')}" placeholder="e.g. BDO savings"></label><label>Type<select class="edit-in" id="of-type">${['cash','bank','ewallet'].map(t=>`<option${x.type===t?' selected':''}>${t}</option>`).join('')}</select></label>
+      <label>Opening balance (₱)<input class="edit-in nq" type="number" step="0.01" id="of-open" value="${x.opening??''}"></label><label>Count from (date)<input class="edit-in" type="date" id="of-od" value="${esc(x.openDate||today())}"></label>
+      <label class="full">Receives sales of<select class="edit-in" id="of-link">${[['','— none —'],['pos-cash','POS cash'],['gcash','GCash'],['maya','Maya'],['bank','Bank transfer']].map(([v,t])=>`<option value="${v}"${(x.link||'')===v?' selected':''}>${t}</option>`).join('')}</select></label>`,
+    expense:`<label>Date<input class="edit-in" type="date" id="of-d" value="${esc(x.d||today())}"></label><label>Category<select class="edit-in" id="of-cat">${O.cats.exp.map(c=>`<option${x.cat===c?' selected':''}>${esc(c)}</option>`).join('')}</select></label>
+      <label class="full">Description<input class="edit-in" id="of-desc" value="${esc(x.desc||'')}" placeholder="e.g. Meralco Oct, Juan 1st half salary"></label><label>Amount (₱)<input class="edit-in nq" type="number" step="0.01" id="of-amt" value="${x.amt??''}"></label><label>Paid from${accSel('of-from',x.from||(acc[0]||{}).id)}</label>`,
+    move:`<label>Date<input class="edit-in" type="date" id="of-d" value="${today()}"></label><label>Type<select class="edit-in" id="of-mt">${O.cats.mov.map(c=>`<option>${esc(c)}</option>`).join('')}</select></label>
+      <label>From account${accSel('of-from','',1)}</label><label>To account${accSel('of-to','',1)}</label><label>Amount (₱)<input class="edit-in nq" type="number" step="0.01" id="of-amt"></label><label>Note<input class="edit-in" id="of-note"></label>
+      <div class="unit full">Transfer: from → to · Capital in / loan received / other income: <b>to</b> · Drawings / loan payment: <b>from</b></div>`,
+    asset:`<label>Name<input class="edit-in" id="of-name" value="${esc(x.name||'')}" placeholder="e.g. Chest freezer 25 cu ft"></label><label>Category<select class="edit-in" id="of-cat">${O.cats.fa.map(c=>`<option${x.cat===c?' selected':''}>${esc(c)}</option>`).join('')}</select></label>
+      <label>Date bought<input class="edit-in" type="date" id="of-d" value="${esc(x.d||today())}"></label><label>Cost (₱)<input class="edit-in nq" type="number" step="0.01" id="of-cost" value="${x.cost??''}"></label>
+      <label>Useful life (years)<input class="edit-in nq" type="number" step="0.5" id="of-life" value="${x.life??5}"></label><label>Salvage value (₱)<input class="edit-in nq" type="number" step="0.01" id="of-salv" value="${x.salvage??0}"></label>
+      <label>Disposed / sold on<input class="edit-in" type="date" id="of-disp" value="${esc(x.disposed||'')}"></label><label>Note<input class="edit-in" id="of-note" value="${esc(x.note||'')}"></label>`}[kind];
+  $('#stb').innerHTML=`<h2>${T}</h2><div class="fgrid">${F}</div><div class="row-end">${id?'<button class="btn" id="of-del" style="color:var(--rose)">Delete</button>':''}<button class="btn" data-x>Cancel</button><button class="go" id="of-ok">Save</button></div>`;box.classList.add('on');
+  const v=i=>{const e=$('#'+i);return e?e.value:''};
+  $('#of-ok').onclick=async()=>{const d={id,ym:OWym,account:{name:v('of-name'),type:v('of-type'),opening:v('of-open'),openDate:v('of-od'),link:v('of-link')},expense:{d:v('of-d'),cat:v('of-cat'),desc:v('of-desc'),amt:v('of-amt'),from:v('of-from')},
+      move:{d:v('of-d'),type:v('of-mt'),from:v('of-from'),to:v('of-to'),amt:v('of-amt'),note:v('of-note')},asset:{name:v('of-name'),cat:v('of-cat'),d:v('of-d'),cost:v('of-cost'),life:v('of-life'),salvage:v('of-salv'),disposed:v('of-disp'),note:v('of-note')}}[kind];
+    d.id=id;d.ym=OWym;$('#of-ok').disabled=true;try{OW=await api('api_ownerSave',session.token,kind,d,false);box.classList.remove('on');toast('Saved');drawStock()}catch(e){alert(errMsg(e));$('#of-ok').disabled=false}};
+  if($('#of-del'))$('#of-del').onclick=async()=>{if(!confirm('Delete this?'))return;try{OW=await api('api_ownerSave',session.token,kind,{id,ym:OWym},true);box.classList.remove('on');drawStock()}catch(e){alert(errMsg(e))}}}
+/* ---------- ATTENDANCE (every staff) ---------- */
+let MA=null,MAload=false,MSL=null;
+function attLoad(){if(MAload)return;MAload=true;Promise.all([api('api_myAtt',session.token),api('api_mySlips',session.token).catch(()=>[])]).then(([a,s])=>{MA=a;MSL=s}).catch(e=>toast(errMsg(e))).finally(()=>{MAload=false;if(view==='att')drawStock()})}
+function attHTML(){if(!MA){attLoad();return '<div class="empty">Loading…</div>'}
+  const t=MA.list.find(a=>a.d===MA.today)||{},next=!t.tin?['in','🟢 Time in']:t.tout?null:!t.bout?['out','🔴 Time out']:!t.bin?['bin','↩ Back from break']:['out','🔴 Time out'];
+  return `<div class="attbox"><div class="att-clock" id="attclk">${new Date().toLocaleTimeString('en-PH',{hour:'numeric',minute:'2-digit'})}</div><div class="unit">${new Date().toLocaleDateString('en-PH',{weekday:'long',month:'long',day:'numeric'})} · ${esc(me.name)}</div>
+    <div class="att-today"><div><span>Time in</span><b>${t.tin?time12h(t.tin):'—'}</b></div><div><span>Break</span><b>${t.bout?time12h(t.bout)+(t.bin?' – '+time12h(t.bin):''):'—'}</b></div><div><span>Time out</span><b>${t.tout?time12h(t.tout):'—'}</b></div></div>
+    ${next?`<button class="go att-btn" data-punch="${next[0]}">${next[1]}</button>${t.tin&&!t.tout&&!t.bout?'<button class="btn" data-punch="bout">☕ Start break</button>':''}<div class="unit">A selfie is taken with your time. The time comes from the server.</div>`:'<div class="snote">✅ Done for today. Ingat!</div>'}</div>
+    <div class="panel"><h3>My last 2 weeks</h3><table class="stbl"><thead><tr><th>Date</th><th>In</th><th>Break</th><th>Out</th></tr></thead><tbody>${MA.list.map(a=>`<tr><td>${day(a.d)}</td><td>${a.tin?time12h(a.tin):'—'}</td><td>${a.bout?time12h(a.bout)+(a.bin?'–'+time12h(a.bin):''):'—'}</td><td>${a.tout?time12h(a.tout):'—'}</td></tr>`).join('')||'<tr><td colspan="4" class="empty">No record yet.</td></tr>'}</tbody></table></div>
+    ${MSL&&MSL.length?`<div class="panel"><h3>💵 My payslips</h3>${MSL.map(s=>`<div class="posx-row"><span>${day(s.from)} – ${day(s.to)}</span><b>${peso(s.line.net)} <button class="btn sm" data-myslip="${s.id}">View</button></b></div>`).join('')}</div>`:''}`}
+const time12h=h=>{if(!h)return '';const[H,M]=h.split(':').map(Number);return ((H+11)%12+1)+':'+String(M).padStart(2,'0')+(H<12?' AM':' PM')};
+async function punch(kind,b){const L={in:'TIME IN',bout:'BREAK',bin:'BACK FROM BREAK',out:'TIME OUT'}[kind];
+  const inp=document.createElement('input');inp.type='file';inp.accept='image/*';inp.setAttribute('capture','user');inp.hidden=true;document.body.appendChild(inp);
+  const done=async(ph)=>{b.disabled=true;try{let id='';if(ph){try{id='D'+await api('api_uploadPhoto',session.token,ph,'att-'+me.name+'-'+Date.now())}catch(e){}}
+    MA=await api('api_punch',session.token,kind,id);toast('✅ '+L+' saved');drawStock()}catch(e){alert(errMsg(e));b.disabled=false}finally{inp.remove()}};
+  inp.onchange=async()=>{const f=inp.files[0];if(!f)return done('');try{done(await stampPhoto(f,[L+' · '+me.name,fullStamp(Date.now())]))}catch(e){done('')}};
+  inp.click()}
+/* ---------- OWNER › PAYROLL ---------- */
+let PY=null,PYload=false,PYerr='',PYfrom='',PYto='',PYov={},PYsub='run';
+function pyLoad(){if(PYload)return;PYload=true;PYerr='';api('api_payroll',session.token,PYfrom,PYto,PYov).then(r=>{PY=r;PYfrom=r.from;PYto=r.to}).catch(e=>PYerr=errMsg(e)).finally(()=>{PYload=false;if(view==='owner')drawStock()})}
+function pyPeriods(){const t=new Date(),out=[];for(let i=0;i<6;i++){const y=t.getFullYear(),m=t.getMonth()-Math.floor(i/2),h=(t.getDate()<=15?0:1)-(i%2);const mm=new Date(y,m+(h<0?-1:0),1),Y=mm.getFullYear(),M=mm.getMonth(),half=(h+2)%2;
+  out.push(half===0?[iso(new Date(Y,M,1)),iso(new Date(Y,M,15))]:[iso(new Date(Y,M,16)),iso(new Date(Y,M+1,0))])}return [...new Map(out.map(p=>[p.join(),p])).values()]}
+function owPayroll(){if(!PY&&!PYerr){pyLoad();return '<div class="empty">Loading payroll…</div>'}if(PYerr)return `<div class="empty">⚠ ${esc(PYerr)}</div>`;
+  const subs=[['run','💵 Payroll'],['att','🕘 Attendance'],['staff','👥 Staff & rates'],['adv','💸 Cash advances'],['hol','📅 Holidays'],['rem','🏛 Contributions']];
+  return `<div class="poh" style="flex-wrap:wrap;gap:8px"><select class="edit-in" data-pyper style="width:auto">${pyPeriods().map(([f,t])=>`<option value="${f}|${t}"${f===PY.from?' selected':''}>${day(f)} – ${day(t)}</option>`).join('')}</select>
+    <div class="chips2">${subs.map(([k,t])=>`<button class="${PYsub===k?'on':''}" data-pysub="${k}">${t}</button>`).join('')}</div></div>`+({run:pyRun,att:pyAtt,staff:pyStaff,adv:pyAdv,hol:pyHol,rem:pyRem}[PYsub])()}
+function pyRun(){const L=PY.lines,tot=k=>L.reduce((a,l)=>a+(l[k]||0),0);
+  if(!L.length)return '<div class="snote">No staff with a rate yet — go to <b>👥 Staff & rates</b> and set each person\'s daily or monthly rate and schedule.</div>';
+  return `${PY.released?`<div class="snote">✅ This period is already <b>released</b>.</div>`:''}<div class="sc"><table class="stbl pyt"><thead><tr><th>Staff</th><th class="r">Days</th><th class="r">Basic</th><th class="r">Holiday / rest day</th><th class="r">OT</th><th class="r">Late / UT</th><th class="r">Adj. (+/−)</th><th class="r">Gross</th><th class="r">SSS · PH · HDMF</th><th class="r">Cash adv.</th><th class="r">NET PAY</th><th></th></tr></thead><tbody>
+    ${L.map(l=>`<tr><td><b>${esc(l.name)}</b>${l.owner?' <small class="unit">owner</small>':''}<br><small class="unit">${l.type==='daily'?peso(l.rate)+'/day':peso(l.rate)+'/month'}${l.absent?' · '+l.absent+' absent':''}${l.noOut?` · <b style="color:var(--rose)">${l.noOut} no time-out</b>`:''}${l.cut?` · <b style="color:var(--amber)">${esc(l.cut)}</b>`:''}</small></td>
+      <td class="r">${l.days}</td><td class="r">${peso(l.basic)}</td><td class="r">${peso(l.holPay+l.restPay)}</td>
+      <td class="r">${l.otMin?`<label class="chk2"><input type="checkbox" data-pyot="${l.id}"${l.otOk?' checked':''}> ${Math.round(l.otMin/6)/10}h</label>${peso(l.otPay)}`:'—'}</td>
+      <td class="r">${l.lateMin+l.utMin?`${l.lateMin+l.utMin} min<br>−${peso(l.lateDed)}`:'—'}</td>
+      <td><input class="edit-in nq" type="number" step="0.01" data-pyadj="${l.id}" value="${l.adj||''}" placeholder="0" style="width:90px"></td><td class="r">${peso(l.gross)}</td>
+      <td class="r"><label class="chk2"><input type="checkbox" data-pyc="${l.id}"${l.contrib?' checked':''}> −${peso(l.sss+l.ph+l.hdmf)}</label></td>
+      <td>${l.advBal>0?`<input class="edit-in nq" type="number" step="0.01" data-pyadv="${l.id}" value="${l.adv}" style="width:90px"><br><small class="unit">balance ${peso(l.advBal)}</small>`:'—'}</td>
+      <td class="r"><b>${peso(l.net)}</b></td><td><button class="btn sm" data-pyslip="${l.id}">Payslip</button></td></tr>`).join('')}
+    <tr class="srtot"><td><b>Total</b></td><td></td><td class="r">${peso(tot('basic'))}</td><td class="r">${peso(tot('holPay')+tot('restPay'))}</td><td class="r">${peso(tot('otPay'))}</td><td class="r">−${peso(tot('lateDed'))}</td><td></td><td class="r"><b>${peso(tot('gross'))}</b></td><td class="r">−${peso(tot('sss')+tot('ph')+tot('hdmf'))}</td><td class="r">−${peso(tot('adv'))}</td><td class="r"><b>${peso(tot('net'))}</b></td><td></td></tr></tbody></table></div>
+    <div class="unit">OT counts only when ticked (30 min or more past the schedule). Late & undertime are deducted per minute. Rest day worked +30%, special holiday worked +30%, regular holiday worked +100% (unworked regular holiday paid). SSS / PhilHealth / Pag-IBIG: half of the monthly amount each cut-off. Adjustments: + for bonus / allowance, − for other deductions.</div>
+    ${PY.released?'':`<div class="row-end"><label>Pay from <select class="edit-in" id="py-acc" style="width:auto">${PY.accounts.map(a=>`<option value="${a.id}">${esc(a.name)}</option>`).join('')}</select></label><button class="go" data-pyrel>✓ Release pay ${peso(tot('net'))}</button></div>`}
+    <details class="panel"><summary><b>🎁 13th month pay (accrued this year)</b></summary>${Object.keys(PY.thirteenth).length?PY.staff.filter(s=>PY.thirteenth[s.id]).map(s=>`<div class="posx-row"><span>${esc(s.name)}</span><b>${peso(PY.thirteenth[s.id])}</b></div>`).join(''):'<div class="unit">Grows with each released payroll (basic pay ÷ 12).</div>'}</details>`}
+function pyAtt(){const S=PY.staff.filter(s=>s.set&&s.active),A=PY.attendance;
+  return `<div class="row-end" style="justify-content:flex-start"><button class="go sm" data-pyattadd>+ Add / correct time</button></div>
+    <div class="sc"><table class="stbl"><thead><tr><th>Date</th><th>Staff</th><th>In</th><th>Break</th><th>Out</th><th>Note</th><th></th></tr></thead><tbody>
+    ${A.slice().sort((a,b)=>a.d<b.d?1:-1).map(a=>{let ph={};try{ph=JSON.parse(a.photos||'{}')}catch(e){}const P=Object.entries(ph).filter(([,v])=>v);return `<tr class="${/⚠/.test(a.note)?'rout':''}"><td>${day(a.d)}</td><td><b>${esc(a.name)}</b></td><td>${a.tin?time12h(a.tin):'—'}</td><td>${a.bout?time12h(a.bout)+(a.bin?'–'+time12h(a.bin):''):'—'}</td><td>${a.tout?time12h(a.tout):'<b style="color:var(--rose)">none</b>'}</td><td class="unit">${/⚠/.test(a.note)?'<b style="color:var(--rose)">'+esc(a.note)+'</b>':esc(a.note)}</td><td>${P.map(([k,v])=>`<button class="btn sm" data-attph="${esc(v)}" title="${k}">📷 ${({in:'in',bout:'break',bin:'back',out:'out'})[k]||k}</button>`).join(' ')} <button class="btn sm" data-pyattedit="${a.id}">Edit</button></td></tr>`}).join('')||'<tr><td colspan="7" class="empty">No time records in this period.</td></tr>'}</tbody></table></div>
+    ${S.length?'':'<div class="snote">Set up staff rates first in 👥 Staff & rates.</div>'}`}
+function pyStaff(){return `<div class="sc"><table class="stbl"><thead><tr><th>Staff</th><th>Pay</th><th>Schedule</th><th>Rest day</th><th class="r">SSS · PH · HDMF / month</th><th></th></tr></thead><tbody>
+  ${PY.staff.map(s=>`<tr class="${s.active?'':'rout'}"><td><b>${esc(s.name)}</b><br><small class="unit">${esc(s.role)}${s.owner?' · owner (fixed pay)':''}${s.active?'':' · inactive'}</small></td><td>${s.set?peso(s.rate)+(s.type==='daily'?' / day':' / month'):'<b style="color:var(--rose)">not set</b>'}</td><td>${time12h(s.tin)} – ${time12h(s.tout)} · ${s.brk} min break</td><td>${esc(s.rest)}</td><td class="r">${peso(s.sss+s.ph+s.hdmf)}</td><td><button class="btn sm" data-pystaff="${s.id}">Edit</button></td></tr>`).join('')}</tbody></table></div>
+  <div class="unit">Staff come from <b>Users & PINs</b>. Contributions: tap <b>Auto</b> in Edit for the 2025 SSS / PhilHealth / Pag-IBIG rates, then check them against your actual contribution tables.</div>`}
+function pyAdv(){return `<div class="row-end" style="justify-content:flex-start"><button class="go sm" data-pyadvadd>+ Cash advance</button></div>
+  ${PY.staff.filter(s=>s.adv>0).map(s=>`<div class="posx-row"><span><b>${esc(s.name)}</b> — balance</span><b>${peso(s.adv)}</b></div>`).join('')||'<div class="unit">No unpaid cash advance.</div>'}
+  <h4>Recent</h4>${PY.advances.map(a=>`<div class="posx-row"><span>${day(a.d)} · ${esc(a.name)} <small class="unit">${esc(a.note)}</small></span><b>${peso(a.amt)} <button class="del" data-pyadvdel="${a.id}">✕</button></b></div>`).join('')||'<div class="unit">None.</div>'}
+  <div class="unit">The balance is deducted from the next payroll (you can change the amount there).</div>`}
+function pyHol(){return `<div class="row-end" style="justify-content:flex-start"><button class="go sm" data-pyholadd>+ Holiday</button></div>
+  ${PY.holidays.sort((a,b)=>a.d<b.d?-1:1).map(h=>`<div class="posx-row"><span>${day(h.d)} · <b>${esc(h.name)}</b> ${badge(h.type==='regular'?'Regular':'Special',h.type==='regular'?'red':'amber')}</span><button class="del" data-pyholdel="${h.d}">✕</button></div>`).join('')||'<div class="unit">No holidays yet — add the national / local holidays you follow.</div>'}`}
+function pyRem(){return PY.runs.map(r=>`<div class="pocard"><div class="poh"><b>${day(r.from)} – ${day(r.to)}</b><span class="unit">· net pay ${peso(r.net)} · released ${stamp(r.at)}</span><span style="flex:1"></span>${r.remitted?badge('Remitted '+stamp(r.remitted.at),'green'):`<b>${peso(r.contrib)}</b> <button class="go sm" data-pyrem="${r.id}">Mark remitted</button>`}</div></div>`).join('')||'<div class="unit">No payroll released yet.</div>'}
+function pyDialog(kind,id){const box=stBox(),acc=PY.accounts,staff=PY.staff.filter(s=>s.set&&s.active);let H='';
+  if(kind==='staff'){const s=PY.staff.find(x=>x.id===id);H=`<h2>👥 ${esc(s.name)}</h2><div class="fgrid">
+    <label>Pay type<select class="edit-in" id="ps-type"><option value="daily"${s.type==='daily'?' selected':''}>Daily rate</option><option value="monthly"${s.type==='monthly'?' selected':''}>Monthly rate</option></select></label><label>Rate (₱)<input class="edit-in nq" type="number" step="0.01" id="ps-rate" value="${s.rate||''}"></label>
+    <label>Time in<input class="edit-in" type="time" id="ps-in" value="${s.tin}"></label><label>Time out<input class="edit-in" type="time" id="ps-out" value="${s.tout}"></label><label>Break (minutes)<input class="edit-in nq" type="number" id="ps-brk" value="${s.brk}"></label><label>Rest day(s)<input class="edit-in" id="ps-rest" value="${esc(s.rest)}" placeholder="Sun"></label>
+    <label>SSS / month (employee)<input class="edit-in nq" type="number" step="0.01" id="ps-sss" value="${s.sss}"></label><label>SSS / month (employer)<input class="edit-in nq" type="number" step="0.01" id="ps-sssEr" value="${s.sssEr}"></label>
+    <label>PhilHealth / month (employee)<input class="edit-in nq" type="number" step="0.01" id="ps-ph" value="${s.ph}"></label><label>PhilHealth / month (employer)<input class="edit-in nq" type="number" step="0.01" id="ps-phEr" value="${s.phEr}"></label>
+    <label>Pag-IBIG / month (employee)<input class="edit-in nq" type="number" step="0.01" id="ps-hdmf" value="${s.hdmf}"></label><label>Pag-IBIG / month (employer)<input class="edit-in nq" type="number" step="0.01" id="ps-hdmfEr" value="${s.hdmfEr}"></label>
+    <label class="full chk2"><input type="checkbox" id="ps-owner"${s.owner?' checked':''}> Owner — fixed pay (no attendance), recorded as Owner's salary</label><label class="full chk2"><input type="checkbox" id="ps-act"${s.active?' checked':''}> Active (include in payroll)</label></div>
+    <div class="row-end"><button class="btn" id="ps-auto">Auto contributions</button><button class="btn" data-x>Cancel</button><button class="go" id="py-ok">Save</button></div>`}
+  else if(kind==='att'){const a=PY.attendance.find(x=>x.id===id)||{};H=`<h2>🕘 ${id?'Correct':'Add'} time record</h2><div class="fgrid"><label>Staff<select class="edit-in" id="pa-u">${staff.map(s=>`<option value="${s.id}"${a.uid===s.id?' selected':''}>${esc(s.name)}</option>`).join('')}</select></label><label>Date<input class="edit-in" type="date" id="pa-d" value="${esc(a.d||today())}"></label>
+    <label>Time in<input class="edit-in" type="time" id="pa-in" value="${a.tin||''}"></label><label>Break out<input class="edit-in" type="time" id="pa-bo" value="${a.bout||''}"></label><label>Break in<input class="edit-in" type="time" id="pa-bi" value="${a.bin||''}"></label><label>Time out<input class="edit-in" type="time" id="pa-out" value="${a.tout||''}"></label>
+    <label class="full">Reason<input class="edit-in" id="pa-n" placeholder="e.g. forgot to time out"></label></div><div class="row-end">${id?'<button class="btn" id="py-del" style="color:var(--rose)">Delete</button>':''}<button class="btn" data-x>Cancel</button><button class="go" id="py-ok">Save</button></div>`}
+  else if(kind==='adv')H=`<h2>💸 Cash advance</h2><div class="fgrid"><label>Staff<select class="edit-in" id="pv-u">${staff.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('')}</select></label><label>Date<input class="edit-in" type="date" id="pv-d" value="${today()}"></label><label>Amount (₱)<input class="edit-in nq" type="number" step="0.01" id="pv-a"></label><label>Paid from<select class="edit-in" id="pv-f">${acc.map(a=>`<option value="${a.id}">${esc(a.name)}</option>`).join('')}</select></label><label class="full">Note<input class="edit-in" id="pv-n"></label></div><div class="row-end"><button class="btn" data-x>Cancel</button><button class="go" id="py-ok">Save</button></div>`;
+  else if(kind==='hol')H=`<h2>📅 Holiday</h2><div class="fgrid"><label>Date<input class="edit-in" type="date" id="ph-d"></label><label>Type<select class="edit-in" id="ph-t"><option value="regular">Regular holiday</option><option value="special">Special non-working day</option></select></label><label class="full">Name<input class="edit-in" id="ph-n" placeholder="e.g. Bonifacio Day"></label></div><div class="row-end"><button class="btn" data-x>Cancel</button><button class="go" id="py-ok">Save</button></div>`;
+  $('#stb').innerHTML=H;box.classList.add('on');const v=i=>{const e=$('#'+i);return e?e.value:''},ck=i=>{const e=$('#'+i);return !!(e&&e.checked)};
+  const save=async(k,x,del)=>{x.from=PYfrom;x.to=PYto;x.ovs=PYov;try{PY=await api('api_paySave',session.token,k,x,!!del);box.classList.remove('on');toast('Saved');drawStock()}catch(e){alert(errMsg(e))}};
+  if($('#ps-auto'))$('#ps-auto').onclick=()=>{const r=+v('ps-rate'),m=v('ps-type')==='monthly'?r:r*26,msc=Math.min(35000,Math.max(5000,Math.round(m/500)*500)),ph=Math.min(100000,Math.max(10000,m)),hd=Math.min(10000,m);
+    [['ps-sss',msc*.05],['ps-sssEr',msc*.1],['ps-ph',ph*.025],['ps-phEr',ph*.025],['ps-hdmf',hd*.02],['ps-hdmfEr',hd*.02]].forEach(([k,x])=>$('#'+k).value=r2(x));toast('Filled with the 2025 rates — please check')};
+  if($('#py-del'))$('#py-del').onclick=()=>{if(confirm('Delete this time record?'))save('att',{id},true)};
+  $('#py-ok').onclick=()=>{
+    if(kind==='staff'){const s=PY.staff.find(x=>x.id===id);save('staff',{id,name:s.name,type:v('ps-type'),rate:v('ps-rate'),tin:v('ps-in'),tout:v('ps-out'),brk:v('ps-brk'),rest:v('ps-rest'),sss:v('ps-sss'),sssEr:v('ps-sssEr'),ph:v('ps-ph'),phEr:v('ps-phEr'),hdmf:v('ps-hdmf'),hdmfEr:v('ps-hdmfEr'),owner:ck('ps-owner'),active:ck('ps-act')})}
+    else if(kind==='att')save('att',{id,uid:v('pa-u'),d:v('pa-d'),tin:v('pa-in'),bout:v('pa-bo'),bin:v('pa-bi'),tout:v('pa-out'),note:v('pa-n')});
+    else if(kind==='adv')save('advance',{uid:v('pv-u'),d:v('pv-d'),amt:v('pv-a'),from:v('pv-f'),note:v('pv-n')});
+    else save('holiday',{d:v('ph-d'),type:v('ph-t'),name:v('ph-n')})}}
+function payslipHTML(l,from,to){const R=(t,v,neg)=>`<tr><td>${t}</td><td style="text-align:right">${neg?'−':''}${peso(v)}</td></tr>`;
+  return `<div style="font-family:monospace;max-width:340px;margin:auto"><h3 style="text-align:center;margin:0">3F MEATSHOP</h3><p style="text-align:center;margin:2px 0"><b>PAYSLIP</b><br>${day(from)} – ${day(to)}</p><hr><p><b>${esc(l.name)}</b><br>${l.type==='daily'?peso(l.rate)+' / day':peso(l.rate)+' / month'} · ${l.days} day(s) worked${l.absent?' · '+l.absent+' absent':''}</p>
+  <table style="width:100%">${R('Basic pay',l.basic)}${l.holPay?R('Holiday pay',l.holPay):''}${l.restPay?R('Rest day pay',l.restPay):''}${l.otPay?R('Overtime ('+Math.round(l.otMin/6)/10+' h)',l.otPay):''}${l.adj>0?R('Additions',l.adj):''}${l.lateDed?R('Late / undertime ('+(l.lateMin+l.utMin)+' min)',l.lateDed,1):''}
+  <tr><td><b>GROSS PAY</b></td><td style="text-align:right"><b>${peso(l.gross)}</b></td></tr>${l.sss?R('SSS',l.sss,1):''}${l.ph?R('PhilHealth',l.ph,1):''}${l.hdmf?R('Pag-IBIG',l.hdmf,1):''}${l.adv?R('Cash advance',l.adv,1):''}${l.otherDed?R('Other deductions',l.otherDed,1):''}
+  <tr><td><b>NET PAY</b></td><td style="text-align:right;font-size:17px"><b>${peso(l.net)}</b></td></tr></table><p style="margin-top:20px">Received by: ____________________</p></div>`}
+function showSlip(l,from,to){const box=stBox();$('#stb').innerHTML=`<h2>💵 Payslip</h2>${payslipHTML(l,from,to)}<div class="row-end"><button class="btn" id="sl-pr">🖨 Print</button><button class="go" data-x>Close</button></div>`;box.classList.add('on');$('#sl-pr').onclick=()=>{$('#print').innerHTML=payslipHTML(l,from,to);window.print()}}
+/* ---------- OWNER › COLLECT & PAY ---------- */
+function owCollect(){const O=OW,cust={},B=[['Not yet due',a=>a.over===0],['1–30 days late',a=>a.over>0&&a.over<=30],['31–60 days late',a=>a.over>30&&a.over<=60],['Over 60 days',a=>a.over>60]];
+  O.ar.forEach(a=>{const c=cust[a.customer]=cust[a.customer]||{name:a.customer,b:[0,0,0,0],t:0};B.forEach(([,f],i)=>{if(f(a))c.b[i]+=a.balance});c.t+=a.balance});
+  const C=Object.values(cust).sort((a,b)=>b.t-a.t),tb=B.map((_,i)=>C.reduce((s,c)=>s+c.b[i],0));
+  return `<div class="panel"><div class="poh"><h3 style="margin:0">📥 Receivables — who owes you</h3><span style="flex:1"></span><label class="unit">Charge terms <input class="edit-in nq" type="number" data-owterms value="${O.termDays}" style="width:70px"> days</label></div>
+    <div class="sc"><table class="stbl"><thead><tr><th>Customer</th>${B.map(([t])=>`<th class="r">${t}</th>`).join('')}<th class="r">Total</th></tr></thead><tbody>
+    ${C.map(c=>`<tr><td><b>${esc(c.name)}</b></td>${c.b.map((v,i)=>`<td class="r" style="${i>=2&&v?'color:var(--rose);font-weight:800':''}">${v?peso(v):'—'}</td>`).join('')}<td class="r"><b>${peso(c.t)}</b></td></tr>`).join('')||'<tr><td colspan="6" class="empty">Nobody owes you. 👍</td></tr>'}
+    ${C.length?`<tr class="srtot"><td><b>Total</b></td>${tb.map(v=>`<td class="r">${peso(v)}</td>`).join('')}<td class="r"><b>${peso(O.bs.ar)}</b></td></tr>`:''}</tbody></table></div>
+    <details><summary class="unit"><b>Every unpaid receipt</b></summary>${O.ar.map(a=>`<div class="posx-row"><span>${esc(a.customer)} · ${esc(a.no)}${a.dr?' · '+esc(a.dr):''} <small class="unit">${day(iso(new Date(a.at)))} · due ${day(a.due)}${a.over?` · <b style="color:var(--rose)">${a.over} day(s) late</b>`:''}</small></span><b>${peso(a.balance)}</b></div>`).join('')}</details>
+    <div class="unit">Payments are recorded by the cashier in POS › 💳 Unpaid.</div></div>
+    <div class="panel"><h3>📤 Payables — supplier bills on charge</h3>${O.ap.map(a=>{const late=a.due&&a.due<today();return `<div class="posx-row"><span><b>${esc(a.supplier)}</b> · ${esc(a.no)} <small class="unit">${a.received?'received':'not received yet'} · due ${a.due?day(a.due):'—'}${late?' · <b style="color:var(--rose)">overdue</b>':''}</small></span><b>${peso(a.amount)} ${a.received?`<button class="go sm" data-owpay="${a.id}">Pay</button>`:''}</b></div>`}).join('')||'<div class="unit">No unpaid supplier bill.</div>'}</div>`}
 /* ---------- INVENTORY ---------- */
 function invHTML(){
   const mgr=can('invEdit'),cats=[...new Set(ST.products.map(p=>p.cat))].sort();
@@ -2754,7 +2963,7 @@ function resetSale(){cart=[];posSel=-1;posDisc='';posDiscO=null;posVoids=[];posC
 function posTools(){const n=posHolds().length;
   return `<div class="posx-tools"><button data-ptool="hold" ${cart.length?'':'disabled'}>⏸ Hold</button><button data-ptool="recall" ${n?'':'disabled'}>▶ Recall${n?` <i>${n}</i>`:''}</button>
     <button data-ptool="disc" ${cart.length?'':'disabled'}>🏷 Discount</button><button data-ptool="price" ${cart.length?'':'disabled'}>✏️ Change price</button><button data-ptool="void" ${cart.length?'':'disabled'}>✕ Void item</button>
-    <span class="sp"></span><button data-ptool="x">🧾 X reading</button><button data-ptool="z" class="zr">🔒 Z reading</button></div>`}
+    <span class="sp"></span><button data-ptool="rsetup" title="Receipt printer">🖨</button><button data-ptool="cash">💸 Cash in/out</button><button data-ptool="x">🧾 X reading</button><button data-ptool="z" class="zr">🔒 Z reading</button></div>`}
 function denomHTML(){return `<div class="den"><table class="stbl"><thead><tr><th>Bills / coins</th><th style="width:110px">How many</th><th class="r">Amount</th></tr></thead><tbody>
   ${DEN.map(v=>`<tr><td><b>₱${v<1?'0.25':v.toLocaleString()}</b> <small class="unit">${v>=20&&v!==20?'bill':v===20?'bill / coin':'coin'}</small></td><td><input class="edit-in nq" type="number" min="0" step="1" inputmode="numeric" data-den="${v}" placeholder="0"></td><td class="r" data-dena="${v}">—</td></tr>`).join('')}
   <tr class="srtot"><td><b>TOTAL CASH</b></td><td></td><td class="r"><b id="den-t">₱0.00</b></td></tr></tbody></table></div>`}
@@ -2763,16 +2972,6 @@ document.addEventListener('input',e=>{const i=e.target;if(!i.dataset||!i.dataset
 function denomWire(root){return;root.addEventListener('input',e=>{const i=e.target;if(!i.dataset.den)return;const n=Math.max(0,Math.round(+i.value||0)),a=root.querySelector(`[data-dena="${i.dataset.den}"]`);if(a)a.textContent=n?peso(n*(+i.dataset.den)):'—';const t=root.querySelector('#den-t');if(t)t.textContent=peso(denomRead(root).total)})}
 function openCashHTML(){return `<div class="panel opencash"><h2>💵 Open the cash drawer</h2><div class="unit">Count the opening cash (change fund) before the first sale.</div>${denomHTML()}
   <div class="row-end"><button class="go" data-ptool="open">✓ Open drawer & start selling</button></div></div>`}
-function readingHTML(R){const L=(t,v,b)=>`<tr><td>${t}</td><td style="text-align:right">${b?'<b>':''}${v}${b?'</b>':''}</td></tr>`,P=n=>peso(n),tm=t=>new Date(t).toLocaleString('en-PH',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
-  return `<div class="zrep" style="font-family:monospace;max-width:340px;margin:auto"><h3 style="margin:0;text-align:center">3F MEATSHOP</h3><p style="text-align:center;margin:2px 0;font-size:17px"><b>${R.kind==='Z'?'Z READING '+esc(R.z):'X READING'}</b></p>
-  <p style="text-align:center;margin:2px 0">${esc(R.shift)} · ${tm(R.from)} – ${tm(R.to)}<br>opened by ${esc(R.openBy)} · by ${esc(R.by)}</p><hr>
-  <table style="width:100%">${L('Receipts',R.receipts+(R.first?` (${esc(R.first)}–${esc(R.last)})`:''))}${L('Gross sales',P(R.gross))}${L('Less SC / PWD discount',P(R.scpwd))}${L('Less other discounts',P(R.otherDisc))}${L('Less returns',P(R.returns))}${L('NET SALES',P(R.net),1)}</table><hr>
-  <table style="width:100%"><tr><td colspan="2"><b>Payments</b></td></tr>${Object.keys(R.pay).map(k=>L(esc(k),P(R.pay[k]))).join('')||L('—','')}
-  ${Object.keys(R.collections).length?'<tr><td colspan="2"><b>Terms collected</b></td></tr>'+Object.keys(R.collections).map(k=>L(esc(k),P(R.collections[k]))).join(''):''}</table><hr>
-  <table style="width:100%">${L('Voided sales',R.voids+' · '+P(R.voidAmt))}${L('Voided items',R.lineVoids+' · '+P(R.lineVoidAmt))}${L('Price changes',R.priceChanges+' · '+P(R.priceChangeAmt)+' less')}${L('Refunds (cash)',P(R.refunds))}</table><hr>
-  <table style="width:100%"><tr><td colspan="2"><b>Cash drawer</b></td></tr>${L('Opening cash',P(R.opening))}${L('+ Cash sales',P(R.cashSales))}${L('+ Cash collected (terms)',P(R.cashColl))}${L('− Cash refunds',P(R.refunds))}${L('EXPECTED CASH',P(R.expected),1)}
-  ${R.kind==='Z'?L('Counted cash',P(R.counted),1)+`<tr><td><b>${R.overShort<0?'SHORT':R.overShort>0?'OVER':'BALANCED'}</b></td><td style="text-align:right"><b style="color:${R.overShort<0?'#B42318':R.overShort>0?'#B45309':'#15803D'}">${P(R.overShort)}</b></td></tr>`:''}</table>
-  ${R.note?`<p>Note: ${esc(R.note)}</p>`:''}</div>`}
 function holdSale(){if(!cart.length)return;const cu=(ST.bulk||[]).find(c=>c.id===posCust);
   const lbl=prompt('Name for this held sale (customer / note):',cu?cu.name:'Customer '+(posHolds().length+1));if(lbl==null)return;
   setHolds(posHolds().concat([{id:uid(),at:Date.now(),label:lbl||'Held sale',cart,posDiscO,posCust,posPrice,posOrder,posVoids,total:cartTotal()}]));resetSale();drawStock();toast('⏸ Sale held — ▶ Recall to continue')}
@@ -2818,20 +3017,62 @@ function voidSaleDialog(no){const box=stBox(),mgr=me.role==='manager';
     $('#vs-ok').disabled=true;try{ST=await api('api_posVoid',session.token,no,why,pin);stCache();box.classList.remove('on');toast('Sale '+no+' voided');drawStock()}catch(e){alert(errMsg(e));$('#vs-ok').disabled=false}}}
 function showReading(R){const box=stBox();$('#stb').innerHTML=`<h2>${R.kind==='Z'?'🔒 Z reading '+esc(R.z)+' — drawer closed':'🧾 X reading'}</h2>${readingHTML(R)}
   <div class="row-end"><button class="btn" id="zr-pr">🖨 Print</button><button class="go" data-x>Close</button></div>`;box.classList.add('on');$('#zr-pr').onclick=()=>{$('#print').innerHTML=readingHTML(R);window.print()}}
+const PAYK=[['Cash','💵'],['GCash','📱'],['Maya','💳'],['Bank transfer','🏦'],['Charge','🗓']];
+function readingHTML(R){const L=(t,v,b,cls)=>`<tr${cls?` class="${cls}"`:''}><td>${b?'<b>':''}${t}${b?'</b>':''}</td><td style="text-align:right">${b?'<b>':''}${v}${b?'</b>':''}</td></tr>`,P=n=>peso(n),H=t=>`<tr><td colspan="2" style="padding-top:6px"><b>${t}</b></td></tr>`,tm=t=>new Date(t).toLocaleString('en-PH',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'});
+  const pay=R.pay||{},os=R.overShort,tally=R.kind!=='Z'?'':os<0?`SHORT ${P(-os)}`:os>0?`OVER ${P(os)}`:'✓ BALANCED';
+  return `<div class="zrep" style="font-family:monospace;max-width:360px;margin:auto;font-size:13px"><h3 style="margin:0;text-align:center">3F MEATSHOP</h3><p style="text-align:center;margin:2px 0;font-size:17px"><b>${R.kind==='Z'?'Z READING · '+esc(R.z):'X READING (not closed)'}</b></p>
+  <p style="text-align:center;margin:2px 0">${esc(R.shift)}<br>${tm(R.from)} – ${tm(R.to)}<br>Opened by ${esc(R.openBy)} · ${R.kind==='Z'?'closed':'printed'} by ${esc(R.by)}</p><hr>
+  <table style="width:100%">${H('SALES')}${L('Receipts',R.receipts+(R.first?` (${esc(R.first)} – ${esc(R.last)})`:''))}${L('Gross sales',P(R.gross))}${L('Less SC / PWD discount',P(R.scpwd))}${L('Less other discounts',P(R.otherDisc))}${L('Less returns',P(R.returns))}${L('NET SALES',P(R.net),1)}${L('Average per receipt',P(R.avg||0))}</table><hr>
+  <table style="width:100%">${H('SALES BY PAYMENT')}${PAYK.map(([k,i])=>L(i+' Total '+k+(k==='Charge'?' (unpaid)':''),P(pay[k]||0))).join('')}${L('TOTAL',P(PAYK.reduce((a,[k])=>a+(pay[k]||0),0)),1)}
+  ${Object.keys(R.collections||{}).length?H('CHARGE PAYMENTS COLLECTED')+Object.keys(R.collections).map(k=>L(esc(k),P(R.collections[k]))).join(''):''}</table><hr>
+  <table style="width:100%">${H('ADJUSTMENTS')}${L('Voided sales',R.voids+' · '+P(R.voidAmt))}${L('Voided items',R.lineVoids+' · '+P(R.lineVoidAmt))}${L('Price changes',R.priceChanges+' · −'+P(R.priceChangeAmt))}${L('Returns / refunds (cash)',P(R.refunds))}</table><hr>
+  <table style="width:100%">${H('CASH IN / OUT OF DRAWER')}${(R.moves||[]).map(m=>L(`${m.kind==='in'?'+ In':'− Out'} · ${esc(m.note)}<br><small>${esc(m.cat)} · ${esc(m.by)} ${stampShort(m.at)}</small>`,(m.kind==='in'?'+':'−')+P(m.amount))).join('')||L('None','—')}
+  ${L('Total cash in','+'+P(R.cashIn||0))}${L('Total cash out','−'+P(R.cashOut||0))}${Object.keys(R.outByCat||{}).map(k=>L('&nbsp;&nbsp;'+esc(k),P(R.outByCat[k]))).join('')}</table><hr>
+  <table style="width:100%">${H('CASH DRAWER TALLY')}${L('Opening cash',P(R.opening))}${L('+ Cash sales',P(R.cashSales))}${L('+ Charge payments in cash',P(R.cashColl))}${L('+ Cash in',P(R.cashIn||0))}${L('− Cash out',P(R.cashOut||0))}${L('− Cash refunds',P(R.refunds))}${L('EXPECTED CASH',P(R.expected),1)}
+  ${R.kind==='Z'?L('COUNTED CASH',P(R.counted),1)+`<tr><td><b>TALLY</b></td><td style="text-align:right;font-size:16px"><b style="color:${os<0?'#B42318':os>0?'#B45309':'#15803D'}">${tally}</b></td></tr>`:''}</table>
+  ${R.kind==='Z'&&R.countDenoms&&Object.keys(R.countDenoms).length?`<hr><table style="width:100%">${H('CASH COUNT')}${Object.keys(R.countDenoms).sort((a,b)=>b-a).map(d=>L(`₱${+d<1?'0.25':(+d).toLocaleString()} × ${R.countDenoms[d]}`,P(d*R.countDenoms[d]))).join('')}</table>`:''}
+  ${R.kind==='Z'?`<hr><table style="width:100%">${L('Old grand total',P(R.oldGT||0))}${L('New grand total',P(R.newGT||0),1)}</table>`:''}
+  ${R.note?`<p>Note: ${esc(R.note)}</p>`:''}${R.kind==='Z'?'<p style="text-align:center;margin-top:16px">_______________________<br>Cashier signature<br><br>_______________________<br>Checked by (manager)</p>':''}</div>`}
+function zSummaryHTML(X){const pay=X.pay||{};
+  return `<div class="zsum"><div class="zs-net"><span>Net sales</span><b>${peso(X.net)}</b><small>${X.receipts} receipt(s)</small></div>
+    <div class="zs-grid">${PAYK.map(([k,i])=>`<div><span>${i} Total ${k}</span><b>${peso(pay[k]||0)}</b></div>`).join('')}
+      <div><span>💸 Cash out</span><b>−${peso(X.cashOut||0)}</b></div><div><span>➕ Cash in</span><b>+${peso(X.cashIn||0)}</b></div></div>
+    <div class="zs-exp">Expected cash in drawer: <b>${peso(X.expected)}</b><br><small>opening ${peso(X.opening)} + cash sales ${peso(X.cashSales)} + charge paid in cash ${peso(X.cashColl)} + cash in ${peso(X.cashIn||0)} − cash out ${peso(X.cashOut||0)} − refunds ${peso(X.refunds)}</small></div></div>`}
 async function zDialog(){if(posQueue().length){await posFlush();if(posQueue().length)return alert('Some sales are not sent yet. Connect to the internet first, then do the Z reading.')}
   if(cart.length||posHolds().length)if(!confirm('There is a sale on screen or held. Close the day anyway?'))return;
   let X;try{X=await api('api_posX',session.token)}catch(e){return alert(errMsg(e))}
-  const box=stBox();$('#stb').innerHTML=`<h2>🔒 Z reading — close the day</h2><div class="snote">Net sales <b>${peso(X.net)}</b> · ${X.receipts} receipt(s) · expected cash in drawer <b>${peso(X.expected)}</b></div>
-    <div class="unit" style="margin:6px 0">Count all the cash in the drawer:</div><div id="zden">${denomHTML()}</div>
-    <div class="fgrid"><label class="full">Note (optional)<input class="edit-in" id="z-n"></label></div>
-    <div class="row-end"><button class="btn" data-x>Cancel</button><button class="go" id="z-ok">🔒 Close day & print Z reading</button></div>`;box.classList.add('on');denomWire($('#zden'));
-  $('#z-ok').onclick=async()=>{const c=denomRead($('#zden'));if(!confirm(`Counted cash ${peso(c.total)} · expected ${peso(X.expected)}.\nClose the day now? Selling stops until the drawer is opened again.`))return;
+  const box=stBox();$('#stb').innerHTML=`<h2>🔒 Z reading — close the day</h2>${zSummaryHTML(X)}
+    <div class="unit" style="margin:10px 0 6px"><b>Count all the cash in the drawer:</b></div><div id="zden">${denomHTML()}</div>
+    <div class="ztally" id="z-tally"></div>
+    <div class="fgrid"><label class="full">Note (optional — e.g. reason for over / short)<input class="edit-in" id="z-n"></label></div>
+    <div class="row-end"><button class="btn" data-x>Cancel</button><button class="go" id="z-ok">🔒 Close day & print Z reading</button></div>`;box.classList.add('on');
+  const live=()=>{const c=denomRead($('#zden')),d=r2(c.total-X.expected),t=$('#z-tally');t.className='ztally '+(Math.abs(d)<0.005?'ok':d<0?'bad':'warn');
+    t.innerHTML=`<span>Counted <b>${peso(c.total)}</b> vs expected <b>${peso(X.expected)}</b></span><b>${Math.abs(d)<0.005?'✓ BALANCED':d<0?'SHORT '+peso(-d):'OVER '+peso(d)}</b>`};
+  live();$('#zden').addEventListener('input',()=>setTimeout(live,0));
+  $('#z-ok').onclick=async()=>{const c=denomRead($('#zden')),d=r2(c.total-X.expected);
+    if(Math.abs(d)>=0.005&&!$('#z-n').value.trim()){alert(`Cash is ${d<0?'SHORT':'OVER'} by ${peso(Math.abs(d))}. Type the reason in the note first.`);$('#z-n').focus();return}
+    if(!confirm(`Counted cash ${peso(c.total)} · expected ${peso(X.expected)}.\nClose the day now? Selling stops until the drawer is opened again.`))return;
     $('#z-ok').disabled=true;try{const R=await api('api_posZ',session.token,c.denoms,$('#z-n').value);try{ST=await api('api_stock',session.token);ST.offline=false;stCache()}catch(_){}box.classList.remove('on');drawStock();showReading(R)}catch(e){alert(errMsg(e));$('#z-ok').disabled=false}}}
+function cashMoveDialog(){const box=stBox(),cats=ST.cashOutCats||['Expense (ice, fare, supplies…)','Purchase of stock (COGS)','Cash pickup / bank deposit','Other'],mv=(ST.shift&&ST.shift.moves)||[];let kind='out';
+  const draw=()=>{$('#stb').innerHTML=`<h2>💸 Cash in / out of the drawer</h2>
+    <div class="td-m" style="grid-template-columns:1fr 1fr"><button data-ck2="out" class="${kind==='out'?'on':''}"><span>➖</span>Cash out</button><button data-ck2="in" class="${kind==='in'?'on':''}"><span>➕</span>Cash in</button></div>
+    <div class="fgrid"><label>Amount (₱)<input class="edit-in td-in" id="cm-a" type="number" step="0.01" inputmode="decimal"></label>
+      <label>${kind==='out'?'Type':'Why'}<select class="edit-in" id="cm-c">${(kind==='out'?cats:['Add change fund','Other']).map(c=>`<option>${esc(c)}</option>`).join('')}</select></label>
+      <label class="full">What for / note<input class="edit-in" id="cm-n" placeholder="${kind==='out'?'e.g. ice 2 sacks, fare to supplier':'e.g. more coins for change'}"></label></div>
+    <div class="unit">${kind==='out'?'Cash out lowers the expected cash in the Z reading. <b>Purchase of stock</b> = buying meat to sell (cost of goods); <b>Expense</b> = shop expenses.':'Cash in raises the expected cash in the Z reading.'}</div>
+    ${mv.length?`<h4 style="margin:12px 0 4px">Today</h4>${mv.map(m=>`<div class="posx-row"><span>${stampShort(m.at)} ${m.kind==='in'?'➕':'➖'} ${esc(m.note)} <small class="unit">${esc(m.cat)}</small></span><b>${peso(m.amount)}</b></div>`).join('')}`:''}
+    <div class="row-end"><button class="btn" data-x>Close</button><button class="go" id="cm-ok">Save</button></div>`;
+    $('#stb').querySelectorAll('[data-ck2]').forEach(b=>b.onclick=()=>{kind=b.dataset.ck2;draw()});
+    $('#cm-ok').onclick=async()=>{const a=+$('#cm-a').value,n=$('#cm-n').value.trim();if(!(a>0))return alert('Type the amount.');if(!n)return alert('Type what the cash is for.');
+      $('#cm-ok').disabled=true;try{ST=await api('api_posCashMove',session.token,kind,a,$('#cm-c').value,n);stCache();box.classList.remove('on');toast((kind==='out'?'➖ Cash out ':'➕ Cash in ')+peso(a)+' saved');drawStock()}catch(e){alert(errMsg(e));$('#cm-ok').disabled=false}}};
+  draw();box.classList.add('on')}
 async function posTool(t,b){
   if(t==='hold')return holdSale();if(t==='recall')return recallDialog();if(t==='disc')return discDialog();if(t==='price')return priceDialog();
   if(t==='void')return voidItem(posSel>=0?posSel:cart.length-1);
   if(t==='x'){b.disabled=true;try{showReading(await api('api_posX',session.token))}catch(e){alert(errMsg(e))}b.disabled=false;return}
   if(t==='z')return zDialog();
+  if(t==='cash')return cashMoveDialog();
+  if(t==='rsetup')return receiptSetup();
   if(t==='open'){const c=denomRead(document.querySelector('.opencash'));if(!confirm(`Opening cash ${peso(c.total)}. Open the drawer?`))return;b.disabled=true;
     try{ST=await api('api_posOpen',session.token,c.denoms);ST.offline=false;stCache();toast('💵 Drawer open — '+peso(c.total));drawStock()}catch(e){alert(errMsg(e));b.disabled=false}}}
 const cartTotal=()=>r2(subTotal()-discAmt());
@@ -2885,10 +3126,10 @@ function toCashHTML(){const L=(ST.toCash||[]).filter(o=>o.id!==posOrder),U=ST.un
       <input class="edit-in" id="drq" data-k="drq" placeholder="DR number e.g. 007" style="max-width:190px"><button class="go sm" data-drgo>Load</button></div>
       ${L.map(o=>`<div class="pocard"><div class="poh"><b class="drno">${esc(o.dr)}</b> <b>${esc(o.customer)}</b> <span class="unit">· deliver ${day(o.delivery)}</span>${o.delivered?' '+badge('Delivered','green'):o.dispatched?' '+badge('On the way','violet'):' '+badge('Ready','amber')}${o.returnPending?' '+badge('↩ return waiting for approval','red'):''}<span style="flex:1"></span><button class="go sm" data-pload="${o.id}" ${o.returnPending?'disabled title="Wait for the manager to approve the return"':''}>Bill</button></div>
         <div class="unit">${o.items.map(i=>`${esc(i.product)} <b>${qf(i.qty)} ${esc(i.unit)}</b>`).join(' · ')}</div></div>`).join('')||'<div class="unit">No DR waiting. A DR appears here when Operations finishes checking an order.</div>'}</div>
-    ${U.length?`<details class="panel" open><summary><b>💳 Unpaid — terms (${U.length})</b> <span class="unit">total ${peso(U.reduce((a,x)=>a+x.balance,0))}</span></summary>${U.map(x=>`<div class="pocard"><div class="poh"><b>${esc(x.no)}</b>${x.dr?' · '+esc(x.dr):''} · <b>${esc(x.customer)}</b><span class="unit">· ${stamp(x.at)} · total ${peso(x.total)}</span><span style="flex:1"></span><b style="color:var(--rose)">${peso(x.balance)}</b> <button class="btn sm" data-ppay="${esc(x.no)}">Record payment</button></div></div>`).join('')}</details>`:''}`}
+    ${U.length?`<details class="panel" open><summary><b>💳 Unpaid — charge (${U.length})</b> <span class="unit">total ${peso(U.reduce((a,x)=>a+x.balance,0))}</span></summary>${U.map(x=>`<div class="pocard"><div class="poh"><b>${esc(x.no)}</b>${x.dr?' · '+esc(x.dr):''} · <b>${esc(x.customer)}</b><span class="unit">· ${stamp(x.at)} · total ${peso(x.total)}</span><span style="flex:1"></span><b style="color:var(--rose)">${peso(x.balance)}</b> <button class="btn sm" data-ppay="${esc(x.no)}">Record payment</button></div></div>`).join('')}</details>`:''}`}
 function payDialog(no){const x=(ST.unpaid||[]).find(z=>z.no===no);if(!x)return;const box=stBox();
   $('#stb').innerHTML=`<h2>💳 Payment — ${esc(x.customer)}</h2><div class="unit">Receipt <b>${esc(x.no)}</b>${x.dr?' · '+esc(x.dr):''} · total ${peso(x.total)} · <b>balance ${peso(x.balance)}</b></div>
-    <div class="fgrid"><label>Amount (₱)<input class="edit-in" id="py-a" type="number" step="0.01" value="${x.balance}"></label><label>Method<select class="edit-in" id="py-m"><option>Cash</option><option>Bank transfer</option><option>GCash / Maya</option><option>Check</option></select></label>
+    <div class="fgrid"><label>Amount (₱)<input class="edit-in" id="py-a" type="number" step="0.01" value="${x.balance}"></label><label>Method<select class="edit-in" id="py-m"><option>Cash</option><option>GCash</option><option>Maya</option><option>Bank transfer</option><option>Check</option></select></label>
     <label class="full">Reference no. (bank / GCash / check)<input class="edit-in" id="py-r"></label></div>
     <div class="row-end"><button class="btn" data-x>Cancel</button><button class="go" id="py-ok">Save payment</button></div>`;box.classList.add('on');
   $('#py-ok').onclick=async()=>{$('#py-ok').disabled=true;try{ST=await api('api_posPay',session.token,no,$('#py-a').value,$('#py-m').value,$('#py-r').value);stCache();box.classList.remove('on');toast('💳 Payment saved');drawStock()}catch(e){alert(errMsg(e));$('#py-ok').disabled=false}}}
@@ -2902,30 +3143,58 @@ function poLive(){poEdit.items.forEach((l,k)=>{const c=document.querySelector(`[
 function addToCart(code){const p=pBy(code);if(!p)return;const pr=priceOf(p),l=cart.find(x=>x.code===code&&x.price===pr);
   if(l)l.qty=r2((+l.qty||0)+1);else cart.push({code:p.code,name:p.name,unit:p.unit,price:pr,qty:1});posSel=cart.findIndex(x=>x.code===code&&x.price===pr);posQ='';drawStock();
   const x=document.querySelector(`[data-cq="${posSel}"]`);if(x&&p.unit==='Kg'){x.focus();x.select()}else{const s=$('#posq');if(s)s.focus()}}
-function receiptHTML(s){return `<div style="font-family:monospace;max-width:300px"><h3 style="margin:0;text-align:center">3F MEATSHOP</h3>${s.dr?`<p style="text-align:center;margin:2px 0;font-size:18px"><b>${esc(s.dr)}</b></p>`:''}<p style="text-align:center;margin:2px 0">${s.no?(s.status==='return'?'RETURN RECEIPT ':'Receipt ')+esc(s.no):'Sale (not yet sent)'}${s.sale?'<br>for receipt '+esc(s.sale):''}<br>${fullStamp(s.at)}<br>Cashier: ${esc(s.cashier||me.name)}</p>
-  <table style="width:100%;border-collapse:collapse">${s.items.map(i=>`<tr><td>${esc(i.name)}<br>${qf(i.qty)} ${esc(i.unit)} × ${peso(i.price)}${i.orig!=null?' <s>'+peso(i.orig)+'</s>':''}</td><td style="text-align:right;vertical-align:bottom">${peso(i.qty*i.price)}</td></tr>`).join('')}</table><hr>
-  ${s.discount?`<div>${s.disc?esc(discLabel(s.disc)):'Discount'}: −${peso(s.discount)}</div>`:''}<div style="font-size:18px"><b>TOTAL ${peso(s.total)}</b></div><div>${/^terms/i.test(s.pay||'')?'<b>TERMS — UNPAID</b>':esc(s.pay)}${s.cash?` · cash ${peso(s.cash)} · change ${peso(Math.max(0,s.cash-s.total))}`:''}${s.ref?' · ref '+esc(s.ref):''}</div>
-  <div>Customer: ${esc(s.customer||s.custName||'Walk-in')}${s.pts?` · ⭐ ${s.pts} point(s)`:''}</div><p style="text-align:center">Thank you!</p></div>`}
-function printReceipt(s){$('#print').innerHTML=receiptHTML(s);window.print()}
+/* ---------- RECEIPT (thermal printer 58 / 80 mm) — customer copy + store duplicate ---------- */
+const LOGO_3F='data:image/png;base64,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';
+const RCPT=()=>Object.assign({paper:'80',copies:'2'},(()=>{try{return JSON.parse(localStorage.getItem('fms_rcpt')||'{}')}catch(e){return {}}})());
+function receiptHTML(s,copy,reprint){const I=(ST&&ST.rcpt)||{name:'3F MEATSHOP',line2:'Fresh · Frozen · Fine Cuts',footer:'Thank you for buying! Please come again.',legal:'THIS IS NOT AN OFFICIAL RECEIPT'};
+  const ret=s.status==='return',chg=/^(terms|charge)/i.test(s.pay||''),sub=(s.items||[]).reduce((a,i)=>a+i.qty*i.price,0),n=(s.items||[]).length,P=v=>peso(v).replace('₱','');
+  const row=(l,r,b)=>`<div class="rr${b?' b':''}"><span>${l}</span><span>${r}</span></div>`,dash='<div class="rd"></div>',d=new Date(s.at);
+  const ds=d.toLocaleDateString('en-PH',{month:'2-digit',day:'2-digit',year:'numeric'}),ts=d.toLocaleTimeString('en-PH',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  return `<div class="rcpt">
+  <img class="rl" src="${LOGO_3F}" alt="3F"><div class="rc b rbig">${esc(I.name)}</div>${I.line2?`<div class="rc">${esc(I.line2)}</div>`:''}${I.owner?`<div class="rc">${esc(I.owner)} - Prop.</div>`:''}
+  ${I.address?`<div class="rc">${esc(I.address)}</div>`:''}${I.phone?`<div class="rc">Tel/Cel: ${esc(I.phone)}</div>`:''}${I.tin?`<div class="rc">TIN: ${esc(I.tin)}</div>`:''}
+  ${dash}<div class="rc b">${ret?'RETURN RECEIPT':chg?'CHARGE INVOICE':'SALES RECEIPT'}</div>${reprint?'<div class="rc b">** REPRINT **</div>':''}${dash}
+  ${row('Receipt No.:',esc(s.no||'(not yet sent)'))}${s.dr?row('DR No.:',esc(s.dr)):''}${s.sale?row('For receipt:',esc(s.sale)):''}${row('Date:',ds)}${row('Time:',ts)}${row('Cashier:',esc(s.cashier||me.name))}${row('Customer:',esc(s.customer||s.custName||'Walk-in'))}
+  ${dash}<div class="rr h"><span>ITEM</span><span>AMOUNT</span></div>${dash}
+  ${(s.items||[]).map(i=>`<div class="ri">${esc(i.name)}</div><div class="rr"><span>&nbsp;&nbsp;${qf(i.qty)} ${esc(String(i.unit||'').toLowerCase())} x ${P(i.price)}${i.orig!=null?` <s>${P(i.orig)}</s>`:''}</span><span>${P(i.qty*i.price)}</span></div>`).join('')}
+  ${dash}${row(n+' item(s)','')}${row('SUBTOTAL',P(sub))}
+  ${s.discount?row(esc(s.disc?discLabel(s.disc).replace(/ · ID.*/,'').replace(/ · .*/,''):'Discount'),'-'+P(s.discount)):''}
+  ${row(ret?'TOTAL RETURN':'TOTAL DUE',P(Math.abs(s.total)),1).replace('class="rr b"','class="rr b rbig"')}${dash}
+  ${ret?row('Refund',P(s.refund||0)):chg?row('CHARGE (unpaid)',P(s.total),1):row(esc(s.pay||'Cash'),P(s.cash||s.total))+(s.cash?row('CHANGE',P(Math.max(0,s.cash-s.total)),1):'')+(s.ref?row('Ref. No.:',esc(s.ref)):'')}
+  ${s.disc&&/^(sc|pwd)$/.test(s.disc.kind)?`${dash}<div class="rc b">${s.disc.kind==='sc'?'SENIOR CITIZEN':'PWD'} DISCOUNT</div>${row('Name:',esc(s.disc.name||''))}${row('ID No.:',esc(s.disc.idNo||''))}<div class="rs">Signature: ______________________</div>`:''}
+  ${chg?`${dash}<div class="rs">Received the above in good condition:</div><div class="rs">Name/Signature: _________________</div>`:''}
+  ${s.pts?`${dash}${row('⭐ Points earned',s.pts)}`:''}
+  ${dash}<div class="rc">${esc(I.footer||'')}</div>${I.legal?`<div class="rc b">${esc(I.legal)}</div>`:''}
+  ${copy?`<div class="rcopy">${copy}</div>`:''}</div>`}
+function printReceipt(s,reprint){const C=RCPT(),copies=C.copies==='1'?['CUSTOMER COPY']:['CUSTOMER COPY','STORE COPY — DUPLICATE'];
+  $('#print').className='rp'+(C.paper==='58'?' p58':'');$('#print').innerHTML=copies.map(c=>receiptHTML(s,c,reprint)).join('<div class="rcut">✂ - - - - - - - - - - - - - - - -</div>');window.print();setTimeout(()=>{$('#print').className=''},1500)}
+function receiptSetup(){const C=RCPT(),box=stBox();$('#stb').innerHTML=`<h2>🖨 Receipt printer</h2><div class="fgrid"><label>Paper width<select class="edit-in" id="rs-p"><option value="80"${C.paper==='80'?' selected':''}>80 mm</option><option value="58"${C.paper==='58'?' selected':''}>58 mm</option></select></label>
+  <label>Copies<select class="edit-in" id="rs-c"><option value="2"${C.copies!=='1'?' selected':''}>2 — customer + store duplicate</option><option value="1"${C.copies==='1'?' selected':''}>1 — customer only</option></select></label></div>
+  <div class="unit">Shop name, address, contact no., TIN and the receipt footer are edited in the Google Sheet › <b>Shop Settings</b> (rows starting with "Receipt:").</div><div class="row-end"><button class="btn" data-x>Close</button><button class="go" id="rs-ok">Save</button></div>`;box.classList.add('on');
+  $('#rs-ok').onclick=()=>{try{localStorage.setItem('fms_rcpt',JSON.stringify({paper:$('#rs-p').value,copies:$('#rs-c').value}))}catch(e){}box.classList.remove('on');toast('🖨 Saved for this device')}}
 /* ---------- TENDER: the cashier confirms how the customer pays before the sale is recorded ---------- */
 function tenderDialog(){const total=cartTotal();
   if(!cart.length)return;
   if(cart.some(l=>!(+l.qty>0)))return alert('Check the qty — every line needs a qty.');
   if(total<0)return alert('The discount is bigger than the total.');
-  const short=cart.filter(l=>{const p=pBy(l.code);return p&&+l.qty>p.avail});
-  if(short.length&&!confirm('Stock in the system is lower for: '+short.map(l=>l.name).join(', ')+'. Sell anyway?'))return;
+  const short=cart.filter(l=>{const p=pBy(l.code);return p&&+l.qty>Math.max(0,p.avail)});
+  if(short.length&&!tenderDialog.ovr){const box=stBox();$('#stb').innerHTML=`<h2>⚠ Not enough stock in the system</h2>
+    <div class="sc"><table class="stbl"><thead><tr><th>Item</th><th class="r">In system</th><th class="r">Selling</th><th class="r">Over by</th></tr></thead><tbody>${short.map(l=>{const p=pBy(l.code),a=Math.max(0,p.avail);return `<tr><td><b>${esc(l.name)}</b></td><td class="r">${qf(a)}</td><td class="r">${qf(+l.qty)}</td><td class="r"><b class="bad">${qf(r2(+l.qty-a))} ${esc(l.unit)}</b></td></tr>`}).join('')}</tbody></table></div>
+    <div class="snote">⏳ The <b>over qty</b> is sold now, but its <b>profit is not counted yet</b>. The cost comes from the <b>next receiving</b> (P.O. / live pig) of that item.</div>
+    <div class="row-end"><button class="btn" data-x>Back</button><button class="go" id="ov-ok">Override & sell</button></div>`;box.classList.add('on');
+    $('#ov-ok').onclick=()=>{box.classList.remove('on');tenderDialog.ovr=1;try{tenderDialog()}finally{tenderDialog.ovr=0}};return}
   const box=stBox(),canTerms=!!(posOrder||posCust);let pay=posPay==='terms'&&!canTerms?'cash':posPay,cash=posCash,ref=posRef;
   const quick=[...new Set([total,Math.ceil(total/50)*50,Math.ceil(total/100)*100,Math.ceil(total/500)*500,Math.ceil(total/1000)*1000,Math.ceil(total/1000)*1000+1000])].filter(v=>v>=total).slice(0,6);
   const cu=(ST.bulk||[]).find(c=>c.id===posCust),ord=posOrder&&(ST.toCash||[]).find(x=>x.id===posOrder);
   const draw=()=>{const chg=pay==='cash'&&cash!==''?r2(+cash-total):null;
     $('#stb').innerHTML=`<h2>💳 Tender</h2>
     <div class="td-due"><span>Amount due</span><b>${peso(total)}</b><small>${cart.length} item(s)${discAmt()?' · less '+esc(discLabel(posDiscO))+' '+peso(discAmt()):''} · ${esc(cu?cu.name:ord?ord.customer:'Walk-in')}${ord?' · '+esc(ord.dr):''}</small></div>
-    <div class="td-m">${[['cash','💵','Cash'],['gcash','📱','GCash / Maya'],['bank','🏦','Bank'],['terms','🗓','Terms']].map(([k,i,t])=>`<button data-tm="${k}" class="${pay===k?'on':''}" ${k==='terms'&&!canTerms?'disabled title="Terms is for a DR or a bulk buyer"':''}><span>${i}</span>${t}</button>`).join('')}</div>
+    <div class="td-m">${[['cash','💵','Cash'],['gcash','📱','GCash'],['maya','💳','Maya'],['bank','🏦','Bank transfer'],['terms','🗓','Charge']].map(([k,i,t])=>`<button data-tm="${k}" class="${pay===k?'on':''}" ${k==='terms'&&!canTerms?'disabled title="Charge is for a DR or a bulk buyer"':''}><span>${i}</span>${t}</button>`).join('')}</div>
     ${pay==='cash'?`<label class="td-l">Cash tendered<input class="edit-in td-in" id="td-cash" type="number" step="0.01" inputmode="decimal" value="${esc(cash)}" placeholder="0.00"></label>
       <div class="td-q">${quick.map(v=>`<button data-tq="${v}">${v===total?'Exact':peso(v)}</button>`).join('')}</div>
       <div class="td-chg ${chg!=null&&chg<0?'bad':''}" id="td-chg">${chg==null?'Type the cash received':chg<0?'Short by '+peso(-chg):'CHANGE '+peso(chg)}</div>`
-    :pay==='terms'?`<div class="snote">🗓 <b>Unpaid — on terms.</b> The balance goes to 💳 Unpaid; record the payment when it comes.</div>`
-    :`<label class="td-l">Reference no. (${pay==='gcash'?'GCash / Maya':'bank transfer'})<input class="edit-in td-in" id="td-ref" value="${esc(ref)}" placeholder="required"></label><div class="unit">Check the payment on the phone / bank app before confirming.</div>`}
+    :pay==='terms'?`<div class="snote">🗓 <b>Charge — unpaid.</b> The balance goes to 💳 Unpaid; record the payment when it comes.</div>`
+    :`<label class="td-l">Reference no. (${pay==='gcash'?'GCash':pay==='maya'?'Maya':'bank transfer'})<input class="edit-in td-in" id="td-ref" value="${esc(ref)}" placeholder="required"></label><div class="unit">Check the payment on the phone / bank app before confirming.</div>`}
     <div class="row-end"><button class="btn" data-x>Back</button><button class="go td-ok" id="td-ok">✓ Confirm tender</button></div>`;
     const ok=()=>pay==='cash'?(cash!==''&&+cash>=total):pay==='terms'?true:!!String(ref).trim();$('#td-ok').disabled=!ok();
     const ci=$('#td-cash'),ri=$('#td-ref');
@@ -2943,7 +3212,7 @@ function completeSale(ok){const total=cartTotal();if(!ok)return tenderDialog();
   if(posPay==='terms'&&!posOrder&&!posCust)return alert('Terms is for a DR or a bulk buyer account. Choose the customer first.');
   const cu=(ST.bulk||[]).find(c=>c.id===posCust),ord=posOrder&&(ST.toCash||[]).find(x=>x.id===posOrder);
   const s={cid:'p'+uid()+uid(),at:Date.now(),order:ord?ord.id:'',items:cart.map(l=>({code:l.code,name:l.name,unit:l.unit,qty:+l.qty,price:l.price,...(l.orig!=null?{orig:l.orig,why:l.why}:{})})),disc:posDiscO?{...posDiscO,amount:discAmt()}:null,voidLines:posVoids,shift:ST.shift?ST.shift.id:'',cust:posCust,custName:cu?cu.name:ord?ord.customer:'Walk-in',price:posPrice,discount:discAmt(),
-    pay:{cash:'Cash',gcash:'GCash / Maya',bank:'Bank',terms:'Terms'}[posPay],dr:ord?ord.dr:'',ref:posRef,cash:posPay==='cash'?+posCash||0:0,total,cashier:me.name,pts:cu?Math.floor(total/500):0};
+    pay:{cash:'Cash',gcash:'GCash',maya:'Maya',bank:'Bank transfer',terms:'Charge'}[posPay],dr:ord?ord.dr:'',ref:posRef,cash:posPay==='cash'?+posCash||0:0,total,cashier:me.name,pts:cu?Math.floor(total/500):0};
   setPosQueue(posQueue().concat([s]));
   s.items.forEach(i=>{const p=pBy(i.code);if(p)p.avail=r2(p.avail-i.qty)});stCache();
   if(ord)ST.toCash=ST.toCash.filter(x=>x.id!==ord.id);
@@ -2968,6 +3237,29 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const srr=e.target
     if('srre' in d){SR=null;SRerr='';drawStock();return}
     if('srcsv' in d){if(SR)srCsv();return}
     if('srcu' in d){SRF.cust=d.srcu;drawStock();window.scrollTo({top:0,behavior:'smooth'});return}}
+  if(view==='att'){if(d.punch){await punch(d.punch,b);return}if(d.myslip){const s=MSL.find(x=>x.id===d.myslip);if(s)showSlip(s.line,s.from,s.to);return}}
+  if(view==='owner'){
+    if(d.owtab){OWtab=d.owtab;drawStock();return}
+    if(d.pysub){PYsub=d.pysub;drawStock();return}
+    if(d.pystaff){pyDialog('staff',d.pystaff);return}
+    if('pyattadd' in d){pyDialog('att','');return}
+    if(d.attph){const ph=await getPhoto(d.attph);if(ph){const box=stBox();$('#stb').innerHTML=`<h2>📷 Time clock selfie</h2><img src="${ph}" style="max-width:100%;border-radius:10px"><div class="row-end"><button class="go" data-x>Close</button></div>`;box.classList.add('on')}else toast('Photo not available');return}
+    if(d.pyattedit){pyDialog('att',d.pyattedit);return}
+    if('pyadvadd' in d){pyDialog('adv','');return}
+    if('pyholadd' in d){pyDialog('hol','');return}
+    if(d.pyadvdel){if(!confirm('Delete this cash advance?'))return;await busy(async()=>{PY=await api('api_paySave',session.token,'advance',{id:d.pyadvdel,from:PYfrom,to:PYto,ovs:PYov},true);drawStock()});return}
+    if(d.pyholdel){await busy(async()=>{PY=await api('api_paySave',session.token,'holiday',{d:d.pyholdel,from:PYfrom,to:PYto,ovs:PYov},true);drawStock()});return}
+    if(d.pyslip){const l=PY.lines.find(x=>x.id===d.pyslip);if(l)showSlip(l,PY.from,PY.to);return}
+    if('pyrel' in d){const acc=$('#py-acc').value,t=PY.lines.reduce((a,l)=>a+l.net,0);if(PY.to>today()&&!confirm('This pay period is not finished yet (ends '+day(PY.to)+'). Release anyway?'))return;if(!confirm(`Release pay for ${day(PY.from)} – ${day(PY.to)}?\nNet pay ${peso(t)} from ${$('#py-acc').selectedOptions[0].text}.\nThe salaries are recorded as expenses.`))return;
+      await busy(async()=>{PY=await api('api_payRelease',session.token,PY.from,PY.to,PYov,acc);PYov={};OW=null;toast('✅ Payroll released');drawStock()});return}
+    if(d.pyrem){const r=PY.runs.find(x=>x.id===d.pyrem),acc=prompt('Remitted SSS / PhilHealth / Pag-IBIG '+peso(r.contrib)+'.\nPaid from which account? Type the number:\n'+PY.accounts.map((a,i)=>(i+1)+'. '+a.name).join('\n'),'1');if(acc==null)return;const A=PY.accounts[(+acc||1)-1];
+      await busy(async()=>{PY=await api('api_payRemit',session.token,r.id,A?A.id:'');OW=null;toast('🏛 Marked remitted');drawStock()});return}
+    if(d.owpay){const a=OW.ap.find(x=>x.id===d.owpay),acc=prompt('Pay '+a.supplier+' '+peso(a.amount)+' ('+a.no+').\nPaid from which account? Type the number:\n'+OW.accounts.map((x,i)=>(i+1)+'. '+x.name).join('\n'),'1');if(acc==null)return;const A=OW.accounts[(+acc||1)-1];
+      await busy(async()=>{await api('api_payPO',session.token,a.id,'',A?A.id:'');OW=null;toast('💳 Paid');drawStock()});return}
+    if('owre' in d){OW=null;OWerr='';drawStock();return}
+    if(d.owadd){owForm(d.owadd,'');return}
+    if(d.owedit){const[k,i]=d.owedit.split(':');owForm(k,i);return}
+    if(d.owdel){const[k,i]=d.owdel.split(':');if(!confirm('Delete this?'))return;await busy(async()=>{OW=await api('api_ownerSave',session.token,k,{id:i,ym:OWym},true);drawStock()});return}}
   if('sref' in d){await renderStock(view,true);return}
   if(d.sview){view=d.sview;render();return}
   if(d.icat!==undefined){invCat=d.icat;drawStock();return}
@@ -3051,7 +3343,7 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const srr=e.target
   if('pdone' in d){tenderDialog();return}
   if(false){const x=document.querySelector('.cartc');if(x)x.scrollIntoView({behavior:'smooth'});return}
   if('psend' in d){b.disabled=true;const ok=await posFlush();toast(ok?'✓ Sales sent':'Still offline — will send automatically');if(view==='pos')drawStock();return}
-  if(d.preprint){const s=ST.sales.find(x=>x.no===d.preprint);if(s)printReceipt(s);return}
+  if(d.preprint){const s=ST.sales.find(x=>x.no===d.preprint);if(s)printReceipt(s,true);return}
   if(d.pvoid){voidSaleDialog(d.pvoid);return}
 }
 function stockInput(e){if(!STOCKV.includes(view))return;const t=e.target,d=t.dataset;
@@ -3075,6 +3367,11 @@ function stockChange(e){if(!STOCKV.includes(view))return;const t=e.target,d=t.da
   if(d.cf&&(t.tagName==='SELECT'||t.type==='date')){const o=d.cft==='po'?poEdit&&poEdit.carcass:rcC;if(o){setPath(o,d.cf,t.value);drawStock()}return}
   if(d.cutu!==undefined){rcC.cuts[+d.cutu].u=t.value;drawStock();return}
   if(d.cutp!==undefined){rcC.cuts[+d.cutp].code=t.value;const p=pBy(t.value);if(p&&p.unit==='Pc')rcC.cuts[+d.cutp].u='Pc';if(!rcC.cuts[+d.cutp].name&&p)rcC.cuts[+d.cutp].name=p.name;ccLive('rc');return}
+  if(d.owym!==undefined){OWym=t.value;OW=null;drawStock();return}
+  if(d.pyper!==undefined){[PYfrom,PYto]=t.value.split('|');PY=null;PYov={};drawStock();return}
+  if(d.pyot!==undefined||d.pyc!==undefined||d.pyadj!==undefined||d.pyadv!==undefined){const id=d.pyot||d.pyc||d.pyadj||d.pyadv,o=PYov[id]=PYov[id]||{};
+    if(d.pyot!==undefined)o.otOk=t.checked;if(d.pyc!==undefined)o.contrib=t.checked;if(d.pyadj!==undefined)o.adj=t.value;if(d.pyadv!==undefined)o.adv=t.value;PY=null;drawStock();return}
+  if(d.owterms!==undefined){api('api_ownerSet',session.token,t.value).then(r=>{OW=r;drawStock()}).catch(e=>alert(errMsg(e)));return}
   if(d.srf){SRF[d.srf]=t.value;if(d.srf==='from'||d.srf==='to')SRF.pre='';drawStock();return}
   if(d.pol!==undefined){const p=pBy(t.value),l=poEdit.items[+d.pol];l.code=t.value;if(p&&!l.cost&&p.cost)l.cost=p.cost;drawStock();return}
   if(d.prl!==undefined){const[k,i]=d.prl.split(':');prodF[k][+i].code=t.value;drawStock();return}
