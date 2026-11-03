@@ -584,7 +584,7 @@ header h1 .tt small{display:block;font-size:11px;color:var(--sky2);letter-spacin
 .posx-tools button:disabled{opacity:.45;cursor:default}.posx-tools button i{font-style:normal;background:var(--rose);color:#fff;border-radius:10px;padding:0 6px;margin-left:3px}.posx-tools .sp{flex:1}.posx-tools .zr{background:#1F2937;color:#fff;border-color:#1F2937}
 .pdiscb{width:100%;text-align:left;white-space:normal}.dkinds{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:10px}.dkinds button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px;font-weight:700;cursor:pointer}.dkinds button.on{border-color:var(--navy);background:#FDF2F2;color:var(--navy)}
 .opencash{max-width:560px;margin:0 auto}.den .stbl input{text-align:right}
-.owtabs{margin:6px 0 12px}.rep.stk{min-width:0;max-width:100%}.rep.stk .sc{max-width:100%;overflow-x:auto}#list{min-width:0}.pyt td,.pyt th{white-space:nowrap}
+.owtabs{margin:6px 0 12px}.lnbar{height:6px;background:var(--line,#eee);border-radius:4px;margin:8px 0 2px;overflow:hidden}.lnbar i{display:block;height:100%;background:var(--green,#16a34a)}.rep.stk{min-width:0;max-width:100%}.rep.stk .sc{max-width:100%;overflow-x:auto}#list{min-width:0}.pyt td,.pyt th{white-space:nowrap}
 .attbox{max-width:480px;margin:0 auto 14px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;text-align:center}.att-clock{font-size:44px;font-weight:800;color:var(--navy)}
 .att-today{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}.att-today div{background:#F9FAFB;border-radius:12px;padding:8px}.att-today span{display:block;font-size:12px;color:var(--muted);font-weight:700}.att-today b{font-size:16px}
 .att-btn{width:100%;font-size:22px!important;padding:18px!important;margin:6px 0!important}.attbox .btn{width:100%;margin-bottom:6px}.owgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:12px}
@@ -2444,13 +2444,14 @@ function owBars(rows,keys){const mx=Math.max(1,...rows.flatMap(r=>keys.map(([k])
     <div class="owleg">${keys.map(([k,c,t])=>`<span><i style="background:${c}"></i>${t}</span>`).join('')}</div>`}
 function ownerHTML(){
   if(!OW&&!OWerr)owLoad();
-  const tabs=[['dash','📊 Dashboard'],['acc','💰 Accounts'],['exp','🧾 Expenses'],['pay','👥 Payroll'],['col','📥 Collect & pay'],['fa','🏢 Fixed assets'],['rep','📑 P&L · Balance sheet']];
+  const tabs=[['dash','📊 Dashboard'],['acc','💰 Accounts'],['exp','🧾 Expenses'],['pay','👥 Payroll'],['col','📥 Collect & pay'],['loan','🤝 Loans'],['fa','🏢 Fixed assets'],['rep','📑 P&L · Balance sheet']];
   const head=`<div class="shead"><div><h2>👑 Owner's Dashboard</h2></div><div class="sbtns"><input type="month" class="edit-in" data-owym value="${esc(OWym||(OW&&OW.ym)||today().slice(0,7))}" style="width:auto"><button class="btn sm" data-owre>↻ Refresh</button></div></div>
     <div class="chips2 owtabs">${tabs.map(([k,t])=>`<button class="${OWtab===k?'on':''}" data-owtab="${k}">${t}</button>`).join('')}</div>`;
   if(OWerr)return head+`<div class="empty">⚠ ${esc(OWerr)}<br><br><button class="btn" data-owre>↻ Try again</button></div>`;
   if(!OW)return head+'<div class="empty">Loading…</div>';
-  return head+({dash:owDash,acc:owAccounts,exp:owExpenses,pay:owPayroll,col:owCollect,fa:owAssets,rep:owReports}[OWtab])()}
-function owDash(){const O=OW,P=O.pl,B=O.bs,arOver=O.ar.filter(a=>a.days>30),apDue=O.ap.filter(a=>a.due&&a.due<=iso(new Date(Date.now()+7*864e5)));
+  return head+({dash:owDash,acc:owAccounts,exp:owExpenses,pay:owPayroll,col:()=>{const p=(OW.zs||[]).some(q=>q.os.st==='pending');return p?owShort()+owCollect():owCollect()+owShort()},loan:owLoans,fa:owAssets,rep:owReports}[OWtab])()}
+function owDash(){const zp=(OW.zs||[]).filter(q=>q.os.st==='pending');return (zp.length?`<button class="snote" style="cursor:pointer;width:100%;text-align:left;font:inherit;color:inherit" data-owtab="col">⚠ <b>${zp.length}</b> cash short / over from the Z reading to decide (${zp.map(q=>(q.amt<0?'short ':'over ')+peso(Math.abs(q.amt))).join(', ')}) — tap to open <b>📥 Collect & pay</b>.</button>`:'')+owDash0()}
+function owDash0(){const O=OW,P=O.pl,B=O.bs,arOver=O.ar.filter(a=>a.days>30),apDue=O.ap.filter(a=>a.due&&a.due<=iso(new Date(Date.now()+7*864e5)));
   const k=(t,v,s,c)=>`<div class="owk ${c||''}"><span>${t}</span><b>${v}</b>${s?`<small>${s}</small>`:''}</div>`;
   return `<div class="owgrid">
     ${k('💰 Cash position',peso(B.cash),O.accounts.map(a=>`${ACCI[a.type]||''} ${esc(a.name)} ${peso(a.balance)}`).join('<br>'),'big')}
@@ -2491,10 +2492,10 @@ function owAssets(){const O=OW,t=O.assets.reduce((a,f)=>a+f.book,0);
 function owReports(){const O=OW,P=O.pl,B=O.bs,L=(t,v,b,i)=>`<tr${b?' class="srtot"':''}><td style="padding-left:${i?24:8}px">${b?'<b>':''}${t}${b?'</b>':''}</td><td class="r">${b?'<b>':''}${peso(v)}${b?'</b>':''}</td></tr>`;
   return `<div class="owrow"><div class="panel"><h3>📑 Profit & Loss · ${ymLbl(O.ym)}</h3><table class="stbl"><tbody>
     ${L('Gross sales',P.gross)}${L('Less discounts',-P.disc,0,1)}${L('Less returns',-P.ret,0,1)}${L('Net sales',P.net,1)}${L('Cost of goods sold (COGS)',-P.cogs)}${L('GROSS PROFIT',P.gp,1)}${P.pend?`<tr><td colspan="2"><small class="unit">⏳ ${peso(P.pend)} of sales were sold over stock — their cost is added when the stock is received, so gross profit will go down a bit.</small></td></tr>`:''}
-    ${Object.entries(P.expenses).map(([c,v])=>L(esc(c),-v,0,1)).join('')}${L('Total operating expenses',-P.opex,1)}${L('NET PROFIT (before owner\'s pay)',P.np,1)}${L("Owner's salary",-P.owner,0,1)}${L('NET PROFIT after owner\'s pay',P.npAfter,1)}</tbody></table>
+    ${Object.entries(P.expenses).map(([c,v])=>L(esc(c),-v,0,1)).join('')}${L('Total operating expenses',-P.opex,1)}${P.other?L('Other income (interest received…)',P.other,0,1):''}${L('NET PROFIT (before owner\'s pay)',P.np,1)}${L("Owner's salary",-P.owner,0,1)}${L('NET PROFIT after owner\'s pay',P.npAfter,1)}</tbody></table>
     <div class="unit">Margin: gross ${P.net?Math.round(P.gp/P.net*1000)/10:0}% · net ${P.net?Math.round(P.np/P.net*1000)/10:0}%</div></div>
     <div class="panel"><h3>⚖️ Balance sheet · today</h3><table class="stbl"><tbody>
-    <tr><td colspan="2"><b>ASSETS</b></td></tr>${L('Cash, bank & e-wallets',B.cash,0,1)}${L('Accounts receivable',B.ar,0,1)}${L('Inventory',B.inventory,0,1)}${L('Fixed assets (book value)',B.fixed,0,1)}${B.advances?L('Staff cash advances',B.advances,0,1):''}${L('Total assets',B.assets,1)}
+    <tr><td colspan="2"><b>ASSETS</b></td></tr>${L('Cash, bank & e-wallets',B.cash,0,1)}${L('Accounts receivable',B.ar,0,1)}${B.lent?L('Cash lent to others',B.lent,0,1):''}${L('Inventory',B.inventory,0,1)}${L('Fixed assets (book value)',B.fixed,0,1)}${B.advances?L('Staff cash advances',B.advances,0,1):''}${L('Total assets',B.assets,1)}
     <tr><td colspan="2"><b>LIABILITIES</b></td></tr>${L('Accounts payable (suppliers)',B.ap,0,1)}${L('Loans',B.loans,0,1)}${B.contrib?L('SSS / PhilHealth / Pag-IBIG to remit',B.contrib,0,1):''}${L('Total liabilities',B.liabilities,1)}
     <tr><td colspan="2"><b>OWNER'S EQUITY</b></td></tr>${L("Owner's capital",B.capital,0,1)}${L("Less owner's drawings",-B.drawings,0,1)}${L('Retained profit & opening values',B.retained,0,1)}${L("Total owner's equity",B.equity,1)}${L('Liabilities + equity',B.liabilities+B.equity,1)}</tbody></table>
     <div class="unit">Management report from the app's data — for BIR filings, work with your accountant.</div></div></div>`}
@@ -2606,6 +2607,72 @@ function payslipHTML(l,from,to){const R=(t,v,neg)=>`<tr><td>${t}</td><td style="
   <tr><td><b>NET PAY</b></td><td style="text-align:right;font-size:17px"><b>${peso(l.net)}</b></td></tr></table><p style="margin-top:20px">Received by: ____________________</p></div>`}
 function showSlip(l,from,to){const box=stBox();$('#stb').innerHTML=`<h2>💵 Payslip</h2>${payslipHTML(l,from,to)}<div class="row-end"><button class="btn" id="sl-pr">🖨 Print</button><button class="go" data-x>Close</button></div>`;box.classList.add('on');$('#sl-pr').onclick=()=>{$('#print').innerHTML=payslipHTML(l,from,to);window.print()}}
 /* ---------- OWNER › COLLECT & PAY ---------- */
+function owLoans(){const O=OW,L=O.loans||[];
+  const card=o=>{const B=o.kind==='borrow',pc=o.amt?Math.min(100,Math.round(o.paid/o.amt*100)):0;return `<div class="pocard"><div class="poh"><b>${esc(o.name)}</b><span style="flex:1"></span>${o.balance<=0?badge('PAID','green'):o.late?badge('OVERDUE','red'):''} <b style="font-size:17px">${peso(o.balance)}</b></div>
+    <div class="unit">${srDay(o.d)}${o.due?' · due '+srDay(o.due):''}${o.monthly?' · '+peso(o.monthly)+'/month':''} · amount ${peso(o.amt)} · ${B?'paid':'collected'} ${peso(o.paid)}${o.interest?' · interest '+peso(o.interest):''}${o.existing?' · <i>existing balance</i>':' · '+(B?'into ':'from ')+esc(owAcc(o.acc))}${o.note?'<br>📝 '+esc(o.note):''}</div>
+    <div class="lnbar"><i style="width:${pc}%"></i></div>
+    ${(o.pays||[]).length?`<details><summary class="unit">${o.pays.length} payment(s)</summary>${o.pays.slice().reverse().map(p=>`<div class="posx-row"><span>${srDay(p.d)} · ${esc(owAcc(p.acc))}${p.note?' · '+esc(p.note):''}</span><span><b>${peso(p.amt)}</b>${+p.int?' + int '+peso(p.int):''} <button class="del" data-lnpdel="${o.id}:${p.id}" title="Delete payment">✕</button></span></div>`).join('')}</details>`:''}
+    <div class="row-end" style="margin-top:6px"><button class="btn sm" data-lnedit="${o.id}">✏ Edit</button>${o.balance>0?`<button class="go sm" data-lnpay="${o.id}">${B?'💸 Pay':'💰 Collect'}</button>`:''}</div></div>`};
+  const sec=(k,t,sub)=>{const A=L.filter(o=>o.kind===k),open=A.filter(o=>o.balance>0),tot=open.reduce((a,o)=>a+o.balance,0),late=open.filter(o=>o.late);
+    return `<div class="panel"><div class="poh"><h3 style="margin:0">${t}</h3><span style="flex:1"></span><button class="go sm" data-lnadd="${k}">+ Add</button></div><div class="unit">${sub}</div>
+      <div class="kpis" style="margin:10px 0"><div><b>${peso(tot)}</b><span>balance · ${open.length} open</span></div>${late.length?`<div class="bad"><b>${late.length}</b><span>overdue</span></div>`:''}</div>
+      ${open.map(card).join('')||'<div class="empty">None.</div>'}
+      ${A.length>open.length?`<details><summary class="unit">Fully paid (${A.length-open.length})</summary>${A.filter(o=>o.balance<=0).map(card).join('')}</details>`:''}</div>`};
+  return `<div class="owrow">${sec('borrow','📤 Loans — money I owe','Bank / personal loans. Payments lower the balance; interest goes to expenses.')}${sec('lend','📥 Cash lent — owed to me','Cash other people borrowed from you. (Staff advances deducted from salary: use 👥 Payroll › Cash advance.)')}</div>`}
+function loanForm(kind,id){const O=OW,o=id?O.loans.find(x=>x.id===id):null,B=(o?o.kind:kind)==='borrow',box=stBox(),acc=O.accounts;
+  const accSel=v=>`<select class="edit-in" id="ln-acc"><option value="">— choose —</option>${acc.map(a=>`<option value="${a.id}"${a.id===v?' selected':''}>${ACCI[a.type]||''} ${esc(a.name)}</option>`).join('')}</select>`;
+  const ex=o?o.existing:true;
+  $('#stb').innerHTML=`<h2>${o?'✏ Edit':'+ Add'} ${B?'loan (money I owe)':'cash lent (owed to me)'}</h2>
+    <div class="fgrid"><label class="full">${B?'Lender (bank / person)':'Borrower'}<input class="edit-in" id="ln-name" value="${esc(o?o.name:'')}" placeholder="${B?'e.g. BDO, Card Bank, Tita Nena':'e.g. Juan Dela Cruz'}"></label>
+      <label class="full">Is this…<select class="edit-in" id="ln-ex"><option value="1"${ex?' selected':''}>Existing — from before the app (just record the balance)</option><option value="0"${ex?'':' selected'}>New — ${B?'money came in to an account':'cash given out from an account'}</option></select></label>
+      <label>${ex&&!o?'Balance still '+(B?'owed today':'owed to me today'):'Amount'} ₱<input class="edit-in" id="ln-amt" type="number" step="0.01" inputmode="decimal" value="${o?o.amt:''}"></label>
+      <label>Date<input class="edit-in" id="ln-d" type="date" value="${o?o.d:today()}"></label>
+      <label>Due date (optional)<input class="edit-in" id="ln-due" type="date" value="${o?o.due:''}"></label>
+      <label>Monthly payment ₱ (optional)<input class="edit-in" id="ln-mo" type="number" step="0.01" inputmode="decimal" value="${o&&o.monthly?o.monthly:''}"></label>
+      <label class="full" id="ln-accw"${ex?' hidden':''}>${B?'Money went into':'Cash taken from'}${accSel(o?o.acc:'')}</label>
+      <label class="full">Note (optional)<input class="edit-in" id="ln-note" value="${esc(o?o.note:'')}" placeholder="${B?'e.g. 2-yr loan, 1.5%/month':'e.g. pay back on 15th'}"></label></div>
+    <div class="row-end">${o?'<button class="btn" id="ln-del" style="margin-right:auto">🗑 Delete</button>':''}<button class="btn" data-x>Cancel</button><button class="go" id="ln-ok">Save</button></div>`;
+  box.classList.add('on');
+  $('#ln-ex').onchange=e=>{$('#ln-accw').hidden=e.target.value==='1'};
+  $('#ln-ok').onclick=async()=>{const b=$('#ln-ok');b.disabled=true;try{OW=await api('api_loanSave',session.token,{id:o?o.id:'',kind:B?'borrow':'lend',name:$('#ln-name').value,existing:$('#ln-ex').value==='1',amt:$('#ln-amt').value,d:$('#ln-d').value,due:$('#ln-due').value,monthly:$('#ln-mo').value,acc:$('#ln-acc').value,note:$('#ln-note').value,ym:OW.ym});box.classList.remove('on');toast('Saved');drawStock()}catch(er){b.disabled=false;alert(errMsg(er))}};
+  if(o)$('#ln-del').onclick=async()=>{if(!confirm('Delete '+o.name+'?'))return;try{OW=await api('api_loanSave',session.token,{id:o.id,ym:OW.ym},true);box.classList.remove('on');toast('Deleted');drawStock()}catch(er){alert(errMsg(er))}}}
+function loanPay(id){const O=OW,o=O.loans.find(x=>x.id===id),B=o.kind==='borrow',box=stBox();
+  $('#stb').innerHTML=`<h2>${B?'💸 Pay':'💰 Collect from'} ${esc(o.name)}</h2><div class="td-due"><span>Balance</span><b>${peso(o.balance)}</b></div>
+    <div class="fgrid"><label>Principal ₱ <small>(lowers the balance)</small><input class="edit-in" id="lp-a" type="number" step="0.01" inputmode="decimal" value="${o.monthly&&o.monthly<=o.balance?o.monthly:''}"></label>
+      <label>Interest ₱ <small>(${B?'expense':'income'})</small><input class="edit-in" id="lp-i" type="number" step="0.01" inputmode="decimal" placeholder="0"></label>
+      <label>Date<input class="edit-in" id="lp-d" type="date" value="${today()}"></label>
+      <label>${B?'Paid from':'Received into'}<select class="edit-in" id="lp-acc">${O.accounts.map(a=>`<option value="${a.id}">${ACCI[a.type]||''} ${esc(a.name)}</option>`).join('')}</select></label>
+      <label class="full">Note / ref (optional)<input class="edit-in" id="lp-n"></label></div>
+    <div class="unit" id="lp-t"></div>
+    <div class="row-end"><button class="btn" data-x>Cancel</button><button class="go" id="lp-ok">✓ Save</button></div>`;box.classList.add('on');
+  const t=()=>{const a=+$('#lp-a').value||0,i=+$('#lp-i').value||0;$('#lp-t').innerHTML=a+i?`Total ${B?'paid':'received'}: <b>${peso(a+i)}</b> · new balance <b>${peso(Math.max(0,o.balance-a))}</b>`:''};$('#lp-a').oninput=t;$('#lp-i').oninput=t;t();
+  $('#lp-ok').onclick=async()=>{const b=$('#lp-ok');b.disabled=true;try{OW=await api('api_loanPay',session.token,o.id,{amt:$('#lp-a').value,int:$('#lp-i').value,d:$('#lp-d').value,acc:$('#lp-acc').value,note:$('#lp-n').value,ym:OW.ym});box.classList.remove('on');toast('✅ Saved');drawStock()}catch(er){b.disabled=false;alert(errMsg(er))}}}
+const ZST={pending:'⏳ To decide',charge:'👤 Charged to cashier',absorb:'🏪 Business absorbed',income:'➕ Cash over (income)',found:'🔎 Mistake found — no loss'};
+function owShort(){const O=OW,Z=O.zs||[],pend=Z.filter(q=>q.os.st==='pending'),yr=today().slice(0,4),per={};
+  Z.filter(q=>q.d.slice(0,4)===yr&&q.os.st!=='found').forEach(q=>{const k=q.closeBy||'—',c=per[k]=per[k]||{n:0,short:0,over:0,charged:0};c.n++;if(q.amt<0)c.short+=-q.amt;else c.over+=q.amt;if(q.os.st==='charge')c.charged+=-q.amt});
+  const row=q=>`<div class="pocard"><div class="poh"><b>${esc(q.z)}</b> <span class="unit">${srDay(q.d)} · ${esc(q.closeBy||'')}</span><span style="flex:1"></span><b style="color:${q.amt<0?'var(--rose)':'#B45309'}">${q.amt<0?'SHORT':'OVER'} ${peso(Math.abs(q.amt))}</b></div>
+    <div class="unit">Counted ${peso(q.counted)} · expected ${peso(q.expected)}${q.note?'<br>💬 '+esc(q.note):'<br><i>no reason given</i>'}<br>${ZST[q.os.st]||''}${q.os.auto?' (within ₱'+O.zTol+' — automatic)':''}${q.os.staffName?' · '+esc(q.os.staffName):''}${q.os.by?' · by '+esc(q.os.by):''}${q.os.note?' · '+esc(q.os.note):''}</div>
+    <div class="row-end" style="margin-top:6px">${q.os.st==='pending'?'':'<button class="btn sm" data-zres="'+q.z+'">Change</button>'}${q.os.st==='pending'?`<button class="go sm" data-zres="${q.z}">Decide</button>`:''}</div></div>`;
+  return `<div class="panel"><div class="poh"><h3 style="margin:0">🧮 Cash short / over (Z reading)</h3><span style="flex:1"></span><label class="unit">Auto-accept up to ₱ <input class="edit-in nq" type="number" data-ztol value="${O.zTol}" style="width:70px"></label></div>
+    <div class="unit">Differences up to ₱${O.zTol} are booked automatically (coins / rounding). Bigger ones wait for your decision. The drawer balance is always set to the cash counted.</div>
+    ${pend.length?`<h4 style="margin:12px 0 6px">⏳ To decide (${pend.length})</h4>${pend.map(row).join('')}`:'<div class="unit" style="margin:10px 0">✓ Nothing to decide.</div>'}
+    ${Object.keys(per).length?`<h4 style="margin:12px 0 6px">👤 By cashier · ${yr}</h4><div class="sc"><table class="stbl"><thead><tr><th>Closed by</th><th class="r">Times</th><th class="r">Total short</th><th class="r">Total over</th><th class="r">Charged</th></tr></thead><tbody>${Object.entries(per).sort((a,b)=>b[1].short-a[1].short).map(([k,c])=>`<tr><td><b>${esc(k)}</b></td><td class="r">${c.n}</td><td class="r" style="color:var(--rose)">${c.short?peso(c.short):'—'}</td><td class="r">${c.over?peso(c.over):'—'}</td><td class="r">${c.charged?peso(c.charged):'—'}</td></tr>`).join('')}</tbody></table></div>`:''}
+    ${Z.length>pend.length?`<details><summary class="unit"><b>History</b> (${Z.length-pend.length})</summary>${Z.filter(q=>q.os.st!=='pending').slice(0,60).map(row).join('')}</details>`:''}</div>`}
+function zResolve(zno){const O=OW,q=O.zs.find(x=>x.z===zno),S=q.amt<0,box=stBox();let st=q.os.st==='pending'?(S?'charge':'income'):q.os.st;
+  const guess=(O.staff.find(p=>p.name===q.closeBy)||{}).id||'';
+  const opts=S?[['charge','👤 Charge to cashier','Becomes a cash advance — deducted in 👥 Payroll (you can lower it per cut-off).'],['absorb','🏪 Business absorbs','Booked as expense "Cash short".'],['found','🔎 Mistake found — no loss','e.g. GCash rung up as cash, cash found. The adjustment is reversed.']]
+    :[['income','➕ Keep as income','Booked as other income "Cash over".'],['found','🔎 Mistake found','The adjustment is reversed.']];
+  const draw=()=>{$('#stb').innerHTML=`<h2>${S?'Cash SHORT':'Cash OVER'} ${peso(Math.abs(q.amt))} · ${esc(q.z)}</h2>
+    <div class="unit">${srDay(q.d)} · closed by <b>${esc(q.closeBy||'')}</b> · counted ${peso(q.counted)} vs expected ${peso(q.expected)}<br>💬 ${q.note?esc(q.note):'<i>no reason given</i>'}</div>
+    <div style="display:grid;gap:8px;margin:12px 0">${opts.map(([k,t,d])=>`<button class="pocard" data-zst="${k}" style="text-align:left;cursor:pointer;${st===k?'outline:3px solid var(--red,#9b1c1c)':''}"><b>${t}</b><br><small class="unit">${d}</small></button>`).join('')}</div>
+    ${st==='charge'?`<label class="td-l">Charge to<select class="edit-in" id="zr-s"><option value="">— choose staff —</option>${O.staff.map(p=>`<option value="${p.id}"${p.id===(q.os.staff||guess)?' selected':''}>${esc(p.name)}</option>`).join('')}</select></label>
+      <div class="snote">⚖ Before deducting from pay: the cashier should be clearly responsible and given a chance to explain, and the deduction must not exceed the actual loss (DOLE rules).</div>`:''}
+    <label class="td-l">Note (optional)<input class="edit-in" id="zr-note" value="${esc(q.os.note||'')}"></label>
+    <div class="row-end"><button class="btn" data-x>Cancel</button><button class="go" id="zr-save">Save</button></div>`;
+    $('#stb').querySelectorAll('[data-zst]').forEach(b=>b.onclick=()=>{st=b.dataset.zst;draw()});
+    $('#zr-save').onclick=async()=>{const sid=st==='charge'?$('#zr-s').value:'';if(st==='charge'&&!sid)return alert('Choose the staff to charge.');
+      try{OW=await api('api_zResolve',session.token,q.z,st,sid,$('#zr-note').value,OW.ym);box.classList.remove('on');toast('Saved');drawStock()}catch(e){alert(errMsg(e))}}};
+  draw();box.classList.add('on')}
 function owCollect(){const O=OW,cust={},B=[['Not yet due',a=>a.over===0],['1–30 days late',a=>a.over>0&&a.over<=30],['31–60 days late',a=>a.over>30&&a.over<=60],['Over 60 days',a=>a.over>60]];
   O.ar.forEach(a=>{const c=cust[a.customer]=cust[a.customer]||{name:a.customer,b:[0,0,0,0],t:0};B.forEach(([,f],i)=>{if(f(a))c.b[i]+=a.balance});c.t+=a.balance});
   const C=Object.values(cust).sort((a,b)=>b.t-a.t),tb=B.map((_,i)=>C.reduce((s,c)=>s+c.b[i],0));
@@ -3068,8 +3135,8 @@ function readingHTML(R){const L=(t,v,b,cls)=>`<tr${cls?` class="${cls}"`:''}><td
   <table style="width:100%">${H('ADJUSTMENTS')}${L('Voided sales',R.voids+' · '+P(R.voidAmt))}${L('Voided items',R.lineVoids+' · '+P(R.lineVoidAmt))}${L('Price changes',R.priceChanges+' · −'+P(R.priceChangeAmt))}${L('Returns / refunds (cash)',P(R.refunds))}</table><hr>
   <table style="width:100%">${H('CASH IN / OUT OF DRAWER')}${(R.moves||[]).map(m=>L(`${m.kind==='in'?'+ In':'− Out'} · ${esc(m.note)}<br><small>${esc(m.cat)} · ${esc(m.by)} ${stampShort(m.at)}</small>`,(m.kind==='in'?'+':'−')+P(m.amount))).join('')||L('None','—')}
   ${L('Total cash in','+'+P(R.cashIn||0))}${L('Total cash out','−'+P(R.cashOut||0))}${Object.keys(R.outByCat||{}).map(k=>L('&nbsp;&nbsp;'+esc(k),P(R.outByCat[k]))).join('')}</table><hr>
-  <table style="width:100%">${H('CASH DRAWER TALLY')}${L('Opening cash',P(R.opening))}${L('+ Cash sales',P(R.cashSales))}${L('+ Charge payments in cash',P(R.cashColl))}${L('+ Cash in',P(R.cashIn||0))}${L('− Cash out',P(R.cashOut||0))}${L('− Cash refunds',P(R.refunds))}${L('EXPECTED CASH',P(R.expected),1)}
-  ${R.kind==='Z'?L('COUNTED CASH',P(R.counted),1)+`<tr><td><b>TALLY</b></td><td style="text-align:right;font-size:16px"><b style="color:${os<0?'#B42318':os>0?'#B45309':'#15803D'}">${tally}</b></td></tr>`:''}</table>
+  ${R.kind!=='Z'&&me.role!=='manager'?'':`<table style="width:100%">${H('CASH DRAWER TALLY')}${L('Opening cash',P(R.opening))}${L('+ Cash sales',P(R.cashSales))}${L('+ Charge payments in cash',P(R.cashColl))}${L('+ Cash in',P(R.cashIn||0))}${L('− Cash out',P(R.cashOut||0))}${L('− Cash refunds',P(R.refunds))}${L('EXPECTED CASH',P(R.expected),1)}
+  ${R.kind==='Z'?L('COUNTED CASH',P(R.counted),1)+`<tr><td><b>TALLY</b></td><td style="text-align:right;font-size:16px"><b style="color:${os<0?'#B42318':os>0?'#B45309':'#15803D'}">${tally}</b></td></tr>`:''}</table>`}
   ${R.kind==='Z'&&R.countDenoms&&Object.keys(R.countDenoms).length?`<hr><table style="width:100%">${H('CASH COUNT')}${Object.keys(R.countDenoms).sort((a,b)=>b-a).map(d=>L(`₱${+d<1?'0.25':(+d).toLocaleString()} × ${R.countDenoms[d]}`,P(d*R.countDenoms[d]))).join('')}</table>`:''}
   ${R.kind==='Z'?`<hr><table style="width:100%">${L('Old grand total',P(R.oldGT||0))}${L('New grand total',P(R.newGT||0),1)}</table>`:''}
   ${R.note?`<p>Note: ${esc(R.note)}</p>`:''}${R.kind==='Z'?'<p style="text-align:center;margin-top:16px">_______________________<br>Cashier signature<br><br>_______________________<br>Checked by (manager)</p>':''}</div>`}
@@ -3081,18 +3148,24 @@ function zSummaryHTML(X){const pay=X.pay||{};
 async function zDialog(){if(posQueue().length){await posFlush();if(posQueue().length)return alert('Some sales are not sent yet. Connect to the internet first, then do the Z reading.')}
   if(cart.length||posHolds().length)if(!confirm('There is a sale on screen or held. Close the day anyway?'))return;
   let X;try{X=await api('api_posX',session.token)}catch(e){return alert(errMsg(e))}
-  const box=stBox();$('#stb').innerHTML=`<h2>🔒 Z reading — close the day</h2>${zSummaryHTML(X)}
+  const blind=me.role!=='manager',box=stBox();$('#stb').innerHTML=`<h2>🔒 Z reading — close the day</h2>${blind?'<div class="snote">🙈 <b>Blind count:</b> count the cash first. The system shows if it is short or over <b>after</b> you close.</div>':zSummaryHTML(X)}
     <div class="unit" style="margin:10px 0 6px"><b>Count all the cash in the drawer:</b></div><div id="zden">${denomHTML()}</div>
     <div class="ztally" id="z-tally"></div>
     <div class="fgrid"><label class="full">Note (optional — e.g. reason for over / short)<input class="edit-in" id="z-n"></label></div>
     <div class="row-end"><button class="btn" data-x>Cancel</button><button class="go" id="z-ok">🔒 Close day & print Z reading</button></div>`;box.classList.add('on');
-  const live=()=>{const c=denomRead($('#zden')),d=r2(c.total-X.expected),t=$('#z-tally');t.className='ztally '+(Math.abs(d)<0.005?'ok':d<0?'bad':'warn');
+  const live=()=>{const c=denomRead($('#zden')),d=r2(c.total-X.expected),t=$('#z-tally');if(blind){t.className='ztally';t.innerHTML=`<span>Counted</span><b>${peso(c.total)}</b>`;return}t.className='ztally '+(Math.abs(d)<0.005?'ok':d<0?'bad':'warn');
     t.innerHTML=`<span>Counted <b>${peso(c.total)}</b> vs expected <b>${peso(X.expected)}</b></span><b>${Math.abs(d)<0.005?'✓ BALANCED':d<0?'SHORT '+peso(-d):'OVER '+peso(d)}</b>`};
   live();$('#zden').addEventListener('input',()=>setTimeout(live,0));
   $('#z-ok').onclick=async()=>{const c=denomRead($('#zden')),d=r2(c.total-X.expected);
-    if(Math.abs(d)>=0.005&&!$('#z-n').value.trim()){alert(`Cash is ${d<0?'SHORT':'OVER'} by ${peso(Math.abs(d))}. Type the reason in the note first.`);$('#z-n').focus();return}
-    if(!confirm(`Counted cash ${peso(c.total)} · expected ${peso(X.expected)}.\nClose the day now? Selling stops until the drawer is opened again.`))return;
-    $('#z-ok').disabled=true;try{const R=await api('api_posZ',session.token,c.denoms,$('#z-n').value);try{ST=await api('api_stock',session.token);ST.offline=false;stCache()}catch(_){}box.classList.remove('on');drawStock();showReading(R)}catch(e){alert(errMsg(e));$('#z-ok').disabled=false}}}
+    if(!blind&&Math.abs(d)>=0.005&&!$('#z-n').value.trim()){alert(`Cash is ${d<0?'SHORT':'OVER'} by ${peso(Math.abs(d))}. Type the reason in the note first.`);$('#z-n').focus();return}
+    if(!confirm(`Counted cash ${peso(c.total)}${blind?'':' · expected '+peso(X.expected)}.\nClose the day now? The count cannot be changed after this. Selling stops until the drawer is opened again.`))return;
+    $('#z-ok').disabled=true;try{const R=await api('api_posZ',session.token,c.denoms,$('#z-n').value);try{ST=await api('api_stock',session.token);ST.offline=false;stCache()}catch(_){}box.classList.remove('on');drawStock();if(R.needReason)zReasonDialog(R);else showReading(R)}catch(e){alert(errMsg(e));$('#z-ok').disabled=false}}}
+function zReasonDialog(R){const box=stBox(),os=R.overShort;$('#stb').innerHTML=`<h2>${os<0?'⚠ Cash SHORT':'⚠ Cash OVER'} ${peso(Math.abs(os))}</h2>
+  <div class="td-due" style="background:${os<0?'var(--rose)':'#B45309'}"><span>Counted ${peso(R.counted)} · expected ${peso(R.expected)}</span><b>${os<0?'SHORT':'OVER'} ${peso(Math.abs(os))}</b></div>
+  <div class="unit" style="margin:8px 0">The count is saved. Explain what happened — the manager will review it.</div>
+  <label class="td-l">Reason<textarea class="edit-in" id="zr-n" rows="3" placeholder="e.g. gave wrong change to a customer, GCash payment rung up as cash…"></textarea></label>
+  <div class="row-end"><button class="go" id="zr-ok">Save reason</button></div>`;box.classList.add('on');setTimeout(()=>$('#zr-n').focus(),50);
+  $('#zr-ok').onclick=async()=>{const n=$('#zr-n').value.trim();if(!n)return alert('Type the reason.');try{await api('api_zReason',session.token,R.z,n);R.note=n;box.classList.remove('on');toast('Saved — the manager will review it');showReading(R)}catch(e){alert(errMsg(e))}}}
 function cashMoveDialog(){const box=stBox(),cats=ST.cashOutCats||['Expense (ice, fare, supplies…)','Purchase of stock (COGS)','Cash pickup / bank deposit','Other'],mv=(ST.shift&&ST.shift.moves)||[];let kind='out';
   const draw=()=>{$('#stb').innerHTML=`<h2>💸 Cash in / out of the drawer</h2>
     <div class="td-m" style="grid-template-columns:1fr 1fr"><button data-ck2="out" class="${kind==='out'?'on':''}"><span>➖</span>Cash out</button><button data-ck2="in" class="${kind==='in'?'on':''}"><span>➕</span>Cash in</button></div>
@@ -3280,6 +3353,11 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const srr=e.target
   if(view==='att'){if(d.punch){await punch(d.punch,b);return}if(d.myslip){const s=MSL.find(x=>x.id===d.myslip);if(s)showSlip(s.line,s.from,s.to);return}}
   if(view==='owner'){
     if(d.owtab){OWtab=d.owtab;drawStock();return}
+    if(d.zres){zResolve(d.zres);return}
+    if(d.lnadd){loanForm(d.lnadd,'');return}
+    if(d.lnedit){loanForm('',d.lnedit);return}
+    if(d.lnpay){loanPay(d.lnpay);return}
+    if(d.lnpdel){const[i,p]=d.lnpdel.split(':');if(!confirm('Delete this payment?'))return;try{OW=await api('api_loanPay',session.token,i,{ym:OW.ym},p);toast('Deleted');drawStock()}catch(er){alert(errMsg(er))}return}
     if(d.pysub){PYsub=d.pysub;drawStock();return}
     if(d.pystaff){pyDialog('staff',d.pystaff);return}
     if('pyattadd' in d){pyDialog('att','');return}
@@ -3414,6 +3492,7 @@ function stockChange(e){if(!STOCKV.includes(view))return;const t=e.target,d=t.da
   if(d.pyper!==undefined){[PYfrom,PYto]=t.value.split('|');PY=null;PYov={};drawStock();return}
   if(d.pyot!==undefined||d.pyc!==undefined||d.pyadj!==undefined||d.pyadv!==undefined){const id=d.pyot||d.pyc||d.pyadj||d.pyadv,o=PYov[id]=PYov[id]||{};
     if(d.pyot!==undefined)o.otOk=t.checked;if(d.pyc!==undefined)o.contrib=t.checked;if(d.pyadj!==undefined)o.adj=t.value;if(d.pyadv!==undefined)o.adv=t.value;PY=null;drawStock();return}
+  if(d.ztol!==undefined){api('api_zTol',session.token,t.value,OW.ym).then(r=>{OW=r;drawStock()}).catch(e=>alert(errMsg(e)));return}
   if(d.owterms!==undefined){api('api_ownerSet',session.token,t.value).then(r=>{OW=r;drawStock()}).catch(e=>alert(errMsg(e)));return}
   if(d.srf){SRF[d.srf]=t.value;if(d.srf==='from'||d.srf==='to')SRF.pre='';drawStock();return}
   if(d.pol!==undefined){const p=pBy(t.value),l=poEdit.items[+d.pol];l.code=t.value;if(p&&!l.cost&&p.cost)l.cost=p.cost;drawStock();return}
