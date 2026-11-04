@@ -742,6 +742,39 @@ th.h-inv small{display:block;font-weight:600;color:var(--muted);text-transform:n
 
 /* home page — big role tabs (primary) + tasks (secondary) */
 .rtabs-wrap{margin-bottom:18px}
+.hatt{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.5fr);gap:20px;align-items:stretch;background:linear-gradient(135deg,#0f766e 0%,#115e59 55%,#134e4a 100%);color:#fff;border-radius:22px;padding:22px;margin:0 0 20px;box-shadow:0 10px 30px rgba(15,118,110,.25);position:relative;overflow:hidden}
+.ha-l{display:flex;flex-direction:column;justify-content:center}.ha-tag{font-size:12px;letter-spacing:.16em;font-weight:800;color:#99f6e4}.ha-l h2{margin:4px 0 4px;font-size:26px;line-height:1.15;color:#fff}.ha-l p{margin:0 0 14px;color:#ccfbf1}.ha-l p b{color:#fff}
+.ha-go{display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;color:#0f766e;border:0;border-radius:16px;padding:16px 20px;font-size:20px;font-weight:900;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,.18);transition:transform .12s}.ha-go span{font-size:26px}.ha-go:hover{transform:translateY(-2px)}.ha-go:active{transform:scale(.98)}
+.ha-r{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:16px;padding:14px}
+.ha-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}.ha-st{background:rgba(255,255,255,.12);border-radius:12px;padding:8px 10px}.ha-st b{display:block;font-size:26px;line-height:1}.ha-st span{font-size:12px;color:#ccfbf1}
+.ha-st.s-in b{color:#86efac}.ha-st.s-brk b{color:#fcd34d}.ha-st.s-out b{color:#e2e8f0}.ha-st.s-not b{color:#fda4af}
+.ha-team{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;max-height:190px;overflow:auto}.ha-load{color:#ccfbf1;padding:6px}
+.ha-p{display:flex;align-items:center;gap:8px;background:#fff;color:#1f2937;border-radius:12px;padding:7px 9px;border-left:5px solid #cbd5e1}.ha-p i{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-weight:900;font-size:13px;background:#e2e8f0;color:#334155}
+.ha-p b{display:block;font-size:14px;line-height:1.1}.ha-p small{font-size:12px;color:#64748b}.ha-p>div{min-width:0}.ha-p b,.ha-p small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ha-p.s-in{border-color:#16a34a}.ha-p.s-in i{background:#dcfce7;color:#166534}.ha-p.s-brk{border-color:#d97706}.ha-p.s-brk i{background:#fef3c7;color:#92400e}.ha-p.s-out{border-color:#64748b;opacity:.85}.ha-p.s-off{border-color:#0284c7;opacity:.75}.ha-p.s-off i{background:#e0f2fe;color:#075985}.ha-p.s-not{opacity:.7}
+.ha-sheet{max-width:440px}.ha-top{text-align:center;margin:-4px 0 10px}.ha-clock{font-size:40px;font-weight:900;color:#0f766e;letter-spacing:-.02em}.ha-date{color:var(--muted);font-size:14px}
+.ha-lbl{display:block;font-weight:800;font-size:13px;color:var(--muted);margin:8px 0 4px}.ha-in{font-size:20px!important;text-align:center;padding:12px!important}
+.ha-dots{display:flex;justify-content:center;gap:12px;margin:6px 0 10px}.ha-dots i{width:16px;height:16px;border-radius:50%;border:2px solid #0f766e;transition:background .1s}.ha-dots i.on{background:#0f766e}.ha-hid{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.ha-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.ha-pad button{font-size:26px;font-weight:800;padding:14px 0;border-radius:14px;border:1px solid var(--line);background:#f8fafc;cursor:pointer;color:#0f172a}.ha-pad button:active{background:#ccfbf1}.ha-pad button.sm{font-size:16px;color:var(--muted)}
+.ha-next{width:100%;margin-top:12px;font-size:20px;font-weight:900;padding:15px;border:0;border-radius:14px;background:#0f766e;color:#fff;cursor:pointer}.ha-next:disabled{opacity:.6}
+.ha-foot{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:13px;color:var(--muted)}.ha-err{background:#fee2e2;color:#991b1b;border-radius:10px;padding:8px 10px;margin:4px 0 10px;font-weight:700;text-align:center}
+.ha-prof{display:flex;align-items:center;gap:12px;padding:14px;border-radius:16px;background:#f1f5f9;border-left:6px solid #94a3b8}.ha-prof>i{flex:none;width:52px;height:52px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-weight:900;font-size:19px;background:#fff;color:#334155}
+.ha-prof b{display:block;font-size:20px}.ha-prof small{color:var(--muted)}.ha-prof>div{flex:1;min-width:0}.ha-pill{font-weight:800;font-size:13px;padding:6px 10px;border-radius:99px;background:#fff;white-space:nowrap}
+.ha-prof.s-in{background:#f0fdf4;border-color:#16a34a}.ha-prof.s-in>i{background:#dcfce7;color:#166534}.ha-prof.s-brk{background:#fffbeb;border-color:#d97706}.ha-prof.s-brk>i{background:#fef3c7;color:#92400e}.ha-prof.s-out{border-color:#64748b}
+.ha-tls{display:flex;align-items:flex-start;margin:16px 0 6px}.ha-ln{flex:1;height:3px;background:#e2e8f0;margin-top:16px;min-width:6px}.ha-tl{display:flex;flex-direction:column;align-items:center;text-align:center;width:62px;flex:none}
+.ha-tl i{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-style:normal;background:#f1f5f9;border:2px solid #e2e8f0;filter:grayscale(1);opacity:.6}.ha-tl b{font-size:12px;margin-top:4px}.ha-tl small{font-size:12px;color:var(--muted)}
+.ha-tl.done i{background:#ecfdf5;border-color:#16a34a;filter:none;opacity:1}.ha-tl.done small{color:#166534;font-weight:800}.ha-tl.now i{border-color:#0f766e;filter:none;opacity:1;box-shadow:0 0 0 4px #ccfbf1}
+.ha-brk{background:#f8fafc;border-radius:14px;padding:10px 12px;margin:10px 0}.ha-brk-h{display:flex;justify-content:space-between;font-size:14px}.ha-brk-h b.over{color:var(--rose)}.ha-brk small{color:var(--muted);font-size:12px}
+.ha-bar{height:10px;border-radius:99px;background:#e2e8f0;overflow:hidden;margin:6px 0 4px}.ha-bar i{display:block;height:100%;background:#0f766e;border-radius:99px}.ha-bar i.low{background:#d97706}.ha-bar i.over{background:var(--rose)}
+.ha-acts{display:flex;gap:10px;margin:14px 0 6px}.ha-act{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;border:0;border-radius:18px;padding:18px 10px;font-size:19px;font-weight:900;letter-spacing:.04em;color:#fff;cursor:pointer;box-shadow:0 6px 14px rgba(0,0,0,.12)}.ha-act span{font-size:30px}.ha-act:disabled{opacity:.6}
+.ha-act.a-in{background:linear-gradient(135deg,#16a34a,#15803d)}.ha-act.a-brk{background:linear-gradient(135deg,#f59e0b,#d97706)}.ha-act.a-out{background:linear-gradient(135deg,#ef4444,#b91c1c)}
+.ha-doneb{flex:1;text-align:center;background:#f0fdf4;color:#166534;font-weight:800;border-radius:14px;padding:16px}
+.ha-more{display:flex;gap:8px;align-items:center;margin-top:8px}.ha-x{margin-top:10px;border-top:1px solid var(--line);padding-top:10px}.ha-x h3{margin:0 0 6px}
+.ha-note{background:#f1f5f9;border-radius:10px;padding:7px 10px;font-size:13px;margin:8px 0}.ha-note.warn{background:#fef3c7;color:#92400e}
+.ha-ok{text-align:center;padding:10px 4px}.ha-ck{width:96px;height:96px;margin:6px auto 10px;border-radius:50%;display:grid;place-items:center;font-size:48px;color:#fff;background:#16a34a;animation:hapop .35s ease-out}
+.ha-ok.a-bout .ha-ck{background:#d97706}.ha-ok.a-out .ha-ck{background:#b91c1c}.ha-ok h2{margin:0;font-size:24px;letter-spacing:.06em}.ha-ok-t{font-size:44px;font-weight:900;color:#0f766e;margin:2px 0}.ha-ok p{color:var(--muted);margin:4px 0 14px;font-size:16px}
+@keyframes hapop{0%{transform:scale(.4);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+@media(max-width:760px){.hatt{grid-template-columns:1fr;padding:16px}.ha-stats{grid-template-columns:repeat(2,1fr)}.ha-l h2{font-size:22px}.ha-tl{width:52px}}
 .rt-h{margin:4px 0 2px;font-size:24px;color:var(--navy)}.rt-sub{margin:0 0 14px;color:var(--muted)}
 .rtabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
 .rtab{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:8px;text-align:left;border:0;border-radius:18px;padding:20px 18px 18px;min-height:220px;cursor:pointer;
@@ -1329,6 +1362,76 @@ const ICONS={
   mon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>',
   month:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 14h3M8 18h6"/></svg>',
   dash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg>'};
+// home page: ⏰ attendance — staff time in / break / out here with User ID + PIN (not inside their task screens)
+let HB=null,HBat=0,HBload=false;
+function hbLoad(){if(HBload)return;HBload=true;api('api_homeBoard',KEY).then(r=>{HB=r;HBat=Date.now()}).catch(()=>{}).finally(()=>{HBload=false;const c=$('#hatt-list');if(c)c.innerHTML=hattList()})}
+const HST={in:['🟢','Working'],brk:['☕','On break'],out:['✅','Done'],off:['🌴','Day off'],not:['⏳','Not in yet']};
+const ini=n=>String(n||'?').trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+function hattList(){if(!HB)return '<div class="ha-load">Loading the team…</div>';const ord='in brk not out off',L=HB.staff.slice().sort((a,b)=>ord.indexOf(a.st)-ord.indexOf(b.st));
+  const n=k=>HB.staff.filter(x=>x.st===k).length;
+  return `<div class="ha-stats">${['in','brk','out','not'].map(k=>`<div class="ha-st s-${k}"><b>${n(k)}</b><span>${HST[k][0]} ${HST[k][1]}</span></div>`).join('')}</div>
+    <div class="ha-team">${L.map(x=>`<div class="ha-p s-${x.st}" title="${esc(x.name)} · ${HST[x.st][1]}"><i>${esc(ini(x.name))}</i><div><b>${esc(x.name.split(' ')[0])}</b><small>${x.st==='in'?'in '+time12h(x.tin):x.st==='brk'?'on break':x.st==='out'?'out '+time12h(x.tout):HST[x.st][1]}</small></div></div>`).join('')||'<div class="ha-load">No staff yet.</div>'}</div>`}
+function hattCard(){if(!HB||Date.now()-HBat>60000)hbLoad();
+  return `<div class="hatt"><div class="ha-l"><div class="ha-tag">ATTENDANCE</div><h2>Time in · Break · Time out</h2><p>Your <b>User ID + PIN</b>, then a quick live selfie.</p>
+      <button class="ha-go" data-hatt><span>⏰</span>Tap to clock in / out</button></div>
+    <div class="ha-r" id="hatt-list">${hattList()}</div></div>`}
+function hattDialog(){let box=$('#hatm');if(!box){box=document.createElement('div');box.className='modal';box.id='hatm';box.style.zIndex=70;box.innerHTML='<div class="sheet ha-sheet" id="hatb"></div>';document.body.appendChild(box);
+    box.addEventListener('click',e=>{if(e.target===box||e.target.closest('[data-x]'))box._close()})}
+  if(box._close)box._close(true);
+  let id='',pin='',A=null,tm=null,tick=null;const B=$('#hatb');
+  const close=quiet=>{clearTimeout(tm);clearInterval(tick);id='';pin='';A=null;box.classList.remove('on');if(!quiet){HB=null;hbLoad()}};box._close=close;
+  const nowT=()=>new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+  const hm=()=>{const d=new Date();return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')};
+  // step 1: User ID + PIN keypad
+  const step1=err=>{clearInterval(tick);B.innerHTML=`<div class="ha-top"><div class="ha-clock" id="ha-clk">${nowT()}</div><div class="ha-date">${new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</div></div>
+    <label class="ha-lbl">User ID<input class="edit-in ha-in" id="ha-id" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="e.g. ops" value="${esc(id)}"></label>
+    <div class="ha-lbl">PIN</div><div class="ha-dots" id="ha-dots">${[0,1,2,3,4,5].map(i=>`<i class="${i<pin.length?'on':''}"></i>`).join('')}</div>
+    <input id="ha-pin" type="password" inputmode="numeric" autocomplete="off" class="ha-hid" value="${esc(pin)}">
+    ${err?`<div class="ha-err">⚠ ${esc(err)}</div>`:''}
+    <div class="ha-pad">${[1,2,3,4,5,6,7,8,9].map(k=>`<button type="button" data-hk="${k}">${k}</button>`).join('')}<button type="button" data-hk="c" class="sm">Clear</button><button type="button" data-hk="0">0</button><button type="button" data-hk="b" class="sm">⌫</button></div>
+    <button class="ha-next" id="ha-go">Next ›</button><div class="ha-foot"><span>Forgot your PIN? Ask the manager.</span><button class="btn sm" data-x>Cancel</button></div>`;
+    tick=setInterval(()=>{const c=$('#ha-clk');if(c)c.textContent=nowT()},10000);
+    const dots=()=>{$('#ha-dots').innerHTML=[0,1,2,3,4,5].map(i=>`<i class="${i<pin.length?'on':''}"></i>`).join('')+(pin.length>6?'<i class="on"></i>'.repeat(pin.length-6):'')};
+    const pi=$('#ha-pin');pi.oninput=()=>{pin=pi.value.replace(/\D/g,'').slice(0,8);dots()};
+    B.querySelectorAll('[data-hk]').forEach(b=>b.onclick=()=>{const k=b.dataset.hk;pin=k==='c'?'':k==='b'?pin.slice(0,-1):(pin+k).slice(0,8);pi.value=pin;dots()});
+    const go=async()=>{id=$('#ha-id').value.trim();pin=pi.value.trim()||pin;if(!id)return step1('Type your User ID.');if(!pin)return step1('Type your PIN.');const g=$('#ha-go');g.disabled=true;g.textContent='Checking…';
+      try{A=await api('api_homeAtt',KEY,id,pin);step2()}catch(e){pin='';step1(errMsg(e))}};
+    $('#ha-go').onclick=go;$('#ha-id').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();pi.focus()}};pi.onkeydown=e=>{if(e.key==='Enter')go()};
+    setTimeout(()=>{(id?pi:$('#ha-id')).focus()},60)};
+  // step 2: today's card
+  const step2=()=>{clearInterval(tick);const S=attState(A),t=S.t,sh=A.shift,W=A.who,ROLE={ops:'Operations',cashier:'Cashier',sales:'Sales',rider:'Rider',manager:'Manager'};
+    const st=!t.tin?['not','⏳ Not in yet']:t.tout?['out','✅ Done for today']:S.onB?['brk','☕ On break']:['in','🟢 Working'];
+    const shTxt=!sh?'No schedule yet':sh.code==='OFF'?'🌴 Day off':`${sh.code?esc(sh.name)+' · ':''}${time12h(sh.tin)} – ${time12h(sh.tout)}`;
+    const late=sh&&sh.tin&&t.tin&&t.tin>sh.tin;
+    const step=(ic,lbl,v,on)=>`<div class="ha-tl ${v?'done':on?'now':''}"><i>${ic}</i><b>${lbl}</b><small>${v?time12h(v):on?'now':'—'}</small></div>`;
+    const tl=[step('🟢','Time in',t.tin,!t.tin),step('☕','Break',t.bout,t.tin&&!t.bout&&!t.tout),step('↩','Back',t.bin,t.bout&&!t.bin)];
+    if(t.bout2)tl.push(step('☕','Break 2',t.bout2,false),step('↩','Back',t.bin2,t.bout2&&!t.bin2));tl.push(step('🔴','Time out',t.tout,false));
+    const pct=Math.max(0,Math.min(100,Math.round(S.used/S.brk*100)));
+    const big=(k,ic,txt,cls)=>`<button class="ha-act ${cls}" data-hp="${k}"><span>${ic}</span>${txt}</button>`;
+    const acts=!t.tin?big('in','🟢','TIME IN','a-in'):t.tout?'<div class="ha-doneb">✅ You are done for today. Salamat, ingat!</div>':S.onB?big('bin','↩','END BREAK','a-in'):`${S.canBrk?big('bout','☕','START BREAK','a-brk'):''}${big('out','🔴','TIME OUT','a-out')}`;
+    B.innerHTML=`<div class="ha-prof s-${st[0]}"><i>${esc(ini(W.name))}</i><div><b>${esc(W.name)}</b><small>${ROLE[W.role]||''} · ${shTxt}</small></div><span class="ha-pill">${st[1]}</span></div>
+      <div class="ha-tls">${tl.join('<span class="ha-ln"></span>')}</div>
+      ${late?`<div class="ha-note warn">⏰ Timed in ${time12h(t.tin)} — shift starts ${time12h(sh.tin)}</div>`:''}
+      ${t.tin&&!t.tout?`<div class="ha-brk"><div class="ha-brk-h"><span>☕ Break</span><b class="${S.left<0?'over':''}">${S.left<0?'Over by '+(-S.left)+' min':S.left+' of '+S.brk+' min left'}</b></div><div class="ha-bar"><i style="width:${pct}%" class="${S.left<0?'over':S.left<=15?'low':''}"></i></div><small>${A.longBrk} min long + ${A.shortBrk} min short — or all at once</small></div>`:''}
+      <div class="ha-acts">${acts}</div>
+      <div class="ha-more"><button class="btn sm" data-hm="ot">⏱ File OT</button><button class="btn sm" data-hm="rules">📋 House rules</button><span style="flex:1"></span><button class="btn sm" data-x>Done</button></div>
+      <div id="ha-extra"></div>`;
+    B.querySelectorAll('[data-hp]').forEach(b=>b.onclick=async()=>{const k=b.dataset.hp,L={in:'TIME IN',bout:'BREAK',bin:'BACK FROM BREAK',out:'TIME OUT'}[k];
+      if(k==='out'&&!confirm('Time out now? Your day ends.'))return;const sf=await attSelfie(L,W.name);if(!sf)return;B.querySelectorAll('[data-hp]').forEach(x=>x.disabled=true);b.innerHTML='<span>⏳</span>Saving…';
+      try{A=await api('api_homePunch',KEY,id,pin,k,sf.photo,sf.desc);const tt=(A.list||[]).find(a=>a.d===A.today)||{},fr=Object.values(tt.face||{}).pop();done(k,L,fr)}catch(e){alert(errMsg(e));step2()}});
+    B.querySelector('[data-hm="rules"]').onclick=()=>{$('#ha-extra').innerHTML=`<div class="ha-x"><h3>📋 House rules</h3><ol class="att-rules">${(A.rules||[]).map(r=>`<li>${esc(r)}</li>`).join('')}</ol></div>`};
+    B.querySelector('[data-hm="ot"]').onclick=()=>{$('#ha-extra').innerHTML=`<div class="ha-x"><h3>⏱ File overtime</h3><div class="unit">Paid only when the manager approves.</div><div class="fgrid"><label>Date<input class="edit-in" type="date" id="ho-d" value="${today()}"></label><label>From<input class="edit-in" type="time" id="ho-f" value="${sh&&sh.tout||''}"></label><label>To<input class="edit-in" type="time" id="ho-t"></label>
+        <label class="full">Task / reason<input class="edit-in" id="ho-r" placeholder="e.g. late delivery to KUI"></label></div><div class="row-end"><button class="go" id="ho-ok">Send to manager</button></div></div>`;
+      $('#ho-ok').onclick=async()=>{const b=$('#ho-ok');b.disabled=true;try{A=await api('api_homeOT',KEY,id,pin,{d:$('#ho-d').value,from:$('#ho-f').value,to:$('#ho-t').value,reason:$('#ho-r').value});step2();toast('⏱ OT sent to the manager')}catch(e){alert(errMsg(e));b.disabled=false}};
+      $('#ho-t').focus()}};
+  // saved
+  const done=(k,L,fr)=>{const W=A.who,first=W.name.split(' ')[0],msg={in:'Have a great shift, '+first+'!',bout:'Enjoy your break, '+first+'. Time back in when you return.',bin:'Welcome back, '+first+'!',out:'Thank you for today, '+first+'. Ingat pauwi! 💛'}[k];
+    let n=6;B.innerHTML=`<div class="ha-ok a-${k}"><div class="ha-ck">${k==='bout'?'☕':k==='out'?'👋':'✓'}</div><h2>${L}</h2><div class="ha-ok-t">${time12h(hm())}</div><p>${esc(msg)}</p>
+      ${fr&&fr.r==='flag'?'<div class="ha-note warn">⚠ Face did not match — the manager will check.</div>':fr&&fr.r==='ok'?'<div class="ha-note">🙂 Face ✓</div>':''}
+      <button class="btn" id="ha-again">See my day</button> <button class="go" data-x>Close (<span id="ha-n">${n}</span>)</button></div>`;
+    $('#ha-again').onclick=()=>{clearTimeout(tm);clearInterval(tick);step2()};
+    clearInterval(tick);tick=setInterval(()=>{n--;const e=$('#ha-n');if(e)e.textContent=n;if(n<=0)close()},1000)};
+  step1();box.classList.add('on')}
 // home page: BIG role tabs — tap your role, log in, and the app opens your own screens
 function roleTabs(n){const b=(v,t,cls='')=>v?`<span class="rt-b ${cls}">${v} ${t}</span>`:'';
   const cnt={manager:b(n.poApproval+(n.retApproval||0),'to approve','hot')+b(n.today,'order(s) today'),
@@ -1363,6 +1466,7 @@ function procHome(msg){
       <div class="welcome"><div class="b3 logo3f wlogo">3F</div><h2>${greet}</h2><p>${msg?'<b>'+esc(msg)+'</b><br>':''}Tap <b>your role</b> below and log in with your username and <b>PIN</b>. Orders are <b>prepared the day before</b> delivery — on delivery day the team only double-checks, dispatches and delivers.</p></div>
       <div class="bigclock"><div class="t" id="bigt">--:--</div><div class="d" id="bigd"></div>
         <div class="co">Preparation standard time: <b>until ${t24(prepBy())} today</b> ${cut}<br>Dispatch target: <b>before ${t24(settings.stdBefore)}</b> on delivery day${n.late?`<br><span class="gpill red">⚠ ${n.late} late order(s)</span>`:''}${n.deliveredToday!=null?` &nbsp;✅ <b>${n.deliveredToday}</b> delivered today`:''}</div></div></div>
+    ${hattCard()}
     ${roleTabs(n)}
     <details class="hcard sec"${(()=>{try{return localStorage.getItem('dp_home_tasks')==='1'?' open':''}catch(e){return ''}})()}><summary><b>Go straight to a task</b><span>Daily process · Reports · Stock &amp; counter</span></summary>
       <div class="grp">Daily process</div>
@@ -1385,7 +1489,7 @@ function procHome(msg){
   tick();
   if(summary==null)api('api_summary',KEY).then(x=>{summary=x;if(!pickUser&&!proc&&!me)procHome(msg)}).catch(()=>{summary={}});
 }
-$('#login').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.closest('form'))return;
+$('#login').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.closest('form'))return;if('hatt' in b.dataset){hattDialog();return}
   if(b.dataset.proc!==undefined){proc=b.dataset.proc||null;roleHint=null;pickUser=null;if(!proc)summary=null;renderLogin();return}
   if(b.dataset.role){roleHint=b.dataset.role;proc='any';pickUser=null;renderLogin();return}});
 $('#login').addEventListener('toggle',e=>{if(e.target.classList&&e.target.classList.contains('sec'))try{localStorage.setItem('dp_home_tasks',e.target.open?'1':'0')}catch(_){}},true);
@@ -2698,7 +2802,7 @@ function attHTML(){if(!MA){attLoad();return '<div class="empty">Loading…</div>
     <div class="snote" style="margin:8px 0">${!sh?'No schedule yet — ask the manager.':sh.code==='OFF'?'🌴 <b>Day off today</b>':`🕘 <b>${sh.code?esc(sh.name):'Today'}: ${time12h(sh.tin)} – ${time12h(sh.tout)}</b> · break ${MA.brk} min (${MA.longBrk} long + ${MA.shortBrk} short, or all at once)`}</div>
     <div class="att-today"><div><span>Time in</span><b>${t.tin?time12h(t.tin):'—'}</b></div><div><span>Break 1</span><b>${B(t.bout,t.bin)||'—'}</b></div><div><span>Break 2</span><b>${B(t.bout2,t.bin2)||'—'}</b></div><div><span>Time out</span><b>${t.tout?time12h(t.tout):'—'}</b></div></div>
     ${t.tin?`<div style="margin:6px 0"><span class="ab-brk ${S.left<0?'over':S.left<=15?'low':''}" style="font-weight:800;padding:4px 10px;border-radius:99px">${S.left<0?'⚠ Over break by '+(-S.left)+' min (deducted)':'☕ Break left: '+S.left+' of '+S.brk+' min'}</span></div>`:''}
-    ${!t.tin?'<button class="go att-btn" data-punch="in">🟢 Time in</button>':t.tout?'<div class="snote">✅ Done for today. Ingat!</div>':S.onB?'<button class="go att-btn" data-punch="bin">↩ End break</button>':`${S.canBrk?'<button class="btn att-btn" data-punch="bout">☕ Start break</button>':''}<button class="go att-btn" data-punch="out" style="background:var(--rose)">🔴 Time out</button>`}
+    <div class="snote">⏰ <b>Time in, breaks and time out are on the main screen</b> — log out, then tap <b>⏰ Time in / out</b>.</div>
     <div class="unit">A selfie is taken with your time. The time comes from the server.</div>
     <div class="row-end" style="justify-content:center"><button class="btn" data-attot>⏱ File overtime</button><button class="btn" data-attrules>📋 House rules</button></div></div>
     <div class="panel"><h3>📋 House rules</h3><ol class="att-rules">${(MA.rules||[]).map(r=>`<li>${esc(r)}</li>`).join('')}</ol></div>
@@ -2707,10 +2811,10 @@ function attHTML(){if(!MA){attLoad();return '<div class="empty">Loading…</div>
     <div class="panel"><h3>My last 2 weeks</h3><div class="sc"><table class="stbl"><thead><tr><th>Date</th><th>In</th><th>Breaks</th><th>Out</th></tr></thead><tbody>${MA.list.map(a=>`<tr><td>${day(a.d)}</td><td>${a.tin?time12h(a.tin):'—'}</td><td>${[B(a.bout,a.bin),B(a.bout2,a.bin2)].filter(Boolean).join('<br>')||'—'}${a.brk>MA.brk?` <b style="color:var(--rose)">+${a.brk-MA.brk} min</b>`:''}</td><td>${a.tout?time12h(a.tout):'—'}</td></tr>`).join('')||'<tr><td colspan="4" class="empty">No record yet.</td></tr>'}</tbody></table></div></div>
     ${MSL&&MSL.length?`<div class="panel"><h3>💵 My payslips</h3>${MSL.map(s=>`<div class="posx-row"><span>${day(s.from)} – ${day(s.to)}</span><b>${peso(s.line.net)} <button class="btn sm" data-myslip="${s.id}">View</button></b></div>`).join('')}</div>`:''}`}
 // today's state for the staff: on break? break minutes used / left (counts a break still running)
-function attState(){if(!MA)return null;const t=MA.list.find(a=>a.d===MA.today)||{},now=new Date(),nowM=now.getHours()*60+now.getMinutes(),m=h=>{const[H,M]=h.split(':').map(Number);return H*60+M};
+function attState(A){A=A||MA;if(!A)return null;const t=A.list.find(a=>a.d===A.today)||{},now=new Date(),nowM=now.getHours()*60+now.getMinutes(),m=h=>{const[H,M]=h.split(':').map(Number);return H*60+M};
   const onB=t.bout2&&!t.bin2?t.bout2:t.bout&&!t.bin?t.bout:'',used=(t.bout&&t.bin?m(t.bin)-m(t.bout):0)+(t.bout2&&t.bin2?m(t.bin2)-m(t.bout2):0)+(onB&&!t.tout?Math.max(0,nowM-m(onB)):0);
-  const nB=(t.bout?1:0)+(t.bout2?1:0),brk=MA.brk||90;return {t,onB,used,left:brk-used,brk,nB,canBrk:t.tin&&!t.tout&&!onB&&nB<2&&used<brk}}
-function renderAttBar(){const el=$('#attbar');if(!el)return;if(!me||!session||me.role==='manager'){el.innerHTML='';return}if(!MA){if(!MAload)attLoad();el.innerHTML='';return}
+  const nB=(t.bout?1:0)+(t.bout2?1:0),brk=A.brk||90;return {t,onB,used,left:brk-used,brk,nB,canBrk:t.tin&&!t.tout&&!onB&&nB<2&&used<brk}}
+function renderAttBar(){const el=$('#attbar');if(!el)return;if(true){el.innerHTML='';return}                     // time in / out is on the main screen nowif(!MA){if(!MAload)attLoad();el.innerHTML='';return}
   const S=attState(),t=S.t,sh=MA.shift;
   const shTxt=!sh?'<b>No schedule yet</b><small>Ask the manager</small>':sh.code==='OFF'?'<b>🌴 Day off today</b><small>'+MA.offThisMonth+' of '+MA.offMax+' day offs this month</small>':`<b>${sh.code?esc(sh.name):'Today'} · ${time12h(sh.tin)} – ${time12h(sh.tout)}</b><small>Break ${MA.brk} min: ${MA.longBrk} long + ${MA.shortBrk} short (or all at once)</small>`;
   const st=!t.tin?'<b>Not in yet</b><small>Time in when you start</small>':t.tout?`<b>✅ Done · out ${time12h(t.tout)}</b><small>In ${time12h(t.tin)}</small>`:S.onB?`<b>☕ On break since ${time12h(S.onB)}</b><small>In ${time12h(t.tin)}</small>`:`<b>🟢 Working · in ${time12h(t.tin)}</b><small>${S.nB?S.nB+' break(s) taken':'No break yet'}</small>`;
@@ -2734,7 +2838,7 @@ const time12h=h=>{if(!h)return '';const[H,M]=h.split(':').map(Number);return ((H
 const FA_URL='https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/dist/face-api.js',FA_MODEL='https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/model/';
 let FAp=null;function faLoad(){if(FAp)return FAp;FAp=new Promise(res=>{const done=()=>{const f=window.faceapi;Promise.all([f.nets.tinyFaceDetector.loadFromUri(FA_MODEL),f.nets.faceLandmark68TinyNet.loadFromUri(FA_MODEL),f.nets.faceRecognitionNet.loadFromUri(FA_MODEL)]).then(()=>res(f),()=>res(null))};
   if(window.faceapi)return done();const sc=document.createElement('script');sc.src=FA_URL;sc.onload=done;sc.onerror=()=>res(null);document.head.appendChild(sc)});return FAp}
-function attSelfie(label){return new Promise(async res=>{camClose();const fa=faLoad();
+function attSelfie(label,who){return new Promise(async res=>{camClose();const fa=faLoad();
   const o=document.createElement('div');o.id='lcam';o.innerHTML=`<video id="lc-v" autoplay playsinline muted style="transform:scaleX(-1)"></video><div class="lc-msg" id="lc-m">Opening camera…</div>
     <div class="lc-bar"><button type="button" id="lc-x" aria-label="Close">✕</button><button type="button" id="lc-shot" aria-label="Take selfie" disabled></button><span style="width:56px"></span></div>`;
   document.body.appendChild(o);const fin=v=>{camClose();res(v)};$('#lc-x').onclick=()=>fin(null);
@@ -2746,7 +2850,7 @@ function attSelfie(label){return new Promise(async res=>{camClose();const fa=faL
     $('#lc-m').textContent='Checking face…';let desc='off';try{const f=await Promise.race([fa,new Promise(r=>setTimeout(()=>r(null),8000))]);
       if(f){const d=await f.detectSingleFace(cv,new f.TinyFaceDetectorOptions({inputSize:320,scoreThreshold:0.4})).withFaceLandmarks(true).withFaceDescriptor();desc=d?Array.from(d.descriptor).map(x=>Math.round(x*1e4)/1e4):'none'}}catch(e){desc='off'}
     if(desc==='none'&&!confirm('No face found in the selfie. Save anyway? (It will be marked for the manager.)')){$('#lc-shot').disabled=false;$('#lc-m').textContent=label+' — look at the camera';return}
-    const fs=Math.max(14,Math.round(cv.width/26));g.fillStyle='rgba(0,0,0,.6)';g.fillRect(0,cv.height-fs*2.4,cv.width,fs*2.4);g.fillStyle='#fff';g.font='bold '+fs+'px system-ui';g.fillText(label+' · '+me.name,fs*.5,cv.height-fs*1.3);g.font=Math.round(fs*.8)+'px system-ui';g.fillText(fullStamp(Date.now()),fs*.5,cv.height-fs*.35);
+    const fs=Math.max(14,Math.round(cv.width/26));g.fillStyle='rgba(0,0,0,.6)';g.fillRect(0,cv.height-fs*2.4,cv.width,fs*2.4);g.fillStyle='#fff';g.font='bold '+fs+'px system-ui';g.fillText(label+' · '+(who||me.name),fs*.5,cv.height-fs*1.3);g.font=Math.round(fs*.8)+'px system-ui';g.fillText(fullStamp(Date.now()),fs*.5,cv.height-fs*.35);
     fin({photo:cv.toDataURL('image/jpeg',.6),desc})}})}
 async function punch(kind,b){const L={in:'TIME IN',bout:'BREAK',bin:'BACK FROM BREAK',out:'TIME OUT'}[kind];
   const sf=await attSelfie(L);if(!sf)return;b.disabled=true;
