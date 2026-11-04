@@ -2656,7 +2656,8 @@ function srCsv(){const L=SR.lines.filter(l=>(!SRF.ch||l.ch===SRF.ch)&&(!SRF.cust
     .concat(L.map(l=>[l.d,l.no,l.dr,l.customer,l.ch,l.code,l.name,l.qty,l.unit,l.price,l.amount,l.pend?'PENDING':l.cost,l.pend?'PENDING':l.costAmt,l.pend?'PENDING':r2(l.amount-l.costAmt),l.cashier,l.pay])),'3FMS-sales-'+SRF.from+'-to-'+SRF.to+'.csv')}
 /* ---------- OWNER'S DASHBOARD (manager) ---------- */
 let OW=null,OWload=false,OWerr='',OWym='',OWtab='dash';
-function owLoad(){if(OWload)return;OWload=true;OWerr='';api('api_owner',session.token,OWym).then(r=>{OW=r;OWym=r.ym}).catch(e=>OWerr=errMsg(e)).finally(()=>{OWload=false;if(view==='owner')drawStock()})}
+let OWat=0;
+function owLoad(){if(OWload)return;OWload=true;OWerr='';api('api_owner',session.token,OWym).then(r=>{OW=r;OWym=r.ym;OWat=Date.now()}).catch(e=>OWerr=errMsg(e)).finally(()=>{OWload=false;if(view==='owner')drawStock()})}
 const owAcc=id=>(OW.accounts.find(a=>a.id===id)||{}).name||'—';
 const ACCI={cash:'💵',bank:'🏦',ewallet:'📱'};
 const ymLbl=k=>{const[y,m]=k.split('-');return SMON[+m-1]+' '+y};
@@ -2664,7 +2665,7 @@ function owBars(rows,keys){const mx=Math.max(1,...rows.flatMap(r=>keys.map(([k])
   return `<div class="owbars">${rows.map(r=>`<div class="owb"><div class="owb-c">${keys.map(([k,c])=>`<i style="height:${Math.round(Math.abs(r[k]||0)/mx*100)}%;background:${(r[k]||0)<0?'#DC2626':c}" title="${k} ${peso(r[k]||0)}"></i>`).join('')}</div><span>${r.lbl!=null?r.lbl:ymLbl(r.ym).slice(0,3)}</span></div>`).join('')}</div>
     <div class="owleg">${keys.map(([k,c,t])=>`<span><i style="background:${c}"></i>${t}</span>`).join('')}</div>`}
 function ownerHTML(){
-  if(!OW&&!OWerr)owLoad();
+  if(!OW&&!OWerr)owLoad();else if(OW&&!OWload&&Date.now()-OWat>30000&&!document.querySelector('.modal.on'))owLoad();      // keep the numbers fresh
   const tabs=[['dash','📊 Dashboard'],['acc','💰 Accounts'],['exp','🧾 Expenses'],['col','📥 Collect & pay'],['loan','🤝 Loans'],['avg','⏱ Profit averages'],['fa','🏢 Fixed assets'],['rep','📑 P&L · Balance sheet']];
   const head=`<div class="shead"><div><h2>${me.role==='manager'?'💰 Accounting & Finance':"👑 Owner's Dashboard"}</h2></div><div class="sbtns"><input type="month" class="edit-in" data-owym value="${esc(OWym||(OW&&OW.ym)||today().slice(0,7))}" style="width:auto"><button class="btn sm" data-owre>↻ Refresh</button></div></div>
     ${me.role==='manager'?'':`<div class="chips2 owtabs">${tabs.map(([k,t])=>`<button class="${OWtab===k?'on':''}" data-owtab="${k}">${t}</button>`).join('')}</div>`}`;
@@ -3026,6 +3027,8 @@ function owShort(){const O=OW,Z=O.zs||[],pend=Z.filter(q=>q.os.st==='pending'),y
     <div class="row-end" style="margin-top:6px">${q.os.st==='pending'?'':'<button class="btn sm" data-zres="'+q.z+'">Change</button>'}${q.os.st==='pending'?`<button class="go sm" data-zres="${q.z}">Decide</button>`:''}</div></div>`;
   return `<div class="panel"><div class="poh"><h3 style="margin:0">🧮 Cash short / over (Z reading)</h3><span style="flex:1"></span><label class="unit">Auto-accept up to ₱ <input class="edit-in nq" type="number" data-ztol value="${O.zTol}" style="width:70px"></label></div>
     <div class="snote" style="margin:6px 0">💸 <b>Cashier payout limit</b> — any cash out above this needs the manager's PIN: ₱ <input class="edit-in nq" type="number" data-pomax value="${O.payoutMax}" style="width:90px"> <small class="unit">(0 = no limit · cash pickup / bank deposit not counted)</small></div>
+    <div class="snote" style="margin:6px 0">💰 <b>After the Z reading</b>, the counted cash goes to <select class="edit-in" data-zturn style="width:auto">${O.accounts.filter(a=>a.link!=='pos-cash'&&a.type==='cash').map(a=>`<option value="${a.id}"${O.zTurn===a.id?' selected':''}>${esc(a.name)}</option>`).join('')}<option value="none"${O.zTurn==='none'?' selected':''}>— stays in the drawer account —</option></select>
+      <small class="unit">· the change fund comes from the same account when the drawer opens</small></div>
     <div class="unit">Differences up to ₱${O.zTol} are booked automatically (coins / rounding). Bigger ones wait for your decision. The drawer balance is always set to the cash counted.</div>
     ${pend.length?`<h4 style="margin:12px 0 6px">⏳ To decide (${pend.length})</h4>${pend.map(row).join('')}`:'<div class="unit" style="margin:10px 0">✓ Nothing to decide.</div>'}
     ${Object.keys(per).length?`<h4 style="margin:12px 0 6px">👤 By cashier · ${yr}</h4><div class="sc"><table class="stbl"><thead><tr><th>Closed by</th><th class="r">Times</th><th class="r">Total short</th><th class="r">Total over</th><th class="r">Charged</th></tr></thead><tbody>${Object.entries(per).sort((a,b)=>b[1].short-a[1].short).map(([k,c])=>`<tr><td><b>${esc(k)}</b></td><td class="r">${c.n}</td><td class="r" style="color:var(--rose)">${c.short?peso(c.short):'—'}</td><td class="r">${c.over?peso(c.over):'—'}</td><td class="r">${c.charged?peso(c.charged):'—'}</td></tr>`).join('')}</tbody></table></div>`:''}
@@ -3603,7 +3606,7 @@ function readingHTML(R){const L=(t,v,b,cls)=>`<tr${cls?` class="${cls}"`:''}><td
   <table style="width:100%">${H('CASH IN / OUT OF DRAWER')}${(R.moves||[]).map(m=>L(`${m.kind==='in'?'+ In':'− Out'} · ${esc(m.note)}<br><small>${esc(m.cat)} · ${esc(m.by)} ${stampShort(m.at)}</small>`,(m.kind==='in'?'+':'−')+P(m.amount))).join('')||L('None','—')}
   ${L('Total cash in','+'+P(R.cashIn||0))}${L('Total cash out','−'+P(R.cashOut||0))}${Object.keys(R.outByCat||{}).map(k=>L('&nbsp;&nbsp;'+esc(k),P(R.outByCat[k]))).join('')}</table><hr>
   ${R.kind!=='Z'&&me.role!=='manager'?'':`<table style="width:100%">${H('CASH DRAWER TALLY')}${L('Opening cash',P(R.opening))}${L('+ Cash sales',P(R.cashSales))}${L('+ Charge payments in cash',P(R.cashColl))}${L('+ Cash in',P(R.cashIn||0))}${L('− Cash out',P(R.cashOut||0))}${L('− Cash refunds',P(R.refunds))}${L('EXPECTED CASH',P(R.expected),1)}
-  ${R.kind==='Z'?L('COUNTED CASH',P(R.counted),1)+`<tr><td><b>TALLY</b></td><td style="text-align:right;font-size:16px"><b style="color:${os<0?'#B42318':os>0?'#B45309':'#15803D'}">${tally}</b></td></tr>`:''}</table>`}
+  ${R.kind==='Z'?L('COUNTED CASH',P(R.counted),1)+`<tr><td><b>TALLY</b></td><td style="text-align:right;font-size:16px"><b style="color:${os<0?'#B42318':os>0?'#B45309':'#15803D'}">${tally}</b></td></tr>`+(R.turnTo?`<tr><td colspan="2" style="font-size:12px;padding-top:6px">💰 Counted cash turned over to <b>${esc(R.turnTo)}</b></td></tr>`:''):''}</table>`}
   ${R.kind==='Z'&&R.countDenoms&&Object.keys(R.countDenoms).length?`<hr><table style="width:100%">${H('CASH COUNT')}${Object.keys(R.countDenoms).sort((a,b)=>b-a).map(d=>L(`₱${+d<1?'0.25':(+d).toLocaleString()} × ${R.countDenoms[d]}`,P(d*R.countDenoms[d]))).join('')}</table>`:''}
   ${R.kind==='Z'?`<hr><table style="width:100%">${L('Old grand total',P(R.oldGT||0))}${L('New grand total',P(R.newGT||0),1)}</table>`:''}
   ${R.note?`<p>Note: ${esc(R.note)}</p>`:''}${R.kind==='Z'?'<p style="text-align:center;margin-top:16px">_______________________<br>Cashier signature<br><br>_______________________<br>Checked by (manager)</p>':''}</div>`}
@@ -4099,6 +4102,7 @@ function stockChange(e){if(!STOCKV.includes(view))return;const t=e.target,d=t.da
   if(d.pyper!==undefined){[PYfrom,PYto]=t.value.split('|');PY=null;PYov={};drawStock();return}
   if(d.pyot!==undefined||d.pyc!==undefined||d.pyadj!==undefined||d.pyadv!==undefined){const id=d.pyot||d.pyc||d.pyadj||d.pyadv,o=PYov[id]=PYov[id]||{};
     if(d.pyot!==undefined)o.otOk=t.checked;if(d.pyc!==undefined)o.contrib=t.checked;if(d.pyadj!==undefined)o.adj=t.value;if(d.pyadv!==undefined)o.adv=t.value;PY=null;drawStock();return}
+  if(d.zturn!==undefined){api('api_zTurnSet',session.token,t.value==='none'?'':t.value,OW.ym).then(r=>{OW=r;OWat=Date.now();toast('Saved');drawStock()}).catch(e=>alert(errMsg(e)));return}
   if(d.pomax!==undefined){api('api_payoutSet',session.token,t.value,OW.ym).then(r=>{OW=r;toast('Payout limit saved');drawStock()}).catch(e=>alert(errMsg(e)));return}
   if(d.ztol!==undefined){api('api_zTol',session.token,t.value,OW.ym).then(r=>{OW=r;drawStock()}).catch(e=>alert(errMsg(e)));return}
   if(d.owterms!==undefined){api('api_ownerSet',session.token,t.value).then(r=>{OW=r;drawStock()}).catch(e=>alert(errMsg(e)));return}
