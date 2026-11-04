@@ -742,6 +742,9 @@ th.h-inv small{display:block;font-weight:600;color:var(--muted);text-transform:n
 
 /* home page — big role tabs (primary) + tasks (secondary) */
 .rtabs-wrap{margin-bottom:18px}
+.lg-acc button{font-weight:800}.lg-kp .big b{font-size:24px}.lg-tb td{vertical-align:top}.lg-day td{background:#f8fafc;border-top:2px solid var(--line)}.lg-day span{float:right;font-size:13px}.lg-t{white-space:nowrap;font-variant-numeric:tabular-nums;color:var(--muted);font-size:13px}
+.lg-ic{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:#f1f5f9;font-size:14px}.lg-r.in .lg-ic{background:#dcfce7}.lg-r.out .lg-ic{background:#fee2e2}
+.lg-in{color:var(--green);font-weight:800;white-space:nowrap}.lg-out{color:var(--rose);font-weight:800;white-space:nowrap}.lg-ft{display:inline-block;margin-top:2px;font-size:12px;font-weight:700;color:var(--blue);background:var(--bbg);border-radius:99px;padding:1px 8px}.lg-g summary{cursor:pointer}
 .hatt{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.5fr);gap:20px;align-items:stretch;background:linear-gradient(135deg,#0f766e 0%,#115e59 55%,#134e4a 100%);color:#fff;border-radius:22px;padding:22px;margin:0 0 20px;box-shadow:0 10px 30px rgba(15,118,110,.25);position:relative;overflow:hidden}
 .ha-l{display:flex;flex-direction:column;justify-content:center}.ha-tag{font-size:12px;letter-spacing:.16em;font-weight:800;color:#99f6e4}.ha-l h2{margin:4px 0 4px;font-size:26px;line-height:1.15;color:#fff}.ha-l p{margin:0 0 14px;color:#ccfbf1}.ha-l p b{color:#fff}
 .ha-go{display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;color:#0f766e;border:0;border-radius:16px;padding:16px 20px;font-size:20px;font-weight:900;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,.18);transition:transform .12s}.ha-go span{font-size:26px}.ha-go:hover{transform:translateY(-2px)}.ha-go:active{transform:scale(.98)}
@@ -1571,7 +1574,7 @@ function deptDefs(c){return {
     {v:'pos',t:'🧾 POS'},{v:'inv',t:'📦 Inventory',n:c.out?c.out+' out':0,g:[['inv','📦 Stock'],['prod','🏭 Production']]},{v:'way',t:'🛵 Deliveries',n:c.way,g:[['way','🛵 Out for delivery',c.way],['delivered','✅ '+c.delLbl,c.delOK],['undel','↩ Undelivered',c.und]]},
     {v:'mgr',t:'📊 Reports',g:[['mgr','📊 Operations dashboard'],['month','📦 Monthly report']]}]},
   hr:{ic:'🧑‍💼',t:'HR',d:'Schedule · OT · payroll',c:'#0F766E',n:c.otP,tabs:[{v:'hr',sub:'sched',t:'📅 Schedule'},{v:'hr',sub:'ot',t:'⏱ OT requests',n:c.otP},{v:'hr',sub:'pay',t:'💵 Payroll & attendance'},{v:'hr',sub:'set',t:'⚙ Shifts & rules'},{act:'users',t:'🔑 Users & PINs'}]},
-  fin:{ic:'💰',t:'Accounting & Finance',d:'Money · expenses · P&L',c:'#B45309',n:c.zP,tabs:[{v:'owner',sub:'dash',t:'📊 Dashboard'},{v:'owner',sub:'acc',t:'💰 Accounts'},{v:'owner',sub:'exp',t:'🧾 Expenses'},{v:'owner',sub:'col',t:'📥 Collect & pay',n:c.zP},
+  fin:{ic:'💰',t:'Accounting & Finance',d:'Money · expenses · P&L',c:'#B45309',n:c.zP,tabs:[{v:'owner',sub:'dash',t:'📊 Dashboard'},{v:'owner',sub:'acc',t:'💰 Accounts'},{v:'owner',sub:'hist',t:'📜 Money history'},{v:'owner',sub:'exp',t:'🧾 Expenses'},{v:'owner',sub:'col',t:'📥 Collect & pay',n:c.zP},
     {v:'owner',sub:'loan',t:'🤝 Loans'},{v:'owner',sub:'avg',t:'⏱ Profit averages'},{v:'owner',sub:'fa',t:'🏢 Fixed assets'},{v:'owner',sub:'rep',t:'📑 P&L · Balance sheet'}]},
   sales:{ic:'📈',t:'Sales & Marketing',d:'Sales · customers · loyalty',c:'#7C3AED',n:0,tabs:[{v:'memb',t:'💳 Membership'},{v:'srep',t:'📈 Sales & profit'},{v:'crep',t:'👥 Customer sales'},{v:'points',t:'⭐ Points (old)'},{act:'bulk',t:'🏢 Bulk buyer accounts'},{act:'cdisc',t:'🏷 Customer discounts'}]}}}
 function deptGo(v,sub){if(v==='owner'&&sub)OWtab=sub;if(v==='hr'&&sub)HRsub=sub;view=v;openId=null;editId=null;dateF='';
@@ -2666,12 +2669,12 @@ function owBars(rows,keys){const mx=Math.max(1,...rows.flatMap(r=>keys.map(([k])
     <div class="owleg">${keys.map(([k,c,t])=>`<span><i style="background:${c}"></i>${t}</span>`).join('')}</div>`}
 function ownerHTML(){
   if(!OW&&!OWerr)owLoad();else if(OW&&!OWload&&Date.now()-OWat>30000&&!document.querySelector('.modal.on'))owLoad();      // keep the numbers fresh
-  const tabs=[['dash','📊 Dashboard'],['acc','💰 Accounts'],['exp','🧾 Expenses'],['col','📥 Collect & pay'],['loan','🤝 Loans'],['avg','⏱ Profit averages'],['fa','🏢 Fixed assets'],['rep','📑 P&L · Balance sheet']];
+  const tabs=[['dash','📊 Dashboard'],['acc','💰 Accounts'],['hist','📜 Money history'],['exp','🧾 Expenses'],['col','📥 Collect & pay'],['loan','🤝 Loans'],['avg','⏱ Profit averages'],['fa','🏢 Fixed assets'],['rep','📑 P&L · Balance sheet']];
   const head=`<div class="shead"><div><h2>${me.role==='manager'?'💰 Accounting & Finance':"👑 Owner's Dashboard"}</h2></div><div class="sbtns"><input type="month" class="edit-in" data-owym value="${esc(OWym||(OW&&OW.ym)||today().slice(0,7))}" style="width:auto"><button class="btn sm" data-owre>↻ Refresh</button></div></div>
     ${me.role==='manager'?'':`<div class="chips2 owtabs">${tabs.map(([k,t])=>`<button class="${OWtab===k?'on':''}" data-owtab="${k}">${t}</button>`).join('')}</div>`}`;
   if(OWerr)return head+`<div class="empty">⚠ ${esc(OWerr)}<br><br><button class="btn" data-owre>↻ Try again</button></div>`;
   if(!OW)return head+'<div class="empty">Loading…</div>';
-  return head+({dash:owDash,acc:owAccounts,exp:owExpenses,col:()=>{const p=(OW.zs||[]).some(q=>q.os.st==='pending');return p?owShort()+owCollect():owCollect()+owShort()},loan:owLoans,avg:owAvg,fa:owAssets,rep:owReports}[OWtab])()}
+  return head+({dash:owDash,acc:owAccounts,hist:owHist,exp:owExpenses,col:()=>{const p=(OW.zs||[]).some(q=>q.os.st==='pending');return p?owShort()+owCollect():owCollect()+owShort()},loan:owLoans,avg:owAvg,fa:owAssets,rep:owReports}[OWtab])()}
 function owDash(){const zp=(OW.zs||[]).filter(q=>q.os.st==='pending');return (zp.length?`<button class="snote" style="cursor:pointer;width:100%;text-align:left;font:inherit;color:inherit" data-owtab="col">⚠ <b>${zp.length}</b> cash short / over from the Z reading to decide (${zp.map(q=>(q.amt<0?'short ':'over ')+peso(Math.abs(q.amt))).join(', ')}) — tap to open <b>📥 Collect & pay</b>.</button>`:'')+owDash0()}
 function owDash0(){const O=OW,P=O.pl,B=O.bs,arOver=O.ar.filter(a=>a.days>30),apDue=O.ap.filter(a=>a.due&&a.due<=iso(new Date(Date.now()+7*864e5)));
   const k=(t,v,s,c)=>`<div class="owk ${c||''}"><span>${t}</span><b>${v}</b>${s?`<small>${s}</small>`:''}</div>`;
@@ -2694,11 +2697,55 @@ function owDash0(){const O=OW,P=O.pl,B=O.bs,arOver=O.ar.filter(a=>a.days>30),apD
 function owAccounts(){const O=OW;
   return `<div class="panel"><div class="poh"><h3 style="margin:0">💰 Money accounts</h3><span style="flex:1"></span><button class="go sm" data-owadd="account">+ Account</button><button class="btn sm" data-owadd="move">⇄ Transfer / owner / loan</button></div>
     <table class="stbl"><thead><tr><th>Account</th><th>Linked to</th><th class="r">Opening</th><th class="r">Balance now</th><th></th></tr></thead><tbody>
-    ${O.accounts.map(a=>`<tr><td><b>${ACCI[a.type]||''} ${esc(a.name)}</b><br><small class="unit">${esc(a.type)}${a.openDate?' · from '+day(a.openDate):''}</small></td><td class="unit">${({'pos-cash':'POS cash sales','gcash':'GCash sales','maya':'Maya sales','bank':'Bank transfer sales'})[a.link]||'—'}</td><td class="r">${peso(a.opening)}</td><td class="r"><b>${peso(a.balance)}</b></td><td><button class="btn sm" data-owedit="account:${a.id}">Edit</button></td></tr>`).join('')}
+    ${O.accounts.map(a=>`<tr><td><b>${ACCI[a.type]||''} ${esc(a.name)}</b><br><small class="unit">${esc(a.type)}${a.openDate?' · from '+day(a.openDate):''}</small></td><td class="unit">${({'pos-cash':'POS cash sales','gcash':'GCash sales','maya':'Maya sales','bank':'Bank transfer sales'})[a.link]||'—'}</td><td class="r">${peso(a.opening)}</td><td class="r"><b>${peso(a.balance)}</b></td><td style="white-space:nowrap"><button class="go sm" data-owhist="${a.id}">📜 History</button> <button class="btn sm" data-owedit="account:${a.id}">Edit</button></td></tr>`).join('')}
     <tr class="srtot"><td colspan="3"><b>Total cash, bank & e-wallets</b></td><td class="r"><b>${peso(O.bs.cash)}</b></td><td></td></tr></tbody></table>
     <div class="unit">Set each account's <b>opening balance</b> and the <b>date</b> you start counting. Sales, charge payments, drawer cash-outs, live pig payments, expenses and transfers then update the balances by themselves.</div></div>
     <div class="panel"><h3>⇄ Transfers · owner's capital & drawings · loans · ${ymLbl(O.ym)}</h3>${O.moves.map(m=>`<div class="posx-row"><span>${day(m.d)} · <b>${esc(m.type)}</b> ${m.from?esc(owAcc(m.from)):''}${m.from&&m.to?' → ':''}${m.to?esc(owAcc(m.to)):''} <small class="unit">${esc(m.note)}</small></span><b>${peso(m.amt)} <button class="del" data-owdel="move:${m.id}">✕</button></b></div>`).join('')||'<div class="unit">None this month.</div>'}</div>
-    <details class="panel"><summary><b>🧾 Money in / out this month</b> <span class="unit">(latest ${O.flows.length})</span></summary><table class="stbl"><tbody>${O.flows.map(f=>`<tr><td>${day(f.d)}</td><td>${esc(owAcc(f.acc))}</td><td>${esc(f.what)}</td><td class="r" style="color:${f.amt<0?'var(--rose)':'var(--green)'}">${f.amt>0?'+':''}${peso(f.amt)}</td></tr>`).join('')}</tbody></table></details>`}
+    <div class="row-end" style="justify-content:flex-start"><button class="go" data-owhist="">📜 Money history — every peso in and out, all accounts</button></div>`}
+/* ---------- 📜 MONEY HISTORY: statement per account — time, what, from / to, who, in, out, running balance ---------- */
+let LG={acc:'',from:ymdL(new Date(new Date().getFullYear(),new Date().getMonth(),1)),to:ymdL(new Date()),pre:'month',q:'',kind:'',grp:true},LGD=null,LGload=false,LGerr='';
+const lgKey=()=>LG.acc+'|'+LG.from+'|'+LG.to;
+function lgLoad(){if(LGload)return;LGload=true;LGerr='';const k=lgKey();api('api_accLedger',session.token,LG.acc,LG.from,LG.to).then(r=>{LGD=r;LGD.key=k}).catch(e=>LGerr=errMsg(e)).finally(()=>{LGload=false;if(view==='owner'&&OWtab==='hist')drawStock()})}
+const LGK={sale:['🧾','Sales'],collection:['💳','Charge collected'],transfer:['⇄','Transfer'],cashin:['➕','Cash in'],expense:['💸','Expense'],purchase:['🚚','Supplier'],billpay:['📄','Bill paid'],cashshort:['⚖','Short / over'],
+  advance:['👤','Cash advance'],loan:['🏦','Loan received'],loanpay:['🏦','Loan payment'],lend:['🤝','Cash lent'],lendcol:['🤝','Collected'],capital:['👑',"Owner's capital"],drawings:['👑',"Owner's drawings"],income:['➕','Other income'],refund:['↩','Refund']};
+const LGF=[['','All types'],['sale','🧾 Sales'],['transfer','⇄ Transfers & drawer'],['cash','➕➖ Cash in / out'],['expense','💸 Expenses & bills'],['purchase','🚚 Supplier payments'],['collection','💳 Charge collected'],['loan','🏦 Loans & lending'],['owner','👑 Owner'],['other','Other']];
+const lgMatch=(r,k)=>!k||(k==='cash'?/cashin|cashshort|refund/.test(r.kind)||/^Cash (in|out)/.test(r.what):k==='expense'?/expense|billpay|advance/.test(r.kind):k==='loan'?/loan|lend/.test(r.kind):k==='owner'?/capital|drawings/.test(r.kind):k==='other'?/income/.test(r.kind):r.kind===k);
+function lgRows(){const q=LG.q.trim().toLowerCase();let L=LGD.rows.filter(r=>lgMatch(r,LG.kind)&&(!q||(r.what+' '+r.other+' '+r.by+' '+r.ref+' '+r.accName).toLowerCase().includes(q)));
+  if(LG.grp&&!q){const out=[],G={};L.forEach(r=>{if(r.kind!=='sale'){out.push(r);return}const k=r.d+'|'+r.acc;let g=G[k];if(!g){g=G[k]={...r,grp:[],amt:0,what:'',t0:r.t};out.push(g)}g.grp.push(r);g.amt=r2(g.amt+r.amt);g.t=r.t||g.t;g.bal=r.bal});
+    out.forEach(g=>{if(g.grp){g.what=`Sales · ${g.grp.length} receipt${g.grp.length>1?'s':''}`;g.by=[...new Set(g.grp.map(x=>x.by).filter(Boolean))].join(', ')}});L=out}
+  return L}
+const lgTime=r=>r.t?new Date(r.t).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}):'';
+function owHist(){if((!LGD||LGD.key!==lgKey())&&!LGerr)lgLoad();const ok=LGD&&LGD.key===lgKey(),A=OW.accounts;
+  const P=[['today','Today'],['yday','Yesterday'],['week','This week'],['month','This month'],['last','Last month']];
+  const head=`<div class="panel"><div class="poh"><h3 style="margin:0">📜 Money history</h3><span style="flex:1"></span><button class="btn sm" data-lgprint${ok?'':' disabled'}>🖨 Print</button><button class="btn sm" data-lgcsv${ok?'':' disabled'}>⬇ CSV</button><button class="btn sm" data-lgre>↻</button></div>
+    <div class="chips2 lg-acc"><button class="${LG.acc===''?'on':''}" data-lga="">🗂 All accounts</button>${A.map(a=>`<button class="${LG.acc===a.id?'on':''}" data-lga="${a.id}">${ACCI[a.type]||''} ${esc(a.name)}</button>`).join('')}</div>
+    <div class="chips2" style="margin-top:6px">${P.map(([k,t])=>`<button class="${LG.pre===k?'on':''}" data-lgp="${k}">${t}</button>`).join('')}</div>
+    <div class="srrow"><label>From <input type="date" class="edit-in" data-lgf="from" value="${LG.from}"></label><label>To <input type="date" class="edit-in" data-lgf="to" value="${LG.to}"></label>
+      <label>Type <select class="edit-in" data-lgf="kind">${LGF.map(([k,t])=>`<option value="${k}"${LG.kind===k?' selected':''}>${t}</option>`).join('')}</select></label>
+      <label>Search <input class="edit-in" data-k="lgq" value="${esc(LG.q)}" placeholder="receipt, name, note…"></label></div>
+    <label class="unit" style="display:inline-flex;gap:6px;align-items:center;margin-top:6px"><input type="checkbox" data-lggrp${LG.grp?' checked':''}> Group sales into one line per day</label></div>`;
+  if(LGerr)return head+`<div class="empty">⚠ ${esc(LGerr)}</div>`;
+  if(!ok)return head+'<div class="empty">Loading…</div>';
+  const D=LGD,L=lgRows(),one=!!D.acc,fil=LG.kind||LG.q.trim(),sIn=L.reduce((a,r)=>a+(r.amt>0?r.amt:0),0),sOut=L.reduce((a,r)=>a+(r.amt<0?-r.amt:0),0);
+  const kp=`<div class="kpis lg-kp">${one?`<div><b>${peso(D.open)}</b><span>balance at the start · ${day(D.from)}</span></div>`:''}<div><b style="color:var(--green)">+${peso(fil?sIn:D.tin)}</b><span>money in</span></div><div><b style="color:var(--rose)">−${peso(fil?sOut:D.tout)}</b><span>money out</span></div>
+    ${one?`<div class="big"><b>${peso(D.close)}</b><span>balance at the end · ${day(D.to)}</span></div>`:`<div><b>${peso(D.tin-D.tout)}</b><span>net</span></div>`}</div>`;
+  if(!L.length)return head+kp+'<div class="empty">No money moved in these dates.</div>';
+  const days=[];L.forEach(r=>{let g=days[days.length-1];if(!g||g.d!==r.d){g={d:r.d,rows:[],in:0,out:0};days.push(g)}g.rows.push(r);if(r.amt>0)g.in+=r.amt;else g.out-=r.amt;g.end=r.bal});
+  const row=r=>{const K=LGK[r.kind]||['•',''],dir=r.amt>0,ft=r.other?(dir?'from ':'to ')+r.other:'';
+    return `<tr class="lg-r ${dir?'in':'out'}"><td class="lg-t">${lgTime(r)||'<span class="unit">—</span>'}</td><td><span class="lg-ic">${K[0]}</span></td>
+      <td><b>${esc(r.what)}</b>${!one?`<br><small class="unit">${ACCI[(A.find(a=>a.id===r.acc)||{}).type]||''} ${esc(r.accName)}</small>`:''}${ft?`<br><span class="lg-ft">${dir?'⬅':'➡'} ${esc(ft)}</span>`:''}${r.grp?`<details class="lg-g"><summary class="unit">show receipts</summary>${r.grp.map(x=>`<div class="unit">${lgTime(x)} · ${esc(x.what)} · ${peso(x.amt)}${x.by?' · '+esc(x.by):''}</div>`).join('')}</details>`:''}</td>
+      <td class="unit">${esc(r.by||'')}</td><td class="r lg-in">${dir?'+'+peso(r.amt):''}</td><td class="r lg-out">${dir?'':'−'+peso(-r.amt)}</td>${one?`<td class="r"><b>${peso(r.bal)}</b></td>`:''}</tr>`};
+  return head+kp+`<div class="panel lg"><div class="sc"><table class="stbl lg-tb"><thead><tr><th>Time</th><th></th><th>What · from / to</th><th>By</th><th class="r">In</th><th class="r">Out</th>${one?'<th class="r">Balance</th>':''}</tr></thead>
+    ${days.slice().reverse().map(g=>`<tbody><tr class="lg-day"><td colspan="${one?7:6}"><b>${day(g.d)}</b><span>${g.in?'<b style="color:var(--green)">+'+peso(g.in)+'</b>':''} ${g.out?'<b style="color:var(--rose)">−'+peso(g.out)+'</b>':''}${one&&!fil?` · end of day <b>${peso(g.end)}</b>`:''}</span></td></tr>${g.rows.slice().reverse().map(row).join('')}</tbody>`).join('')}</table></div>
+    <div class="unit">Newest first. ${one?'Balance = after that line. ':''}Lines with "—" have a date only (entered by hand without a time).</div></div>`}
+function lgCsv(){const L=lgRows(),one=!!LGD.acc,out=[['Date','Time','Account','Type','What','From / to','By','Ref','In','Out'].concat(one?['Balance']:[])];
+  L.forEach(r=>out.push([r.d,lgTime(r),r.accName,(LGK[r.kind]||[])[1]||r.kind,r.what,r.other,r.by,r.ref,r.amt>0?r.amt:'',r.amt<0?-r.amt:''].concat(one?[r.bal]:[])));
+  downloadCsv(out,'3FMS-money-'+(one?LGD.acc.name:'all').replace(/\W+/g,'_')+'-'+LG.from+'-to-'+LG.to+'.csv')}
+function lgPrint(){const L=lgRows(),D=LGD,one=!!D.acc;$('#print').className='';
+  $('#print').innerHTML=`<div style="font-family:Arial,sans-serif;font-size:12px"><div style="display:flex;align-items:center;gap:10px"><img src="${LOGO_3F}" style="width:56px;height:56px"><div><h2 style="margin:0">3F MEATSHOP</h2><div><b>Money history — ${esc(one?D.acc.name:'All accounts')}</b></div><div>${day(D.from)} – ${day(D.to)}</div></div></div><hr>
+    ${one?`<div>Balance at the start: <b>${fmt2(D.open)}</b> · In: ${fmt2(D.tin)} · Out: ${fmt2(D.tout)} · Balance at the end: <b>${fmt2(D.close)}</b></div>`:''}
+    <table style="width:100%;border-collapse:collapse;margin-top:8px" border="1" cellpadding="4"><thead><tr><th>Date</th><th>Time</th>${one?'':'<th>Account</th>'}<th>What</th><th>From / to</th><th>By</th><th>In</th><th>Out</th>${one?'<th>Balance</th>':''}</tr></thead><tbody>
+    ${L.map(r=>`<tr><td>${day(r.d)}</td><td>${lgTime(r)}</td>${one?'':'<td>'+esc(r.accName)+'</td>'}<td>${esc(r.what)}</td><td>${esc(r.other)}</td><td>${esc(r.by)}</td><td style="text-align:right">${r.amt>0?fmt2(r.amt):''}</td><td style="text-align:right">${r.amt<0?fmt2(-r.amt):''}</td>${one?`<td style="text-align:right">${fmt2(r.bal)}</td>`:''}</tr>`).join('')}</tbody></table></div>`;window.print()}
 function owExpenses(){const O=OW,tot=O.expenses.reduce((a,e)=>a+e.amt,0);
   return `<div class="panel"><div class="poh"><h3 style="margin:0">🧾 Expenses · ${ymLbl(O.ym)}</h3><span style="flex:1"></span><button class="go sm" data-owadd="expense">+ Expense</button></div>
     <table class="stbl"><thead><tr><th>Date</th><th>Category</th><th>Description</th><th>Paid from</th><th class="r">Amount</th><th></th></tr></thead><tbody>
@@ -3974,7 +4021,10 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const rvr=e.target
       supPayDialog({title:'Pay '+a.supplier,sub:a.no+(a.pig?` · pig ${peso(a.pig)} + expenses ${peso(a.exp)}`:''),bal:a.amount,accounts:OW.accounts,part:k!=='exp',method:a.terms==='transfer'?'transfer':'cash',payBy:a.payBy,onAssign:async w=>{await api('api_payAssign',session.token,k,a.id,w);OW=null;drawStock()},
         onPay:async(amt,acc,ref,dd)=>{if(k==='exp')OW=await api('api_expPay',session.token,a.id,acc,dd,OW.ym);else{await api('api_payPO',session.token,a.id,ref,acc,amt,dd);OW=null}drawStock()}});return}
     if(d.owexpay){const e=OW.expenses.find(x=>x.id===d.owexpay);supPayDialog({title:'Pay bill · '+e.cat,sub:esc(e.desc||''),bal:e.amt,accounts:OW.accounts,part:false,payBy:e.from==='ask:cashier'?'cashier':'mgr',onAssign:async w=>{await api('api_payAssign',session.token,'exp',e.id,w);OW=null;drawStock()},onPay:async(amt,acc,ref,dd)=>{OW=await api('api_expPay',session.token,e.id,acc,dd,OW.ym);drawStock()}});return}
-    if('owre' in d){OW=null;OWerr='';PA=null;PAerr='';drawStock();return}
+    if('owre' in d){OW=null;OWerr='';PA=null;PAerr='';LGD=null;drawStock();return}
+    if(d.owhist!==undefined){LG.acc=d.owhist;LGD=null;if(me.role==='manager')return deptGo('owner','hist');OWtab='hist';drawStock();return}
+    if(d.lga!==undefined){LG.acc=d.lga;drawStock();return}if(d.lgp){const [f,t]=srPreset(d.lgp);LG.from=f;LG.to=t;LG.pre=d.lgp;drawStock();return}
+    if('lgre' in d){LGD=null;LGerr='';drawStock();return}if('lgcsv' in d){lgCsv();return}if('lgprint' in d){lgPrint();return}
     if(d.owadd){owForm(d.owadd,'');return}
     if(d.owedit){const[k,i]=d.owedit.split(':');owForm(k,i);return}
     if(d.owdel){const[k,i]=d.owdel.split(':');if(!confirm('Delete this?'))return;await busy(async()=>{OW=await api('api_ownerSave',session.token,k,{id:i,ym:OWym},true);drawStock()});return}}
@@ -4075,6 +4125,7 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const rvr=e.target
 function stockInput(e){if(!STOCKV.includes(view))return;const t=e.target,d=t.dataset;
   if(d.k==='invq'){invQ=t.value;drawStock();return}
   if(d.k==='mbq'){MBq=t.value;drawStock();return}
+  if(d.k==='lgq'){LG.q=t.value;drawStock();return}
   if(d.k==='posq'){posQ=t.value;drawStock();return}
   if(poEdit&&t.id==='po-sup'){poEdit.supplier=t.value;return}if(poEdit&&t.id==='po-exp'){poEdit.expected=t.value;return}if(poEdit&&t.id==='po-note'){poEdit.note=t.value;return}
   if(prodF&&t.id==='pr-note'){prodF.note=t.value;return}
@@ -4106,6 +4157,8 @@ function stockChange(e){if(!STOCKV.includes(view))return;const t=e.target,d=t.da
   if(d.pomax!==undefined){api('api_payoutSet',session.token,t.value,OW.ym).then(r=>{OW=r;toast('Payout limit saved');drawStock()}).catch(e=>alert(errMsg(e)));return}
   if(d.ztol!==undefined){api('api_zTol',session.token,t.value,OW.ym).then(r=>{OW=r;drawStock()}).catch(e=>alert(errMsg(e)));return}
   if(d.owterms!==undefined){api('api_ownerSet',session.token,t.value).then(r=>{OW=r;drawStock()}).catch(e=>alert(errMsg(e)));return}
+  if(d.lgf){LG[d.lgf]=t.value;if(d.lgf==='from'||d.lgf==='to')LG.pre='';drawStock();return}
+  if('lggrp' in d){LG.grp=t.checked;drawStock();return}
   if(d.rvf){RVF[d.rvf]=t.value;if(d.rvf==='from'||d.rvf==='to')RVF.pre='';drawStock();return}
   if(d.crf){CRF[d.crf]=t.value;if(d.crf==='from'||d.crf==='to')CRF.pre='';drawStock();return}
   if(d.srf){SRF[d.srf]=t.value;if(d.srf==='from'||d.srf==='to')SRF.pre='';drawStock();return}
