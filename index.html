@@ -8,7 +8,7 @@
   b.style.cssText='position:fixed;left:10px;right:10px;bottom:10px;z-index:99999;background:#B42318;color:#fff;font:14px/1.45 system-ui,Arial;padding:12px 14px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.3);white-space:pre-wrap';
   (document.body||document.documentElement).appendChild(b);b.textContent='⚠ App error — please screenshot this and send it:\n'}b.textContent+='\n• '+m}catch(e){}}
  window.addEventListener('error',function(e){show((e.message||'error')+(e.lineno?' (line '+e.lineno+':'+e.colno+')':''))});
- window.addEventListener('unhandledrejection',function(e){var r=e.reason;show('Promise: '+(r&&r.message||r))});
+ window.addEventListener('unhandledrejection',function(e){var r=e.reason,w='';try{w=String(r&&r.stack||'').split('\n').slice(1,3).map(function(x){return x.trim().replace(/^at /,'').replace(/\(?https?:\/\/[^)]*\/([^/)]*)\)?/,'[$1]')}).join(' ← ')}catch(_){}show('Promise: '+(r&&r.message||r)+(w?'  @ '+w:''))});
  window.addEventListener('load',function(){setTimeout(function(){var c=document.getElementById('clk'),l=document.getElementById('login');
    if(c&&/--/.test(c.textContent)&&!(l&&l.classList.contains('on')))show('The app did not start. Browser: '+navigator.userAgent)},4000)});})();
 </script>
@@ -1541,7 +1541,9 @@ function isNet(m){return /NOSERVER|NetworkError|HTTP 0|Failed to fetch|network|c
 function serverErr(m){return '⚠ Server error: <b>'+esc(String(m).replace(/^(Script)?Error:\s*/,''))+'</b><br><small>The internet is OK. Check that <b>Code.gs</b> is the newest one and a <b>New version</b> was deployed. If it stays, send a screenshot.</small>'}
 function logout(msg){if(session)api('api_logout',session.token).catch(()=>{});
   session=null;me=null;MA=null;MSL=null;localStorage.removeItem(SESS);clearTimeout(pollTimer);clearTimeout(flushTimer);
-  db={orders:[]};base={};ver=0;proc=null;summary=null;hist={};showLogin(msg)}
+  db={orders:[]};base={};ver=0;proc=null;summary=null;hist={};
+  try{OW=null;OWerr='';LGD=null;RV=null;RVrep=false;MB=null;PY=null;HR=null;CR=null;SR=null;PA=null}catch(e){}          // no money data left for the next person on this device
+  showLogin(msg)}
 async function saveThen(fn){ // send unsaved work first, then leave
   if(dirtyOrders().length||deletedIds().length){setSync('saving');try{clearTimeout(flushTimer);await flush()}catch(e){}}
   if((dirtyOrders().length||deletedIds().length)&&!confirm('Some changes are not saved online yet (no internet?). Leave anyway?'))return;fn()}
@@ -1577,9 +1579,9 @@ function deptDefs(c){return {
   fin:{ic:'💰',t:'Accounting & Finance',d:'Money · expenses · P&L',c:'#B45309',n:c.zP,tabs:[{v:'owner',sub:'dash',t:'📊 Dashboard'},{v:'owner',sub:'acc',t:'💰 Accounts'},{v:'owner',sub:'hist',t:'📜 Money history'},{v:'owner',sub:'exp',t:'🧾 Expenses'},{v:'owner',sub:'col',t:'📥 Collect & pay',n:c.zP},
     {v:'owner',sub:'loan',t:'🤝 Loans'},{v:'owner',sub:'avg',t:'⏱ Profit averages'},{v:'owner',sub:'fa',t:'🏢 Fixed assets'},{v:'owner',sub:'rep',t:'📑 P&L · Balance sheet'}]},
   sales:{ic:'📈',t:'Sales & Marketing',d:'Sales · customers · loyalty',c:'#7C3AED',n:0,tabs:[{v:'memb',t:'💳 Membership'},{v:'srep',t:'📈 Sales & profit'},{v:'crep',t:'👥 Customer sales'},{v:'points',t:'⭐ Points (old)'},{act:'bulk',t:'🏢 Bulk buyer accounts'},{act:'cdisc',t:'🏷 Customer discounts'}]}}}
-function deptGo(v,sub){if(v==='owner'&&sub)OWtab=sub;if(v==='hr'&&sub)HRsub=sub;view=v;openId=null;editId=null;dateF='';
+function deptGo(v,sub){if(!me)return;if(v==='owner'&&sub)OWtab=sub;if(v==='hr'&&sub)HRsub=sub;view=v;openId=null;editId=null;dateF='';
   DLAST[deptOf(v)]={v,sub:sub||''};try{localStorage.setItem('fms_dlast',JSON.stringify(DLAST))}catch(e){}render();if(STOCKV.includes(v)&&ST)drawStock()}
-async function deptAct(a){if(a==='neworder')return $('#newbtn').click();if(a==='users')return $('#l-users').click();if(a==='bulk')return bulkDialog();
+async function deptAct(a){if(!me)return;if(a==='neworder')return $('#newbtn').click();if(a==='users')return $('#l-users').click();if(a==='bulk')return bulkDialog();
   if(a==='cdisc'){if(!OW){toast('Loading…');try{OW=await api('api_owner',session.token,OWym||'')}catch(e){return alert(errMsg(e))}}return custDiscDialog()}}
 function render(){
   if(!me)return;
@@ -2538,8 +2540,8 @@ async function loadStock(force){
 async function renderStock(v,force){
   if(!ST)$('#list').innerHTML=`<div class="rep" data-v="${v}"><div class="empty">Loading…</div></div>`;
   try{await loadStock(force)}catch(e){if(/AUTH/.test(errMsg(e))){handleErr(e);return}$('#list').innerHTML=`<div class="rep" data-v="${v}"><div class="empty">Needs internet — ${esc(errMsg(e))}<br><br><button class="btn" data-sref>↻ Try again</button></div></div>`;$('#list').onclick=stockClick;return}
-  if(view!==v)return;drawStock()}
-function drawStock(){const v=view;if(!STOCKV.includes(v))return;
+  if(view!==v||!me)return;drawStock()}
+function drawStock(){const v=view;if(!me||!session||!STOCKV.includes(v))return;                 // logged out while something was loading
   const a=document.activeElement,keep=a&&a.closest&&a.closest('#list')&&a.dataset&&a.dataset.k?{k:a.dataset.k,s:a.selectionStart}:null;
   $('#list').innerHTML=`<div class="rep stk" data-v="${v}">${(ST.offline?'<div class="stoff">📴 Offline — showing the last saved data.</div>':'')+{inv:invHTML,po:poHTML,recv:recvHTML,prod:prodHTML,pos:posHTML,srep:srepHTML,crep:crepHTML,memb:membHTML,owner:ownerHTML,hr:hrHTML,att:attHTML}[v]()}</div>`;
   $('#list').onclick=stockClick;$('#list').oninput=stockInput;$('#list').onchange=stockChange;
