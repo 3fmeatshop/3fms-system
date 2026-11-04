@@ -1,0 +1,4 @@
+3FMS — DEPLOY (Nov 4, 2026) · membership cards + supplier payments + receiving report
+1. GitHub › 3fms-system › Add file › Upload files: index.html, shop.html, attendance.html, clock-sw.js › Commit
+2. Apps Script › Code.gs › select all › paste Code-gs-COPY-ALL.txt › Save
+3. Deploy › Manage deployments › Edit › New version › Deploy (same deployment)

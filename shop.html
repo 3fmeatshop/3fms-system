@@ -177,6 +177,11 @@ a.btn{display:inline-block;text-decoration:none}
   .toast{bottom:150px}
 }
 @media (max-width:380px){.grid{grid-template-columns:1fr}}
+.mcard{width:340px;max-width:100%;aspect-ratio:85.6/54;border-radius:14px;padding:12px 14px;box-sizing:border-box;color:#fff;background:linear-gradient(135deg,#7f1d1d,#b91c1c 60%,#ef4444);display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 6px 18px rgba(0,0,0,.18);margin:6px auto;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.mcard.t-silver{background:linear-gradient(135deg,#334155,#64748b 60%,#94a3b8)}.mcard.t-gold{background:linear-gradient(135deg,#78350f,#b45309 55%,#f59e0b)}.mcard.big{width:420px}
+.mc-top{display:flex;align-items:center;gap:8px}.mc-top img{width:34px;height:34px;border-radius:8px;background:#fff}.mc-top b{display:block;letter-spacing:.04em}.mc-top small{opacity:.85;font-size:10px;letter-spacing:.12em}.mc-tier{margin-left:auto;font-weight:900;letter-spacing:.08em;text-transform:uppercase;font-size:13px;background:rgba(255,255,255,.18);padding:3px 9px;border-radius:99px}
+.mc-mid{display:flex;align-items:flex-end;justify-content:space-between;gap:10px}.mc-name{font-size:17px;font-weight:800}.mc-no{font-family:ui-monospace,monospace;font-size:16px;letter-spacing:.08em;margin:2px 0}.mc-mid small{opacity:.85;font-size:11px}.mc-qr{background:#fff;border-radius:8px;padding:3px;line-height:0}
+.mcard{text-align:left}.mbar{height:10px;border-radius:99px;background:#eee;overflow:hidden}.mbar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--red2))}
 </style>
 </head>
 <body>
@@ -232,8 +237,9 @@ function nav(){
   const nw=news().length;
   const ready=ptsReady();
   const T=(ic,l,c)=>`<i>${ic}</i><span>${l}</span>${c||''}`;
-  const tabs=isBulk()?[['orders',T('📦','My orders',nw?`<span class="cnt">${nw} new</span>`:'')],['points',T('⭐','My points',ready?'<span class="cnt" style="background:#F5C518;color:#8E1B22">🎁</span>':'')],['acct',T('👤','Account')]]
-    :[['shop',T('🛒','Shop')],['cart',T('🧺','Cart',n?`<span class="cnt">${n}</span>`:'')],['orders',T('📦','My orders',nw?`<span class="cnt">${nw} new</span>`:act?`<span class="cnt">${act}</span>`:'')],['info',T('ℹ️','How to order')],['acct',T('👤',me?'Account':'Log in')]];
+  const oldPts=!memOn||(pts&&(pts.balance>0||pts.pending)),card=me&&memOn?[['card',T('💳','My card',mine&&mine.me.bal>0?`<span class="cnt" style="background:#F5C518;color:#8E1B22">${peso(mine.me.bal).replace('.00','')}</span>`:'')]]:[];
+  const tabs=isBulk()?[['orders',T('📦','My orders',nw?`<span class="cnt">${nw} new</span>`:'')],...card,...(oldPts?[['points',T('⭐','My points',ready?'<span class="cnt" style="background:#F5C518;color:#8E1B22">🎁</span>':'')]]:[]),['acct',T('👤','Account')]]
+    :[['shop',T('🛒','Shop')],['cart',T('🧺','Cart',n?`<span class="cnt">${n}</span>`:'')],['orders',T('📦','My orders',nw?`<span class="cnt">${nw} new</span>`:act?`<span class="cnt">${act}</span>`:'')],...card,['info',T('ℹ️','How to order')],['acct',T('👤',me?'Account':'Log in')]];
   if(view==='login'&&me)view='acct';
   if(view!=='login'&&!tabs.some(t=>t[0]===view))view=tabs[0][0];
   $('#nav').innerHTML=tabs.map(([k,l])=>`<button data-v="${k}" class="${view===k?'on':''}">${l}</button>`).join('');
@@ -242,7 +248,7 @@ function nav(){
 function render(){
   nav();
   if(me&&me.mustChange){rFirstPin();cartBar();return}
-  ({shop:rShop,cart:rCart,orders:rOrders,acct:rAcct,login:rLogin,info:rInfo,points:rPoints})[view]();
+  ({shop:rShop,cart:rCart,orders:rOrders,acct:rAcct,login:rLogin,info:rInfo,points:rPoints,card:rCard})[view]();
   cartBar();
 }
 function hero(){
@@ -341,7 +347,7 @@ function rInfo(){
   const s=info.set||{},A=info.areas||[];
   const step=(n,t,d)=>`<div style="display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line)"><span style="flex:none;width:32px;height:32px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;font-weight:900">${n}</span><div><b>${t}</b><div class="muted" style="font-size:14.5px">${d}</div></div></div>`;
   $('#view').innerHTML=`<div class="card gold"><h2>ℹ️ How to order</h2><p class="lead">Simple, like any online shop — but fresh from 3F Meatshop.</p>
-    ${step(1,'Sign up once','Your name, mobile no., a 4-digit PIN, your address and barangay. Stores, restaurants and resellers can ask for a <b>wholesale</b> account.')}
+    ${step(1,'Sign up once','Your name, username, mobile no., email (we send a code to check it), a strong password, your address and barangay. Stores, restaurants and resellers can ask for a <b>wholesale</b> account.')}
     ${step(2,'Choose products','You see the price and the <b>quantity available</b> right now. Order in whole numbers: 1 kg, 2 kg, 3 kg… and per pack / piece.')}
     ${step(3,'Pay your way','<b>Cash on delivery</b> — pay the rider.<br><b>Bank transfer</b> or <b>GCash / Maya</b> — send the total, type the reference no. (and attach the receipt if you like).')}
     ${step(4,'We confirm your order','Our <b>sales team</b> confirms every order — COD by a quick call or text, bank / e-wallet after checking your payment. Orders placed today are <b>confirmed tomorrow morning</b>, then prepared and delivered that same day.')}
@@ -382,7 +388,7 @@ function rOrders(){
   let head='';
   if(bulk){const m=new Date().toISOString().slice(0,7),mo=orders.filter(o=>o.delivery.slice(0,7)===m);
     const kg=mo.filter(o=>o.delivered&&!o.delivered.result).reduce((a,o)=>a+o.items.filter(i=>i.unit==='Kg').reduce((b,i)=>b+(i.prepared||0),0),0);
-    head=`<div class="card gold"><h2>📦 ${esc(me.name)} — order monitoring</h2><p class="lead">All your orders with 3F Meatshop: what was prepared, when it left and when it arrived. Updates every minute.</p>
+    head=`<div class="card gold"><h2>📦 ${esc(me.name)} — order monitoring</h2><p class="lead">All your orders with 3F Meatshop: what was prepared, when it left and when it arrived. Updates every minute.</p>${me.tempPw?'<div class="rule">🔒 You are using the password given by 3F Meatshop. You can change it anytime in <b>Account</b>.</div>':''}
       <div class="kpis"><div class="kpi"><span>This month</span><b>${mo.length}</b><span>deliveries</span></div><div class="kpi"><span>Delivered</span><b>${mo.filter(o=>o.delivered&&!o.delivered.result).length}</b><span>this month</span></div>
       <div class="kpi"><span>Out for delivery</span><b>${orders.filter(o=>o.dispatched&&!o.delivered).length}</b><span>now</span></div><div class="kpi"><span>Kg delivered</span><b>${fmt(Math.round(kg*100)/100)}</b><span>this month</span></div></div></div>`}
   const act=orders.filter(o=>!o.delivered&&!(o.online&&o.online.status==='cancelled')),done=orders.filter(o=>!act.includes(o));
@@ -465,6 +471,69 @@ function rPoints(){
     openM(`<div style="text-align:center"><div style="font-size:60px">🎁</div><h2>Claim received!</h2><p class="lead">Thank you, <b>${esc(me.name)}</b>! Your <b>${pts.pending?pts.pending.pts:''} points</b> will be applied to your next receipt.<br>We are so grateful to have you with us. 💛</p><button class="btn wide" data-close>Yay!</button></div>`)}catch(e){toast(errMsg(e));c.disabled=false}};
 }
 
+/* ---------------- 💳 3F member card ---------------- */
+let mine=null,memOn=true;
+async function loadCard(){if(!token)return;try{mine=await api('shop_member',token);memOn=!!mine;nav();if(view==='card'&&!document.querySelector('.modal.on'))rCard()}catch(e){}}
+function qrMatrix(text){
+  const data=Array.from(new TextEncoder().encode(String(text)));
+  const V=[null,[10,[[1,16]]],[16,[[1,28]]],[26,[[1,44]]],[18,[[2,32]]],[24,[[2,43]]],[16,[[4,27]]]],AL=[null,[],[6,18],[6,22],[6,26],[6,30],[6,34]];
+  let v=1;for(;v<=6;v++){const cap=V[v][1].reduce((a,[n,k])=>a+n*k,0);if(4+8+data.length*8<=cap*8)break}if(v>6)throw new Error('too long');
+  const cap=V[v][1].reduce((a,[n,k])=>a+n*k,0),bits=[];const put=(val,len)=>{for(let i=len-1;i>=0;i--)bits.push((val>>>i)&1)};
+  put(4,4);put(data.length,8);data.forEach(b=>put(b,8));put(0,Math.min(4,cap*8-bits.length));while(bits.length%8)bits.push(0);
+  const cw=[];for(let i=0;i<bits.length;i+=8)cw.push(parseInt(bits.slice(i,i+8).join(''),2));for(let p=0;cw.length<cap;p++)cw.push(p%2?0x11:0xEC);
+  // Reed-Solomon
+  const EX=new Array(512),LG=new Array(256);let x=1;for(let i=0;i<255;i++){EX[i]=x;LG[x]=i;x<<=1;if(x&256)x^=0x11d}for(let i=255;i<512;i++)EX[i]=EX[i-255];
+  const mul=(a,b)=>a&&b?EX[LG[a]+LG[b]]:0,ecn=V[v][0];let g=[1];for(let i=0;i<ecn;i++){const n=new Array(g.length+1).fill(0);g.forEach((c,j)=>{n[j]^=c;n[j+1]^=mul(c,EX[i])});g=n}
+  const rs=d=>{const r=d.concat(new Array(ecn).fill(0));for(let i=0;i<d.length;i++){const c=r[i];if(c)g.forEach((gc,j)=>{r[i+j]^=mul(gc,c)})}return r.slice(d.length)};
+  const blocks=[];let o=0;V[v][1].forEach(([n,k])=>{for(let i=0;i<n;i++){const d=cw.slice(o,o+k);o+=k;blocks.push({d,e:rs(d)})}});
+  const fin=[],mx=Math.max(...blocks.map(b=>b.d.length));for(let i=0;i<mx;i++)blocks.forEach(b=>{if(i<b.d.length)fin.push(b.d[i])});for(let i=0;i<ecn;i++)blocks.forEach(b=>fin.push(b.e[i]));
+  // matrix
+  const N=17+4*v,M=[...Array(N)].map(()=>Array(N).fill(null)),F=[...Array(N)].map(()=>Array(N).fill(false));
+  const set=(r,c,b)=>{M[r][c]=b;F[r][c]=true};
+  const finder=(r,c)=>{for(let i=-1;i<=7;i++)for(let j=-1;j<=7;j++){const R=r+i,C=c+j;if(R<0||C<0||R>=N||C>=N)continue;const b=i>=0&&i<=6&&j>=0&&j<=6&&(i===0||i===6||j===0||j===6||(i>=2&&i<=4&&j>=2&&j<=4));set(R,C,b)}};
+  finder(0,0);finder(0,N-7);finder(N-7,0);
+  for(let i=8;i<N-8;i++){set(6,i,i%2===0);set(i,6,i%2===0)}
+  const al=AL[v];al.forEach(r=>al.forEach(c=>{if(F[r][c])return;for(let i=-2;i<=2;i++)for(let j=-2;j<=2;j++)set(r+i,c+j,Math.max(Math.abs(i),Math.abs(j))!==1)}));
+  set(4*v+9,8,true);
+  for(let i=0;i<9;i++){if(!F[8][i])set(8,i,false);if(!F[i][8])set(i,8,false)}for(let i=0;i<8;i++){if(!F[8][N-1-i])set(8,N-1-i,false);if(!F[N-1-i][8])set(N-1-i,8,false)}
+  const db=[];fin.forEach(b=>{for(let i=7;i>=0;i--)db.push((b>>i)&1)});
+  let k=0,up=true;for(let c=N-1;c>0;c-=2){if(c===6)c--;for(let t=0;t<N;t++){const r=up?N-1-t:t;for(const cc of [c,c-1]){if(F[r][cc])continue;M[r][cc]=k<db.length?!!db[k]:false;k++}}up=!up}
+  const MK=[(r,c)=>(r+c)%2===0,(r)=>r%2===0,(r,c)=>c%3===0,(r,c)=>(r+c)%3===0,(r,c)=>(Math.floor(r/2)+Math.floor(c/3))%2===0,(r,c)=>(r*c)%2+(r*c)%3===0,(r,c)=>((r*c)%2+(r*c)%3)%2===0,(r,c)=>((r+c)%2+(r*c)%3)%2===0];
+  const fmtBits=m=>{let d=(0<<3)|m,r=d<<10;for(let i=14;i>=10;i--)if((r>>i)&1)r^=0x537<<(i-10);return ((d<<10)|r)^0x5412};
+  const build=m=>{const A=M.map((row,r)=>row.map((b,c)=>F[r][c]?b:(b!==MK[m](r,c))));const f=fmtBits(m);
+    for(let i=0;i<15;i++){const b=((f>>i)&1)===1;
+      if(i<6)A[i][8]=b;else if(i<8)A[i+1][8]=b;else A[N-15+i][8]=b;
+      if(i<8)A[8][N-1-i]=b;else if(i<9)A[8][15-i-1+1]=b;else A[8][15-i-1]=b;}
+    A[N-8][8]=true;return A};
+  const pen=A=>{let p=0;for(let r=0;r<N;r++){let run=1;for(let c=1;c<N;c++){if(A[r][c]===A[r][c-1]){run++;if(run===5)p+=3;else if(run>5)p++}else run=1}}
+    for(let c=0;c<N;c++){let run=1;for(let r=1;r<N;r++){if(A[r][c]===A[r-1][c]){run++;if(run===5)p+=3;else if(run>5)p++}else run=1}}
+    for(let r=0;r<N-1;r++)for(let c=0;c<N-1;c++){const b=A[r][c];if(b===A[r][c+1]&&b===A[r+1][c]&&b===A[r+1][c+1])p+=3}
+    const dark=A.flat().filter(Boolean).length;p+=Math.floor(Math.abs(dark*20-N*N*10)/(N*N))*10;return p};
+  let best=null,bp=1e9;for(let m=0;m<8;m++){const A=build(m),q=pen(A);if(q<bp){bp=q;best=A}}return best}
+function qrSVG(text,size){const A=qrMatrix(text),N=A.length,q=4,T=N+q*2;let d='';A.forEach((row,r)=>row.forEach((b,c)=>{if(b)d+=`M${c+q} ${r+q}h1v1h-1z`}));
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${T} ${T}" width="${size||160}" height="${size||160}" shape-rendering="crispEdges"><rect width="${T}" height="${T}" fill="#fff"/><path d="${d}" fill="#000"/></svg>`}
+const cardFace=(m,big)=>`<div class="mcard${big?' big':''} t-${esc((m.tier||'').toLowerCase())}"><div class="mc-top"><img src="${window.LOGO_ICON||''}" alt=""><div><b>3F MEATSHOP</b><small>MEMBER${m.premOn?' · ⭐ PREMIUM':''}</small></div><span class="mc-tier">${esc(m.tier||'')}</span></div>
+  <div class="mc-mid"><div><div class="mc-name">${esc(m.name)}</div><div class="mc-no">${esc(m.cardFmt||m.card)}</div><small>${m.pct||0}% back as store credit</small></div><div class="mc-qr">${qrSVG(m.card,big?120:84)}</div></div></div>`;
+function rCard(){
+  if(!me){view='login';rLogin();return}
+  if(!mine){$('#view').innerHTML='<div class="empty">Loading your card…</div>';loadCard();return}
+  const m=mine.me,T=mine.tiers.slice().sort((a,b)=>a.min-b.min),nx=m.next,cur=T.filter(t=>m.spend>=t.min).pop()||T[0],prog=nx?Math.min(100,Math.round((m.spend-cur.min)/(nx.min-cur.min)*100)):100;
+  const W={earn:'Earned',use:'Used',reverse:'Taken back',adjust:'Adjusted',welcome:'Welcome gift'};
+  $('#view').innerHTML=`<div class="card" style="text-align:center">${cardFace(m,true)}<p class="lead" style="margin-top:8px">Show this card (or its QR) at the counter, or tell the cashier your card no.</p>
+      <button class="btn sm" id="cprint">🖨 Print / save my card</button></div>
+    ${m.status==='blocked'?'<div class="rule">⛔ This card is blocked. Please call the shop.</div>':''}
+    <div class="card gold"><div style="display:flex;justify-content:space-between;align-items:flex-end;gap:10px;flex-wrap:wrap"><div><small>Store credit</small><div style="font-size:40px;font-weight:900;color:var(--red);line-height:1.1">${peso(m.bal)}</div>
+      <small>${m.bal>=mine.minUse?'✅ Ready to use — like cash on your next order at the counter':'Usable from '+peso(mine.minUse)}</small></div><div style="text-align:right"><small>You get</small><div style="font-size:26px;font-weight:900">${m.pct}% back</div><small>${esc(m.tier)}${m.premOn?' + ⭐ Premium':''}</small></div></div></div>
+    <div class="card"><h2>📈 My level</h2><p class="lead">Based on what you bought in the last 12 months: <b>${peso(m.spend)}</b></p>
+      ${nx?`<div class="mbar"><i style="width:${prog}%"></i></div><p style="margin:6px 0 0">${peso(nx.need)} more to reach <b>${esc(nx.name)}</b> (${nx.pct}% back)</p>`:`<p>🏆 You're at our top level. Thank you!</p>`}
+      <table class="it" style="margin-top:10px"><thead><tr><th>Level</th><th>Spend in 12 months</th><th class="r">Back</th></tr></thead><tbody>${T.map(t=>`<tr${t.name===m.tier?' style="background:var(--goldl);font-weight:800"':''}><td>${esc(t.name)}</td><td>${t.min?peso(t.min)+' and up':'Everyone'}</td><td class="r">${t.pct}%</td></tr>`).join('')}</tbody></table>
+      ${mine.premFee?`<p style="margin-top:10px">⭐ <b>Premium</b> — ${peso(mine.premFee)} a year for <b>+${mine.premPct}% back</b> on every purchase.${m.premOn?' Yours is active until <b>'+longDay(m.prem)+'</b>.':' Ask at the counter.'}</p>`:''}</div>
+    <div class="card"><h2>🧾 Credit history</h2><table class="it"><thead><tr><th>Date</th><th>What</th><th class="r">Credit</th></tr></thead><tbody>
+      ${mine.history.map(h=>`<tr><td>${t12(h.d)}</td><td>${W[h.type]||esc(h.type)}${h.ref&&h.ref!=='Manual'&&h.ref!=='Welcome'?' · #'+esc(h.ref):''}${h.buy>0?'<br><small>'+peso(h.buy)+' × '+h.pct+'%</small>':''}</td><td class="r"><b style="color:${h.amt<0?'var(--red)':'var(--green)'}">${h.amt<0?'−':'+'}${peso(Math.abs(h.amt))}</b></td></tr>`).join('')||'<tr><td colspan="3" class="empty">Your credit shows here after your first purchase.</td></tr>'}</tbody></table>
+      <p class="lead" style="margin-top:8px">Credit is added after payment (online orders: after delivery). It doesn't expire.</p></div>`;
+  $('#cprint').onclick=()=>{const w=window.open('','_blank');if(!w)return toast('Allow pop-ups to print');w.document.write(`<html><head><title>3F card</title><style>${[...document.querySelectorAll('style')].map(x=>x.textContent).join('')}@page{margin:10mm}body{background:#fff}.mcard{width:85.6mm;height:54mm;margin:0}</style></head><body>${cardFace(m)}</body></html>`);w.document.close();setTimeout(()=>w.print(),300)};
+}
+
 /* ---------------- account / login ---------------- */
 function rAcct(){
   if(!me){view='login';rLogin();return}
@@ -473,35 +542,62 @@ function rAcct(){
     ${isBulk()?'':`<label class="f">Delivery address</label><textarea class="in" id="a-addr" rows="2">${esc(me.address)}</textarea>
       <label class="f">Barangay</label><select class="in" id="a-area"><option value="">—</option>${(info?info.areas:[]).map(a=>`<option${a.area===me.area?' selected':''}>${esc(a.area)}</option>`).join('')}</select>
       <button class="btn" id="a-save" style="margin-top:12px">Save address</button>`}
-    <h3>🔒 Change PIN</h3>${pinForm()}
+    <p class="muted" style="margin:10px 0 0">Log in with any of these — Username: <b>${esc(me.login)}</b>${me.mobile?' · Mobile: <b>'+esc(me.mobile)+'</b>':''}${me.email?' · Email: <b>'+esc(me.email)+'</b>':''}</p>
+    <h3>🔒 Change password</h3>${me.tempPw?'<p class="muted" style="margin:0 0 6px">You are still using the password given by 3F Meatshop.</p>':''}${pinForm()}
+    ${me.type==='bulk'&&!me.email?'<p class="muted" style="font-size:13px">Want to reset your password by email next time? Ask 3F Meatshop to add your email to your account.</p>':''}
     <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap"><button class="btn sec" id="a-out">Log out</button></div><div class="err" id="aerr"></div></div>`;
-  wirePin(()=>toast('PIN changed'));
+  wirePin(()=>toast('Password changed'));
   if($('#a-save'))$('#a-save').onclick=async()=>{try{me=await api('shop_updateMe',token,{address:$('#a-addr').value,area:$('#a-area').value});keepSess();toast('Address saved')}catch(e){$('#aerr').textContent=errMsg(e)}};
   $('#a-out').onclick=()=>{logout();toast('Logged out')};
 }
-function pinForm(){return `<div class="two"><div><label class="f">Current PIN</label><input class="in" id="p-old" type="password" inputmode="numeric" maxlength="4" autocomplete="current-password"></div><div><label class="f">New 4-digit PIN</label><input class="in" id="p-new" type="password" inputmode="numeric" maxlength="4" autocomplete="new-password"></div></div>
-  <label class="f">Type the new PIN again</label><input class="in" id="p-new2" type="password" inputmode="numeric" maxlength="4" autocomplete="new-password">
-  <button class="btn" id="p-go" style="margin-top:12px">Change PIN</button><div class="err" id="perr2"></div>`}
-function wirePin(done){const b=$('#p-go');if(!b)return;b.onclick=async()=>{const e=$('#perr2');e.textContent='';const a=$('#p-old').value,n=$('#p-new').value,n2=$('#p-new2').value;
-  if(n!==n2){e.textContent='The new PINs do not match';return}
-  b.disabled=true;try{me=await api('shop_changePin',token,a,n);keepSess();done()}catch(er){e.textContent=errMsg(er)}b.disabled=false}}
-// first login with the PIN the shop gave → must choose their own PIN
-function rFirstPin(){$('#view').innerHTML=`<div class="card gold" style="max-width:520px;margin:0 auto"><h2>🔒 Choose your own PIN</h2><p class="lead">Welcome, <b>${esc(me.name)}</b>! You logged in with the PIN given by 3F Meatshop. Please change it now so only your company knows it.</p>${pinForm()}
-  <p class="muted" style="font-size:13px">Your username stays <b>${esc(me.login)}</b>.</p></div>`;
-  $('#p-old').value='';wirePin(()=>{toast('PIN changed — welcome!');render();loadOrders()})}
+const PWHINT='8+ characters with an UPPERCASE letter, a lowercase letter, a number and a symbol (e.g. ! @ # $ . -).';
+const PWR=[['8+ characters',p=>p.length>=8],['UPPERCASE',p=>/[A-Z]/.test(p)],['lowercase',p=>/[a-z]/.test(p)],['number',p=>/\d/.test(p)],['symbol',p=>/[^A-Za-z0-9]/.test(p)]];
+function pwMeter(id){return `<div class="pwm" data-pwm="${id}" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;font-size:12px">${PWR.map(([t])=>`<span style="padding:2px 8px;border-radius:99px;background:#eee;color:#777">${t}</span>`).join('')}</div>`}
+document.addEventListener('input',e=>{const t=e.target;if(!t.id)return;const m=document.querySelector(`[data-pwm="${t.id}"]`);if(!m)return;[...m.children].forEach((c,i)=>{const ok=PWR[i][1](t.value);c.style.background=ok?'#DCFCE7':'#eee';c.style.color=ok?'#15803D':'#777';c.textContent=(ok?'✓ ':'')+PWR[i][0]})});
+function emailCheck(e){return /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(e)?'':'Type a valid email address'}
+// "Send code" button: asks the server to email a 6-digit code
+async function sendCode(btn,email,purpose,errEl){const m=emailCheck(email);if(m){errEl.textContent=m;return false}btn.disabled=true;const t=btn.textContent;btn.textContent='Sending…';
+  try{await api('shop_sendCode',KEY,email,purpose,token||'');errEl.textContent='';toast('📧 Code sent to '+email+' — check your inbox (and Spam)');let n=60;btn.textContent='Send again (60)';const iv=setInterval(()=>{btn.textContent='Send again ('+(--n)+')';if(n<=0){clearInterval(iv);btn.disabled=false;btn.textContent=t}},1000);return true}
+  catch(er){errEl.textContent=errMsg(er);btn.disabled=false;btn.textContent=t;return false}}
+function codeRow(prefix,label){return `<label class="f">${label||'Email'}</label><div style="display:flex;gap:8px"><input class="in" id="${prefix}-email" type="email" autocomplete="email" autocapitalize="off" spellcheck="false" placeholder="name@gmail.com" style="flex:1"><button type="button" class="btn sec" id="${prefix}-send" style="white-space:nowrap">Send code</button></div>
+  <label class="f">6-digit code from your email</label><input class="in" id="${prefix}-code" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="••••••" style="letter-spacing:6px">`}
+function pwEye(id){return `<button type="button" class="eye" data-eye="${id}" aria-label="Show password" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);border:0;background:none;font-size:18px;cursor:pointer">👁</button>`}
+function pwIn(id,ac,ph){return `<div style="position:relative"><input class="in" id="${id}" type="password" autocomplete="${ac}" autocapitalize="off" spellcheck="false" placeholder="${ph||''}" style="padding-right:40px">${pwEye(id)}</div>`}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-eye]');if(!b)return;const i=document.getElementById(b.dataset.eye);if(i)i.type=i.type==='password'?'text':'password'});
+function pwCheck(pw,user){if(pw.length<8)return 'Password must be at least 8 characters';if(PWR.some(([,f])=>!f(pw)))return 'Password needs an UPPERCASE letter, a lowercase letter, a number and a symbol';if(/\s/.test(pw))return 'Password must not have spaces';if(user&&pw.toLowerCase().includes(user.toLowerCase()))return 'Password must not contain the username';return ''}
+function userCheck(u){if(!/^[A-Za-z0-9._-]{3,20}$/.test(u))return 'Username: 3–20 letters / numbers (no spaces)';if(!/[A-Za-z]/.test(u))return 'Username must have at least one letter';return ''}
+function pinForm(first){const needUser=me&&me.needUser,needEmail=me&&me.needEmail;return `${needEmail?codeRow('p','Your email <small class="muted">(for password reset — we send a code to check it)</small>'):''}${needUser?`<label class="f">Choose a username <small class="muted">(you will log in with this)</small></label><input class="in" id="p-user" autocomplete="username" autocapitalize="off" spellcheck="false" placeholder="e.g. juan.delacruz">`:''}
+  <label class="f">${first?'Password / PIN you used to log in':'Current password'}</label>${pwIn('p-old','current-password')}
+  <div class="two"><div><label class="f">New password</label>${pwIn('p-new','new-password')}</div><div><label class="f">Type it again</label>${pwIn('p-new2','new-password')}</div></div>
+  ${pwMeter('p-new')}
+  <button class="btn" id="p-go" style="margin-top:12px">${first?'Save & continue':'Change password'}</button><div class="err" id="perr2"></div>`}
+function wirePin(done){const b=$('#p-go');if(!b)return;if($('#p-send'))$('#p-send').onclick=()=>sendCode($('#p-send'),$('#p-email').value.trim(),'link',$('#perr2'));
+  b.onclick=async()=>{const e=$('#perr2');e.textContent='';const a=$('#p-old').value,n=$('#p-new').value,n2=$('#p-new2').value,u=$('#p-user')?$('#p-user').value.trim():'',em=$('#p-email')?$('#p-email').value.trim():'',cd=$('#p-code')?$('#p-code').value.trim():'';
+  if($('#p-email')){const m=emailCheck(em);if(m){e.textContent=m;return}if(!/^\d{6}$/.test(cd)){e.textContent='Type the 6-digit code sent to your email (tap Send code)';return}}
+  if(u){const m=userCheck(u);if(m){e.textContent=m;return}}else if(me&&me.needUser){e.textContent='Choose a username';return}
+  const m=pwCheck(n,u||(me&&me.login));if(m){e.textContent=m;return}if(n!==n2){e.textContent='The new passwords do not match';return}
+  b.disabled=true;try{me=await api('shop_changePin',token,a,n,u,em,cd);keepSess();done()}catch(er){e.textContent=errMsg(er)}b.disabled=false}}
+// first login with an old PIN / the password the shop gave → must choose their own password (and username for old mobile-no. accounts)
+function rFirstPin(){$('#view').innerHTML=`<div class="card gold" style="max-width:520px;margin:0 auto"><h2>🔒 Secure your account</h2><p class="lead">Welcome, <b>${esc(me.name)}</b>! Please ${[me.needEmail?'add your <b>email</b>':'',me.needUser?'choose a <b>username</b>':'','set a <b>strong password</b>'].filter(Boolean).join(', ')}. You can then log in with your username, mobile no. or email.</p>${pinForm(true)}
+  ${me.needUser?'':`<p class="muted" style="font-size:13px">Your username stays <b>${esc(me.login)}</b>.</p>`}</div>`;
+  wirePin(()=>{toast('Saved — welcome!');render();loadOrders()})}
 let lmode='login';
 function rLogin(){
   const areas=info?info.areas:[];
   $('#view').innerHTML=`<div class="card gold" style="max-width:520px;margin:0 auto 16px">
     <div class="chips" style="margin-bottom:12px"><button data-lm="login" class="${lmode==='login'?'on':''}">Log in</button><button data-lm="reg" class="${lmode==='reg'?'on':''}">Sign up (new customer)</button></div>
-    ${lmode==='login'?`<h2>Log in</h2><p class="lead">Use your mobile no. (or the username given by the shop) and your 4-digit PIN.</p>
-      <label class="f">Mobile no. / Username</label><input class="in" id="l-id" autocomplete="username" autocapitalize="off" placeholder="09XXXXXXXXX or username">
-      <label class="f">PIN</label><input class="in" id="l-pin" type="password" inputmode="numeric" maxlength="4" autocomplete="current-password" placeholder="••••">
+    ${lmode==='login'?`<h2>Log in</h2><p class="lead">Use your mobile no., email or username, and your password.</p>
+      <label class="f">Mobile no. / Email / Username</label><input class="in" id="l-id" autocomplete="username" autocapitalize="off" spellcheck="false" placeholder="09XXXXXXXXX, email or username">
+      <label class="f">Password</label>${pwIn('l-pin','current-password','Password (old customers: your 4-digit PIN)')}
       <button class="btn wide" id="l-go" style="margin-top:14px">Log in</button>
-      <p class="muted" style="font-size:13px">Bulk buyers (e.g. KUI): use the username and PIN given by 3F Meatshop — you will choose your own PIN after logging in.</p>`:
+      <p style="text-align:right;margin:8px 0 0"><a href="#" id="l-forgot" style="font-size:14px">Forgot password?</a></p>
+      <p class="muted" style="font-size:13px">Bulk buyers (e.g. KUI): use the username and password given by 3F Meatshop — you will choose your own password after logging in. Forgot it? Call the shop.</p>`:
      `<h2>Sign up</h2><p class="lead">For retail and wholesale buyers.</p>
       <label class="f">Name / store name</label><input class="in" id="r-name">
-      <div class="two"><div><label class="f">Mobile no.</label><input class="in" id="r-mob" inputmode="tel" placeholder="09XXXXXXXXX"></div><div><label class="f">Choose a 4-digit PIN</label><input class="in" id="r-pin" type="password" inputmode="numeric" maxlength="4"></div></div>
+      <div class="two"><div><label class="f">Username <small class="muted">(unique)</small></label><input class="in" id="r-user" autocomplete="username" autocapitalize="off" spellcheck="false" placeholder="e.g. juan.delacruz"></div><div><label class="f">Mobile no.</label><input class="in" id="r-mob" inputmode="tel" placeholder="09XXXXXXXXX"></div></div>
+      <div class="two"><div><label class="f">Password</label>${pwIn('r-pin','new-password')}</div><div><label class="f">Type it again</label>${pwIn('r-pin2','new-password')}</div></div>
+      ${pwMeter('r-pin')}
+      ${codeRow('r')}
       <label class="f">Delivery address</label><textarea class="in" id="r-addr" rows="2"></textarea>
       <label class="f">Barangay (Santa Ana, Cagayan)</label><select class="in" id="r-area"><option value="">— choose your barangay —</option>${areas.map(a=>`<option>${esc(a.area)}</option>`).join('')}</select>
       <label style="display:flex;gap:10px;align-items:flex-start;margin-top:12px;font-size:14px"><input type="checkbox" id="r-ws" style="width:auto;margin-top:4px"> I buy <b>wholesale</b> (store / restaurant / reseller). The shop will review — retail prices apply until approved.</label>
@@ -509,17 +605,31 @@ function rLogin(){
     <div class="err" id="lerr"></div></div>`;
   if($('#l-go')){const go=async()=>{const e=$('#lerr');e.textContent='';try{const r=await api('shop_login',KEY,$('#l-id').value,$('#l-pin').value);setSess(r)}catch(er){e.textContent=errMsg(er)}};
     $('#l-go').onclick=go;$('#l-pin').onkeydown=k=>{if(k.key==='Enter')go()}}
-  if($('#r-go'))$('#r-go').onclick=async()=>{const e=$('#lerr');e.textContent='';try{const r=await api('shop_register',KEY,{name:$('#r-name').value,mobile:$('#r-mob').value,pin:$('#r-pin').value,address:$('#r-addr').value,area:$('#r-area').value,wholesale:$('#r-ws').checked});setSess(r);toast('Welcome, '+r.me.name+'!')}catch(er){e.textContent=errMsg(er)}};
+  if($('#r-send'))$('#r-send').onclick=()=>sendCode($('#r-send'),$('#r-email').value.trim(),'reg',$('#lerr'));
+  if($('#l-forgot'))$('#l-forgot').onclick=e=>{e.preventDefault();rForgot()};
+  if($('#r-go'))$('#r-go').onclick=async()=>{const e=$('#lerr');e.textContent='';const u=$('#r-user').value.trim(),pw=$('#r-pin').value;
+    const em=$('#r-email').value.trim(),cd=$('#r-code').value.trim();
+    const m=userCheck(u)||pwCheck(pw,u)||(pw!==$('#r-pin2').value?'The passwords do not match':'')||emailCheck(em)||(/^\d{6}$/.test(cd)?'':'Tap “Send code”, then type the 6-digit code from your email');if(m){e.textContent=m;return}
+    try{const r=await api('shop_register',KEY,{name:$('#r-name').value,username:u,mobile:$('#r-mob').value,password:pw,email:em,code:cd,address:$('#r-addr').value,area:$('#r-area').value,wholesale:$('#r-ws').checked});setSess(r);toast('Welcome, '+r.me.name+'!')}catch(er){e.textContent=errMsg(er)}};
 }
+function rForgot(){$('#view').innerHTML=`<div class="card gold" style="max-width:520px;margin:0 auto"><h2>🔑 Forgot password</h2><p class="lead">Type the email on your account. We send a 6-digit code — then choose a new password.</p>
+    ${codeRow('f')}<div class="two"><div><label class="f">New password</label>${pwIn('f-new','new-password')}</div><div><label class="f">Type it again</label>${pwIn('f-new2','new-password')}</div></div>${pwMeter('f-new')}
+    <button class="btn wide" id="f-go" style="margin-top:14px">Save new password & log in</button><p style="margin:10px 0 0"><a href="#" id="f-back">← Back to log in</a></p>
+    <p class="muted" style="font-size:13px">No email on your account yet? Call the shop to reset it.</p><div class="err" id="ferr"></div></div>`;
+  $('#f-back').onclick=e=>{e.preventDefault();lmode='login';rLogin()};
+  $('#f-send').onclick=()=>sendCode($('#f-send'),$('#f-email').value.trim(),'reset',$('#ferr'));
+  $('#f-go').onclick=async()=>{const e=$('#ferr');e.textContent='';const em=$('#f-email').value.trim(),cd=$('#f-code').value.trim(),n=$('#f-new').value;
+    const m=emailCheck(em)||(/^\d{6}$/.test(cd)?'':'Type the 6-digit code')||pwCheck(n,'')||(n!==$('#f-new2').value?'The passwords do not match':'');if(m){e.textContent=m;return}
+    $('#f-go').disabled=true;try{const r=await api('shop_resetPw',KEY,em,cd,n);setSess(r);toast('Password changed — welcome back!')}catch(er){e.textContent=errMsg(er);$('#f-go').disabled=false}}}
 function keepSess(){try{localStorage.setItem(SESS,JSON.stringify({token,me}))}catch(e){}}
 function setSess(r){token=r.token;me=r.me;keepSess();orders=null;view=isBulk()?'orders':Object.keys(cart).length?'cart':'shop';render();loadOrders()}
-function logout(){if(token)api('shop_logout',token).catch(()=>{});token=null;me=null;orders=null;pts=null;lmode='login';try{localStorage.removeItem(SESS)}catch(e){}view='shop';render()}
+function logout(){if(token)api('shop_logout',token).catch(()=>{});token=null;me=null;orders=null;pts=null;mine=null;lmode='login';try{localStorage.removeItem(SESS)}catch(e){}view='shop';render()}
 
 /* ---------------- data ---------------- */
 async function loadInfo(){try{info=await api('shop_info',KEY);for(const c of Object.keys(cart)){const p=prod(c);if(!p)delete cart[c];else if(cart[c]>p.avail){cart[c]=p.avail;if(!cart[c])delete cart[c]}}saveCart();if(['shop','cart','acct','login'].includes(view)&&!document.activeElement.matches('input,textarea,select'))render();else nav()}
   catch(e){if(/BADLINK/.test(errMsg(e))){document.body.innerHTML='<div style="font:18px system-ui;max-width:420px;margin:60px auto;text-align:center">🔒<h2>This link is not valid</h2><p>Please use the shop link from 3F Meatshop.</p></div>';return}
     $('#view').innerHTML=`<div class="empty">Can't reach the shop right now. Check your internet, then <a href="#" onclick="location.reload()">reload</a>.</div>`}}
-async function loadOrders(){if(!token)return;if(isBulk())loadPoints();try{orders=await api('shop_orders',token);if(me&&!seen[me.id])markSeen();else if(me){const m=seen[me.id];orders.forEach(o=>{if(!(o.id in m))m[o.id]=stOf(o).t})}if(view==='orders'&&!document.querySelector('.modal.on')&&!(me&&me.mustChange))rOrders();nav()}catch(e){if(/AUTH/.test(errMsg(e))){logout();toast('Please log in again')}}}
+async function loadOrders(){if(!token)return;if(isBulk())loadPoints();loadCard();try{orders=await api('shop_orders',token);if(me&&!seen[me.id])markSeen();else if(me){const m=seen[me.id];orders.forEach(o=>{if(!(o.id in m))m[o.id]=stOf(o).t})}if(view==='orders'&&!document.querySelector('.modal.on')&&!(me&&me.mustChange))rOrders();nav()}catch(e){if(/AUTH/.test(errMsg(e))){logout();toast('Please log in again')}}}
 if(token)api('shop_me',token).then(m=>{me=m;keepSess();nav()}).catch(e=>{if(/AUTH/.test(errMsg(e)))logout()});
 setInterval(()=>{if(document.hidden)return;if(token)loadOrders();if(view==='shop')loadInfo()},60000);
 
