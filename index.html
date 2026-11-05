@@ -1464,7 +1464,7 @@ function hattDialog(){let box=$('#hatm');if(!box){box=document.createElement('di
     tick=setInterval(()=>{const c=$('#ha-clk');if(c)c.textContent=nowT()},10000);
     const go=async()=>{id=$('#ha-id').value.trim();if(!id)return step1('Type your User ID.');const g=$('#ha-go');g.disabled=true;g.textContent='Checking…';
       try{A=await api('api_homeWho',KEY,id);step2()}catch(e){const m=errMsg(e);if(/not registered/i.test(m))say('ID number not registered.');step1(/not registered/i.test(m)?'ID number not registered.':m)}};
-    $('#ha-go').onclick=go;$('#ha-snd').onclick=()=>say('Sound check. Successful.');$('#ha-id').onkeydown=e=>{if(e.key==='Enter')go()};setTimeout(()=>$('#ha-id').focus(),60)};
+    $('#ha-go').onclick=go;$('#ha-snd').onclick=()=>{say('Sound check. Successful.');setTimeout(()=>alert(sndInfo()),400)};$('#ha-id').onkeydown=e=>{if(e.key==='Enter')go()};setTimeout(()=>$('#ha-id').focus(),60)};
   // PIN pad — shown when they tap Time in / Break / Time out (or File OT). Wrong PIN: "Sorry, please try again!"
   const pinPad=(title,err)=>new Promise(res=>{let pin='';const draw=e=>{B.innerHTML=`<div class="ha-pin-h"><b>${esc(title)}</b><small>${esc(A.who.name)} · ${esc(A.who.id)}</small></div>
       <div class="ha-lbl">PIN</div><div class="ha-dots" id="ha-dots">${[0,1,2,3,4,5].map(i=>`<i class="${i<pin.length?'on':''}"></i>`).join('')}</div>
@@ -3082,7 +3082,14 @@ let VOX=null;function voxPick(){try{const V=speechSynthesis.getVoices();VOX=V.fi
 try{voxPick();speechSynthesis.onvoiceschanged=voxPick}catch(e){}
 // Android app (WebView): sound may only start from a tap — the first tap "unlocks" one audio player that the voice reuses later
 let AUD=null;document.addEventListener('pointerdown',()=>{if(AUD)return;try{AUD=new Audio('data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=');AUD.play().catch(()=>{})}catch(e){}},true);
-function say(txt){if(!txt)return;let done=false;const audio=()=>{if(done)return;done=true;try{const a=AUD||new Audio();a.src='https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en&ttsspeed=1&q='+encodeURIComponent(txt);a.play().catch(()=>{})}catch(e){}};
+// what the sound test uses — shown after 🔊 Test sound so we know where it fails
+function sndInfo(){const ua=navigator.userAgent,app=(ua.match(/FMSApp\/(\d+)/)||[])[1];let L=[];
+  if(app)L.push('3FMS app version: '+app+(+app<5?'  ⚠ older app — install the newest APK (Releases)':'  ✓ newest app'));else L.push('Running in: browser (not the app)');
+  if(window.FMSVoice){let r='?';try{r=FMSVoice.ready()?'READY ✓':'NOT READY ✗ — '+(FMSVoice.state?FMSVoice.state():'phone voice not set up')}catch(e){r='error'}L.push('Phone voice (app): '+r)}else if(app)L.push('Phone voice (app): missing ✗');
+  try{L.push('Browser voice: '+(window.speechSynthesis?speechSynthesis.getVoices().length+' voice(s)':'none'))}catch(e){L.push('Browser voice: none')}
+  L.push('Online: '+(navigator.onLine?'yes':'NO'));return '🔊 Sound check\n\n'+L.join('\n')+'\n\nNo sound? Raise the MEDIA volume while it plays.'}
+function say(txt){if(!txt)return;try{if(window.FMSVoice&&FMSVoice.speak){FMSVoice.speak(String(txt));return}}catch(e){}   // inside the 3FMS Android app: the phone's own voice
+  let done=false;const audio=()=>{if(done)return;done=true;try{const a=AUD||new Audio();a.src='https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en&ttsspeed=1&q='+encodeURIComponent(txt);a.play().catch(()=>{})}catch(e){}};
   // 1) the phone's own voice (Chrome: Google voice) · 2) if this device has none (Android app / WebView) → the same Google voice as audio from the internet
   try{const S=window.speechSynthesis;if(!S||typeof SpeechSynthesisUtterance==='undefined')return audio();if(!VOX)voxPick();
     const u=new SpeechSynthesisUtterance(txt);u.lang=VOX?VOX.lang:'en-US';if(VOX)u.voice=VOX;u.rate=1;u.pitch=1;u.onstart=()=>{done=true};u.onerror=()=>{if(!done){done=false;audio()}};
