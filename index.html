@@ -347,6 +347,7 @@ header h1 .tt small{display:block;font-size:11px;color:var(--sky2);letter-spacin
 .next{background:var(--goldl);border:1px solid #F1DC8A;border-left:6px solid var(--gold);color:#4A3800}
 .next.ok{background:var(--skyl);border-color:var(--sky2);border-left-color:var(--navy);color:var(--navy)}
 .next.wait{background:var(--silverl);border-color:var(--silver);border-left-color:var(--silver);color:var(--muted)}
+.next.pdone{background:#ecfdf5;border-color:#a7f3d0;border-left-color:#15803d;color:#065f46}
 .next.bad{background:var(--rbg);border-color:#F2B8B0;border-left-color:var(--rose);color:#7A1A12}
 .btn{border-color:#C9B3B0;color:var(--navy)}
 .btn:hover{background:var(--skyl)}
@@ -755,6 +756,12 @@ th.h-inv small{display:block;font-weight:600;color:var(--muted);text-transform:n
 .ctlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px;margin:10px 0}.ctrow{display:flex;align-items:center;gap:10px;justify-content:space-between;border:1px solid var(--line);border-radius:12px;padding:8px 10px;background:#fff;cursor:text}
 .ctrow b{display:block}.ctrow small{color:var(--muted);font-size:12px}.ctrow.done{border-color:#86efac;background:#f0fdf4}.ctin{display:flex;align-items:center;gap:6px;flex:none}.ctin input{width:96px;text-align:right}.ctin em{font-style:normal;font-size:12px;color:var(--muted);min-width:30px}
 .ctv .ctbig td{background:#fff7ed}.ctv input{min-width:180px}.ctstart p{max-width:62ch;color:var(--muted)}
+.wsrc{border-top:1px solid var(--line);padding:6px 10px}.wsrc summary{display:flex;gap:8px;align-items:baseline;cursor:pointer;flex-wrap:wrap}.wsrc summary span{flex:1}
+.igrp td{background:#f1f5f9;cursor:pointer;font-size:14px}.igrp.on td{background:#e2e8f0}.igc{display:inline-block;width:18px;color:var(--muted)}.igsub td:first-child{padding-left:26px}
+.prkg{margin-top:4px}.prsetb{display:block;margin-top:4px;font-size:11px;padding:3px 8px}.prauto td{background:#f8fafc}.prauto small{display:block}
+.ychip{display:inline-block;border-radius:99px;padding:2px 9px;font-size:12px;font-weight:700;margin-left:4px}.ychip.ok{background:#dcfce7;color:#166534}.ychip.bad{background:#fee2e2;color:#991b1b}.ychip.lrn{background:#e0e7ff;color:#3730a3}.prsum2 div{margin-top:4px}
+.ptgt .ptrow{padding:8px 0;border-bottom:1px solid var(--line)}.ptgt .ptrow:last-child{border:0}.pt-h{display:flex;gap:8px;align-items:center;margin-bottom:4px}
+.rvmoney{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px;margin:6px 0}.rvmoney span{border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-size:12px;display:flex;flex-direction:column}.rvmoney b{font-size:16px}.rvmoney small{color:var(--muted)}.rvmoney .ls{background:#fef2f2;border-color:#fecaca;color:#991b1b}.rvmoney .gn{background:#ecfdf5;border-color:#a7f3d0;color:#065f46}
 .rvchk{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}.rvchk span{background:#ecfdf5;color:#065f46;border-radius:8px;padding:4px 10px;font-size:13px}.rvchk span.bad{background:#fff7ed;color:#9a3412}
 .rft input{max-width:120px}.rfx td{background:#fffbeb}.rfnf{margin:10px 0;padding:8px 12px;border-radius:10px;background:#f8fafc;display:flex;flex-direction:column;gap:6px}.rfnf.on{background:#fffbeb;border:1px solid #fcd34d}.rfu{display:flex;align-items:center;gap:6px;margin:2px 0}.rfu span{font-size:12px;color:var(--muted);min-width:22px}.rft input[readonly]{background:#f1f5f9;color:var(--muted);border-style:dashed}.rfnf label{display:flex;flex-direction:column;gap:4px}.rfnf label.chk2{flex-direction:row;align-items:center}.rfx small{display:block;margin-top:2px}.rfchg{color:#b45309;font-weight:800}
 .dayhd{display:flex;align-items:center;gap:12px;margin:18px 2px 8px}.dayhd .dh-cal{width:46px;text-align:center;border-radius:10px;background:var(--red);color:#fff;padding:3px 0;line-height:1.1}.dayhd .dh-cal small{display:block;font-size:10px;letter-spacing:.1em;font-weight:800;text-transform:uppercase;opacity:.9}.dayhd .dh-cal b{font-size:22px}
@@ -1323,6 +1330,8 @@ function check(o){const it=o.items, act=it.filter(i=>!isCR(i));
     prepared:it.filter(i=>isCR(i)||!np(i)).length, checkedN:it.filter(i=>isCR(i)||i.checked).length,
     shorts:act.filter(i=>status(i).short)};}
 const stage=o=>o.delivered?'delivered':o.dispatched?'way':'prep';
+// Operations confirms "done preparing" before an order moves to Dispatch (older orders already being checked count as sent)
+const prepOK=o=>!!(o.prepDone||o.dr||o.approved||o.dispatched||o.items.some(i=>i.checked));
 const okDel=o=>!!o.delivered&&!o.delivered.result; // successfully delivered (not returned / cancelled at the door)
 const RES={returned:{i:'↩️',t:'Returned'},cancelled:{i:'✕',t:'Cancelled'}};
 const NDR=['Customer not home / no answer','Customer refused the order','Wrong or damaged item','Wrong address / can\'t find the place','Customer cancelled','No cash to pay (COD)'];
@@ -1647,7 +1656,7 @@ function render(){
   const LBL={ops:{prep:'⚖️ Prepare · ✅ Check & Dispatch',way:'🚚 Out for delivery'},sales:{prep:'⚖️ Preparing',way:'🚚 Out for delivery'},manager:{prep:'⚖️ To Prepare',way:'🚚 Out for delivery'}}[me.role]||{};
   tabs.forEach(t=>{if(LBL[t[0]])t[1]=LBL[t[0]]});
   // OPERATIONS: clean task tabs — Receiving · Prepare · Dispatch · Production · Inventory (+ small "more" links)
-  const prepTodo=prep.filter(o=>check(o).notPrep.length),dispTodo=prep.filter(o=>!check(o).notPrep.length);
+  const prepTodo=prep.filter(o=>check(o).notPrep.length||!prepOK(o)),dispTodo=prep.filter(o=>!check(o).notPrep.length&&prepOK(o));
   let opsSeg=null;
   if(me.role==='ops'){
     const rc=(ST&&ST.pos?ST.pos.filter(p=>p.status==='open').length:0)+retList('to check').length,out=INV?INV.list.filter(p=>p.q<=0).length:0;
@@ -1906,7 +1915,7 @@ function rowHTML(o,i,st){
   if(cr) chk='<span class="unit">—</span>';
   else if(fix) chk=`<div class="chk"><button class="sv" data-fixsave="${i.id}">Save correct qty</button><button data-fixcancel="${i.id}">Cancel</button></div>`;
   else if(i.checked) chk=`<div class="okd">✓ Tally${i.corr.length?' (corrected)':''}<small>${esc(i.checked.by||'')}${i.checked.at?' · '+time12(new Date(i.checked.at)):''}</small></div>`;
-  else if(st==='prep'&&can('check')&&v!=null&&!o.dr) chk=`<div class="chk"><button class="tal" data-tally="${i.id}">✓ Tally</button><button class="no" data-fix="${i.id}">✎ Not tally</button></div>`;
+  else if(st==='prep'&&can('check')&&v!=null&&!o.dr&&prepOK(o)) chk=`<div class="chk"><button class="tal" data-tally="${i.id}">✓ Tally</button><button class="no" data-fix="${i.id}">✎ Not tally</button></div>`;
   else chk='';
   const tags=[
     i.asked?`<span class="tag">ordered as “${esc(i.asked)}”</span>`:'',
@@ -1993,6 +2002,7 @@ function card(o){
     :allOK&&needBill(o)?`<span class="pill p-appr">🧾 For billing</span>`
     :allOK?`<span class="pill p-ready">Billed · ready to dispatch</span>`
     :c.prepared<total?`<span class="pill p-todo">Preparing ${c.prepared}/${total}</span>`
+    :!prepOK(o)?`<span class="pill p-todo">✅ Prepared · send to Dispatch</span>`
     :`<span class="pill p-todo">Checking ${c.checkedN}/${total}</span>`;
   const rows=o.items.map(i=>{
     if(ed) return `<tr class="it"><td class="c-p"><input class="edit-in" data-e="product" data-i="${i.id}" value="${esc(i.product)}" placeholder="Product"></td>
@@ -2001,9 +2011,9 @@ function card(o){
       <td colspan="${showInv(st)?4:3}" class="r">${i.carryFrom?'<span class="tag v">🔒 Carry-over · can\'t delete</span>':`<button class="del" data-del="${i.id}" title="Remove item">✕</button>`}</td></tr>`;
     return rowHTML(o,i,st)}).join('');
   const ev=(e,extra)=>e?`${stamp(e.at)}${e.by?'<br>by '+esc(e.by):''}${e.riderName?`<br>🛵 <span class="rlink" data-rprof="${esc(e.rider)}">${esc(e.riderName)}</span>${e.riderPlate?' · '+esc(e.riderPlate):''}`:''}${e.receiver?'<br>Received: '+esc(e.receiver):''}${e.photo?`<img data-ph="${e.photo}" data-cap="${esc(extra+' · '+fullStamp(e.at))}" alt="photo">`:''}`:'';
-  const s1=c.prepared===total||st!=='prep', s2=(c.checkedN===total&&!c.pend.length)||st!=='prep';
+  const s1=(c.prepared===total&&prepOK(o))||st!=='prep', s2=(c.checkedN===total&&!c.pend.length)||st!=='prep';
   const steps=`<div class="steps">
-    <div class="step${s1?' on':''}${!s1?' now':''}"><i>${s1?'✓':1}</i><b>Prepared</b>${c.prepared}/${total} items</div>
+    <div class="step${s1?' on':''}${!s1?' now':''}"><i>${s1?'✓':1}</i><b>Prepared</b>${c.prepared}/${total} items${o.prepDone?'<br>Sent by '+esc(o.prepDone.by||'')+' · '+time12(new Date(o.prepDone.at)):''}</div>
     <div class="step${s2?' on':''}${s1&&!s2?' now':''}"><i>${s2?'✓':2}</i><b>Checked</b>${c.checkedN}/${total} tally${o.approved?'<br>Approved by '+esc(o.approved.by):''}</div>
     <div class="step${o.dispatched?' on':''}${s2&&st==='prep'?' now':''}"><i>${o.dispatched?'✓':3}</i><b>Dispatched</b>${ev(o.dispatched,'Dispatched')||'Waiting'}${rating(o)?`<br><em class="dtag ${RT[rating(o)][1]}" style="margin:4px 0 0">${RT[rating(o)][0]}</em>`:''}</div>
     <div class="step${o.delivered?' on':''}${st==='way'?' now':''}${o.delivered&&o.delivered.result?' fail':''}"><i>${o.delivered?(o.delivered.result?RES[o.delivered.result].i:'✓'):4}</i><b>${o.delivered&&o.delivered.result?RES[o.delivered.result].t:'Delivered'}</b>${ev(o.delivered,'Delivered')||'Waiting'}${o.delivered&&o.delivered.why?'<br><b style="color:var(--rose)">Reason: '+esc(o.delivered.why)+'</b>':''}</div></div>`;
@@ -2012,12 +2022,13 @@ function card(o){
   else if(st==='prep'){
     let action;
     if(c.notPrep.length) action='';
+    else if(!prepOK(o)) action=can('weigh')?(c.excess.length?`<span class="note" style="font-weight:800;color:var(--rose)">Remove the extra first</span>`:`<button class="go" data-prepdone="${o.id}">✅ Done preparing → Send to Dispatch</button>`):`<span class="note">Waiting for Operations to send it to Dispatch</span>`;
     else if(c.unchecked.length) action=can('check')?`<button class="tallall" data-tallyall="${o.id}">✓ All ${c.unchecked.length} tally</button>`:'';
     else if(c.excess.length) action='';
     else if(c.pend.length) action=can('dispatch')?`<button class="go violet" data-appr="${o.id}">⚠ Manager approval (${c.pend.length} short)</button>`:'';
     else if(needBill(o)) action=`<span class="note" style="font-weight:800;color:var(--violet)">🧾 Waiting for the cashier to bill ${o.dr?esc(o.dr.no):''}</span>`;
     else action=can('dispatch')?`<button class="go" data-disp="${o.id}">🚚 DISPATCH · take photo</button>`:'';
-    foot=`<button class="btn" data-print="${o.id}">Print</button>${can('edit')&&!o.dr?`<button class="btn" data-edit="${o.id}">Edit</button>`:''}${o.approved&&can('check')?`<button class="btn" data-appr="${o.id}">Change approval</button>`:''}${action}`;
+    foot=`<button class="btn" data-print="${o.id}">Print</button>${can('edit')&&!o.dr?`<button class="btn" data-edit="${o.id}">Edit</button>`:''}${o.approved&&can('check')?`<button class="btn" data-appr="${o.id}">Change approval</button>`:''}${o.prepDone&&!o.dr&&!o.approved&&!o.items.some(i=>i.checked)&&can('weigh')?`<button class="btn" data-prepback="${o.id}">↩ Back to Prepare</button>`:''}${action}`;
   }
   else if(st==='way') foot=`<button class="btn" data-print="${o.id}">Print</button>${can('undo')?`<button class="btn" data-undisp="${o.id}">Undo dispatch</button>`:''}
       ${can('deliver')?`<button class="go blue" data-deliv="${o.id}">✅ DELIVERED · take photo</button>`:''}`;
@@ -2061,6 +2072,7 @@ function nextHTML(o,c,st){ // one clear line: what happens next, and who does it
     if(pw&&pw.k==='crit')return L('bad','🔴',`LATE PREPARATION: <b>${c.notPrep.length}</b> item(s) should have been ready by the standard time, ${dueTxt(o)}. Prepare now.`);
     return mine('ops')?L('','⚖️',`Weigh and type <b>${c.notPrep.length}</b> item(s)${due}`):L('wait','⏳',`Prep team is weighing — ${c.notPrep.length} item(s) left${due}`)}
   if(c.excess.length)return L('','✂️',`Remove excess on <b>${c.excess.length}</b> item(s)`);
+  if(!prepOK(o))return L('pdone','✅',can('weigh')?'All items prepared — tap <b>Done preparing → Send to Dispatch</b>':'Prepared — waiting for Operations to send it to Dispatch');
   if(c.unchecked.length)return can('check')?L('','⚖️',`Check <b>${c.unchecked.length}</b> item(s) on the scale`):L('wait','⏳','Waiting for Dispatch team to check');
   if(c.pend.length)return can('dispatch')?L('','⚠️',`<b>${c.pend.length}</b> short item(s) — manager decides`):L('wait','⏳','Short items — waiting for manager');
   if(needBill(o))return L('wait','🧾',`<b>${o.dr?esc(o.dr.no):'DR'}</b> is ready — waiting for the <b>cashier to bill it</b>. DISPATCH opens after the receipt is made.`);
@@ -2491,6 +2503,11 @@ document.addEventListener('click',async e=>{
   if(d.deliv){openProof(find(d.deliv),'deliver');return}
   if(d.nodeliv){const o=find(d.nodeliv);if(o)notDeliveredDialog(o);return}
   if(d.wtog){wayOpen.has(d.wtog)?wayOpen.delete(d.wtog):wayOpen.add(d.wtog);render();return}
+  if(d.prepdone){const o=find(d.prepdone);if(!o)return;const c=check(o);if(c.notPrep.length)return alert('Not done yet: '+c.notPrep.length+' item(s) still to prepare.');
+    const n=o.items.filter(i=>!isCR(i)).length,sh=c.shorts.length;
+    if(!confirm(`Done preparing ${o.customer}?\n\n${n} item(s) prepared${sh?` · ${sh} short`:''}.\nSend to Dispatch for checking?`))return;
+    keepUndo();o.prepDone={by:me.name,at:Date.now()};save();openId=null;render();toast('✅ '+o.customer+' sent to Dispatch',true);return}
+  if(d.prepback){const o=find(d.prepback);if(!o)return;if(!confirm('Move '+o.customer+' back to Prepare?'))return;keepUndo();o.prepDone=null;save();render();toast('Back to Prepare',true);return}
   if(d.undisp){keepUndo();const o=find(d.undisp);o.dispatched=null;save();view='prep';openId=d.undisp;render();toast('Dispatch undone',true);return}
   if(d.undeliv){keepUndo();find(d.undeliv).delivered=null;save();view='way';openId=d.undeliv;render();toast('Delivered undone',true);return}
   if(d.print){printSlip(find(d.print));return}
@@ -2811,13 +2828,14 @@ function owAssets(){const O=OW,t=O.assets.reduce((a,f)=>a+f.book,0);
     <tr class="srtot"><td colspan="4"><b>Total book value</b></td><td class="r"><b>${peso(t)}</b></td><td></td></tr></tbody></table>
     <div class="unit">Depreciation (straight line: cost − salvage ÷ useful life) is added to the monthly expenses automatically.</div></div>`}
 /* ---------- P&L you can open: every line shows what is behind it + where every ₱100 of sales goes ---------- */
-const PLC={cogs:'#2a78d6',np:'#008300',other:'#a3a29b',ex:['#eb6834','#1baf7a','#eda100','#e87ba4']};
+const PLC={waste:'#b91c1c',cogs:'#2a78d6',np:'#008300',other:'#a3a29b',ex:['#eb6834','#1baf7a','#eda100','#e87ba4']};
 function plPie(T,cats){const ns=T.net;if(!(ns>0))return '<div class="unit">No sales this month yet.</div>';
   const ex=Object.entries(cats).sort((a,b)=>b[1]-a[1]),top=ex.slice(0,4),rest=ex.slice(4).reduce((a,[,v])=>a+v,0);
-  if(T.np<0){const costs=[['Cost of goods (meat)',T.cogs,PLC.cogs],...top.map(([c,v],k)=>[c,v,PLC.ex[k]]),...(rest?[['Other expenses',rest,PLC.other]]:[])],tot=costs.reduce((a,x)=>a+x[1],0);
+  const WS=T.waste>0?[['Wastage & shrinkage',T.waste,PLC.waste]]:[];
+  if(T.np<0){const costs=[['Cost of goods (meat)',T.cogs,PLC.cogs],...WS,...top.map(([c,v],k)=>[c,v,PLC.ex[k]]),...(rest?[['Other expenses',rest,PLC.other]]:[])],tot=costs.reduce((a,x)=>a+x[1],0);
     return `<div class="snote" style="border-color:var(--rose)">⚠ <b>Loss this month:</b> costs are <b>${Math.round(tot/ns*100)}%</b> of net sales (over 100% = loss of ${peso(-T.np)}). A pie can't show a loss — here is what each cost takes:</div>
       ${costs.map(([l,v,c])=>`<div class="plbar"><span>${esc(l)}</span><i style="width:${Math.min(100,v/tot*100)}%;background:${c}"></i><b>${Math.round(v/ns*1000)/10}%</b></div>`).join('')}`}
-  const S=[['Cost of goods (meat)',T.cogs,PLC.cogs],...top.map(([c,v],k)=>[c,v,PLC.ex[k]]),...(rest?[['Other expenses',rest,PLC.other]]:[]),['Net profit',T.np,PLC.np]].filter(x=>x[1]>0);
+  const S=[['Cost of goods (meat)',T.cogs,PLC.cogs],...WS,...top.map(([c,v],k)=>[c,v,PLC.ex[k]]),...(rest?[['Other expenses',rest,PLC.other]]:[]),['Net profit',T.np,PLC.np]].filter(x=>x[1]>0);
   const tot=S.reduce((a,x)=>a+x[1],0),R=70,C=2*Math.PI*R;let off=0;
   const arcs=S.map(([l,v,c])=>{const len=v/tot*C,g=Math.min(2,len/2),a=`<circle r="${R}" cx="90" cy="90" fill="none" stroke="${c}" stroke-width="34" stroke-dasharray="${Math.max(0,len-g)} ${C-len+g}" stroke-dashoffset="${-off}" transform="rotate(-90 90 90)"><title>${esc(l)}: ${peso(v)} · ${Math.round(v/ns*1000)/10}% of net sales</title></circle>`;off+=len;return a}).join('');
   return `<div class="plpie"><svg viewBox="0 0 180 180" width="190" height="190" role="img" aria-label="Where every 100 pesos of sales goes">${arcs}<text x="90" y="84" text-anchor="middle" font-size="12" fill="var(--muted,#777)">net profit</text><text x="90" y="104" text-anchor="middle" font-size="22" font-weight="800" fill="var(--ink,#222)">${Math.round(T.np/ns*1000)/10}%</text></svg>
@@ -2825,12 +2843,16 @@ function plPie(T,cats){const ns=T.net;if(!(ns>0))return '<div class="unit">No sa
 function plCsv(){const P=OW.pl,D=P.detail,T=D.tot,o=[['3F MEATSHOP — Profit & Loss',ymLbl(OW.ym)],[],['Section','Date','Item','Detail','Amount','% of net sales']],pc=v=>T.net?Math.round(v/T.net*1000)/10:'';
   D.cats.forEach(c=>o.push(['Sales by category','',c.cat,'',c.sales,pc(c.sales)]));o.push(['GROSS SALES','','','',T.gross,pc(T.gross)]);
   D.disc.forEach(x=>o.push(['Discount',x.d,x.label,x.no+' · '+x.customer,-x.amt,'']));D.ret.forEach(x=>o.push(['Return',x.d,x.name,x.no+' · '+x.customer,-x.amt,'']));o.push(['NET SALES','','','',T.net,100]);
-  D.prods.forEach(x=>o.push(['COGS','',x.name,x.qty+' '+(x.unit||'')+' sold · sales '+x.sales,-x.cost,pc(x.cost)]));o.push(['COST OF GOODS SOLD','','','',-T.cogs,pc(T.cogs)]);o.push(['GROSS PROFIT','','','',T.gp,pc(T.gp)]);
+  D.prods.forEach(x=>o.push(['COGS','',x.name,x.qty+' '+(x.unit||'')+' sold · sales '+x.sales,-x.cost,pc(x.cost)]));o.push(['COST OF GOODS SOLD','','','',-T.cogs,pc(T.cogs)]);
+  (D.waste||[]).forEach(x=>o.push(['Wastage · '+x.src,x.d,x.desc,'',-x.amt,pc(x.amt)]));if(T.waste)o.push(['WASTAGE & SHRINKAGE','','','',-T.waste,pc(T.waste)]);o.push(['GROSS PROFIT','','','',T.gp,pc(T.gp)]);
   D.items.forEach(x=>o.push(['Expense · '+x.cat,x.d,x.desc,x.src,-x.amt,pc(x.amt)]));o.push(['TOTAL OPERATING EXPENSES','','','',-T.opex,pc(T.opex)]);
   D.other.forEach(x=>o.push(['Other income',x.d,x.desc,'',x.amt,'']));o.push(['NET PROFIT (before owner\'s pay)','','','',T.np,pc(T.np)]);
   D.owner.forEach(x=>o.push(["Owner's salary",x.d,x.desc||'','',-x.amt,'']));o.push(["NET PROFIT after owner's pay",'','','',T.np-T.owner,pc(T.np-T.owner)]);
   downloadCsv(o,'3FMS-PnL-'+OW.ym+'.csv')}
 function plPrint(){const w=document.querySelectorAll('.plr');w.forEach(x=>x.open=true);setTimeout(()=>{const h=document.querySelector('.owrow').outerHTML;$('#print').className='';$('#print').innerHTML=`<div style="font-family:Arial,sans-serif"><h2 style="margin:0">3F MEATSHOP — Profit & Loss · ${ymLbl(OW.ym)}</h2>${h}</div>`;window.print();w.forEach(x=>x.open=false)},50)}
+function wsRows(L,LP,net){const src=[...new Set(L.map(x=>x.src).concat(LP.map(x=>x.src)))];if(!src.length)return '<div class="unit" style="padding:6px 10px">None this month.</div>';
+  return src.map(sk=>{const A=L.filter(x=>x.src===sk),v=r2(A.reduce((a,x)=>a+x.amt,0)),pv=r2(LP.filter(x=>x.src===sk).reduce((a,x)=>a+x.amt,0));
+    return `<details class="wsrc"><summary><span>${esc(sk)}</span><b>${peso(v)}</b><small class="unit">${net?Math.round(v/net*1000)/10+'% of sales':''}${LP.length?' · last month '+peso(pv):''}</small></summary>${A.length?`<div class="sc"><table class="stbl"><tbody>${A.map(x=>`<tr><td>${day(x.d)}</td><td>${esc(x.desc)}</td><td class="r">${peso(x.amt)}</td></tr>`).join('')}</tbody></table></div>`:''}</details>`}).join('')}
 function owReports(){const L=(t,v,b,i)=>`<tr${b?' class="srtot"':''}><td style="padding-left:${i?24:8}px">${b?'<b>':''}${t}${b?'</b>':''}</td><td class="r">${b?'<b>':''}${peso(v)}${b?'</b>':''}</td></tr>`;const O=OW,P=O.pl,B=O.bs,D=P.detail||{tot:P,cats:[],prods:[],disc:[],ret:[],items:[],other:[],owner:[]},Q=P.prev,PT=Q&&(Q.tot.net||Q.tot.opex||Q.tot.cogs||Q.tot.owner)?Q.tot:null,ns=D.tot.net||0;
   const pc=v=>ns?(Math.round(v/ns*1000)/10)+'%':'—',dl=(v,pv,good)=>{if(pv==null||!PT)return '';const d=v-pv;if(Math.abs(d)<0.5)return '<small class="unit">same</small>';const up=d>0,ok=good?up:!up;return `<small style="color:${ok?'var(--green)':'var(--rose)'}">${up?'▲':'▼'} ${peso(Math.abs(d))}</small>`};
   const row=(lbl,v,pv,o)=>{o=o||{};const body=o.body;return `<details class="plr${o.tot?' pltot':''}"${o.open?' open':''}><summary><span class="pl-l">${body?'<i class="pl-c">▸</i>':''}${lbl}</span><span class="r pl-v" style="${!o.neg&&v<0?'color:var(--rose)':''}">${(o.neg?v>0:v<0)?'−':''}${peso(Math.abs(v))}</span><span class="r pl-p">${pc(v)}</span><span class="r pl-pv">${PT&&pv!=null?((o.neg?pv>0:pv<0)?'−':'')+peso(Math.abs(pv)):''}<br>${dl(v,pv,o.good)}</span></summary>${body||''}</details>`};
@@ -2847,7 +2869,8 @@ function owReports(){const L=(t,v,b,i)=>`<tr${b?' class="srtot"':''}><td style="
     ${row('Less returns',T.ret,PT&&PT.ret,{neg:1,body:tbl(['Date','Receipt','Customer','Item','r:Amount'],D.ret.map(x=>`<tr><td>${day(x.d)}</td><td>${esc(x.no)}</td><td>${esc(x.customer)}</td><td>${esc(x.name)} ${qf(x.qty)} ${esc(x.unit||'')}</td><td class="r">${peso(x.amt)}</td></tr>`))})}
     ${row('<b>NET SALES</b>',T.net,PT&&PT.net,{tot:1,good:1})}
     ${row('Cost of goods sold (COGS)',T.cogs,PT&&PT.cogs,{neg:1,body:'<div class="unit" style="padding:4px 10px">What the meat you SOLD cost you (qty × cost) — not what you bought.</div>'+tbl(['Product','r:Qty sold','r:Cost','r:Sales','r:Margin'],D.prods.map(x=>`<tr><td><b>${esc(x.name)}</b><br><small class="unit">${esc(x.cat)}${x.pend?' · ⏳ some cost pending':''}</small></td><td class="r">${qf(x.qty)} ${esc(x.unit||'')}</td><td class="r">${peso(x.cost)}</td><td class="r">${peso(x.sales)}</td><td class="r">${x.sales?Math.round((x.sales-x.cost)/x.sales*1000)/10+'%':'—'}</td></tr>`))})}
-    ${row('<b>GROSS PROFIT</b>',T.gp,PT&&PT.gp,{tot:1,good:1,body:tbl(['Category','r:Sales','r:Cost','r:Gross profit','r:Margin'],D.cats.map(c=>`<tr><td><b>${esc(c.cat)}</b></td><td class="r">${peso(c.sales)}</td><td class="r">${peso(c.cost)}</td><td class="r">${peso(c.sales-c.cost)}</td><td class="r">${c.sales?Math.round((c.sales-c.cost)/c.sales*1000)/10+'%':'—'}</td></tr>`))})}
+    ${T.waste||(PT&&PT.waste)?row('Wastage & shrinkage',T.waste||0,PT&&PT.waste,{neg:1,body:'<div class="unit" style="padding:4px 10px">Receiving trim, spoiled returns and stock count shrinkage. Production and live pig yield loss stays inside the product cost.</div>'+wsRows(D.waste||[],Q?Q.waste||[]:[],T.net)}):''}
+    ${row('<b>GROSS PROFIT</b>',T.gp,PT&&PT.gp,{tot:1,good:1,body:tbl(['Category','r:Sales','r:Cost','r:Gross profit','r:Margin'],D.cats.map(c=>`<tr><td><b>${esc(c.cat)}</b></td><td class="r">${peso(c.sales)}</td><td class="r">${peso(c.cost)}</td><td class="r">${peso(c.sales-c.cost)}</td><td class="r">${c.sales?Math.round((c.sales-c.cost)/c.sales*1000)/10+'%':'—'}</td></tr>`))+(D.groups&&D.groups.length?'<div class="plsec" style="margin-top:8px">By group</div>'+tbl(['Group','r:Sales','r:Cost','r:Gross profit','r:Margin'],D.groups.map(c=>`<tr><td><b>${esc(c.group)}</b><br><small class="unit">${esc(c.cat)}</small></td><td class="r">${peso(c.sales)}</td><td class="r">${peso(c.cost)}</td><td class="r">${peso(c.sales-c.cost)}</td><td class="r">${c.sales?Math.round((c.sales-c.cost)/c.sales*1000)/10+'%':'—'}</td></tr>`)):'')})}
     ${P.pend?`<div class="unit" style="padding:2px 10px">⏳ ${peso(P.pend)} of sales were sold over stock — their cost is added when the stock is received.</div>`:''}
     <div class="plsec">Operating expenses</div>${exRows||'<div class="unit" style="padding:4px 10px">No expenses recorded yet — add them in 🧾 Expenses.</div>'}
     ${row('<b>Total operating expenses</b>',T.opex,PT&&PT.opex,{tot:1,neg:1,body:exCats.length?`<div style="padding:6px 10px">${exCats.map(([c,v],k)=>`<div class="plbar"><span>${esc(c)}</span><i style="width:${v/exMax*100}%;background:${k<4?PLC.ex[k]:PLC.other}"></i><b>${pc(v)}</b></div>`).join('')}</div>`:''})}
@@ -3232,6 +3255,14 @@ function ctSetDialog(){const H=CT.set,box=stBox();$('#stb').innerHTML=`<h2>⚙ S
   <div class="row-end"><button class="btn" data-x>Cancel</button><button class="go" id="cs-ok">Save</button></div>`;box.classList.add('on');
   $('#cs-ok').onclick=async()=>{try{CT=await api('api_countSet',session.token,{freq:$('#cs-f').value,dow:$('#cs-w').value,dom:$('#cs-m').value,bigAmt:$('#cs-a').value,bigPct:$('#cs-p').value});box.classList.remove('on');toast('Saved');drawStock()}catch(e){alert(errMsg(e))}}}
 /* ---------- INVENTORY ---------- */
+// GROUPS: a group (e.g. Dimsum) is only a folder — stock, cost and price live on its sub-products
+let invOpenG=new Set();
+function invRows(list,mgr,q,rowFn){const out=[],seen=new Set();
+  list.forEach(p=>{if(!p.group){out.push(rowFn(p));return}if(seen.has(p.group))return;seen.add(p.group);
+    const G=list.filter(x=>x.group===p.group),open=invOpenG.has(p.group)||!!q,us=[...new Set(G.map(x=>x.unit))],qty=us.length===1?qf(r2(G.reduce((a,x)=>a+Math.max(0,x.avail),0)))+' '+esc(us[0]):'',val=G.reduce((a,x)=>a+Math.max(0,x.avail)*(x.cost||0),0),lo=G.filter(x=>x.avail<=0||isLow(x)).length;
+    out.push(`<tr class="igrp${open?' on':''}" data-igrp="${esc(p.group)}"><td colspan="${mgr?8:6}"><span class="igc">${open?'▾':'▸'}</span><b>${esc(p.group)}</b> <span class="unit">· ${G.length} item${G.length>1?'s':''}${qty?' · <b>'+qty+'</b>':''}${mgr&&val?' · value '+peso(val):''}</span>${lo?' '+badge(lo+' LOW / OUT','amber'):''}</td></tr>`);
+    if(open)G.forEach(x=>out.push(rowFn(x)))});
+  return out.join('')}
 function invHTML(){
   const mgr=can('invEdit'),cats=[...new Set(ST.products.map(p=>p.cat))].sort();
   const q=invQ.trim().toLowerCase(),list=ST.products.filter(p=>(!invCat||p.cat===invCat)&&(!q||(p.name+' '+p.code).toLowerCase().includes(q)));
@@ -3245,7 +3276,7 @@ function invHTML(){
     ${mgr&&ST.unmatched&&ST.unmatched.length?`<div class="snote">🔎 These order names did not match a product, so dispatch could not take them out of stock: <b>${ST.unmatched.map(esc).join(', ')}</b>. Edit the product and add the name under <b>Other names</b>.</div>`:''}
     <div class="sfilt"><input class="edit-in" data-k="invq" placeholder="🔍 Search product or code" value="${esc(invQ)}"><div class="chips2"><button class="${invCat?'':'on'}" data-icat="">All</button>${cats.map(c=>`<button class="${invCat===c?'on':''}" data-icat="${esc(c)}">${esc(c)}</button>`).join('')}</div></div>
     <div class="panel"><div class="sc"><table class="stbl"><thead><tr><th>Product</th><th>Category</th><th class="r">Stock</th><th>Unit</th><th class="r">Reorder at</th><th class="r">Retail</th>${mgr?'<th class="r">Cost</th><th></th>':''}</tr></thead><tbody>
-    ${list.map(p=>`<tr class="${p.avail<=0?'rout':isLow(p)?'rlow':''}"><td><b>${esc(p.name)}</b><br><small class="unit">${esc(p.code)}${p.on?' · 🛒 online':''}</small></td><td>${esc(p.cat)}</td><td class="r"><b class="stq">${qf(p.avail)}</b>${p.avail<=0?'<br>'+badge('OUT','red'):isLow(p)?'<br>'+badge('LOW','amber'):''}</td><td>${esc(p.unit)}</td><td class="r">${p.reorder?qf(p.reorder):'—'}</td><td class="r">${peso(p.retail)}</td>${mgr?`<td class="r">${p.cost?peso(p.cost):'—'}</td><td><button class="btn sm" data-pedit="${esc(p.code)}">Edit / Count</button></td>`:''}</tr>`).join('')||`<tr><td colspan="8" class="empty">No product found.</td></tr>`}</tbody></table></div></div>
+    ${invRows(list,mgr,q,p=>`<tr class="${p.avail<=0?'rout':isLow(p)?'rlow':''}${p.group?' igsub':''}"><td><b>${esc(p.name)}</b><br><small class="unit">${esc(p.code)}${p.on?' · 🛒 online':''}</small></td><td>${esc(p.cat)}</td><td class="r"><b class="stq">${qf(p.avail)}</b>${p.avail<=0?'<br>'+badge('OUT','red'):isLow(p)?'<br>'+badge('LOW','amber'):''}</td><td>${esc(p.unit)}</td><td class="r">${p.reorder?qf(p.reorder):'—'}</td><td class="r">${peso(p.retail)}</td>${mgr?`<td class="r">${p.cost?peso(p.cost):'—'}</td><td><button class="btn sm" data-pedit="${esc(p.code)}">Edit / Count</button></td>`:''}</tr>`)||`<tr><td colspan="8" class="empty">No product found.</td></tr>`}</tbody></table></div></div>
     ${ST.moves?`<details class="panel"><summary><b>🧾 Recent stock movements</b> <span class="unit">(last ${ST.moves.length})</span></summary><div class="sc"><table class="stbl"><thead><tr><th>When</th><th>Type</th><th>Product</th><th class="r">Qty</th><th class="r">Stock after</th><th>Reference</th><th>By</th></tr></thead><tbody>
       ${ST.moves.slice(0,120).map(m=>`<tr><td>${stamp(m.at)}</td><td>${esc(m.type)}</td><td>${esc(m.name)}</td><td class="r"><b style="color:${m.q<0?'var(--rose)':'var(--green)'}">${m.q>0?'+':''}${qf(m.q)}</b> ${esc(m.unit)}</td><td class="r">${qf(m.after)}</td><td class="unit">${esc(m.ref)}${m.note?' — '+esc(m.note):''}</td><td>${esc(m.by)}</td></tr>`).join('')||'<tr><td colspan="7" class="empty">No movements yet.</td></tr>'}</tbody></table></div></details>`:''}`}
 function stBox(){let box=$('#stm');if(!box){box=document.createElement('div');box.className='modal';box.id='stm';box.innerHTML='<div class="sheet" id="stb"></div>';document.body.appendChild(box);
@@ -3383,6 +3414,8 @@ function productDialog(code){const p=code?pBy(code):{code:'',name:'',cat:'',unit
       <label>Cost (₱ per unit)<input class="edit-in" id="pf-cost" type="number" step="0.01" value="${p.cost||''}"></label>
       <label>Reorder level (warn when stock is this or lower)<input class="edit-in" id="pf-ro" type="number" step="0.01" value="${p.reorder||''}"></label>
       <label>Weight per pack / pc (kg)<input class="edit-in" id="pf-kg" type="number" step="0.001" value="${p.unit==='Kg'?'':p.kg||''}" placeholder="packs & pieces only"></label>
+      <label>Group <small>(optional · e.g. Dimsum)</small><input class="edit-in" id="pf-grp" list="pf-grps" value="${esc(p.group||'')}" placeholder="none"><datalist id="pf-grps">${[...new Set(ST.products.map(x=>x.group).filter(Boolean))].map(g=>`<option value="${esc(g)}">`).join('')}</datalist></label>
+      <label>Max stock <small>(production daily target = max − stock)</small><input class="edit-in" id="pf-max" type="number" step="0.001" value="${p.max||''}" placeholder="blank = no target"></label>
       ${isNew?`<label>Starting stock<input class="edit-in" id="pf-av" type="number" step="0.001" value=""></label>`:''}
       <label class="full">Other names used in orders (comma) <input class="edit-in" id="pf-al" value="${esc(p.alias||'')}" placeholder="e.g. Liempo, Pork Belly"></label>
       <label class="full chk2"><input type="checkbox" id="pf-on"${p.on?' checked':''}> Show on the online shop</label></div>
@@ -3393,7 +3426,7 @@ function productDialog(code){const p=code?pBy(code):{code:'',name:'',cat:'',unit
   box.classList.add('on');
   $('#pf-save').onclick=async()=>{const b=$('#pf-save');b.disabled=true;
     try{ST=await api('api_saveProduct',session.token,{isNew,code:$('#pf-code').value,name:$('#pf-name').value,cat:$('#pf-cat').value,unit:$('#pf-unit').value,retail:$('#pf-ret').value,wholesale:$('#pf-ws').value,
-      cost:$('#pf-cost').value,reorder:$('#pf-ro').value,kg:$('#pf-kg').value,alias:$('#pf-al').value,on:$('#pf-on').checked,avail:isNew?$('#pf-av').value:0});stCache();box.classList.remove('on');toast('Product saved');drawStock()}
+      cost:$('#pf-cost').value,reorder:$('#pf-ro').value,kg:$('#pf-kg').value,group:$('#pf-grp').value,max:$('#pf-max').value,alias:$('#pf-al').value,on:$('#pf-on').checked,avail:isNew?$('#pf-av').value:0});stCache();box.classList.remove('on');toast('Product saved');drawStock()}
     catch(e){alert(errMsg(e))}b.disabled=false};
   if(!isNew)$('#pf-adj').onclick=async()=>{const v=$('#pf-cnt').value;if(v===''){$('#pf-cnt').focus();return}
     if(!confirm(`Set the stock of ${p.name} to ${v} ${p.unit}?`))return;
@@ -3533,8 +3566,10 @@ function ccRecvDiff(p){const c=p.carcass,rc=p.recv.carcass,a=ccMoney(c),b=ccMone
 function recvTable(lines,R){const hasR=lines.some(l=>l.rcpt!=null),u=l=>esc(String(l.ounit||l.unit||'').toLowerCase()),gotOf=l=>l.ounit?l.pcs:l.qty,rcOf=l=>l.rcpt!=null?l.rcpt:l.ordered;
   const rD=l=>r2(rcOf(l)-l.ordered),aD=l=>r2(gotOf(l)-rcOf(l)),showR=hasR&&lines.some(l=>rD(l)),nR=lines.filter(l=>rD(l)).length,nA=lines.filter(l=>aD(l)).length;
   const dc=d=>d?`<b style="color:${d<0?'var(--rose)':'var(--amber)'}">${d>0?'+':''}${qf(d)}</b>`:'<span style="color:var(--green,#15803d)">✓</span>';
-  return `${R&&(R.notFollowed||R.rcptNo)?`<div class="unit">${R.rcptNo?'🧾 Supplier receipt <b>'+esc(R.rcptNo)+'</b>':''}${R.notFollowed?` <span class="sb sb-amber">⚠ P.O. not followed</span> ${esc(R.nfWhy||'')}`:''}</div>`:''}
+  return `${R&&(R.notFollowed||R.rcptNo||R.grn)?`<div class="unit">${R.grn?'📄 <b>'+esc(R.grn)+'</b> · ':''}${R.rcptNo?'🧾 Supplier receipt <b>'+esc(R.rcptNo)+'</b>':''}${R.notFollowed?` <span class="sb sb-amber">⚠ P.O. not followed</span> ${esc(R.nfWhy||'')}`:''}</div>`:''}
   ${hasR&&(nR||nA)?`<div class="rvchk"><span class="${nR?'bad':''}">🧾 Supplier receipt vs P.O.: <b>${nR?nR+' changed':'same ✓'}</b></span><span class="${nA?'bad':''}">📦 Actual count vs receipt: <b>${nA?nA+' different':'same ✓'}</b></span></div>`:''}
+  ${hasR&&me&&me.role==='manager'&&lines.some(l=>l.cost!=null)?(()=>{let pay=0,stk=0,ls=0,gn=0;lines.forEach(l=>{const c=+l.cost||0,v=r2(aD(l)*c);pay+=rcOf(l)*c;stk+=gotOf(l)*c;if(v<0)ls-=v;else gn+=v});
+    return `<div class="rvmoney"><span>💳 Pay supplier <small>(receipt qty)</small><b>${peso(pay)}</b></span><span>📦 Into stock <small>(actual qty)</small><b>${peso(stk)}</b></span>${ls?`<span class="ls">📉 Loss <small>(trim / short vs receipt)</small><b>${peso(ls)}</b></span>`:''}${gn?`<span class="gn">📈 Gain <small>(over the receipt)</small><b>${peso(gn)}</b></span>`:''}</div>`})():''}
   <div class="sc"><table class="stbl"><thead><tr><th>Product</th><th class="r">P.O.</th>${hasR?'<th class="r">Supplier receipt</th>':''}<th class="r">Actual count</th>${showR?'<th class="r">Receipt vs P.O.</th>':''}<th class="r">Actual vs ${hasR?'receipt':'P.O.'}</th></tr></thead><tbody>${lines.map(l=>{const d=aD(l),e=rD(l);
   return `<tr class="${d||e?'rlow':''}"><td>${esc(l.name)}</td><td class="r">${qf(l.ordered)} ${u(l)}</td>${hasR?`<td class="r${e?' rfchg':''}"><b>${qf(rcOf(l))}</b> ${u(l)}</td>`:''}<td class="r"><b>${qf(gotOf(l))}</b> ${u(l)}${l.ounit?`<br><small class="unit">${qf(l.qty)} ${esc(String(l.unit).toLowerCase())} weighed</small>`:''}</td>${showR?`<td class="r">${dc(e)}</td>`:''}<td class="r">${dc(d)}</td></tr>`}).join('')}</tbody></table></div>`}
 
@@ -3595,7 +3630,7 @@ function rvHTML(){const key=RVF.from+'|'+RVF.to;if((!RV||RV.key!==key)&&!RVerr)r
     ${R.pays.length?`<tr class="srtot"><td colspan="5"><b>Total paid</b></td><td class="r"><b>${peso(R.pays.reduce((a,x)=>a+x.amt,0))}</b></td></tr>`:''}</tbody></table></div>`;
   else if(RVtab==='unpaid')body=`<div class="unit">Every supplier P.O. still unpaid (any date).</div><div class="sc"><table class="stbl"><thead><tr><th>P.O.</th><th>Supplier</th><th>Terms</th><th>Due</th><th class="r">Balance</th><th></th></tr></thead><tbody>
     ${RV.unpaid.filter(x=>!RVF.sup||x.name===RVF.sup).map(x=>`<tr><td>${esc(x.no)}${x.received?'':'<br><small class="unit">not received yet</small>'}</td><td>${esc(x.name)}</td><td>${TERMS[x.terms]||''}</td><td>${x.dueDate?`<span style="${x.dueDate<today()?'color:var(--rose);font-weight:800':''}">${day(x.dueDate)}</span>`:'on delivery'}</td><td class="r"><b>${peso(x.bal)}</b>${x.payBy==='cashier'?'<br>'+badge('cashier to pay','violet'):''}</td><td><button class="go sm" data-rvpay="${x.id}">Pay</button></td></tr>`).join('')||'<tr><td colspan="6" class="empty">Nothing unpaid 🎉</td></tr>'}</tbody></table></div>`;
-  else body=R.rows.map(r=>`<div class="pocard"><div class="poh"><b>${esc(r.no)}</b> · ${esc(r.supplier)} <span class="unit">&nbsp;· ${srDay(r.d)} · ${r.rtype==='pickup'?'🛻 picked up':'🚚 delivered'} · received by ${esc(r.by)}${r.rcptNo?' · receipt '+esc(r.rcptNo):''}${r.freight&&M?' · freight '+peso(r.freight):''}</span><span style="flex:1"></span>
+  else body=R.rows.map(r=>`<div class="pocard"><div class="poh"><b>${esc(r.no)}</b> · ${esc(r.supplier)} <span class="unit">&nbsp;· ${srDay(r.d)} · ${r.rtype==='pickup'?'🛻 picked up':'🚚 delivered'} · received by ${esc(r.by)}${r.grn?' · '+esc(r.grn):''}${r.rcptNo?' · receipt '+esc(r.rcptNo):''}${r.freight&&M?' · freight '+peso(r.freight):''}${M&&r.vLoss?` · <b style="color:var(--rose)">loss ${peso(r.vLoss)}</b>`:''}${M&&r.vGain?` · <b style="color:#15803d">gain ${peso(r.vGain)}</b>`:''}</span><span style="flex:1"></span>
       ${r.status==='for approval'?badge('WAITING APPROVAL','amber'):''}${r.nf?badge('P.O. NOT FOLLOWED','amber'):''}${r.diff?badge('SHORT / OVER VS RECEIPT','red'):''}${M?payBadge({bal:r.bal,paid:r.paid,terms:r.terms,dueDate:r.dueDate,payBy:r.payBy}):''}</div>
       ${r.kind==='pig'?`<div class="unit">🐖 ${r.heads} pc · liveweight ${qf(r.lw)} kg${r.lw!==r.lwPO?' (P.O. '+qf(r.lwPO)+')':''} · cuts ${qf(r.kg)} kg · yield <b>${r.yieldPct}%</b>${M?` · pig ${peso(r.pigPay)} + expenses ${peso(r.exp)} = <b>${peso(r.value)}</b>`:''}</div>`:''}
       <div class="sc"><table class="stbl"><thead><tr><th>${r.kind==='pig'?'Cut':'Product'}</th>${r.kind==='pig'?'':'<th class="r">P.O.</th>'}<th class="r">Received</th>${M?'<th class="r">Cost / unit</th><th class="r">Amount</th>':''}</tr></thead><tbody>
@@ -3670,13 +3705,13 @@ function recvHTML(){
     ${done.length?`<div class="panel"><h3>✅ Recently received</h3>${done.map(p=>`<div class="unit" style="padding:4px 0"><b>${esc(p.no)}</b> · ${esc(p.supplier)} · ${stamp(p.recv.at)} by ${esc(p.recv.by)}</div>`).join('')}</div>`:''}`}
 
 /* ---------- PRODUCTION (operations) ---------- */
-function prodLines(kind,C){return prodF[kind].map((l,k)=>{const p=pBy(l.code);return `<tr><td>${uSel(l.code,'','data-prl="'+kind+':'+k+'"')}</td><td><input class="edit-in nq" type="number" step="0.001" inputmode="decimal" data-prq="${kind}:${k}" data-k="prq${kind}${k}" value="${l.qty}" placeholder="Qty"></td><td class="unit">${p?esc(p.unit)+'<br>stock '+qf(p.avail):''}${p&&kind==='used'&&+l.qty>p.avail?'<br><b style="color:var(--rose)">not enough</b>':''}</td>${kind==='made'&&me.role==='manager'?`<td class="r" id="prcu${k}">${C&&C.unit[k]!=null?peso(C.unit[k]):'—'}</td>`:''}<td><button class="del" data-prdel="${kind}:${k}">✕</button></td></tr>`}).join('')}
+function prodLines(kind,C){return prodF[kind].map((l,k)=>{const p=pBy(l.code),pk=kind==='made'&&p&&!/^kg$/i.test(p.unit);return `<tr${l.auto?' class="prauto"':''}><td>${uSel(l.code,'','data-prl="'+kind+':'+k+'"')}${l.auto?'<small class="unit">📦 auto · per '+esc(pBy(l.auto)?pBy(l.auto).name:'')+'</small>':''}${kind==='made'&&p&&me.role==='manager'&&prodF.kind!=='conv'?`<button type="button" class="btn sm prsetb" data-prset="${esc(p.code)}">⚙ Packaging & yield</button>`:''}</td><td><input class="edit-in nq" type="number" step="0.001" inputmode="decimal" data-prq="${kind}:${k}" data-k="prq${kind}${k}" value="${l.qty}" placeholder="Qty">${pk?`<input class="edit-in nq prkg" type="number" step="0.001" inputmode="decimal" data-prkg="${k}" value="${esc(l.kg||'')}" placeholder="kg weighed (all)">`:''}</td><td class="unit">${p?esc(p.unit)+'<br>stock '+qf(p.avail):''}${p&&kind==='used'&&+l.qty>p.avail?'<br><b style="color:var(--rose)">not enough</b>':''}${pk?`<br><span id="prpg${k}">${prPackTxt(l,p)}</span>`:''}</td>${kind==='made'&&me.role==='manager'?`<td class="r" id="prcu${k}">${C&&C.unit[k]!=null?peso(C.unit[k]):'—'}</td>`:''}<td><button class="del" data-prdel="${kind}:${k}">✕</button></td></tr>`}).join('')}
 /* ---------- INVENTORY: product conversion (pigue + belly -> laman, whole chicken -> cuts, kilo -> packs). Cost = same as the source. ---------- */
 let convF=null;
 function convCostJS(){const ok=l=>l.code&&+l.qty>0,kgOf=(p,q)=>/^kg$/i.test(p.unit)?q:(+p.kg>0?q*+p.kg:0);let total=0,inKg=0,inQ=0,outKg=0,allKg=true;
   convF.from.filter(ok).forEach(l=>{const p=pBy(l.code);if(!p)return;total+=+l.qty*(p.cost||0);inQ+=+l.qty;const k=kgOf(p,+l.qty);if(!k)allKg=false;inKg+=k});
   const T=convF.to.map(l=>ok(l)?{p:pBy(l.code),q:+l.qty}:null);T.forEach(x=>{if(x&&x.p){const k=kgOf(x.p,x.q);if(!k)allKg=false;outKg+=k}});
-  const perKg=inKg?total/inKg:0,perU=inQ?total/inQ:0;
+  const perKg=allKg&&outKg>0?total/outKg:inKg?total/inKg:0,perU=inQ?total/inQ:0;
   return {total,inKg,outKg,perKg,allKg,loss:allKg&&inKg>0&&outKg?Math.round((inKg-outKg)/inKg*1000)/10:null,unit:T.map(x=>x&&x.p?r2(allKg?(/^kg$/i.test(x.p.unit)?perKg:perKg*+x.p.kg):perU):null)}}
 function convDialog(){if(!convF)convF={from:[{code:'',qty:''}],to:[{code:'',qty:''}],note:''};const box=stBox(),mgr=me.role==='manager';
   const lines=(k,C)=>convF[k].map((l,i)=>{const p=pBy(l.code);return `<tr><td>${uSel(l.code,'','data-cvp="'+k+':'+i+'"')}</td><td><input class="edit-in nq" type="number" step="0.001" inputmode="decimal" data-cvq="${k}:${i}" value="${esc(l.qty)}" placeholder="Qty"></td>
@@ -3702,24 +3737,58 @@ function convDialog(){if(!convF)convF={from:[{code:'',qty:''}],to:[{code:'',qty:
       const C=convCostJS();if(C.loss!=null&&C.loss<0&&!confirm('More kg out than in. Convert anyway?'))return;
       const b=$('#cv-ok');b.disabled=true;b.textContent='Converting…';try{const bt=await api('api_production',session.token,{kind:'conv',used:from,made:to,note:convF.note});convF=null;box.classList.remove('on');toast('🔁 '+bt.no+' converted — stock & cost updated');await renderStock(view,true)}catch(er){b.disabled=false;b.textContent='✓ Convert';alert(errMsg(er))}}};
   draw();box.classList.add('on')}
-function prodCostJS(){const ok=l=>l.code&&+l.qty>0,U=prodF.used.filter(ok).map(l=>({p:pBy(l.code),q:+l.qty})).filter(x=>x.p),M=prodF.made.map(l=>({l,p:ok(l)?pBy(l.code):null,q:+l.qty||0}));
-  const kgOf=(p,q)=>/^kg$/i.test(p.unit)?q:(+p.kg>0?q*+p.kg:0);let total=+prodF.extra||0,inKg=0,outKg=0;U.forEach(x=>{total+=x.q*(x.p.cost||0);inKg+=kgOf(x.p,x.q)});
-  const val=M.map(x=>x.p?x.q*(+x.p.retail||0):0),sv=val.reduce((a,v)=>a+v,0),sq=M.reduce((a,x)=>a+(x.p?x.q:0),0);M.forEach(x=>{if(x.p)outKg+=kgOf(x.p,x.q)});
-  return {total,inKg,outKg,loss:inKg>0?Math.round((inKg-outKg)/inKg*1000)/10:null,unit:M.map((x,k)=>x.p&&x.q?r2((total*(sv>0?val[k]/sv:x.q/sq))/x.q):null)}}
-const prodSum=(C,mgr)=>mgr&&C.total?`<div class="snote">💰 Total cost <b>${peso(C.total)}</b> — split by selling price${C.loss!=null&&C.outKg?` · ⚖ in ${qf(C.inKg)} kg → out ${qf(C.outKg)} kg · loss <b>${C.loss}%</b>`:''}</div>`:C.loss!=null&&C.outKg?`<div class="snote">⚖ in ${qf(C.inKg)} kg → out ${qf(C.outKg)} kg · loss <b>${C.loss}%</b></div>`:'';
-function prodRefresh(){const C=prodCostJS(),mgr=me.role==='manager';C.unit.forEach((u,k)=>{const e=document.getElementById('prcu'+k);if(e)e.textContent=u!=null?peso(u):'—'});const s=document.getElementById('prsum');if(s)s.innerHTML=prodSum(C,mgr)}
+const YTOL=2;
+function prPackTxt(l,p){const q=+l.qty,kg=+l.kg;if(!(q>0&&kg>0))return p&&+p.kg>0?`<small>standard ${Math.round(p.kg*1000)} g / ${esc(String(p.unit).toLowerCase())}</small>`:'';const g=Math.round(kg/q*1000);if(!(+p.kg>0))return `avg <b>${g} g</b>`;
+  const sg=Math.round(p.kg*1000),d=Math.round((g-sg)/sg*1000)/10;return `avg <b style="color:${Math.abs(d)>=3?'var(--rose)':'inherit'}">${g} g</b> <small>(std ${sg} g · ${d>0?'+':''}${d}%)</small>`}
+function prodCostJS(){const ok=l=>l.code&&+l.qty>0,U=prodF.used.filter(ok).map(l=>({p:pBy(l.code),q:+l.qty})).filter(x=>x.p),M=prodF.made.map(l=>({l,p:ok(l)?pBy(l.code):null,q:+l.qty||0,kg:+l.kg||0}));
+  const kgOf=(p,q)=>/^kg$/i.test(p.unit)?q:(+p.kg>0?q*+p.kg:0);let total=+prodF.extra||0,inKg=0,outKg=0,meat=0;U.forEach(x=>{total+=x.q*(x.p.cost||0);const k=kgOf(x.p,x.q);inKg+=k;if(k>0)meat+=x.q*(x.p.cost||0)});
+  const val=M.map(x=>x.p?x.q*(+x.p.retail||0):0),sv=val.reduce((a,v)=>a+v,0),sq=M.reduce((a,x)=>a+(x.p?x.q:0),0);M.forEach(x=>{if(x.p)outKg+=!/^kg$/i.test(x.p.unit)&&x.kg>0?x.kg:kgOf(x.p,x.q)});
+  const one=M.filter(x=>x.p),key=one.length===1?one[0].p.code:'',ys=key&&ST.ystd&&ST.ystd[key]||{std:null,n:0,src:'learning'},yp=inKg>0&&outKg>0?Math.round(outKg/inKg*1000)/10:null;
+  let ab=0,waste=0;if(yp!=null&&ys.std&&yp<ys.std-YTOL){ab=Math.round((ys.std-YTOL-yp)*10)/10;waste=r2(meat*ab/100)}const keep=total;   // remark only — full cost stays in the product
+  return {total,inKg,outKg,yp,ys,ab,waste,key,loss:inKg>0?Math.round((inKg-outKg)/inKg*1000)/10:null,unit:M.map((x,k)=>x.p&&x.q?r2((keep*(sv>0?val[k]/sv:x.q/sq))/x.q):null)}}
+function prodSum(C,mgr){if(!(C.yp!=null||mgr&&C.total))return '';const ys=C.ys||{};
+  const st=C.yp==null?'':!ys.std?`<span class="ychip lrn">📚 learning the standard · ${ys.n||0} of 5 batches</span>`:C.ab?`<span class="ychip bad">⚠ ${C.ab}% below the standard${mgr?' · ≈ '+peso(C.waste)+' extra loss':''} · remark only</span>`:`<span class="ychip ok">✓ normal (standard ${ys.std}%${ys.src==='set'?' · set by manager':''})</span>`;
+  return `<div class="snote prsum2">${C.yp!=null?`⚖ in <b>${qf(C.inKg)} kg</b> → out <b>${qf(C.outKg)} kg</b> · yield <b>${C.yp}%</b>${ys.std?' · standard '+ys.std+'%':''} ${st}`:''}${mgr&&C.total?`<div>💰 Total cost <b>${peso(C.total)}</b> — all into the product</div>`:''}${C.ab?'<div>📝 Write why the yield is low in the <b>Note</b> below.</div>':''}</div>`}
+// packaging per unit (manager setting) is filled in automatically under "used"
+function prodAuto(){if(!prodF||prodF.kind==='conv')return;const S=ST.pset||{},want=[];
+  prodF.made.forEach(m=>{const set=m.code&&S[m.code];if(set&&set.pack)set.pack.forEach(x=>want.push({code:x.code,qty:+m.qty>0?String(r2(x.per*+m.qty)):'',auto:m.code}))});
+  prodF.used=prodF.used.filter(l=>!l.auto||want.some(w=>w.auto===l.auto&&w.code===l.code));
+  want.forEach(w=>{const ex=prodF.used.find(l=>l.auto===w.auto&&l.code===w.code);if(ex)ex.qty=w.qty;else prodF.used.push(w)});
+  const man=prodF.used.filter(l=>!l.auto),au=prodF.used.filter(l=>l.auto);prodF.used=(man.length?man:[{code:'',qty:''}]).concat(au)}
+function prodRefresh(){prodAuto();prodF.used.forEach((l,k)=>{if(!l.auto)return;const e=document.querySelector(`[data-prq="used:${k}"]`);if(e&&e!==document.activeElement)e.value=l.qty});
+  const C=prodCostJS(),mgr=me.role==='manager';C.unit.forEach((u,k)=>{const e=document.getElementById('prcu'+k);if(e)e.textContent=u!=null?peso(u):'—'});
+  prodF.made.forEach((l,k)=>{const e=document.getElementById('prpg'+k),p=pBy(l.code);if(e&&p)e.innerHTML=prPackTxt(l,p)});const s=document.getElementById('prsum');if(s)s.innerHTML=prodSum(C,mgr)}
+function prodSetDialog(code){const p=pBy(code),S=(ST.pset||{})[code]||{pack:[],std:null},ys=(ST.ystd||{})[code]||{n:0},box=stBox();let L=(S.pack||[]).map(x=>({code:x.code,per:x.per}));if(!L.length)L=[{code:'',per:''}];
+  const draw=()=>{$('#stb').innerHTML=`<h2>⚙ ${esc(p.name)}</h2>
+    <h3>📦 Packaging per 1 ${esc(String(p.unit).toLowerCase())} <small>filled in automatically at production</small></h3>
+    <div class="sc"><table class="stbl"><thead><tr><th>Item (wrapper, tray, plastic…)</th><th style="width:110px">Qty per ${esc(String(p.unit).toLowerCase())}</th><th></th></tr></thead><tbody>${L.map((l,i)=>`<tr><td>${uSel(l.code,'','data-psc="'+i+'"')}</td><td><input class="edit-in nq" type="number" step="0.001" data-psq="${i}" value="${esc(l.per)}"></td><td><button class="del" data-psd="${i}">✕</button></td></tr>`).join('')}</tbody></table></div>
+    <button class="btn sm" id="ps-add">+ Add item</button>
+    <h3 style="margin-top:14px">⚖ Standard yield</h3><div class="unit">Blank = the app learns it (average of the last 10 batches, from 5 batches on). Now: <b>${ys.std?ys.std+'% ('+(ys.src==='set'?'set':'learned from '+ys.n+' batches')+')':'learning · '+(ys.n||0)+' of 5 batches'}</b>. More than ${YTOL}% under it = flagged on the batch (remark only — the cost stays in the product).</div>
+    <label>Fixed standard yield % <small>(optional)</small><input class="edit-in nq" type="number" step="0.1" id="ps-std" value="${S.std||''}" placeholder="learn"></label>
+    <div class="row-end"><button class="btn" data-x>Cancel</button><button class="go" id="ps-ok">Save</button></div>`;
+    const B=$('#stb');B.querySelectorAll('[data-psc]').forEach(e=>e.onchange=()=>{L[+e.dataset.psc].code=e.value});B.querySelectorAll('[data-psq]').forEach(e=>e.oninput=()=>{L[+e.dataset.psq].per=e.value});
+    B.querySelectorAll('[data-psd]').forEach(e=>e.onclick=()=>{L.splice(+e.dataset.psd,1);if(!L.length)L.push({code:'',per:''});draw()});$('#ps-add').onclick=()=>{L.push({code:'',per:''});draw()};
+    $('#ps-ok').onclick=async()=>{try{ST=await api('api_prodSet',session.token,code,{pack:L.filter(l=>l.code&&+l.per>0),std:$('#ps-std').value});stCache();box.classList.remove('on');prodRefresh();drawStock();toast('Saved')}catch(e){alert(errMsg(e))}}};
+  draw();box.classList.add('on')}
+// 🎯 daily target = max stock − stock (fixed for the day) · the manager can change today's target
+function ptgtHTML(){const T=ST.ptgt;if(!T||!T.rows||!T.rows.length)return '';const mgr=me.role==='manager';
+  return `<div class="panel ptgt"><div class="poh"><h3 style="margin:0">🎯 Today's production targets</h3><span style="flex:1"></span><span class="unit">target = max stock − stock this morning</span></div>
+    ${T.rows.map(r=>{const pct=r.target>0?Math.min(100,Math.round(r.made/r.target*100)):100,left=r2(Math.max(0,r.target-r.made)),u=esc(String(r.unit).toLowerCase());
+      return `<div class="ptrow"><div class="pt-h"><b>${esc(r.name)}</b>${r.group?` <small class="unit">${esc(r.group)}</small>`:''}<span style="flex:1"></span><span><b>${qf(r.made)}</b> / ${qf(r.target)} ${u}</span>${mgr?`<button class="btn sm" data-ptset="${esc(r.code)}" data-ptv="${r.target}">✎</button>`:''}</div>
+        <div class="ctprog"><i style="width:${pct}%;${pct>=100?'background:#15803d':''}"></i></div>
+        <div class="unit">${r.target<=0?'✓ Stock is at max — nothing to make today':pct>=100?'✓ Target done':`<b>${qf(left)} ${u}</b> left to make`} · stock ${qf(r.avail)} / max ${qf(r.max)}${r.week&&r.week.length?` · last 7 days: made <b>${qf(r.week.reduce((a,w)=>a+w.m,0))}</b> of ${qf(r.week.reduce((a,w)=>a+w.t,0))} target`:''}</div></div>`}).join('')}</div>`}
 function prodHTML(){
-  if(!prodF)prodF={kind:'prod',used:[{code:'',qty:''}],made:[{code:'',qty:''}],note:'',extra:''};
+  if(!prodF)prodF={kind:'prod',used:[{code:'',qty:''}],made:[{code:'',qty:'',kg:''}],note:'',extra:''};
   const cv=prodF.kind==='conv',mgr=me.role==='manager',C=prodCostJS();
   const tab=(kind,t,s)=>`<h3>${t} <small>${s}</small></h3><div class="sc"><table class="stbl lines pr"><thead><tr><th>Product</th><th style="width:100px">Qty</th><th>Unit</th>${kind==='made'&&mgr?'<th class="r">Cost / unit</th>':''}<th></th></tr></thead><tbody>${prodLines(kind,C)}</tbody></table></div><button class="btn sm" data-pradd="${kind}">+ Add line</button>`;
-  return `<div class="shead"><div><h2>${cv?'🔁 Conversion':'🏭 Production'}</h2><div class="unit">${cv?'Change one product into another: <b>whole chicken → cuts</b>, <b>kilo → packs</b>, <b>box → pieces</b>.':'Raw meat used goes out of stock; finished products (longganisa, siomai…) go in.'} The cost moves to the new product.</div></div><div class="sbtns"><button class="btn sm" data-sref>↻ Refresh</button></div></div>
+  return (cv?'':ptgtHTML())+`<div class="shead"><div><h2>${cv?'🔁 Conversion':'🏭 Production'}</h2><div class="unit">${cv?'Change one product into another: <b>whole chicken → cuts</b>, <b>kilo → packs</b>, <b>box → pieces</b>.':'Raw meat used goes out of stock; finished products (longganisa, siomai…) go in.'} The cost moves to the new product.</div></div><div class="sbtns"><button class="btn sm" data-sref>↻ Refresh</button></div></div>
     <div class="panel">${tab('used',cv?'⬅ From':'🥩 Raw used','taken out of stock')}<div style="height:14px"></div>${tab('made',cv?'➡ To':'📦 Finished made','added to stock')}
       <div class="fgrid">${cv?'':`<label>Other costs ₱ <small>(casing, spices, packs)</small><input class="edit-in" type="number" step="0.01" inputmode="decimal" id="pr-extra" data-k="prx" value="${esc(prodF.extra)}" placeholder="0.00"></label>`}
         <label class="${cv?'full':''}">Note (optional)<input class="edit-in" id="pr-note" data-k="prn" value="${esc(prodF.note)}" placeholder="${cv?'e.g. 10 kg whole chicken cut up':'e.g. 2 kg trimmings'}"></label></div>
       <div id="prsum">${prodSum(C,mgr)}</div>
       <div class="row-end"><button class="btn" data-prclear>Clear</button><button class="go" data-prsave>✓ Save ${cv?'conversion':'batch'}</button></div></div>
     <div class="panel"><h3>Recent</h3>${(ST.prod||[]).map(b=>`<div class="pocard"><div class="poh"><b>${b.kind==='conv'?'🔁':'🏭'} ${esc(b.no)}</b><span style="flex:1"></span><span class="unit">${stamp(b.at)} · ${esc(b.by)}</span></div>
-      <div class="unit">${b.kind==='conv'?'⬅':'🥩'} ${b.used.map(l=>esc(l.name)+' '+qf(l.qty)+' '+esc(l.unit)).join(', ')||'—'}<br>${b.kind==='conv'?'➡':'📦'} <b>${b.made.map(l=>esc(l.name)+' '+qf(l.qty)+' '+esc(l.unit)+(mgr&&l.costU?' @ '+peso(l.costU):'')).join(', ')}</b>${b.lossPct!=null&&b.outKg?' · loss '+b.lossPct+'%':''}${b.note?'<br>📝 '+esc(b.note):''}</div></div>`).join('')||'<div class="empty">Nothing yet.</div>'}</div>`}
+      <div class="unit">${b.kind==='conv'?'⬅':'🥩'} ${b.used.map(l=>esc(l.name)+' '+qf(l.qty)+' '+esc(l.unit)).join(', ')||'—'}<br>${b.kind==='conv'?'➡':'📦'} <b>${b.made.map(l=>esc(l.name)+' '+qf(l.qty)+' '+esc(l.unit)+(mgr&&l.costU?' @ '+peso(l.costU):'')).join(', ')}</b>${b.yieldPct!=null?` · yield <b>${b.yieldPct}%</b>${b.std?' (std '+b.std+'%)':''}`:b.lossPct!=null&&b.outKg?' · loss '+b.lossPct+'%':''}${b.abPct?` <span class="ychip bad">⚠ ${b.abPct}% below standard${mgr&&(b.abVal||b.waste)?' · ≈ '+peso(b.abVal||b.waste)+' extra loss':''}</span>`:''}${b.made.filter(l=>l.perG).map(l=>` · ${esc(l.name)} avg <b>${l.perG} g</b>${l.stdG?' ('+(l.wtPct>0?'+':'')+l.wtPct+'%)':''}`).join('')}${b.note?'<br>📝 '+esc(b.note):''}</div></div>`).join('')||'<div class="empty">Nothing yet.</div>'}</div>`}
 
 /* ---------- POS (cashier) — works offline, sends when online ---------- */
 const priceOf=p=>posPrice==='wholesale'?(p.wholesale||p.retail):p.retail;
@@ -4134,7 +4203,7 @@ setInterval(()=>{if(session&&posQueue().length)posFlush()},20000);
 window.addEventListener('online',()=>{if(session)posFlush()});
 
 /* ---------- clicks & typing on these screens ---------- */
-async function stockClick(e){if(!STOCKV.includes(view))return;const rvr=e.target.closest('tr[data-rvsup]');if(rvr&&view==='recv'){RVF.sup=rvr.dataset.rvsup;RVtab='all';drawStock();return}const crr=e.target.closest('tr[data-crcu]');if(crr&&view==='crep'){CRF.cust=crr.dataset.crcu;drawStock();window.scrollTo({top:0,behavior:'smooth'});return}const srr=e.target.closest('tr[data-srcu]');if(srr&&view==='srep'){SRF.cust=srr.dataset.srcu;drawStock();window.scrollTo({top:0,behavior:'smooth'});return}const tr=e.target.closest('[data-psel]');if(tr&&!e.target.closest('button')){posSel=+tr.dataset.psel;document.querySelectorAll('[data-psel]').forEach(r=>r.classList.toggle('sel',r===tr));const ps=$('#psel');if(ps)ps.innerHTML=pselHTML();return}
+async function stockClick(e){if(!STOCKV.includes(view))return;const igr=e.target.closest('tr[data-igrp]');if(igr&&!e.target.closest('button')){const g=igr.dataset.igrp;invOpenG.has(g)?invOpenG.delete(g):invOpenG.add(g);drawStock();return}const rvr=e.target.closest('tr[data-rvsup]');if(rvr&&view==='recv'){RVF.sup=rvr.dataset.rvsup;RVtab='all';drawStock();return}const crr=e.target.closest('tr[data-crcu]');if(crr&&view==='crep'){CRF.cust=crr.dataset.crcu;drawStock();window.scrollTo({top:0,behavior:'smooth'});return}const srr=e.target.closest('tr[data-srcu]');if(srr&&view==='srep'){SRF.cust=srr.dataset.srcu;drawStock();window.scrollTo({top:0,behavior:'smooth'});return}const tr=e.target.closest('[data-psel]');if(tr&&!e.target.closest('button')){posSel=+tr.dataset.psel;document.querySelectorAll('[data-psel]').forEach(r=>r.classList.toggle('sel',r===tr));const ps=$('#psel');if(ps)ps.innerHTML=pselHTML();return}
   const b=e.target.closest('button');if(!b)return;const d=b.dataset;
   const busy=async(fn)=>{b.disabled=true;try{await fn()}catch(er){alert(errMsg(er))}b.disabled=false};
   if(view==='memb'){if(d.mbsub){MBsub=d.mbsub;drawStock();return}if('mbre' in d){MB=null;MBerr='';drawStock();return}if(d.mbopen){mbOpen(d.mbopen);return}
@@ -4277,7 +4346,9 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const rvr=e.target
       const r=await api('api_receive',session.token,d.rcsave,lines.map(l=>({code:l.code,rcpt:l.rcpt,qty:l.qty,pcs:l.pcs})),$('#rc-note').value,ph,Object.assign(rxOut(),{notFollowed:rvF.nf,nfWhy:rvF.why,rcptNo:rvF.no}));recvId=null;recvPhoto='';rxS={};rvF={};
       toast(r.waiting?'⏳ Saved — actual qty is different from the supplier receipt, the manager will approve':'✅ Received — stock updated');await renderStock('recv',true)});return}
   // production
-  if(d.pradd){prodF[d.pradd].push({code:'',qty:''});drawStock();return}
+  if(d.pradd){prodF[d.pradd].push(d.pradd==='made'?{code:'',qty:'',kg:''}:{code:'',qty:''});drawStock();return}
+  if(d.prset){prodSetDialog(d.prset);return}
+  if(d.ptset){const v=prompt('Today\'s target for '+(pBy(d.ptset)||{}).name+':',d.ptv);if(v==null)return;await busy(async()=>{ST=await api('api_prodTarget',session.token,d.ptset,v);stCache();drawStock();toast('Target saved')});return}
   if(d.prdel){const[k,i]=d.prdel.split(':');prodF[k].splice(+i,1);if(!prodF[k].length)prodF[k].push({code:'',qty:''});drawStock();return}
   if('prclear' in d){prodF=null;drawStock();return}
   if('pconv' in d){convDialog();return}
@@ -4341,6 +4412,7 @@ function stockInput(e){if(!STOCKV.includes(view))return;const t=e.target,d=t.dat
    if(d.rr!==undefined||d.rq!==undefined||d.rqp!==undefined){const c=d.rr??d.rq??d.rqp,v=rvF.L[c]=rvF.L[c]||{r:'',q:'',p:''};if(d.rr!==undefined)v.r=t.value;else if(d.rqp!==undefined)v.p=t.value;else v.q=t.value;if(po)rfLive(po);return}
    if(t.id==='rf-why'){rvF.why=t.value;return}if(t.id==='rf-no'){rvF.no=t.value;return}}
   if(d.prq!==undefined){const[k,i]=d.prq.split(':');prodF[k][+i].qty=t.value;prodRefresh();return}
+  if(d.prkg!==undefined){prodF.made[+d.prkg].kg=t.value;prodRefresh();return}
   if(d.cq!==undefined){cart[+d.cq].qty=t.value;posLive();return}
   if(d.k==='pdisc'){posDisc=t.value;posLive();return}
   if(d.k==='pcash'){posCash=t.value;posLive();return}
@@ -4367,7 +4439,7 @@ function stockChange(e){if(!STOCKV.includes(view))return;const t=e.target,d=t.da
   if(d.crf){CRF[d.crf]=t.value;if(d.crf==='from'||d.crf==='to')CRF.pre='';drawStock();return}
   if(d.srf){SRF[d.srf]=t.value;if(d.srf==='from'||d.srf==='to')SRF.pre='';drawStock();return}
   if(d.pol!==undefined){const p=pBy(t.value),l=poEdit.items[+d.pol];l.code=t.value;if(p&&!l.cost&&p.cost)l.cost=p.cost;drawStock();return}
-  if(d.prl!==undefined){const[k,i]=d.prl.split(':');prodF[k][+i].code=t.value;drawStock();return}
+  if(d.prl!==undefined){const[k,i]=d.prl.split(':');prodF[k][+i].code=t.value;if(k==='used')delete prodF[k][+i].auto;prodAuto();drawStock();return}
   if(t.id==='pc-cust'){posCust=t.value;drawStock();return}
   if(t.id==='pc-pay'){posPay=t.value;drawStock();return}
   if(t.id==='pc-price'){posPrice=t.value;cart.forEach(l=>{const p=pBy(l.code);if(p)l.price=priceOf(p)});drawStock();return}
