@@ -756,6 +756,11 @@ th.h-inv small{display:block;font-weight:600;color:var(--muted);text-transform:n
 .ctlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px;margin:10px 0}.ctrow{display:flex;align-items:center;gap:10px;justify-content:space-between;border:1px solid var(--line);border-radius:12px;padding:8px 10px;background:#fff;cursor:text}
 .ctrow b{display:block}.ctrow small{color:var(--muted);font-size:12px}.ctrow.done{border-color:#86efac;background:#f0fdf4}.ctin{display:flex;align-items:center;gap:6px;flex:none}.ctin input{width:96px;text-align:right}.ctin em{font-style:normal;font-size:12px;color:var(--muted);min-width:30px}
 .ctv .ctbig td{background:#fff7ed}.ctv input{min-width:180px}.ctstart p{max-width:62ch;color:var(--muted)}
+.acday{font-weight:800;color:var(--muted);font-size:13px;margin:12px 0 4px;text-transform:uppercase;letter-spacing:.04em}.acday:first-child{margin-top:0}
+.acrow{display:grid;grid-template-columns:62px 30px 1fr auto;gap:8px;align-items:start;padding:7px 0;border-bottom:1px solid var(--line)}.actime{font-size:12px;color:var(--muted);padding-top:5px}
+.acic{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;font-size:15px}.acmain{min-width:0}.acmain .unit{overflow-wrap:anywhere}.acref{font-size:11px;background:#f1f5f9;border-radius:6px;padding:1px 6px;color:#334155}
+.acside{text-align:right;display:flex;flex-direction:column;gap:2px;align-items:flex-end}.acby{font-size:12px;color:#334155;white-space:nowrap}.actypes{margin:8px 0}.actypes small{opacity:.7}
+@media(max-width:560px){.acrow{grid-template-columns:52px 28px 1fr}.acside{grid-column:3;align-items:flex-start;flex-direction:row;gap:10px}}
 .wsrc{border-top:1px solid var(--line);padding:6px 10px}.wsrc summary{display:flex;gap:8px;align-items:baseline;cursor:pointer;flex-wrap:wrap}.wsrc summary span{flex:1}
 .igrp td{background:#f1f5f9;cursor:pointer;font-size:14px}.igrp.on td{background:#e2e8f0}.igc{display:inline-block;width:18px;color:var(--muted)}.igsub td:first-child{padding-left:26px}
 .prkg{margin-top:4px}.prsetb{display:block;margin-top:4px;font-size:11px;padding:3px 8px}.prauto td{background:#f8fafc}.prauto small{display:block}
@@ -1615,7 +1620,7 @@ function deptDefs(c){return {
   ops:{ic:'🔪',t:'Operations',d:'Orders · stock · POS · deliveries',c:'#B91C1C',n:c.onP+c.prep+c.disp+c.poA,tabs:[
     {act:'neworder',t:'📋 Customer Orders'},{v:'online',t:'🛒 Online',n:c.onP},{v:'po',t:'📝 P.O.',n:c.poA},{v:'recv',t:'📥 Receiving'},{v:'prep',t:'⚖️ Preparation',n:c.prep},{v:'disp',t:'✅ Dispatch',n:c.disp},
     {v:'pos',t:'🧾 POS'},{v:'inv',t:'📦 Inventory',n:c.out?c.out+' out':0,g:[['inv','📦 Stock'],['count','🧮 Stock count'],['prod','🏭 Production']]},{v:'way',t:'🛵 Deliveries',n:c.way,g:[['way','🛵 Out for delivery',c.way],['delivered','✅ '+c.delLbl,c.delOK],['undel','↩ Undelivered',c.und]]},
-    {v:'mgr',t:'📊 Reports',g:[['mgr','📊 Operations dashboard'],['month','📦 Monthly report']]}]},
+    {v:'mgr',t:'📊 Reports',g:[['mgr','📊 Operations dashboard'],['month','📦 Monthly report']]},{v:'act',t:'📜 Activity history'}]},
   hr:{ic:'🧑‍💼',t:'HR',d:'Schedule · OT · payroll',c:'#0F766E',n:c.otP,tabs:[{v:'hr',sub:'sched',t:'📅 Schedule'},{v:'hr',sub:'ot',t:'⏱ OT requests',n:c.otP},{v:'hr',sub:'pay',t:'💵 Payroll & attendance'},{v:'hr',sub:'set',t:'⚙ Shifts & rules'},{act:'users',t:'🔑 Users & PINs'}]},
   fin:{ic:'💰',t:'Accounting & Finance',d:'Money · expenses · P&L',c:'#B45309',n:c.zP,tabs:[{v:'owner',sub:'dash',t:'📊 Dashboard'},{v:'owner',sub:'acc',t:'💰 Accounts'},{v:'owner',sub:'hist',t:'📜 Money history'},{v:'owner',sub:'exp',t:'🧾 Expenses'},{v:'owner',sub:'col',t:'📥 Collect & pay',n:c.zP},
     {v:'owner',sub:'loan',t:'🤝 Loans'},{v:'owner',sub:'avg',t:'⏱ Profit averages'},{v:'owner',sub:'fa',t:'🏢 Fixed assets'},{v:'owner',sub:'rep',t:'📑 P&L · Balance sheet'}]},
@@ -2586,7 +2591,7 @@ $('#save').onclick=()=>{const res=preview();if(!cust)return alert('Pick a custom
    INVENTORY · P.O. · RECEIVING · PRODUCTION · POS
    One stock count for the shop (Products tab › Available qty).
    ================================================================ */
-var STOCKV=['inv','count','po','recv','prod','pos','srep','crep','memb','owner','hr','att'];
+var STOCKV=['inv','count','po','recv','prod','pos','srep','crep','memb','owner','hr','att','act'];
 var STKEY='dp_stock_'+MODE, POSQ='dp_posq';
 let posMem=null, posMemUse=0, posCharges=[], posNote='';
 const chgTotal=()=>r2(posCharges.reduce((a,c)=>a+(+c.amt||0),0));
@@ -2610,7 +2615,7 @@ async function renderStock(v,force){
   if(view!==v||!me)return;drawStock()}
 function drawStock(){const v=view;if(!me||!session||!STOCKV.includes(v))return;                 // logged out while something was loading
   const a=document.activeElement,keep=a&&a.closest&&a.closest('#list')&&a.dataset&&a.dataset.k?{k:a.dataset.k,s:a.selectionStart}:null;
-  $('#list').innerHTML=`<div class="rep stk" data-v="${v}">${(ST.offline?'<div class="stoff">📴 Offline — showing the last saved data.</div>':'')+{inv:invHTML,count:countHTML,po:poHTML,recv:recvHTML,prod:prodHTML,pos:posHTML,srep:srepHTML,crep:crepHTML,memb:membHTML,owner:ownerHTML,hr:hrHTML,att:attHTML}[v]()}</div>`;
+  $('#list').innerHTML=`<div class="rep stk" data-v="${v}">${(ST.offline?'<div class="stoff">📴 Offline — showing the last saved data.</div>':'')+{inv:invHTML,count:countHTML,po:poHTML,recv:recvHTML,prod:prodHTML,pos:posHTML,srep:srepHTML,crep:crepHTML,memb:membHTML,owner:ownerHTML,hr:hrHTML,att:attHTML,act:actHTML}[v]()}</div>`;
   $('#list').onclick=stockClick;$('#list').oninput=stockInput;$('#list').onchange=stockChange;
   $('#list').onkeydown=e=>{if(view!=='pos'||e.key!=='Enter')return;const t=e.target;
     if(t.id==='posq'){e.preventDefault();const f=posSug()[0];if(f)addToCart(f.code);return}
@@ -2621,6 +2626,31 @@ const badge=(t,c)=>`<span class="sb sb-${c}">${t}</span>`;
 const POST={open:['Open — waiting for delivery','amber'],'for approval':['Received — waiting for manager approval','violet'],received:['Received','green'],cancelled:['Cancelled','gray']};
 const poBadge=p=>badge(POST[p.status][0],POST[p.status][1]);
 const unitOf2=c=>{const p=pBy(c);return p?p.unit:''};
+
+/* ---------- ACTIVITY HISTORY (manager): every transaction · filter by date, type, staff ---------- */
+const ACT={sales:['🧾','Sales (POS)','#1d4ed8'],orders:['📋','Orders & dispatch','#b45309'],buy:['📥','Purchasing & receiving','#15803d'],prod:['🏭','Production','#c2410c'],inv:['📦','Inventory','#0e7490'],money:['💰','Money','#7c3aed'],drawer:['💵','Drawer & Z reading','#be123c']};
+let ACF={from:'',to:'',pre:'today',type:'',staff:'',q:'',n:300},AC=null,ACload=false,ACerr='';
+function acLoad(){if(ACload)return;if(!ACF.from){const[f,t]=srPreset('today');ACF.from=f;ACF.to=t}ACload=true;ACerr='';const k=ACF.from+'|'+ACF.to;
+  api('api_activity',session.token,ACF.from,ACF.to).then(r=>{AC=r;AC.key=k}).catch(e=>{ACerr=errMsg(e)}).finally(()=>{ACload=false;if(view==='act')drawStock()})}
+function acRows(){if(!AC)return [];const q=ACF.q.trim().toLowerCase();return AC.rows.filter(r=>(!ACF.type||r.type===ACF.type)&&(!ACF.staff||r.by===ACF.staff)&&(!q||(r.act+' '+r.what+' '+r.ref+' '+r.by).toLowerCase().includes(q)))}
+function actHTML(){if(!ACF.from){const[f,t]=srPreset('today');ACF.from=f;ACF.to=t}const key=ACF.from+'|'+ACF.to;if((!AC||AC.key!==key)&&!ACerr)acLoad();
+  const P=[['today','Today'],['yday','Yesterday'],['week','This week'],['month','This month'],['last','Last month']];
+  const head=`<div class="shead"><div><h2>📜 Activity history</h2><div class="unit">Every transaction — who did what, and when.</div></div><div class="sbtns"><button class="btn sm" data-acre>↻ Refresh</button>${AC?'<button class="btn sm" data-accsv>⬇ Excel (CSV)</button>':''}</div></div>
+    <div class="panel acf"><div class="chips2">${P.map(([k,t])=>`<button class="${ACF.pre===k?'on':''}" data-acpre="${k}">${t}</button>`).join('')}</div>
+      <div class="srrow"><label>From <input type="date" class="edit-in" data-acd="from" value="${ACF.from}"></label><label>To <input type="date" class="edit-in" data-acd="to" value="${ACF.to}"></label>
+      <label>Staff <select class="edit-in" data-acs>${'<option value="">Everyone</option>'+(AC?AC.staff.map(x=>`<option value="${esc(x.name)}"${ACF.staff===x.name?' selected':''}>${esc(x.name)} (${x.n})</option>`).join(''):'')}</select></label>
+      <label>Search <input class="edit-in" data-k="acq" value="${esc(ACF.q)}" placeholder="🔍 customer, P.O., receipt…"></label></div></div>`;
+  if(ACerr)return head+`<div class="empty">${esc(ACerr)}<br><br><button class="btn" data-acre>↻ Try again</button></div>`;
+  if(!AC||AC.key!==key)return head+'<div class="empty">Loading…</div>';
+  const base=AC.rows.filter(r=>!ACF.staff||r.by===ACF.staff),cnt=t=>base.filter(r=>r.type===t).length;
+  const L=acRows(),show=L.slice(0,ACF.n);let lastD='';
+  const rows=show.map(r=>{const d=new Date(r.t),dk=ymdL(d),T=ACT[r.type]||['•',r.type,'#64748b'];const hd=dk!==lastD?(lastD=dk,`<div class="acday">${srDay(dk)}</div>`):'';
+    return hd+`<div class="acrow"><span class="actime">${r.x&&r.x.nt?'—':time12(d)}</span><span class="acic" style="background:${T[2]}1a;color:${T[2]}" title="${esc(T[1])}">${T[0]}</span>
+      <div class="acmain"><b>${esc(r.act)}</b>${r.ref?` <span class="acref">${esc(r.ref)}</span>`:''}<div class="unit">${esc(r.what)}</div></div>
+      <div class="acside"><span class="acby">👤 ${esc(r.by)}</span>${r.amt!=null?`<b style="color:${r.amt<0?'var(--rose)':'inherit'}">${r.amt<0?'−':''}${peso(Math.abs(r.amt))}</b>`:''}</div></div>`}).join('');
+  return head+`<div class="chips2 actypes"><button class="${ACF.type?'':'on'}" data-actype="">All <small>${base.length}</small></button>${Object.entries(ACT).map(([k,[ic,t]])=>{const n=cnt(k);return n||ACF.type===k?`<button class="${ACF.type===k?'on':''}" data-actype="${k}">${ic} ${t} <small>${n}</small></button>`:''}).join('')}</div>
+    <div class="panel">${rows||'<div class="empty">Nothing here for these filters.</div>'}${L.length>show.length?`<div class="row-end"><button class="btn" data-acmore>Show more (${L.length-show.length} left)</button></div>`:''}${AC.more?`<div class="unit">Only the latest 5,000 are shown — pick fewer days.</div>`:''}</div>`}
+function acCsv(){downloadCsv([['Date','Time','Type','What','Details','Reference','Staff','Amount']].concat(acRows().map(r=>{const d=new Date(r.t);return [ymdL(d),r.x&&r.x.nt?'':time12(d),(ACT[r.type]||[,r.type])[1],r.act,r.what,r.ref,r.by,r.amt!=null?r.amt:'']})),'3FMS-activity-'+ACF.from+'-to-'+ACF.to+'.csv')}
 
 /* ---------- SALES & PROFIT REPORT (manager) ---------- */
 const ymdL=d=>{const z=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+z(d.getMonth()+1)+'-'+z(d.getDate())};
@@ -4205,6 +4235,13 @@ window.addEventListener('online',()=>{if(session)posFlush()});
 /* ---------- clicks & typing on these screens ---------- */
 async function stockClick(e){if(!STOCKV.includes(view))return;const igr=e.target.closest('tr[data-igrp]');if(igr&&!e.target.closest('button')){const g=igr.dataset.igrp;invOpenG.has(g)?invOpenG.delete(g):invOpenG.add(g);drawStock();return}const rvr=e.target.closest('tr[data-rvsup]');if(rvr&&view==='recv'){RVF.sup=rvr.dataset.rvsup;RVtab='all';drawStock();return}const crr=e.target.closest('tr[data-crcu]');if(crr&&view==='crep'){CRF.cust=crr.dataset.crcu;drawStock();window.scrollTo({top:0,behavior:'smooth'});return}const srr=e.target.closest('tr[data-srcu]');if(srr&&view==='srep'){SRF.cust=srr.dataset.srcu;drawStock();window.scrollTo({top:0,behavior:'smooth'});return}const tr=e.target.closest('[data-psel]');if(tr&&!e.target.closest('button')){posSel=+tr.dataset.psel;document.querySelectorAll('[data-psel]').forEach(r=>r.classList.toggle('sel',r===tr));const ps=$('#psel');if(ps)ps.innerHTML=pselHTML();return}
   const b=e.target.closest('button');if(!b)return;const d=b.dataset;
+  if(view==='act'){
+    if(d.acpre){const [f,t]=srPreset(d.acpre);ACF.from=f;ACF.to=t;ACF.pre=d.acpre;ACF.n=300;ACerr='';drawStock();return}
+    if(d.actype!==undefined){ACF.type=d.actype;ACF.n=300;drawStock();return}
+    if('acmore' in d){ACF.n+=300;drawStock();return}
+    if('acre' in d){AC=null;ACerr='';drawStock();return}
+    if('accsv' in d){acCsv();return}
+  }
   const busy=async(fn)=>{b.disabled=true;try{await fn()}catch(er){alert(errMsg(er))}b.disabled=false};
   if(view==='memb'){if(d.mbsub){MBsub=d.mbsub;drawStock();return}if('mbre' in d){MB=null;MBerr='';drawStock();return}if(d.mbopen){mbOpen(d.mbopen);return}
     if('mbadd' in d){memDialog();return}if('mbprint' in d){const L=MB.list.filter(m=>m.status==='active');if(!L.length)return alert('No members yet.');if(L.length>12&&!confirm('Print all '+L.length+' cards?'))return;memPrint(L);return}
@@ -4390,6 +4427,7 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const igr=e.target
 }
 function stockInput(e){if(!STOCKV.includes(view))return;const t=e.target,d=t.dataset;
   if(d.k==='invq'){invQ=t.value;drawStock();return}
+  if(d.k==='acq'){ACF.q=t.value;ACF.n=300;drawStock();return}
   if(t.id==='pc-note'){posNote=t.value;return}
   if(d.cw!==undefined){CTrev.why[d.cw]=t.value;return}
   if(d.k==='ctq'){CTq=t.value;drawStock();return}
@@ -4438,6 +4476,8 @@ function stockChange(e){if(!STOCKV.includes(view))return;const t=e.target,d=t.da
   if(d.rvf){RVF[d.rvf]=t.value;if(d.rvf==='from'||d.rvf==='to')RVF.pre='';drawStock();return}
   if(d.crf){CRF[d.crf]=t.value;if(d.crf==='from'||d.crf==='to')CRF.pre='';drawStock();return}
   if(d.srf){SRF[d.srf]=t.value;if(d.srf==='from'||d.srf==='to')SRF.pre='';drawStock();return}
+  if(d.acd){if(t.value){ACF[d.acd]=t.value;ACF.pre='';ACF.n=300;ACerr=''}drawStock();return}
+  if(d.acs!==undefined){ACF.staff=t.value;ACF.n=300;drawStock();return}
   if(d.pol!==undefined){const p=pBy(t.value),l=poEdit.items[+d.pol];l.code=t.value;if(p&&!l.cost&&p.cost)l.cost=p.cost;drawStock();return}
   if(d.prl!==undefined){const[k,i]=d.prl.split(':');prodF[k][+i].code=t.value;if(k==='used')delete prodF[k][+i].auto;prodAuto();drawStock();return}
   if(t.id==='pc-cust'){posCust=t.value;drawStock();return}
