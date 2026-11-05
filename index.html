@@ -762,6 +762,8 @@ th.h-inv small{display:block;font-weight:600;color:var(--muted);text-transform:n
 .acside{text-align:right;display:flex;flex-direction:column;gap:2px;align-items:flex-end}.acby{font-size:12px;color:#334155;white-space:nowrap}.actypes{margin:8px 0}.actypes small{opacity:.7}
 @media(max-width:560px){.acrow{grid-template-columns:52px 28px 1fr}.acside{grid-column:3;align-items:flex-start;flex-direction:row;gap:10px}}
 .wsrc{border-top:1px solid var(--line);padding:6px 10px}.wsrc summary{display:flex;gap:8px;align-items:baseline;cursor:pointer;flex-wrap:wrap}.wsrc summary span{flex:1}
+.lapseb{color:var(--rose);border-color:#fecaca}.clcause{display:flex;flex-wrap:wrap;gap:6px}.clcause button{border:1px solid var(--line);background:#fff;border-radius:99px;padding:8px 12px;font-weight:700;cursor:pointer}.clcause button.on{background:var(--rose);color:#fff;border-color:var(--rose)}
+.closedbox{border-color:var(--rose)!important}.closedc{border-left:4px solid var(--rose)}
 .igrp td{background:#f1f5f9;cursor:pointer;font-size:14px}.igrp.on td{background:#e2e8f0}.igc{display:inline-block;width:18px;color:var(--muted)}.igsub td:first-child{padding-left:26px}
 .prkg{margin-top:4px}.prsetb{display:block;margin-top:4px;font-size:11px;padding:3px 8px}.prauto td{background:#f8fafc}.prauto small{display:block}
 .ychip{display:inline-block;border-radius:99px;padding:2px 9px;font-size:12px;font-weight:700;margin-left:4px}.ychip.ok{background:#dcfce7;color:#166534}.ychip.bad{background:#fee2e2;color:#991b1b}.ychip.lrn{background:#e0e7ff;color:#3730a3}.prsum2 div{margin-top:4px}
@@ -1296,7 +1298,7 @@ const showInv=st=>st==='prep'&&!!INV&&me&&me.role!=='rider';
 // PREPARED qty of orders not yet cashed out at the POS -> subtracted from the stock ONLY on this screen (the real stock changes at the cashier)
 let PREPD={};
 function calcPrepd(){const r={};if(!INV)return r;
-  db.orders.forEach(o=>{if(o.online||o.posSale||o.dispatched||o.delivered)return;   // only orders still in Preparation; billed / dispatched / delivered ones are out of the count
+  db.orders.forEach(o=>{if(o.online||o.posSale||o.dispatched||o.delivered||o.closed)return;   // only orders still in Preparation; billed / dispatched / delivered ones are out of the count
     o.items.forEach(i=>{const v=i.wtReq?(isCR(i)?0:parseFloat(i.wt)||0):actualVal(i);if(!(v>0))return;const p=invOf(i);if(!p)return;r[p.c]=(r[p.c]||0)+v})});
   Object.keys(r).forEach(k=>r[k]=r2(r[k]));return r}
 function invCell(i,mobile){const p=invOf(i);
@@ -1334,7 +1336,7 @@ function check(o){const it=o.items, act=it.filter(i=>!isCR(i));
     pend:act.filter(i=>status(i).pending), unchecked:act.filter(i=>!i.checked),
     prepared:it.filter(i=>isCR(i)||!np(i)).length, checkedN:it.filter(i=>isCR(i)||i.checked).length,
     shorts:act.filter(i=>status(i).short)};}
-const stage=o=>o.delivered?'delivered':o.dispatched?'way':'prep';
+const stage=o=>o.closed?'closed':o.delivered?'delivered':o.dispatched?'way':'prep';
 // Operations confirms "done preparing" before an order moves to Dispatch (older orders already being checked count as sent)
 const prepOK=o=>!!(o.prepDone||o.dr||o.approved||o.dispatched||o.items.some(i=>i.checked));
 const okDel=o=>!!o.delivered&&!o.delivered.result; // successfully delivered (not returned / cancelled at the door)
@@ -1619,7 +1621,7 @@ let DLAST={};try{DLAST=JSON.parse(localStorage.getItem('fms_dlast')||'{}')}catch
 function deptDefs(c){return {
   ops:{ic:'🔪',t:'Operations',d:'Orders · stock · POS · deliveries',c:'#B91C1C',n:c.onP+c.prep+c.disp+c.poA,tabs:[
     {act:'neworder',t:'📋 Customer Orders'},{v:'online',t:'🛒 Online',n:c.onP},{v:'po',t:'📝 P.O.',n:c.poA},{v:'recv',t:'📥 Receiving'},{v:'prep',t:'⚖️ Preparation',n:c.prep},{v:'disp',t:'✅ Dispatch',n:c.disp},
-    {v:'pos',t:'🧾 POS'},{v:'inv',t:'📦 Inventory',n:c.out?c.out+' out':0,g:[['inv','📦 Stock'],['count','🧮 Stock count'],['prod','🏭 Production']]},{v:'way',t:'🛵 Deliveries',n:c.way,g:[['way','🛵 Out for delivery',c.way],['delivered','✅ '+c.delLbl,c.delOK],['undel','↩ Undelivered',c.und]]},
+    {v:'pos',t:'🧾 POS'},{v:'inv',t:'📦 Inventory',n:c.out?c.out+' out':0,g:[['inv','📦 Stock'],['count','🧮 Stock count'],['prod','🏭 Production']]},{v:'way',t:'🛵 Deliveries',n:c.way,g:[['way','🛵 Out for delivery',c.way],['delivered','✅ '+c.delLbl,c.delOK],['undel','↩ Undelivered / ⛔ Closed',c.und]]},
     {v:'mgr',t:'📊 Reports',g:[['mgr','📊 Operations dashboard'],['month','📦 Monthly report']]},{v:'act',t:'📜 Activity history'}]},
   hr:{ic:'🧑‍💼',t:'HR',d:'Schedule · OT · payroll',c:'#0F766E',n:c.otP,tabs:[{v:'hr',sub:'sched',t:'📅 Schedule'},{v:'hr',sub:'ot',t:'⏱ OT requests',n:c.otP},{v:'hr',sub:'pay',t:'💵 Payroll & attendance'},{v:'hr',sub:'set',t:'⚙ Shifts & rules'},{act:'users',t:'🔑 Users & PINs'}]},
   fin:{ic:'💰',t:'Accounting & Finance',d:'Money · expenses · P&L',c:'#B45309',n:c.zP,tabs:[{v:'owner',sub:'dash',t:'📊 Dashboard'},{v:'owner',sub:'acc',t:'💰 Accounts'},{v:'owner',sub:'hist',t:'📜 Money history'},{v:'owner',sub:'exp',t:'🧾 Expenses'},{v:'owner',sub:'col',t:'📥 Collect & pay',n:c.zP},
@@ -1667,7 +1669,7 @@ function render(){
     const rc=(ST&&ST.pos?ST.pos.filter(p=>p.status==='open').length:0)+retList('to check').length,out=INV?INV.list.filter(p=>p.q<=0).length:0;
     const MAIN=[['recv','📥','Receiving','Supplier deliveries & returns',rc,'#15803D'],['prep','⚖️','Prepare','Weigh tomorrow\'s orders',prepTodo.length,'#D97706'],['disp','🚚','Dispatch','Check · bill · send out',dispTodo.length,'#1D4ED8'],
       ['prod','🏭','Production','Longganisa, siomai & more',0,'#C2410C'],['inv','📦','Inventory','Stock monitoring',out?out+' out':0,'#0E7490']];
-    const MORE=[['way','🛵 Out for delivery',way.length],['delivered','✅ '+delLbl,delOK.length],['undel','↩ Undelivered',und.length],['count','🧮 Stock count'+(ST&&ST.cnt&&ST.cnt.dueOpen?' · DUE':ST&&ST.cnt&&ST.cnt.open==='counting'?' · open':''),null],['month','📊 Monthly',null],['att','⏱ Attendance',null]];
+    const MORE=[['way','🛵 Out for delivery',way.length],['delivered','✅ '+delLbl,delOK.length],['undel','↩ Undelivered / ⛔ Closed',und.length+db.orders.filter(o=>o.closed&&iso(new Date(o.closed.at)).slice(0,7)===mk).length],['count','🧮 Stock count'+(ST&&ST.cnt&&ST.cnt.dueOpen?' · DUE':ST&&ST.cnt&&ST.cnt.open==='counting'?' · open':''),null],['month','📊 Monthly',null],['att','⏱ Attendance',null]];
     tabs.length=0;MAIN.forEach(m=>tabs.push([m[0],m[2],null]));MORE.forEach(m=>tabs.push([m[0],m[1],null]));
     opsSeg=`<div class="opstabs">${MAIN.map(([k,ic,t,d,n,c])=>`<button data-view="${k}" class="otab${view===k?' on':''}" style="--oc:${c}"><span class="ot-ic">${ic}</span><span class="ot-t">${t}</span><span class="ot-d">${d}</span>${n?`<span class="ot-n">${n}</span>`:''}</button>`).join('')}</div>
       <div class="opsmore">${MORE.map(([k,t,n])=>`<button data-view="${k}" class="${view===k?'on':''}">${t}${n?' ('+n+')':''}</button>`).join('')}</div>`;
@@ -1691,7 +1693,7 @@ function render(){
   if(STOCKV.includes(view)){if(!document.querySelector(`#list .rep[data-v="${view}"]`))renderStock(view);return}
   if(view==='points'){if(!document.querySelector('#list .rep[data-v="points"]'))renderPoints();return}
   if(view==='month'||view==='mgr'){if(!document.querySelector(`#list .rep[data-v="${view}"]`))renderReport();return}
-  if(view==='undel'){$('#list').innerHTML=undeliveredHTML(und);return}
+  if(view==='undel'){$('#list').innerHTML=closedHTML()+undeliveredHTML(und);return}
   if(view==='online'){const af=document.activeElement&&document.activeElement.id==='onq',cp=af?document.activeElement.selectionStart:0;$('#list').innerHTML=onlineHTML(onl);fillPhotos();wireOnline(onl);if(af){const x=$('#onq');x.focus();try{x.setSelectionRange(cp,cp)}catch(e){}}if($('#feesbtn'))$('#feesbtn').onclick=feesDialog;if($('#bulkbtn2'))$('#bulkbtn2').onclick=bulkDialog;return}
   if(view==='way'){let banner2='';if(me.role!=='rider'&&me.role!=='prep'){const td=today(),tod=db.orders.filter(o=>live(o)&&!o.online&&o.delivery===td&&!o.balanceOf);
       if(tod.length){const n={std:0,ok:0,crit:0};tod.forEach(o=>{const r=rating(o);if(r)n[r]++});if(n.std+n.ok+n.crit)banner2=`<div class="daybar"><b>🕗 Today</b><span class="unit">dispatch before ${t24(settings.stdBefore)}</span><span style="flex:1"></span>${n.std?`<em class="dtag dt-std">🟢 ${n.std} Standard</em>`:''}${n.ok?`<em class="dtag dt-ok">🟡 ${n.ok} OK</em>`:''}${n.crit?`<em class="dtag dt-crit">🔴 ${n.crit} Critical</em>`:''}</div>`}}
@@ -1889,6 +1891,30 @@ function onRow(o){
       ${pend||(ol.status==='confirmed'&&stage(o)==='prep'&&!o.items.some(i=>String(i.actual||'').trim()))?`<button class="btn sm" data-oncancel="${o.id}" style="color:var(--rose)">✕ Cancel order</button>`:''}</div></div>`:''}
   </div>`;
 }
+const CLC=[['late-prep','⏱ Late preparation'],['late-delivery','🚚 Late delivery'],['customer','🙅 Customer cancelled / not needed'],['other','Other']];
+function lapseDialog(id){const o=find(id);if(!o)return;const box=stBox(),P=o.items.filter(i=>!isCR(i)&&actualVal(i)!=null&&actualVal(i)>0);let cause='';
+  $('#stb').innerHTML=`<h2>⛔ Lapsed – close order</h2><div class="unit"><b>${esc(o.customer)}</b> · for ${longDay(o.delivery)}${o.use?' · use '+esc(o.use):''}${o.dr?' · <b>'+esc(o.dr.no)+' will be voided</b>':''}</div>
+    <div class="snote" style="margin:8px 0">The order leaves Prepare / Dispatch, <b>doesn't carry over</b> and is <b>not billed</b>. It stays in history as <b>CLOSED</b> with its Lost Sales and Lost Gross Profit.<br>Some items <b>were delivered</b>? Don't close — edit the order to the delivered qty and dispatch it.</div>
+    <h3>Cause</h3><div class="clcause">${CLC.map(([k,t])=>`<button type="button" data-clc="${k}">${t}</button>`).join('')}</div>
+    <label class="td-l">Reason <small>(required)</small><textarea class="edit-in" id="cl-why" rows="2" placeholder="e.g. date of use passed, customer bought elsewhere"></textarea></label>
+    ${P.length?`<h3 style="margin-top:10px">🗑 Waste — prepared items that can't go back to stock <small>(thawed / spoiled · leave blank if they go back)</small></h3><div class="sc"><table class="stbl"><thead><tr><th>Item</th><th class="r">Prepared</th><th style="width:120px">Spoiled qty</th></tr></thead><tbody>
+      ${P.map(i=>`<tr><td>${esc(i.product)}</td><td class="r">${qf(actualVal(i))} ${esc(i.unit)}</td><td><input class="edit-in nq" type="number" step="0.001" min="0" data-clw="${i.id}" placeholder="0"></td></tr>`).join('')}</tbody></table></div>`:'<div class="unit" style="margin-top:8px">Nothing was prepared yet.</div>'}
+    <div class="row-end"><button class="btn" data-x>Cancel</button><button class="go" id="cl-ok" style="background:var(--rose)">⛔ Close order</button></div>`;
+  box.classList.add('on');const B=$('#stb');
+  B.querySelectorAll('[data-clc]').forEach(b=>b.onclick=()=>{cause=b.dataset.clc;B.querySelectorAll('[data-clc]').forEach(x=>x.classList.toggle('on',x===b))});
+  $('#cl-ok').onclick=async()=>{const why=$('#cl-why').value.trim();if(!cause)return alert('Pick the cause.');if(!why){$('#cl-why').focus();return alert('Type the reason.')}
+    const waste=[...B.querySelectorAll('[data-clw]')].map(e=>({iid:e.dataset.clw,qty:e.value})).filter(w=>+w.qty>0);
+    if(!confirm(`Close ${o.customer} (${day(o.delivery)})?${waste.length?'\n'+waste.length+' item(s) will be taken out of stock as waste.':''}`))return;
+    const b=$('#cl-ok');b.disabled=true;const r=await retCall('api_closeOrder',id,{cause,reason:why,waste});b.disabled=false;
+    if(r&&r.closed){box.classList.remove('on');openId=null;render();toast(`⛔ Closed · lost gross profit ${peso(r.closed.lostGP)}${r.closed.wasteAmt?' · waste '+peso(r.closed.wasteAmt):''}`,true)}}}
+function closedHTML(){const mk=today().slice(0,7),M=me.role==='manager',L=db.orders.filter(o=>o.closed&&iso(new Date(o.closed.at)).slice(0,7)===mk).sort((a,b)=>b.closed.at-a.closed.at);if(!L.length)return '';
+  const gp=r2(L.reduce((a,o)=>a+o.closed.lostGP,0)),sl=r2(L.reduce((a,o)=>a+o.closed.lostSales,0)),ws=r2(L.reduce((a,o)=>a+(o.closed.wasteAmt||0),0));
+  return `<div class="ldbox closedbox"><b>⛔ Closed orders (lapsed) · this month</b><span class="unit">${L.length} order(s)${M?` · Lost Sales <b>${peso(sl)}</b> · Lost Gross Profit <b>${peso(gp)}</b>${ws?' · Waste Loss <b>'+peso(ws)+'</b>':''}`:''}</span></div>
+    ${L.map(o=>{const c=o.closed;return `<div class="pocard closedc"><div class="poh"><b>${esc(o.customer)}</b><span class="sb sb-red">CLOSED</span><span style="flex:1"></span><span class="unit">for ${day(o.delivery)} · closed ${stamp(c.at)} by ${esc(c.by)}</span></div>
+      <div class="unit"><b>${esc(c.causeTxt)}</b> — ${esc(c.reason)}${c.staff&&c.staff.length?' · staff: '+c.staff.map(esc).join(', '):''}${o.drVoid?' · '+esc(o.drVoid.no)+' voided':''}</div>
+      ${M?`<div class="rvmoney"><span>Lost Sales<b>${peso(c.lostSales)}</b>${c.disc?`<small>less ${c.disc}% customer discount</small>`:''}</span><span class="ls">Lost Gross Profit<b>${peso(c.lostGP)}</b></span>${c.wasteAmt?`<span class="ls">Waste Loss<b>${peso(c.wasteAmt)}</b><small>${c.waste.map(w=>esc(w.name)+' '+qf(w.qty)).join(', ')}</small></span>`:''}</div>`:''}
+      <div class="unit">${o.items.map(i=>esc(i.product)+' '+qf(i.qty)+' '+esc(i.unit)).join(' · ')}</div>
+      ${M&&!c.wasteAmt?`<div class="row-end"><button class="btn sm" data-reopen="${o.id}">↩ Reopen</button></div>`:''}</div>`}).join('')}`}
 function undeliveredHTML(und){
   if(!und.length)return '<div class="empty">No undelivered items. 👍<br><span class="unit">Short items the Manager marks as <b>Forfeit</b> (usage date lapsed) are listed here.</span></div>';
   const kg=r2(und.filter(x=>x.i.unit==='Kg').reduce((a,x)=>a+x.i.short.qty,0));
@@ -2033,7 +2059,7 @@ function card(o){
     else if(c.pend.length) action=can('dispatch')?`<button class="go violet" data-appr="${o.id}">⚠ Manager approval (${c.pend.length} short)</button>`:'';
     else if(needBill(o)) action=`<span class="note" style="font-weight:800;color:var(--violet)">🧾 Waiting for the cashier to bill ${o.dr?esc(o.dr.no):''}</span>`;
     else action=can('dispatch')?`<button class="go" data-disp="${o.id}">🚚 DISPATCH · take photo</button>`:'';
-    foot=`<button class="btn" data-print="${o.id}">Print</button>${can('edit')&&!o.dr?`<button class="btn" data-edit="${o.id}">Edit</button>`:''}${o.approved&&can('check')?`<button class="btn" data-appr="${o.id}">Change approval</button>`:''}${o.prepDone&&!o.dr&&!o.approved&&!o.items.some(i=>i.checked)&&can('weigh')?`<button class="btn" data-prepback="${o.id}">↩ Back to Prepare</button>`:''}${action}`;
+    foot=`<button class="btn" data-print="${o.id}">Print</button>${can('edit')&&!o.dr?`<button class="btn" data-edit="${o.id}">Edit</button>`:''}${o.approved&&can('check')?`<button class="btn" data-appr="${o.id}">Change approval</button>`:''}${o.prepDone&&!o.dr&&!o.approved&&!o.items.some(i=>i.checked)&&can('weigh')?`<button class="btn" data-prepback="${o.id}">↩ Back to Prepare</button>`:''}${me.role==='manager'&&o.delivery<=t&&!o.posSale?`<button class="btn lapseb" data-lapse="${o.id}">⛔ Lapsed – close order</button>`:''}${action}`;
   }
   else if(st==='way') foot=`<button class="btn" data-print="${o.id}">Print</button>${can('undo')?`<button class="btn" data-undisp="${o.id}">Undo dispatch</button>`:''}
       ${can('deliver')?`<button class="go blue" data-deliv="${o.id}">✅ DELIVERED · take photo</button>`:''}`;
@@ -2084,7 +2110,7 @@ function nextHTML(o,c,st){ // one clear line: what happens next, and who does it
   return can('dispatch')?L('ok','🚚',`Billed${o.posSale?' · receipt <b>'+esc(o.posSale.no)+'</b>':''} — tap <b>DISPATCH</b> and take a photo`):L('ok','✓','Ready — Dispatch team will dispatch');
 }
 // RULE: delivery orders are BILLED by the cashier (receipt made, any payment incl. terms) BEFORE dispatch. Online orders are paid on the shop site.
-const needBill=o=>!o.online&&!o.posSale;
+const needBill=o=>!o.online&&!o.posSale&&!o.closed;
 const find=id=>db.orders.find(o=>o.id===id);
 const findItem=id=>{for(const o of db.orders){const i=o.items.find(x=>x.id===id);if(i)return[o,i]}return[]};
 
@@ -2512,6 +2538,8 @@ document.addEventListener('click',async e=>{
     const n=o.items.filter(i=>!isCR(i)).length,sh=c.shorts.length;
     if(!confirm(`Done preparing ${o.customer}?\n\n${n} item(s) prepared${sh?` · ${sh} short`:''}.\nSend to Dispatch for checking?`))return;
     keepUndo();o.prepDone={by:me.name,at:Date.now()};save();openId=null;render();toast('✅ '+o.customer+' sent to Dispatch',true);return}
+  if(d.lapse){lapseDialog(d.lapse);return}
+  if(d.reopen){const o=find(d.reopen);if(!confirm('Reopen '+o.customer+'? It goes back to Prepare / Dispatch.'))return;const r=await retCall('api_reopenOrder',d.reopen);if(r){render();toast('Reopened',true)}return}
   if(d.prepback){const o=find(d.prepback);if(!o)return;if(!confirm('Move '+o.customer+' back to Prepare?'))return;keepUndo();o.prepDone=null;save();render();toast('Back to Prepare',true);return}
   if(d.undisp){keepUndo();const o=find(d.undisp);o.dispatched=null;save();view='prep';openId=d.undisp;render();toast('Dispatch undone',true);return}
   if(d.undeliv){keepUndo();find(d.undeliv).delivered=null;save();view='way';openId=d.undeliv;render();toast('Delivered undone',true);return}
@@ -2763,6 +2791,15 @@ function owLoad(){if(OWload)return;OWload=true;OWerr='';api('api_owner',session.
 const owAcc=id=>(OW.accounts.find(a=>a.id===id)||{}).name||'—';
 const ACCI={cash:'💵',bank:'🏦',ewallet:'📱'};
 const ymLbl=k=>{const[y,m]=k.split('-');return SMON[+m-1]+' '+y};
+// ⛔ CLOSED ORDERS (lapsed): what delays cost — Lost Gross Profit (not booked: nothing was sold), Lost Sales, Waste Loss (booked in Wastage)
+function owClosed(O){const C=O.closed;if(!C||!C.all.n)return '';const M=C.month,box=(t,b,sub)=>`<div><span>${t}</span><b>${peso(b.gp)}</b><small>${b.n} order(s) · sales ${peso(b.sales)}${b.waste?' · waste '+peso(b.waste):''}</small></div>`;
+  const ct=Object.entries(C.cause).sort((a,b)=>b[1].gp-a[1].gp),st=Object.entries(C.staff).sort((a,b)=>b[1].gp-a[1].gp);
+  return `<div class="panel owclosed"><div class="poh"><h3 style="margin:0">⛔ Closed orders — Lost Gross Profit</h3><span style="flex:1"></span><button class="btn sm" data-owcl>Open list</button></div>
+    <div class="unit">Profit you would have earned if the order had been delivered (lost sales − cost). Not in the P&L — waste is.</div>
+    <div class="ygrid">${box('Today',C.today)}${box(ymLbl(O.ym),M)}${box('All time',C.all)}</div>
+    <div class="owrow"><div>${owBars(C.months,[['gp','#b91c1c','Lost gross profit'],['waste','#f59e0b','Waste loss']])}</div>
+      <div>${ct.length?`<h4 style="margin:4px 0">By cause · ${ymLbl(O.ym)}</h4><table class="stbl"><tbody>${ct.map(([k,v])=>`<tr><td>${esc(k)}</td><td class="r">${v.n}</td><td class="r"><b>${peso(v.gp)}</b></td></tr>`).join('')}</tbody></table>`:''}
+        ${st.length?`<h4 style="margin:10px 0 4px">Staff on those orders</h4><table class="stbl"><tbody>${st.map(([k,v])=>`<tr><td>👤 ${esc(k)}</td><td class="r">${v.n} order(s)</td><td class="r"><b>${peso(v.gp)}</b></td></tr>`).join('')}</tbody></table>`:''}</div></div></div>`}
 function owBars(rows,keys){const mx=Math.max(1,...rows.flatMap(r=>keys.map(([k])=>Math.abs(r[k]||0))));
   return `<div class="owbars">${rows.map(r=>`<div class="owb"><div class="owb-c">${keys.map(([k,c])=>`<i style="height:${Math.round(Math.abs(r[k]||0)/mx*100)}%;background:${(r[k]||0)<0?'#DC2626':c}" title="${k} ${peso(r[k]||0)}"></i>`).join('')}</div><span>${r.lbl!=null?r.lbl:ymLbl(r.ym).slice(0,3)}</span></div>`).join('')}</div>
     <div class="owleg">${keys.map(([k,c,t])=>`<span><i style="background:${c}"></i>${t}</span>`).join('')}</div>`}
@@ -2788,6 +2825,7 @@ function owDash0(){const O=OW,P=O.pl,B=O.bs,arOver=O.ar.filter(a=>a.days>30),apD
     ${k('Inventory value',peso(B.inventory),O.lowStock+' low / out of stock'+(O.noCost?` · ${O.noCost} without cost`:''))}
     ${k('Business worth (equity)',peso(B.equity),'assets '+peso(B.assets)+' − owed '+peso(B.liabilities))}
   </div>
+  ${owClosed(O)}
   <div class="owrow"><div class="panel"><h3>📈 Last 6 months</h3>${owBars(O.trend,[['sales','#2563EB','Net sales'],['gp','#16A34A','Gross profit'],['np','#F59E0B','Net profit']])}</div>
     <div class="panel"><h3>🥩 Gross profit by category · ${ymLbl(O.ym)}</h3>${O.byCat.length?`<table class="stbl"><thead><tr><th>Category</th><th class="r">Sales</th><th class="r">Gross profit</th><th class="r">Margin</th></tr></thead><tbody>${O.byCat.map(c=>`<tr><td><b>${esc(c.cat)}</b></td><td class="r">${peso(c.sales)}</td><td class="r">${peso(c.gp)}</td><td class="r">${c.sales?Math.round(c.gp/c.sales*1000)/10+'%':'—'}</td></tr>`).join('')}</tbody></table>`:'<div class="unit">No sales yet this month.</div>'}</div></div>
   <div class="owrow"><div class="panel"><h3>🧾 Expenses · ${ymLbl(O.ym)} <small>% of net sales</small></h3>${Object.keys(P.expenses).length?`<table class="stbl"><tbody>${Object.entries(P.expenses).sort((a,b)=>b[1]-a[1]).map(([c,v])=>`<tr><td>${esc(c)}</td><td class="r">${peso(v)}</td><td class="r">${P.net?Math.round(v/P.net*1000)/10+'%':'—'}</td></tr>`).join('')}<tr class="srtot"><td><b>Total expenses</b></td><td class="r"><b>${peso(P.opex)}</b></td><td class="r">${P.net?Math.round(P.opex/P.net*1000)/10+'%':''}</td></tr>${P.owner?`<tr><td>Owner's salary</td><td class="r">${peso(P.owner)}</td><td class="r">${P.net?Math.round(P.owner/P.net*1000)/10+'%':''}</td></tr>`:''}</tbody></table>`:'<div class="unit">No expenses yet. Add them in 🧾 Expenses.</div>'}</div>
@@ -4317,6 +4355,7 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const igr=e.target
       supPayDialog({title:'Pay '+a.supplier,sub:a.no+(a.pig?` · pig ${peso(a.pig)} + expenses ${peso(a.exp)}`:''),bal:a.amount,accounts:OW.accounts,part:k!=='exp',method:a.terms==='transfer'?'transfer':'cash',payBy:a.payBy,onAssign:async w=>{await api('api_payAssign',session.token,k,a.id,w);OW=null;drawStock()},
         onPay:async(amt,acc,ref,dd)=>{if(k==='exp')OW=await api('api_expPay',session.token,a.id,acc,dd,OW.ym);else{await api('api_payPO',session.token,a.id,ref,acc,amt,dd);OW=null}drawStock()}});return}
     if(d.owexpay){const e=OW.expenses.find(x=>x.id===d.owexpay);supPayDialog({title:'Pay bill · '+e.cat,sub:esc(e.desc||''),bal:e.amt,accounts:OW.accounts,part:false,payBy:e.from==='ask:cashier'?'cashier':'mgr',onAssign:async w=>{await api('api_payAssign',session.token,'exp',e.id,w);OW=null;drawStock()},onPay:async(amt,acc,ref,dd)=>{OW=await api('api_expPay',session.token,e.id,acc,dd,OW.ym);drawStock()}});return}
+    if('owcl' in d){deptGo('undel');return}
     if('owre' in d){OW=null;OWerr='';PA=null;PAerr='';LGD=null;drawStock();return}
     if(d.owhist!==undefined){LG.acc=d.owhist;LGD=null;if(me.role==='manager')return deptGo('owner','hist');OWtab='hist';drawStock();return}
     if(d.lga!==undefined){LG.acc=d.lga;drawStock();return}if(d.lgp){const [f,t]=srPreset(d.lgp);LG.from=f;LG.to=t;LG.pre=d.lgp;drawStock();return}
