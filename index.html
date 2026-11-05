@@ -764,6 +764,7 @@ th.h-inv small{display:block;font-weight:600;color:var(--muted);text-transform:n
 .wsrc{border-top:1px solid var(--line);padding:6px 10px}.wsrc summary{display:flex;gap:8px;align-items:baseline;cursor:pointer;flex-wrap:wrap}.wsrc summary span{flex:1}
 .lapseb{color:var(--rose);border-color:#fecaca}.clcause{display:flex;flex-wrap:wrap;gap:6px}.clcause button{border:1px solid var(--line);background:#fff;border-radius:99px;padding:8px 12px;font-weight:700;cursor:pointer}.clcause button.on{background:var(--rose);color:#fff;border-color:var(--rose)}
 .closedbox{border-color:var(--rose)!important}.closedc{border-left:4px solid var(--rose)}
+.pstbl input.nq{width:80px}.pstbl .pssup{min-width:120px}.psoff td{opacity:.45}.psord summary{cursor:pointer;font-size:12px;color:var(--muted)}.psord div{font-size:12px}
 .igrp td{background:#f1f5f9;cursor:pointer;font-size:14px}.igrp.on td{background:#e2e8f0}.igc{display:inline-block;width:18px;color:var(--muted)}.igsub td:first-child{padding-left:26px}
 .prkg{margin-top:4px}.prsetb{display:block;margin-top:4px;font-size:11px;padding:3px 8px}.prauto td{background:#f8fafc}.prauto small{display:block}
 .ychip{display:inline-block;border-radius:99px;padding:2px 9px;font-size:12px;font-weight:700;margin-left:4px}.ychip.ok{background:#dcfce7;color:#166534}.ychip.bad{background:#fee2e2;color:#991b1b}.ychip.lrn{background:#e0e7ff;color:#3730a3}.prsum2 div{margin-top:4px}
@@ -3341,14 +3342,15 @@ function invRows(list,mgr,q,rowFn){const out=[],seen=new Set();
     out.push(`<tr class="igrp${open?' on':''}" data-igrp="${esc(p.group)}"><td colspan="${mgr?8:6}"><span class="igc">${open?'▾':'▸'}</span><b>${esc(p.group)}</b> <span class="unit">· ${G.length} item${G.length>1?'s':''}${qty?' · <b>'+qty+'</b>':''}${mgr&&val?' · value '+peso(val):''}</span>${lo?' '+badge(lo+' LOW / OUT','amber'):''}</td></tr>`);
     if(open)G.forEach(x=>out.push(rowFn(x)))});
   return out.join('')}
-function invHTML(){
+function invHTML(){if(PSon&&me.role==='manager')return poSugHTML();return invHTML0()}
+function invHTML0(){
   const mgr=can('invEdit'),cats=[...new Set(ST.products.map(p=>p.cat))].sort();
   const q=invQ.trim().toLowerCase(),list=ST.products.filter(p=>(!invCat||p.cat===invCat)&&(!q||(p.name+' '+p.code).toLowerCase().includes(q)));
   const low=ST.products.filter(isLow),out=ST.products.filter(p=>p.avail<=0),appr=(ST.pos||[]).filter(p=>p.status==='for approval');
   const val=mgr?ST.products.reduce((s,p)=>s+Math.max(0,p.avail)*(p.cost||0),0):0;
   const CN=ST.cnt||{},cban=CN.open==='counting'?`<button class="snote cntban" data-sview="count">🧮 <b>Stock count in progress</b> — tap to continue</button>`:CN.open==='submitted'?`<button class="snote cntban" data-sview="count">🧮 <b>Stock count waiting for approval</b>${me.role==='manager'?' — tap to review':''}</button>`:CN.dueOpen?`<button class="snote cntban due" data-sview="count">⏰ <b>Stock count due</b> (${day(CN.due)}) — tap to start</button>`:'';
   return cban+`<div class="shead"><div><h2>🗃️ Inventory</h2><div class="unit">One stock count for the shop. It goes up with <b>Receiving</b> and <b>Production</b>, and down with <b>POS sales</b> (walk-in and delivery orders cashed out by the cashier) and <b>online orders</b>. Prepared orders are <b>not</b> taken out until the cashier rings them up.${mgr?'':' <b>View only</b> — the Manager changes products and counts.'}</div></div>
-    <div class="sbtns">${mgr?'<button class="go sm" data-padd>+ Add product</button><button class="btn sm" data-pimp>⬆ Import</button>':''}${mgr||me.role==='ops'?'<button class="btn sm" data-pconv>🔁 Convert</button>':''}<button class="btn sm" data-sref>↻ Refresh</button></div></div>
+    <div class="sbtns">${me.role==='manager'?'<button class="go sm sugb" data-posug>📈 Inventory Forecast</button>':''}${mgr?'<button class="go sm" data-padd>+ Add product</button><button class="btn sm" data-pimp>⬆ Import</button>':''}${mgr||me.role==='ops'?'<button class="btn sm" data-pconv>🔁 Convert</button>':''}<button class="btn sm" data-sref>↻ Refresh</button></div></div>
     <div class="kpis"><div><b>${ST.products.length}</b><span>products</span></div><div class="${low.length?'warn':''}"><b>${low.length}</b><span>low stock</span></div><div class="${out.length?'bad':''}"><b>${out.length}</b><span>out of stock</span></div>${mgr?`<div><b>${peso(val)}</b><span>stock value (cost)</span></div>`:''}</div>
     ${mgr&&appr.length?`<div class="snote violet">⚠ <b>${appr.length}</b> receiving(s) don't match the P.O. and wait for your approval. <button class="btn sm" data-sview="po">Open P.O.</button></div>`:''}
     ${mgr&&ST.unmatched&&ST.unmatched.length?`<div class="snote">🔎 These order names did not match a product, so dispatch could not take them out of stock: <b>${ST.unmatched.map(esc).join(', ')}</b>. Edit the product and add the name under <b>Other names</b>.</div>`:''}
@@ -3604,6 +3606,29 @@ function ckBalance(){const po=(ST.pos||[]).find(p=>p.id===rcC.id),S=ckRows(po.ca
 function ccLive(t){if(t==='po'){const c=poEdit.carcass,m=ccMoney(c);[['pay',m.pay],['pay2',m.pay],['et2',m.et],['tot',m.total]].forEach(([k,v])=>{const e=$('#cc-po-'+k);if(e)e.textContent=peso(v)});
     const e=$('#cc-po-et');if(e)e.textContent=peso(m.et);const pk=$('#cc-po-pkg');if(pk)pk.textContent=m.lw?'= '+peso(m.total/m.lw)+' per kg liveweight':''}
   else{const po=(ST.pos||[]).find(p=>p.id===rcC.id);const e=$('#cc-rc-et');if(e)e.textContent=peso(expTot(rcC.exp));const s=$('#cc-split');if(s&&po)s.innerHTML=ckHTML(po.carcass);const yy=$('#cc-yield');if(yy&&po&&!(document.activeElement&&document.activeElement.id==='rc-why'))yy.innerHTML=yieldHTML(po.carcass)}}
+// 📈 INVENTORY FORECAST (was Suggested P.O.): what the open advance orders need vs stock + open P.O.s — approve / change, then make the P.O. per supplier
+let PS=null,PSload=false,PSerr='',PSdays=3,PSx={},PSon=false,PSback=false;
+function psLoad(){if(PSload)return;PSload=true;PSerr='';api('api_poSuggest',session.token,PSdays).then(r=>{PS=r;PSx={};r.rows.forEach(x=>PSx[x.code]={on:!x.made,qty:String(x.suggest),cost:x.cost?String(x.cost):'',sup:x.supplier})}).catch(e=>PSerr=errMsg(e)).finally(()=>{PSload=false;if(view==='inv')drawStock()})}
+function poSugHTML(){if(!PS&&!PSerr)psLoad();const head=`<div class="shead"><div><h2>📈 Inventory Forecast <small class="unit" style="font-weight:600">what to buy &amp; make</small></h2><div class="unit">Open advance orders (not yet billed / dispatched) vs <b>stock + what is already on an open P.O.</b> Suggested = orders need + reorder level − stock − on P.O. Check, change the qty / supplier, then <b>Make P.O.</b></div></div><div class="sbtns"><button class="btn sm" data-psre>↻</button><button class="btn sm" data-psback>‹ Back to Inventory</button></div></div>
+  <div class="chips2" style="margin:6px 0">${[[1,'Today'],[2,'Today + tomorrow'],[3,'Next 3 days'],[7,'Next 7 days'],[14,'Next 14 days']].map(([d,t])=>`<button class="${PSdays===d?'on':''}" data-psd="${d}">${t}</button>`).join('')}</div>`;
+  if(PSerr)return head+`<div class="empty">⚠ ${esc(PSerr)}</div>`;if(!PS)return head+'<div class="empty">Loading…</div>';
+  const buy=PS.rows.filter(r=>!r.made),mk=PS.rows.filter(r=>r.made);
+  if(!PS.rows.length)return head+`<div class="empty">✅ Nothing to buy — stock and open P.O.s cover the orders ${PS.days>1?'for the next '+PS.days+' days':'for today'}.</div>`+(PS.odd.length?psOdd():'');
+  const G={};buy.forEach(r=>{const k=(PSx[r.code].sup||'').trim()||'— no supplier yet —';(G[k]=G[k]||[]).push(r)});
+  const u=r=>esc(String(r.unit).toLowerCase()),row=r=>{const x=PSx[r.code];return `<tr class="${x.on?'':'psoff'}"><td><input type="checkbox" data-psc="${esc(r.code)}"${x.on?' checked':''}></td>
+    <td><b>${esc(r.name)}</b><br><small class="unit">${r.first?'needed '+day(r.first)+' · ':''}${esc(r.why)}${r.lastPO?' · last '+esc(r.lastPO):''}</small>${r.orders.length?`<details class="psord"><summary>${r.orders.length} order(s)</summary>${r.orders.map(o=>`<div>${day(o.delivery)} · ${esc(o.customer)} · ${qf(o.qty)} ${u(r)}</div>`).join('')}</details>`:''}</td>
+    <td class="r">${qf(r.need)}</td><td class="r">${qf(r.stock)}</td><td class="r">${r.onPO?qf(r.onPO):'—'}</td><td class="r">${r.short?`<b style="color:var(--rose)">${qf(r.short)}</b>`:'—'}</td>
+    <td><input class="edit-in nq" type="number" step="0.001" data-psq="${esc(r.code)}" value="${esc(x.qty)}"> <small>${u(r)}</small></td><td><input class="edit-in nq" type="number" step="0.01" data-psp="${esc(r.code)}" value="${esc(x.cost)}" placeholder="₱"></td>
+    <td><input class="edit-in pssup" list="ps-sups" data-pss="${esc(r.code)}" value="${esc(x.sup)}" placeholder="supplier"></td></tr>`};
+  return head+`<datalist id="ps-sups">${PS.suppliers.map(x=>`<option value="${esc(x)}">`).join('')}</datalist>
+    <div class="kpis"><div><b>${buy.length}</b><span>to buy</span></div><div class="${buy.some(r=>r.short)?'bad':''}"><b>${buy.filter(r=>r.short).length}</b><span>short for orders</span></div>${mk.length?`<div><b>${mk.length}</b><span>to make (production)</span></div>`:''}</div>
+    ${Object.entries(G).map(([sup,L])=>{const on=L.filter(r=>PSx[r.code].on),tot=on.reduce((a,r)=>a+(+PSx[r.code].qty||0)*(+PSx[r.code].cost||0),0);
+      return `<div class="panel"><div class="poh"><h3 style="margin:0">🏪 ${esc(sup)}</h3><span style="flex:1"></span>${tot?`<span class="unit">≈ ${peso(tot)}</span>`:''}</div>
+      <div class="sc"><table class="stbl pstbl"><thead><tr><th></th><th>Product</th><th class="r">Orders need</th><th class="r">Stock</th><th class="r">On P.O.</th><th class="r">Short</th><th>Order qty</th><th>Cost / unit</th><th>Supplier</th></tr></thead><tbody>${L.map(row).join('')}</tbody></table></div>
+      <div class="row-end"><button class="go" data-psmake="${esc(sup)}"${on.length?'':' disabled'}>📝 Make P.O. · ${on.length} item(s)</button></div></div>`}).join('')}
+    ${mk.length?`<div class="panel"><h3>🏭 Make in Production <small>made by your team — not bought</small></h3><div class="sc"><table class="stbl"><thead><tr><th>Product</th><th class="r">Orders need</th><th class="r">Stock</th><th class="r">Short</th><th class="r">Make</th></tr></thead><tbody>${mk.map(r=>`<tr><td><b>${esc(r.name)}</b><br><small class="unit">${r.first?'needed '+day(r.first):''}</small></td><td class="r">${qf(r.need)}</td><td class="r">${qf(r.stock)}</td><td class="r">${r.short?`<b style="color:var(--rose)">${qf(r.short)}</b>`:'—'}</td><td class="r"><b>${qf(r.suggest)}</b> ${u(r)}</td></tr>`).join('')}</tbody></table></div></div>`:''}
+    ${PS.odd.length?psOdd():''}`}
+const psOdd=()=>`<div class="snote">🔎 Not counted (no matching product or different unit): ${PS.odd.map(esc).join(' · ')}. Add the name under <b>Other names</b> of the product.</div>`;
 function poHTML(){
   const all=ST.pos||[],appr=all.filter(p=>p.status==='for approval');
   if(poEdit&&poEdit.kind==='carcass')return carcassPOForm();
@@ -4380,6 +4405,13 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const igr=e.target
   if('pimp' in d){importDialog();return}
   if(d.pedit){productDialog(d.pedit);return}
   // P.O.
+  if('posug' in d){PSon=true;PS=null;PSerr='';drawStock();return}
+  if('psback' in d){PSon=false;drawStock();return}
+  if('psre' in d){PS=null;PSerr='';drawStock();return}
+  if(d.psd){PSdays=+d.psd;PS=null;PSerr='';drawStock();return}
+  if(d.psmake!==undefined){const sup=d.psmake==='— no supplier yet —'?'':d.psmake,L=PS.rows.filter(r=>!r.made&&PSx[r.code].on&&((PSx[r.code].sup||'').trim()||'— no supplier yet —')===d.psmake);
+    const fd=L.map(r=>r.first).filter(Boolean).sort()[0],ex=fd?iso(new Date(pISO(fd).getTime()-864e5)):'',exp=ex&&ex>=today()?ex:today();
+    poEdit={supplier:sup,expected:exp,note:'From 📈 Inventory Forecast · for orders up to '+day(PS.to),items:L.map(r=>({code:r.code,qty:PSx[r.code].qty,cost:PSx[r.code].cost}))};PSback=true;view='po';render();window.scrollTo(0,0);toast('Check the P.O. and save it');return}
   if('ponew' in d){poEdit={supplier:'',expected:'',note:'',items:[{code:'',qty:'',cost:''}]};drawStock();return}
   if('ponewc' in d){poEdit={kind:'carcass',supplier:'',expected:'',note:'',items:[],carcass:{heads:1,lw:'',price:'',pay:'cash',due:'',orNo:'',exp:{transport:'',butcher:'',slaughter:'',others:[{desc:'',amt:''}]}}};drawStock();return}
   if(d.ccoadd){const o=d.ccoadd==='po'?poEdit.carcass:rcC;o.exp.others.push({desc:'',amt:''});drawStock();return}
@@ -4398,9 +4430,9 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const igr=e.target
   if(d.poedit){const p=ST.pos.find(x=>x.id===d.poedit);poEdit=JSON.parse(J(p));if(poEdit.carcass&&!poEdit.carcass.exp.others.length)poEdit.carcass.exp.others.push({desc:'',amt:''});drawStock();return}
   if('poadd' in d){poEdit.items.push({code:'',qty:'',cost:''});drawStock();return}
   if(d.podel){poEdit.items.splice(+d.podel,1);if(!poEdit.items.length)poEdit.items.push({code:'',qty:'',cost:''});drawStock();return}
-  if('pocancel' in d){poEdit=null;drawStock();return}
+  if('pocancel' in d){poEdit=null;if(PSback){PSback=false;view='inv';render();return}drawStock();return}
   if('posave' in d){poEdit.supplier=$('#po-sup').value;poEdit.expected=$('#po-exp').value;poEdit.note=$('#po-note').value;if($('#po-pay')){poEdit.pay=$('#po-pay').value;poEdit.due=$('#po-due').value}if($('#po-by'))poEdit.payBy=$('#po-by').value;if($('#po-rt')){poEdit.rtype=$('#po-rt').value;poEdit.etime=$('#po-et').value}
-    await busy(async()=>{ST=await api('api_savePO',session.token,poEdit);stCache();poEdit=null;toast('P.O. saved — Operations can now receive it');drawStock()});return}
+    await busy(async()=>{ST=await api('api_savePO',session.token,poEdit);stCache();poEdit=null;if(PSback){PSback=false;PS=null;PSerr='';view='inv';toast('P.O. saved — back to 📈 Inventory Forecast');render();return}toast('P.O. saved — Operations can now receive it');drawStock()});return}
   if(d.pokill){if(!confirm('Cancel this P.O.?'))return;await busy(async()=>{ST=await api('api_cancelPO',session.token,d.pokill);stCache();drawStock()});return}
   if(d.poapprove||d.poreject){const id=d.poapprove||d.poreject,n=document.querySelector(`[data-anote="${id}"]`).value;
     if(d.poreject&&!confirm('Send back? Operations must receive this P.O. again.'))return;
@@ -4499,6 +4531,8 @@ function stockInput(e){if(!STOCKV.includes(view))return;const t=e.target,d=t.dat
    if(d.rr!==undefined||d.rq!==undefined||d.rqp!==undefined){const c=d.rr??d.rq??d.rqp,v=rvF.L[c]=rvF.L[c]||{r:'',q:'',p:''};if(d.rr!==undefined)v.r=t.value;else if(d.rqp!==undefined)v.p=t.value;else v.q=t.value;if(po)rfLive(po);return}
    if(t.id==='rf-why'){rvF.why=t.value;return}if(t.id==='rf-no'){rvF.no=t.value;return}}
   if(d.prq!==undefined){const[k,i]=d.prq.split(':');prodF[k][+i].qty=t.value;prodRefresh();return}
+  if(d.psq!==undefined&&PSx[d.psq]){PSx[d.psq].qty=t.value;return}
+  if(d.psp!==undefined&&PSx[d.psp]){PSx[d.psp].cost=t.value;return}
   if(d.prkg!==undefined){prodF.made[+d.prkg].kg=t.value;prodRefresh();return}
   if(d.cq!==undefined){cart[+d.cq].qty=t.value;posLive();return}
   if(d.k==='pdisc'){posDisc=t.value;posLive();return}
@@ -4528,6 +4562,8 @@ function stockChange(e){if(!STOCKV.includes(view))return;const t=e.target,d=t.da
   if(d.acd){if(t.value){ACF[d.acd]=t.value;ACF.pre='';ACF.n=300;ACerr=''}drawStock();return}
   if(d.acs!==undefined){ACF.staff=t.value;ACF.n=300;drawStock();return}
   if(d.pol!==undefined){const p=pBy(t.value),l=poEdit.items[+d.pol];l.code=t.value;if(p&&!l.cost&&p.cost)l.cost=p.cost;drawStock();return}
+  if(d.psc!==undefined&&PSx[d.psc]){PSx[d.psc].on=t.checked;drawStock();return}
+  if(d.pss!==undefined&&PSx[d.pss]){PSx[d.pss].sup=t.value;drawStock();return}
   if(d.prl!==undefined){const[k,i]=d.prl.split(':');prodF[k][+i].code=t.value;if(k==='used')delete prodF[k][+i].auto;prodAuto();drawStock();return}
   if(t.id==='pc-cust'){posCust=t.value;drawStock();return}
   if(t.id==='pc-pay'){posPay=t.value;drawStock();return}
