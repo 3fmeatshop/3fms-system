@@ -742,6 +742,26 @@ th.h-inv small{display:block;font-weight:600;color:var(--muted);text-transform:n
 
 /* home page — big role tabs (primary) + tasks (secondary) */
 .rtabs-wrap{margin-bottom:18px}
+.cntban{display:block;width:100%;text-align:left;cursor:pointer;font:inherit;color:inherit;margin-bottom:10px}.cntban.due{background:#fef3c7;border-left:5px solid #d97706}
+.ctprog{height:10px;background:#e2e8f0;border-radius:99px;overflow:hidden;margin:8px 0 4px}.ctprog i{display:block;height:100%;background:#0f766e;border-radius:99px;transition:width .2s}
+.ctlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px;margin:10px 0}.ctrow{display:flex;align-items:center;gap:10px;justify-content:space-between;border:1px solid var(--line);border-radius:12px;padding:8px 10px;background:#fff;cursor:text}
+.ctrow b{display:block}.ctrow small{color:var(--muted);font-size:12px}.ctrow.done{border-color:#86efac;background:#f0fdf4}.ctin{display:flex;align-items:center;gap:6px;flex:none}.ctin input{width:96px;text-align:right}.ctin em{font-style:normal;font-size:12px;color:var(--muted);min-width:30px}
+.ctv .ctbig td{background:#fff7ed}.ctv input{min-width:180px}.ctstart p{max-width:62ch;color:var(--muted)}
+.rft input{max-width:120px}.rfx td{background:#fffbeb}.rfnf{margin:10px 0;padding:8px 12px;border-radius:10px;background:#f8fafc;display:flex;flex-direction:column;gap:6px}.rfnf.on{background:#fffbeb;border:1px solid #fcd34d}.rfu{display:flex;align-items:center;gap:6px;margin:2px 0}.rfu span{font-size:12px;color:var(--muted);min-width:22px}.rft input[readonly]{background:#f1f5f9;color:var(--muted);border-style:dashed}.rfnf label{display:flex;flex-direction:column;gap:4px}.rfnf label.chk2{flex-direction:row;align-items:center}.rfx small{display:block;margin-top:2px}.rfchg{color:#b45309;font-weight:800}
+.dayhd{display:flex;align-items:center;gap:12px;margin:18px 2px 8px}.dayhd .dh-cal{width:46px;text-align:center;border-radius:10px;background:var(--red);color:#fff;padding:3px 0;line-height:1.1}.dayhd .dh-cal small{display:block;font-size:10px;letter-spacing:.1em;font-weight:800;text-transform:uppercase;opacity:.9}.dayhd .dh-cal b{font-size:22px}
+.dayhd.td .dh-cal{background:#b45309}.dayhd.past .dh-cal{background:#64748b}.dayhd .dh-t b{display:block;font-size:20px;color:var(--ink)}.dayhd .dh-t span{color:var(--muted);font-size:13px}.dayhd .dh-t em{font-style:normal;font-weight:900;color:#b45309}
+.card .top .who2{flex:1;min-width:0;text-align:left}.card .cname{font-size:20px;font-weight:900;color:var(--ink);line-height:1.2;letter-spacing:.01em}.card .qno{font-style:normal;background:#7c3aed;color:#fff;border-radius:8px;padding:1px 7px;font-size:14px;vertical-align:2px}
+.card .ctags{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}.card .ctags em{margin:0!important;font-style:normal}.card .ctags:empty{display:none}.card .ctags .nt{font-style:normal;font-size:12px;font-weight:700;background:#fffbeb;color:#92400e;border-radius:6px;padding:2px 7px}
+.card .cright{display:flex;align-items:center;gap:8px;flex:none}.card .top .arrow{transition:transform .15s;font-size:16px}.card.open .top .arrow{transform:rotate(180deg)}
+.cinfo{padding:8px 16px;font-size:14px;color:var(--muted);border-bottom:1px solid var(--line)}
+@media(max-width:600px){.card .top{flex-wrap:wrap}.card .cright{width:100%;justify-content:space-between}.card .cname{font-size:18px}}
+.rx2{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px;align-items:end;border-left:5px solid #0f766e}.rx2-h{font-weight:800;margin-bottom:6px}
+.rx2-seg{display:inline-flex;background:#f1f5f9;border-radius:12px;padding:4px;gap:4px;flex-wrap:wrap;margin-bottom:6px}.rx2-seg button{border:0;background:transparent;padding:9px 14px;border-radius:9px;font-weight:800;cursor:pointer;color:#475569}.rx2-seg button.on{background:#fff;color:#0f766e;box-shadow:0 1px 4px rgba(0,0,0,.15)}
+.rx2-r{display:flex;flex-direction:column;gap:4px;font-weight:700;font-size:13px}@media(max-width:700px){.rx2{grid-template-columns:1fr}}
+.apprno{background:#fee2e2!important;color:#991b1b!important;border-left:4px solid #dc2626}.ap-no{margin-top:12px;border:1px solid #fecaca;border-radius:12px;padding:8px 12px;background:#fff5f5}.ap-no summary{cursor:pointer;color:#991b1b}
+.onote{margin:6px 0;padding:8px 12px;border-radius:10px;background:#fffbeb;border-left:4px solid #f59e0b;font-weight:600}
+.pm-pr{display:none;font-size:12px;color:var(--muted);font-weight:600}.pchg{display:flex;flex-direction:column;gap:6px}.pchg-row{display:flex;align-items:center;gap:6px;background:#f8fafc;border-radius:10px;padding:6px 8px}.pchg-row span{flex:1}.pchg-btns{display:flex;gap:6px;flex-wrap:wrap}
+@media(max-width:860px){.pm-pr{display:block}}
 .lg-acc button{font-weight:800}.lg-kp .big b{font-size:24px}.lg-tb td{vertical-align:top}.lg-day td{background:#f8fafc;border-top:2px solid var(--line)}.lg-day span{float:right;font-size:13px}.lg-t{white-space:nowrap;font-variant-numeric:tabular-nums;color:var(--muted);font-size:13px}
 .lg-ic{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:#f1f5f9;font-size:14px}.lg-r.in .lg-ic{background:#dcfce7}.lg-r.out .lg-ic{background:#fee2e2}
 .lg-in{color:var(--green);font-weight:800;white-space:nowrap}.lg-out{color:var(--rose);font-weight:800;white-space:nowrap}.lg-ft{display:inline-block;margin-top:2px;font-size:12px;font-weight:700;color:var(--blue);background:var(--bbg);border-radius:99px;padding:1px 8px}.lg-g summary{cursor:pointer}
@@ -892,7 +912,9 @@ details.sec .tile .ic{width:36px;height:36px}details.sec .tile .due{display:none
 DATE: USE-     Oct. 18-19
 40kg    Pork Ribs
 60kg    Whole Chicken"></textarea>
-  <div class="lbl">4. Check</div>
+  <div class="lbl">4. Notes <span class="unit">(optional)</span></div>
+  <input class="edit-in" id="onote" placeholder="e.g. Slice liempo thin · call before delivery · gate code 1234">
+  <div class="lbl">5. Check</div>
   <div class="prev" id="prev">Nothing yet.</div>
   <div class="row-end"><button class="btn" data-x>Cancel</button><button class="big" id="save">Save</button></div>
 </div></div>
@@ -1551,7 +1573,7 @@ $('#home').onclick=()=>saveThen(()=>logout());
 $('#me').onclick=()=>{if(me&&me.role==='rider'){openRiderProfile(me.id);return}myAccount()};
 function land(){ // open the screen of the process the person chose
   try{if(me&&!localStorage.getItem('dp_help_'+me.role))setTimeout(helpDialog,600)}catch(e){}
-  if(!proc||!PROCS[proc]){if(me.role==='cashier'){view='pos';render()}return}const P=PROCS[proc];view=P.view;dateF='';openId=null;render();
+  if(!proc||!PROCS[proc]){if(me.role==='cashier'){view='pos';render()}return}const P=PROCS[proc];view=P.view;dateF=null;openId=null;render();
   if(proc==='paste'&&can('paste'))setTimeout(()=>$('#newbtn').click(),300);
   if(proc==='prep'){const qn=o=>o.online?(o.online.queue||999):0;const srt=db.orders.filter(o=>live(o)&&stage(o)==='prep'&&check(o).notPrep.length).sort((a,b)=>a.delivery.localeCompare(b.delivery)||qn(a)-qn(b));if(srt[0]){openId=srt[0].id;render()}}
   if(proc==='disp'){const r=db.orders.find(o=>stage(o)==='prep'&&!check(o).notPrep.length);if(r){openId=r.id;render()}}
@@ -1565,7 +1587,7 @@ function start(fresh){
 }
 
 /* ---------- screen ---------- */
-let view='prep', openId=null, editId=null, dateF='', notes=new Set(); const fixing=new Set();
+let view='prep', openId=null, editId=null, dateF=null, notes=new Set(); const fixing=new Set();
 /* ---------- MANAGER: 4 departments ---------- */
 const DEPT_OF={owner:'fin',hr:'hr',srep:'sales',crep:'sales',points:'sales',memb:'sales'};
 const deptOf=v=>DEPT_OF[v]||'ops';
@@ -1573,13 +1595,13 @@ let DLAST={};try{DLAST=JSON.parse(localStorage.getItem('fms_dlast')||'{}')}catch
 function deptDefs(c){return {
   ops:{ic:'🔪',t:'Operations',d:'Orders · stock · POS · deliveries',c:'#B91C1C',n:c.onP+c.prep+c.disp+c.poA,tabs:[
     {act:'neworder',t:'📋 Customer Orders'},{v:'online',t:'🛒 Online',n:c.onP},{v:'po',t:'📝 P.O.',n:c.poA},{v:'recv',t:'📥 Receiving'},{v:'prep',t:'⚖️ Preparation',n:c.prep},{v:'disp',t:'✅ Dispatch',n:c.disp},
-    {v:'pos',t:'🧾 POS'},{v:'inv',t:'📦 Inventory',n:c.out?c.out+' out':0,g:[['inv','📦 Stock'],['prod','🏭 Production']]},{v:'way',t:'🛵 Deliveries',n:c.way,g:[['way','🛵 Out for delivery',c.way],['delivered','✅ '+c.delLbl,c.delOK],['undel','↩ Undelivered',c.und]]},
+    {v:'pos',t:'🧾 POS'},{v:'inv',t:'📦 Inventory',n:c.out?c.out+' out':0,g:[['inv','📦 Stock'],['count','🧮 Stock count'],['prod','🏭 Production']]},{v:'way',t:'🛵 Deliveries',n:c.way,g:[['way','🛵 Out for delivery',c.way],['delivered','✅ '+c.delLbl,c.delOK],['undel','↩ Undelivered',c.und]]},
     {v:'mgr',t:'📊 Reports',g:[['mgr','📊 Operations dashboard'],['month','📦 Monthly report']]}]},
   hr:{ic:'🧑‍💼',t:'HR',d:'Schedule · OT · payroll',c:'#0F766E',n:c.otP,tabs:[{v:'hr',sub:'sched',t:'📅 Schedule'},{v:'hr',sub:'ot',t:'⏱ OT requests',n:c.otP},{v:'hr',sub:'pay',t:'💵 Payroll & attendance'},{v:'hr',sub:'set',t:'⚙ Shifts & rules'},{act:'users',t:'🔑 Users & PINs'}]},
   fin:{ic:'💰',t:'Accounting & Finance',d:'Money · expenses · P&L',c:'#B45309',n:c.zP,tabs:[{v:'owner',sub:'dash',t:'📊 Dashboard'},{v:'owner',sub:'acc',t:'💰 Accounts'},{v:'owner',sub:'hist',t:'📜 Money history'},{v:'owner',sub:'exp',t:'🧾 Expenses'},{v:'owner',sub:'col',t:'📥 Collect & pay',n:c.zP},
     {v:'owner',sub:'loan',t:'🤝 Loans'},{v:'owner',sub:'avg',t:'⏱ Profit averages'},{v:'owner',sub:'fa',t:'🏢 Fixed assets'},{v:'owner',sub:'rep',t:'📑 P&L · Balance sheet'}]},
   sales:{ic:'📈',t:'Sales & Marketing',d:'Sales · customers · loyalty',c:'#7C3AED',n:0,tabs:[{v:'memb',t:'💳 Membership'},{v:'srep',t:'📈 Sales & profit'},{v:'crep',t:'👥 Customer sales'},{v:'points',t:'⭐ Points (old)'},{act:'bulk',t:'🏢 Bulk buyer accounts'},{act:'cdisc',t:'🏷 Customer discounts'}]}}}
-function deptGo(v,sub){if(!me)return;if(v==='owner'&&sub)OWtab=sub;if(v==='hr'&&sub)HRsub=sub;view=v;openId=null;editId=null;dateF='';
+function deptGo(v,sub){if(!me)return;if(v==='owner'&&sub)OWtab=sub;if(v==='hr'&&sub)HRsub=sub;view=v;openId=null;editId=null;dateF=null;
   DLAST[deptOf(v)]={v,sub:sub||''};try{localStorage.setItem('fms_dlast',JSON.stringify(DLAST))}catch(e){}render();if(STOCKV.includes(v)&&ST)drawStock()}
 async function deptAct(a){if(!me)return;if(a==='neworder')return $('#newbtn').click();if(a==='users')return $('#l-users').click();if(a==='bulk')return bulkDialog();
   if(a==='cdisc'){if(!OW){toast('Loading…');try{OW=await api('api_owner',session.token,OWym||'')}catch(e){return alert(errMsg(e))}}return custDiscDialog()}}
@@ -1606,11 +1628,11 @@ function render(){
   if(can('online'))tabs.splice(me.role==='sales'?0:1,0,['online','🛒 Online',onl.filter(o=>o.online.status==='pending'&&!placedToday(o))]);
   if(can('online'))tabs.push(['points','⭐ Points',null]);
   if(can('report'))tabs.push(['month','📦 Monthly',null]);if(can('dash'))tabs.push(['mgr','📊 Dashboard',null]);
-  if(can('pos'))tabs.push(['pos','🧾 POS',null]);if(can('inv'))tabs.push(['inv','🗃️ Inventory',null]);if(can('po'))tabs.push(['po','📝 P.O.',null]);
+  if(can('pos'))tabs.push(['pos','🧾 POS',null]);if(can('inv'))tabs.push(['inv','🗃️ Inventory',null]);if(can('inv')&&(me.role==='ops'||me.role==='manager'))tabs.push(['count','🧮 Stock count',null]);if(can('po'))tabs.push(['po','📝 P.O.',null]);
   if(can('recv'))tabs.push(['recv','📥 Receiving',null]);if(can('prod'))tabs.push(['prod','🏭 Production',null]);
   // keep only the tabs this role needs (simpler screen)
   if(me.role!=='manager')tabs.push(['att','⏱ Attendance',null]);
-  const KEEP={ops:['prep','way','delivered','undel','recv','prod','inv','month','att'],cashier:['pos','inv','att'],sales:['online','prep','way','delivered','points','month','inv','att'],rider:['way','delivered','att']}[me.role];
+  const KEEP={ops:['prep','way','delivered','undel','recv','prod','inv','count','month','att'],cashier:['pos','inv','att'],sales:['online','prep','way','delivered','points','month','inv','att'],rider:['way','delivered','att']}[me.role];
   if(KEEP)for(let k=tabs.length-1;k>=0;k--)if(!KEEP.includes(tabs[k][0]))tabs.splice(k,1);
   const LBL={ops:{prep:'⚖️ Prepare · ✅ Check & Dispatch',way:'🚚 Out for delivery'},sales:{prep:'⚖️ Preparing',way:'🚚 Out for delivery'},manager:{prep:'⚖️ To Prepare',way:'🚚 Out for delivery'}}[me.role]||{};
   tabs.forEach(t=>{if(LBL[t[0]])t[1]=LBL[t[0]]});
@@ -1621,7 +1643,7 @@ function render(){
     const rc=(ST&&ST.pos?ST.pos.filter(p=>p.status==='open').length:0)+retList('to check').length,out=INV?INV.list.filter(p=>p.q<=0).length:0;
     const MAIN=[['recv','📥','Receiving','Supplier deliveries & returns',rc,'#15803D'],['prep','⚖️','Prepare','Weigh tomorrow\'s orders',prepTodo.length,'#D97706'],['disp','🚚','Dispatch','Check · bill · send out',dispTodo.length,'#1D4ED8'],
       ['prod','🏭','Production','Longganisa, siomai & more',0,'#C2410C'],['inv','📦','Inventory','Stock monitoring',out?out+' out':0,'#0E7490']];
-    const MORE=[['way','🛵 Out for delivery',way.length],['delivered','✅ '+delLbl,delOK.length],['undel','↩ Undelivered',und.length],['month','📊 Monthly',null],['att','⏱ Attendance',null]];
+    const MORE=[['way','🛵 Out for delivery',way.length],['delivered','✅ '+delLbl,delOK.length],['undel','↩ Undelivered',und.length],['count','🧮 Stock count'+(ST&&ST.cnt&&ST.cnt.dueOpen?' · DUE':ST&&ST.cnt&&ST.cnt.open==='counting'?' · open':''),null],['month','📊 Monthly',null],['att','⏱ Attendance',null]];
     tabs.length=0;MAIN.forEach(m=>tabs.push([m[0],m[2],null]));MORE.forEach(m=>tabs.push([m[0],m[1],null]));
     opsSeg=`<div class="opstabs">${MAIN.map(([k,ic,t,d,n,c])=>`<button data-view="${k}" class="otab${view===k?' on':''}" style="--oc:${c}"><span class="ot-ic">${ic}</span><span class="ot-t">${t}</span><span class="ot-d">${d}</span>${n?`<span class="ot-n">${n}</span>`:''}</button>`).join('')}</div>
       <div class="opsmore">${MORE.map(([k,t,n])=>`<button data-view="${k}" class="${view===k?'on':''}">${t}${n?' ('+n+')':''}</button>`).join('')}</div>`;
@@ -1653,9 +1675,10 @@ function render(){
     $('#list').innerHTML=banner2+wayHTML(way);fillPhotos();const wq=$('#wq');if(wq){wq.oninput=()=>{wayQ=wq.value;render()};if(af){wq.focus();try{wq.setSelectionRange(cp,cp)}catch(e){}}}return}
   const full={prep:me.role==='ops'||me.role==='manager'?prepTodo:prep,disp:dispTodo,way,delivered:del}[view];
   const dts=[...new Set(full.map(o=>o.delivery))].sort();if(view==='delivered')dts.reverse();
-  if(dateF&&!dts.includes(dateF))dateF='';
+  if(dateF===null||(dateF&&!dts.includes(dateF))){const td=today();          // default: the day to work on now (not all days)
+    dateF=view==='prep'?(dts[0]||''):dts.includes(td)?td:(dts[0]||'')}
   const list=dateF?full.filter(o=>o.delivery===dateF):full;
-  if(openId===null&&list.length)openId=((view==='disp'&&list[0])||(view==='prep'&&(me.role==='ops'&&proc==='disp'?list.find(o=>!check(o).notPrep.length):list.find(o=>check(o).notPrep.length)))||list[0]).id;
+  // every order starts closed — tap a customer to see the details
   const td0=today(),tmr0=(()=>{const d=new Date();d.setDate(d.getDate()+1);return iso(d)})();
   const strip=dts.length>1?`<div class="dates"><button class="all${dateF?'':' on'}" data-df=""><small>All</small><b>${full.length}</b><i>orders</i></button>${dts.map(dt=>{const d=pISO(dt),n=full.filter(o=>o.delivery===dt).length;
     return `<button data-df="${dt}" class="${dt===dateF?'on':''}${dt===td0?' td':view==='prep'&&dt===tmr0?' pt':view==='prep'&&dt<td0?' lt':''}"><small>${dt===td0?'Today':view==='prep'&&dt===tmr0?'Prep today':DOW[d.getDay()]}</small><b>${MON[d.getMonth()]} ${d.getDate()}</b><i>${n} order${n>1?'s':''}</i></button>`}).join('')}</div>`:'';
@@ -1678,7 +1701,10 @@ function render(){
       ${left.length?`<em class="dtag addt">Next: #${left[0].online.queue||'?'}</em>`:'<em class="dtag dt-std">All prepared</em>'}</div>`}}
   if(view==='prep'){const ld=[];prep.forEach(o=>o.items.forEach(i=>{if(i.carryFrom&&!isCR(i))ld.push({o,i})}));
     if(ld.length)banner=`<div class="ldbox"><b>⏰ Late deliveries — carried over automatically</b>${ld.map(({o,i})=>`<div data-jump="${o.id}">${esc(i.product)} <b>${fmt(i.qty)} ${esc(i.unit)}</b> → <b>${longDay(o.delivery)}</b> <span class="unit">(from ${day(i.carryFrom)} order · ${status(i).t})</span></div>`).join('')}</div>`}
-  $('#list').innerHTML=strip+banner+(list.length?list.map(card).join(''):`<div class="empty">${msg}</div>`);
+  const byDay=[];list.forEach(o=>{let g=byDay[byDay.length-1];if(!g||g.d!==o.delivery){g={d:o.delivery,L:[]};byDay.push(g)}g.L.push(o)});
+  const dh=g=>{const d=pISO(g.d),td=today(),rel=g.d===td?'TODAY':g.d===tmr0?'TOMORROW':g.d<td?'PAST':'';
+    return `<div class="dayhd${g.d===td?' td':g.d<td?' past':''}"><div class="dh-cal"><small>${MON[d.getMonth()]}</small><b>${d.getDate()}</b></div><div class="dh-t"><b>${DOWL[d.getDay()]}</b><span>${rel?`<em>${rel}</em> · `:''}${g.L.length} order${g.L.length>1?'s':''}${view==='prep'&&g.d===tmr0?' · prepare today':''}</span></div></div>`};
+  $('#list').innerHTML=strip+banner+(list.length?byDay.map(g=>dh(g)+g.L.map(card).join('')).join(''):`<div class="empty">${msg}</div>`);
   fillPhotos();
 }
 // manager: delivery fee per barangay (Santa Ana, Cagayan) — saved to the "Delivery Areas" tab
@@ -1953,7 +1979,7 @@ function card(o){
   const allOK=!c.notPrep.length&&!c.excess.length&&!c.pend.length&&!c.unchecked.length;
   const pill=st==='delivered'?(o.delivered.result?`<span class="pill p-fail">${RES[o.delivered.result].i} ${RES[o.delivered.result].t} ${time12(new Date(o.delivered.at))}</span>`:`<span class="pill p-done">✓ Delivered ${time12(new Date(o.delivered.at))}</span>`)
     :st==='way'?`<span class="pill p-way">🚚 On the way · ${time12(new Date(o.dispatched.at))}</span>`
-    :c.pend.length&&!c.notPrep.length?`<span class="pill p-appr">⚠ Needs manager approval</span>`
+    :c.pend.length&&!c.notPrep.length?(o.apprNo&&!o.approved?`<span class="pill p-fail">✕ Not approved</span>`:`<span class="pill p-appr">⚠ Needs manager approval</span>`)
     :allOK&&needBill(o)?`<span class="pill p-appr">🧾 For billing</span>`
     :allOK?`<span class="pill p-ready">Billed · ready to dispatch</span>`
     :c.prepared<total?`<span class="pill p-todo">Preparing ${c.prepared}/${total}</span>`
@@ -1991,22 +2017,26 @@ function card(o){
   const hasShort=c.shorts.length&&o.approved;
   return `<div class="card${isOpen?' open':''}${st!=='prep'&&!ed?' simple':''}" id="c-${o.id}">
     <button class="top" data-open="${o.id}">
-      <div class="cal ${calCls}"><small>${MON[d.getMonth()].toUpperCase()}</small><b>${d.getDate()}</b><span>${DOW[d.getDay()]}</span></div>
-      <div class="who"><div class="d1">${longDay(o.delivery)}${o.balanceOf?`<em class="bal">BALANCE${o.time?' · by '+t24(o.time):''}</em>`:''}${isAdd(o)?`<em class="addt">➕ ADDITIONAL${o.delivery===t&&st==='prep'?'':' · dispatch by '+t24(o.time)}</em>`:''}${st==='prep'&&isToday&&!o.balanceOf?'<em>TODAY</em>':''}${late?'<em class="late">LATE</em>':''}${(()=>{if(me.role==='rider')return'';const r=rating(o);if(r)return`<em class="dtag ${RT[r][1]}">${RT[r][0]}</em>`;const pw=prepWarn(o);if(pw)return`<em class="dtag ${RT[pw.k][1]}${pw.k==='crit'?' blink':''}">${esc(pw.m)}</em>`;const w=liveWarn(o);return w?`<em class="dtag ${['std','ok','crit'].includes(w.k)?RT[w.k][1]:''}${w.k==='crit'?' blink':''}">${esc(w.m)}</em>`:''})()}${(()=>{const l=prepDoneLate(o);return l?`<em class="late" title="Standard: ${dueTxt(o)}">⏰ LATE PREPARATION · done ${DOW[new Date(l).getDay()]} ${time12(new Date(l))}</em>`:''})()}${o.items.some(i=>i.carryFrom)?`<em class="late">⏰ ${o.items.filter(i=>i.carryFrom).length} LATE DELIVERY</em>`:''}</div>
-        ${o.online?`<div class="d2" style="color:var(--ink)">${o.online.queue?`<em class="dtag" style="margin-left:0;background:#7c3aed;color:#fff;font-size:14px">🛒 #${o.online.queue}</em> `:'🛒 '}<b>${esc(o.customer)}</b> · ${PAY[o.online.pay]||''}${o.online.pay==='cod'?` · <b>collect ${onTot(o.online)}</b>`:o.online.status==='confirmed'?' · paid ✓':''}<br>📍 ${esc(o.online.address)}${o.online.phone?` · 📞 <a href="tel:${esc(o.online.phone)}" onclick="event.stopPropagation()">${esc(o.online.phone)}</a> · <a href="sms:${esc(o.online.phone)}" onclick="event.stopPropagation()">text</a>`:''}${o.online.note?' · 📝 '+esc(o.online.note):''}${o.dispatched&&!o.delivered?'<br><b style="color:var(--red)">📞 Call or text the customer now — order is out for delivery</b>':''}</div>`:''}
-        ${o.delivered&&o.delivered.result?`<div class="d2" style="color:var(--rose)"><b>${RES[o.delivered.result].i} ${RES[o.delivered.result].t}</b> · reason: <b>${esc(o.delivered.why||'not given')}</b> · by ${esc(o.delivered.by||'')}</div>`:''}
-        <div class="d2">${o.dr?`<em class="drchip">🧾 ${esc(o.dr.no)}</em> `:''}${o.balanceOf?'Left qty from '+day(o.balanceFrom):'Delivery date'}${o.use==='Carry-over'?' · <b style="color:var(--violet)">↪ Carry-over items</b>':o.use?' · Use '+esc(o.use):''} · <span class="cust">${esc(o.customer)}</span></div></div>
-      ${pill}<span class="arrow">›</span></button>
+      <div class="who2"><div class="cname">${o.online&&o.online.queue?`<em class="qno">🛒 #${o.online.queue}</em> `:''}${esc(o.customer)}</div>
+        <div class="ctags">${o.balanceOf?`<em class="bal">BALANCE${o.time?' · by '+t24(o.time):''}</em>`:''}${isAdd(o)?`<em class="addt">➕ ADDITIONAL${o.delivery===t&&st==='prep'?'':' · dispatch by '+t24(o.time)}</em>`:''}${late?'<em class="late">LATE</em>':''}${(()=>{if(me.role==='rider')return'';const r=rating(o);if(r)return`<em class="dtag ${RT[r][1]}">${RT[r][0]}</em>`;const pw=prepWarn(o);if(pw)return`<em class="dtag ${RT[pw.k][1]}${pw.k==='crit'?' blink':''}">${esc(pw.m)}</em>`;const w=liveWarn(o);return w?`<em class="dtag ${['std','ok','crit'].includes(w.k)?RT[w.k][1]:''}${w.k==='crit'?' blink':''}">${esc(w.m)}</em>`:''})()}${(()=>{const l=prepDoneLate(o);return l?`<em class="late" title="Standard: ${dueTxt(o)}">⏰ LATE PREPARATION · done ${DOW[new Date(l).getDay()]} ${time12(new Date(l))}</em>`:''})()}${o.items.some(i=>i.carryFrom)?`<em class="late">⏰ ${o.items.filter(i=>i.carryFrom).length} LATE DELIVERY</em>`:''}${o.dr?`<em class="drchip">🧾 ${esc(o.dr.no)}</em>`:''}${o.use==='Carry-over'?'<em class="bal">↪ CARRY-OVER</em>':''}${o.apprNo&&!o.approved&&st==='prep'?'<em class="late">✕ NOT APPROVED</em>':''}${o.note?`<em class="nt">📝 ${esc(o.note.length>48?o.note.slice(0,46)+'…':o.note)}</em>`:''}${o.online&&o.online.pay==='cod'&&!o.delivered?`<em class="nt">💵 collect ${onTot(o.online)}</em>`:''}</div></div>
+      <div class="cright">${pill}<span class="arrow">▾</span></div></button>
     <div class="body">
+      <div class="cinfo">📅 <b>${longDay(o.delivery)}</b>${o.use&&o.use!=='Carry-over'?' · use '+esc(o.use):''}${o.balanceOf?' · left qty from the '+day(o.balanceFrom)+' order':''}${o.createdBy?' · by '+esc(o.createdBy):''}</div>
+      ${o.online?`<div class="d2" style="color:var(--ink)">${o.online.queue?`<em class="dtag" style="margin-left:0;background:#7c3aed;color:#fff;font-size:14px">🛒 #${o.online.queue}</em> `:'🛒 '}<b>${esc(o.customer)}</b> · ${PAY[o.online.pay]||''}${o.online.pay==='cod'?` · <b>collect ${onTot(o.online)}</b>`:o.online.status==='confirmed'?' · paid ✓':''}<br>📍 ${esc(o.online.address)}${o.online.phone?` · 📞 <a href="tel:${esc(o.online.phone)}" onclick="event.stopPropagation()">${esc(o.online.phone)}</a> · <a href="sms:${esc(o.online.phone)}" onclick="event.stopPropagation()">text</a>`:''}${o.online.note?' · 📝 '+esc(o.online.note):''}${o.dispatched&&!o.delivered?'<br><b style="color:var(--red)">📞 Call or text the customer now — order is out for delivery</b>':''}</div>`:''}
+        ${o.delivered&&o.delivered.result?`<div class="d2" style="color:var(--rose)"><b>${RES[o.delivered.result].i} ${RES[o.delivered.result].t}</b> · reason: <b>${esc(o.delivered.why||'not given')}</b> · by ${esc(o.delivered.by||'')}</div>`:''}
+        
       ${steps}
       ${drBar(o,st)}${retBox(o)}
       ${hasShort?`<div class="apprline">✓ Short items approved by ${esc(o.approved.by)} · ${stamp(o.approved.at)}</div>`:''}
+      ${o.apprNo&&!o.approved&&st==='prep'?`<div class="apprline apprno">✕ <b>Not approved</b> by ${esc(o.apprNo.by)} · ${stamp(o.apprNo.at)}<br>Reason: <b>${esc(o.apprNo.reason)}</b><br><small>Fix it (prepare the missing qty), then ask for approval again.</small></div>`:''}
+      ${o.note?`<div class="onote">📝 ${esc(o.note)}</div>`:''}
       ${ed?'':nextHTML(o,c,st)}
       ${st==='prep'&&can('weigh')&&!ed&&!o.dr?`<div class="keys"><span>Type the weight</span><span><b>+</b> add up</span><span><b>0</b> no stock</span><span><b>C</b> cancelled</span><span><b>R</b> returned</span><span><b>V</b> void</span></div>`:''}
       ${ed?`<div class="help" style="display:flex;gap:8px;flex-wrap:wrap;padding-bottom:6px">
         <input class="edit-in" style="max-width:170px" type="date" data-oe="delivery" value="${o.delivery}">
         <input class="edit-in" style="max-width:150px" data-oe="use" value="${esc(o.use)}" placeholder="Date of use">
         <input class="edit-in" style="max-width:160px" data-oe="customer" value="${esc(o.customer)}" placeholder="Customer">
+        <input class="edit-in" style="flex:1;min-width:200px" data-oe="note" value="${esc(o.note||'')}" placeholder="📝 Note (optional)">
         ${!o.balanceOf?`<select class="edit-in" style="max-width:220px" data-oe="kind"><option value=""${isAdd(o)?'':' selected'}>📅 Advance preparation</option><option value="add"${isAdd(o)?' selected':''}>➕ Additional order</option></select>
         ${isAdd(o)?`<label class="unit" style="display:flex;gap:6px;align-items:center">Dispatch by <input class="edit-in" style="width:auto" type="time" data-oe="time" value="${esc(o.time||'')}"></label>`:''}`:''}</div>`:''}
       <table><thead><tr><th>Product</th><th class="r">Order</th>${showInv(st)?`<th class="r h-inv">${ed?'':'Left <small>stock − prepared · live</small>'}</th>`:''}<th class="r">${ed?'Unit':st==='prep'?'Prepared':'Sent'}</th><th class="h-s">${ed?'':'Status'}</th><th class="h-k">${ed?'':'Check'}</th><th>${ed?'':'Note'}</th></tr></thead><tbody>${rows}</tbody></table>
@@ -2269,12 +2299,21 @@ function openApproval(o){
       <label class="opt${s.d==='forfeit'?' sel':''}"><input type="radio" name="d-${i.id}" value="forfeit"${s.d==='forfeit'?' checked':''}><span class="grow">✕ Forfeit — usage date already lapsed<small>The missing qty will not be delivered — it will be listed in Undelivered items</small></span></label>
     </div>`}).join('')}
     ${me.role==='manager'?`<div class="pinrow">Approving as <b>${esc(me.name)}</b> (Manager)</div>`:`<div class="pinrow"><b>Manager PIN</b><br><span class="unit">Ask the manager to enter their PIN here to approve.</span><br><input id="ap-pin" type="password" inputmode="numeric" maxlength="4"> <span class="bad" id="ap-err"></span></div>`}
+    <details class="ap-no"${o.apprNo&&!o.approved?' open':''}><summary><b>✕ Not approved</b> — the team must fix it first</summary>
+      <label class="full">Reason <span class="unit">(required)</span><textarea class="edit-in" id="ap-why" rows="2" placeholder="e.g. Get stock from the chiller — customer needs the full 40 kg">${esc(o.apprNo&&!o.approved?o.apprNo.reason:'')}</textarea></label>
+      <div class="row-end"><button class="btn" id="ap-no" style="border-color:var(--rose);color:var(--rose)">✕ Not approved — send back</button></div></details>
     <div class="row-end"><button class="btn" data-x>Cancel</button><button class="big" id="ap-ok">Approve</button></div>`;
   $('#ap').classList.add('on');
 }
 $('#ap').addEventListener('change',e=>{if(e.target.type==='radio'){e.target.closest('.ap-item').querySelectorAll('.opt').forEach(l=>l.classList.toggle('sel',l.contains(e.target)))}});
 $('#ap').addEventListener('click',async e=>{
   const inp=e.target.closest('.opt input[type=date],.opt input[type=time]'); if(inp){const r=inp.closest('.opt').querySelector('input[type=radio]');if(!r.checked){r.checked=true;r.dispatchEvent(new Event('change',{bubbles:true}))}}
+  if(e.target.id==='ap-no'){const o=find(APO),why=$('#ap-why').value.trim();if(!why){alert('Type the reason why it is not approved.');$('#ap-why').focus();return}
+    let mgr=me.role==='manager'?me:null;
+    if(!mgr){const pin=($('#ap-pin')||{}).value||'';$('#ap-err').textContent='Checking…';
+      try{const name=await api('api_checkManager',session.token,pin);mgr={name};mgrPinForSync=pin}catch(err){const m=errMsg(err);$('#ap-err').textContent=/PIN/.test(m)?'Wrong manager PIN':isNet(m)?'No internet — needs internet':'Server error: '+m;return}}
+    keepUndo();if(o.approved){removeFollowUps(o);o.items.forEach(i=>{if(i.short)i.short=null});o.approved=null}
+    o.apprNo={by:mgr.name,at:Date.now(),reason:why};save();clearTimeout(flushTimer);flush();$('#ap').classList.remove('on');render();toast('✕ Not approved — sent back to the team',true);return}
   if(e.target.id!=='ap-ok')return;
   const o=find(APO), blocks=[...document.querySelectorAll('#ap .ap-item')];
   const picks=blocks.map(b=>({id:b.dataset.ap,r:b.querySelector('input[type=radio]:checked'),date:b.querySelector('.ap-date').value,time:b.querySelector('.ap-time').value}));
@@ -2285,7 +2324,7 @@ $('#ap').addEventListener('click',async e=>{
     catch(err){const m=errMsg(err);$('#ap-err').textContent=/PIN/.test(m)?'Wrong manager PIN':isNet(m)?'No internet — approval needs internet':'Server error: '+m;return}}
   keepUndo(); const at=Date.now(); removeFollowUps(o);
   picks.forEach(p=>{const[,i]=findItem(p.id);i.short={d:p.r.value,date:p.r.value==='carry'?(p.date||carryDate(o)):'',time:p.r.value==='later'?p.time:'',qty:shortOf(i),by:mgr.name,at}});
-  o.approved={by:mgr.name,at}; spawnFollowUps(o); save(); clearTimeout(flushTimer); flush(); $('#ap').classList.remove('on'); render();
+  o.approved={by:mgr.name,at}; o.apprNo=null; spawnFollowUps(o); save(); clearTimeout(flushTimer); flush(); $('#ap').classList.remove('on'); render();
   const sched=o.items.filter(i=>i.short&&i.short.made).map(i=>i.product+' → '+(i.short.d==='carry'?day(i.short.date):'later today'));
   toast('✓ Approved by '+mgr.name+(sched.length?' · added for prep: '+sched.join(', '):''),true);
 });
@@ -2402,12 +2441,12 @@ function resetChecks(o,i){removeFollowUp(i);i.checked=null;i.short=null;o.approv
 async function saveThenAsync(){if(dirtyOrders().length){clearTimeout(flushTimer);try{await flush()}catch(e){}}}
 document.addEventListener('click',async e=>{
   const im=e.target.closest('img[data-ph]');if(im){$('#v-img').src=im.src;$('#v-cap').textContent=im.dataset.cap;$('#viewer').classList.add('on');return}
-  const j=e.target.closest('[data-jump]');if(j){const t=find(j.dataset.jump);if(t){view=stage(t);openId=t.id;editId=null;render();const el=document.getElementById('c-'+t.id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'})}return}
+  const j=e.target.closest('[data-jump]');if(j){const t=find(j.dataset.jump);if(t){view=stage(t);openId=t.id;editId=null;dateF=t.delivery;render();const el=document.getElementById('c-'+t.id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'})}return}
   const b=e.target.closest('button');if(!b||b.closest('.modal')||b.closest('#login'))return;const d=b.dataset;
   if(d.dept){fixing.clear();const L=DLAST[d.dept];if(L)return deptGo(L.v,L.sub);const T=deptDefs({}),f=T[d.dept].tabs.find(t=>t.v);return deptGo(f.v,f.sub)}
   if(d.dview){fixing.clear();return deptGo(d.dview,d.dsub)}
   if(d.dact){return deptAct(d.dact)}
-  if(d.view){view=d.view;openId=null;editId=null;dateF='';fixing.clear();if(me&&me.role==='manager'){DLAST[deptOf(view)]={v:view,sub:''};try{localStorage.setItem('fms_dlast',JSON.stringify(DLAST))}catch(e){}}render();return}
+  if(d.view){view=d.view;openId=null;editId=null;dateF=null;fixing.clear();if(me&&me.role==='manager'){DLAST[deptOf(view)]={v:view,sub:''};try{localStorage.setItem('fms_dlast',JSON.stringify(DLAST))}catch(e){}}render();return}
   if(d.df!==undefined){dateF=d.df;openId=null;render();return}
   if(d.note){notes.add(d.note);render();const x=document.querySelector(`[data-r="${d.note}"]`);if(x)x.focus();return}
   if(d.tallyall){const o=find(d.tallyall);check(o).unchecked.forEach(i=>{i.checked={by:me.name,at:Date.now()}});save();render();toast('All items marked tally');return}
@@ -2499,20 +2538,20 @@ function preview(){const res=parse($('#txt').value);
   return res}
 let PICKREM=true;
 $('#prev').addEventListener('change',e=>{if(e.target.dataset.pick!==undefined){PICK[e.target.dataset.pick]=e.target.value;preview()}if(e.target.id==='mtrem')PICKREM=e.target.checked});
-$('#newbtn').onclick=()=>{PICK={};$('#txt').value='';$('#adddate').value='';$('#addtime').value='';document.querySelectorAll('#m .pby').forEach(x=>x.textContent=t24(prepBy()));setOtype('adv');custs();preview();$('#m').classList.add('on');setTimeout(()=>$('#txt').focus(),50)};
+$('#newbtn').onclick=()=>{PICK={};$('#txt').value='';$('#onote').value='';$('#adddate').value='';$('#addtime').value='';document.querySelectorAll('#m .pby').forEach(x=>x.textContent=t24(prepBy()));setOtype('adv');custs();preview();$('#m').classList.add('on');setTimeout(()=>$('#txt').focus(),50)};
 $('#m').addEventListener('click',e=>{const b=e.target.closest('[data-c]');if(b){cust=b.dataset.c;custs();preview()}});
 $('#m').addEventListener('input',e=>{if(e.target.id==='custin'){cust=e.target.value.trim().toUpperCase();document.querySelectorAll('#custs button').forEach(x=>x.classList.remove('on'))}preview()});
 $('#save').onclick=()=>{const res=preview();if(!cust)return alert('Pick a customer first');
   if(otype==='add'&&!/^\d\d:\d\d$/.test($('#addtime').value))return alert('Set the target dispatch time for the additional order');
   const add=res.filter(r=>!dup(r));if(!add.length)return alert(res.length?'These orders are already saved.':'No items found. Lines should look like: 40kg Pork Ribs');
-  keepUndo();
+  keepUndo();const note=$('#onote').value.trim();
   add.forEach(r=>{const date=r.delivery||(otype==='add'?($('#adddate').value||today()):today());
-    if(otype==='add'){db.orders.push({id:uid(),customer:cust,delivery:date,use:r.use,kind:'add',time:$('#addtime').value,createdBy:me.name,createdAt:Date.now(),dispatched:null,delivered:null,approved:null,items:r.items.map(mkLine)});return}
+    if(otype==='add'){db.orders.push({id:uid(),customer:cust,delivery:date,use:r.use,kind:'add',time:$('#addtime').value,createdBy:me.name,createdAt:Date.now(),dispatched:null,delivered:null,approved:null,items:r.items.map(mkLine),note});return}
     // if a carry-over order already exists for that date, merge the new order into it
     const co=db.orders.find(o=>o.customer===cust&&o.delivery===date&&o.use==='Carry-over'&&!o.dispatched);
     const items=r.items.map(mkLine);
-    if(co){co.use=r.use;co.items=items.concat(co.items);co.createdBy=me.name}
-    else db.orders.push({id:uid(),customer:cust,delivery:date,use:r.use,createdBy:me.name,createdAt:Date.now(),dispatched:null,delivered:null,approved:null,items})});
+    if(co){co.use=r.use;co.items=items.concat(co.items);co.createdBy=me.name;if(note)co.note=[co.note,note].filter(Boolean).join(' · ')}
+    else db.orders.push({id:uid(),customer:cust,delivery:date,use:r.use,createdBy:me.name,createdAt:Date.now(),dispatched:null,delivered:null,approved:null,items,note})});
   if(PICKREM){const L=[],seen={};add.forEach(r=>r.items.forEach(i=>{const m=lineMatch(i);if(m.p&&m.how!=='exact'&&!seen[slugN(i.product)]){seen[slugN(i.product)]=1;L.push({code:m.p.c,name:i.product})}}));learnNames(L)}
   save();$('#m').classList.remove('on');view='prep';openId=null;render();toast(add.length+(otype==='add'?' additional':'')+' order'+(add.length>1?'s':'')+' saved',true)};
 
@@ -2520,9 +2559,10 @@ $('#save').onclick=()=>{const res=preview();if(!cust)return alert('Pick a custom
    INVENTORY · P.O. · RECEIVING · PRODUCTION · POS
    One stock count for the shop (Products tab › Available qty).
    ================================================================ */
-var STOCKV=['inv','po','recv','prod','pos','srep','crep','memb','owner','hr','att'];
+var STOCKV=['inv','count','po','recv','prod','pos','srep','crep','memb','owner','hr','att'];
 var STKEY='dp_stock_'+MODE, POSQ='dp_posq';
-let posMem=null, posMemUse=0;
+let posMem=null, posMemUse=0, posCharges=[], posNote='';
+const chgTotal=()=>r2(posCharges.reduce((a,c)=>a+(+c.amt||0),0));
 let ST=null, cart=[], posCat='', posQ='', posPrice='retail', posCust='', posPay='cash', posDisc='', posCash='', posRef='';
 let posOrder=null, invQ='', invCat='', poEdit=null, recvId=null, recvPhoto='', prodF=null, posSending=false;
 const pBy=c=>ST&&ST.products.find(p=>p.code===c);
@@ -2543,7 +2583,7 @@ async function renderStock(v,force){
   if(view!==v||!me)return;drawStock()}
 function drawStock(){const v=view;if(!me||!session||!STOCKV.includes(v))return;                 // logged out while something was loading
   const a=document.activeElement,keep=a&&a.closest&&a.closest('#list')&&a.dataset&&a.dataset.k?{k:a.dataset.k,s:a.selectionStart}:null;
-  $('#list').innerHTML=`<div class="rep stk" data-v="${v}">${(ST.offline?'<div class="stoff">📴 Offline — showing the last saved data.</div>':'')+{inv:invHTML,po:poHTML,recv:recvHTML,prod:prodHTML,pos:posHTML,srep:srepHTML,crep:crepHTML,memb:membHTML,owner:ownerHTML,hr:hrHTML,att:attHTML}[v]()}</div>`;
+  $('#list').innerHTML=`<div class="rep stk" data-v="${v}">${(ST.offline?'<div class="stoff">📴 Offline — showing the last saved data.</div>':'')+{inv:invHTML,count:countHTML,po:poHTML,recv:recvHTML,prod:prodHTML,pos:posHTML,srep:srepHTML,crep:crepHTML,memb:membHTML,owner:ownerHTML,hr:hrHTML,att:attHTML}[v]()}</div>`;
   $('#list').onclick=stockClick;$('#list').oninput=stockInput;$('#list').onchange=stockChange;
   $('#list').onkeydown=e=>{if(view!=='pos'||e.key!=='Enter')return;const t=e.target;
     if(t.id==='posq'){e.preventDefault();const f=posSug()[0];if(f)addToCart(f.code);return}
@@ -2609,7 +2649,7 @@ function srepHTML(){
     <details class="panel"${SRF.cust?' open':''}><summary><b>🥩 By product</b> <span class="unit">(${byI.length})</span></summary><div class="sc"><table class="stbl"><thead><tr><th>Product</th><th class="r">Qty</th><th class="r">Sales</th><th class="r">Cost</th><th class="r">Profit</th><th class="r">Margin</th></tr></thead><tbody>
       ${byI.map(g=>`<tr><td><b>${esc(g.k)}</b></td><td class="r">${qf(g.qty)} ${esc(g.unit||'')}</td><td class="r">${peso(g.sales)}</td><td class="r">${peso(g.cost)}</td><td class="r"><b style="color:${g.profit<0?'var(--rose)':'var(--green)'}">${peso(g.profit)}</b></td><td class="r">${pctP(g)}</td></tr>`).join('')}</tbody></table></div></details>
     <details class="panel"${SRF.cust?' open':''}><summary><b>🧾 Every item sold</b> <span class="unit">(${L.length} lines)</span></summary><div class="sc"><table class="stbl"><thead><tr><th>Date</th><th>Receipt</th><th>Customer</th><th>Type</th><th>Product</th><th class="r">Qty</th><th class="r">Price</th><th class="r">Amount</th><th class="r">Cost</th><th class="r">Profit</th></tr></thead><tbody>
-      ${L.slice().reverse().slice(0,400).map(l=>`<tr><td>${srDay(l.d)}</td><td>${esc(l.no)}${l.dr?'<br><small class="unit">'+esc(l.dr)+'</small>':''}</td><td>${esc(l.customer)}</td><td>${esc(l.ch)}</td><td>${esc(l.name)}</td><td class="r">${qf(l.qty)} ${esc(l.unit||'')}</td><td class="r">${peso(l.price)}</td><td class="r">${peso(l.amount)}</td>${l.pend?'<td class="r" colspan="2"><b class="warn">⏳ cost pending</b></td>':`<td class="r">${peso(l.costAmt)}${l.est?'*':''}${l.settled?'<br><small class="unit">cost from '+esc(l.settled)+'</small>':''}</td><td class="r">${peso(l.amount-l.costAmt)}</td>`}</tr>`).join('')}</tbody></table></div>
+      ${L.slice().reverse().slice(0,400).map(l=>`<tr><td>${srDay(l.d)}</td><td>${esc(l.no)}${l.dr?'<br><small class="unit">'+esc(l.dr)+'</small>':''}</td><td>${esc(l.customer)}</td><td>${esc(l.ch)}</td><td>${esc(l.name)}${l.label&&!l.code&&l.name!=='Discount'?' · '+esc(l.label):''}</td><td class="r">${qf(l.qty)} ${esc(l.unit||'')}</td><td class="r">${peso(l.price)}</td><td class="r">${peso(l.amount)}</td>${l.pend?'<td class="r" colspan="2"><b class="warn">⏳ cost pending</b></td>':`<td class="r">${peso(l.costAmt)}${l.est?'*':''}${l.settled?'<br><small class="unit">cost from '+esc(l.settled)+'</small>':''}</td><td class="r">${peso(l.amount-l.costAmt)}</td>`}</tr>`).join('')}</tbody></table></div>
       ${L.length>400?'<div class="unit">Showing the latest 400 — download the CSV for all.</div>':''}</details>`}`}
 /* ---------- CUSTOMER SALES — detailed report by customer and date range (statement-style) ---------- */
 let CRF={from:ymdL(new Date(new Date().getFullYear(),new Date().getMonth(),1)),to:ymdL(new Date()),pre:'month',cust:''},CR=null,CRload=false,CRerr='';
@@ -2617,7 +2657,7 @@ function crLoad(){if(CRload)return;CRload=true;CRerr='';const k=CRF.from+'|'+CRF
   api('api_salesReport',session.token,CRF.from,CRF.to).then(r=>{CR=r;CR.key=k}).catch(e=>{CRerr=errMsg(e)}).finally(()=>{CRload=false;if(view==='crep')drawStock()})}
 function crData(){const L=CR.lines.filter(l=>!CRF.cust||l.customer===CRF.cust),R=new Map();
   L.forEach(l=>{let r=R.get(l.no);if(!r){const x=CR.rc[l.no]||{};r={no:l.no,dr:l.dr,d:l.d,at:l.at,customer:l.customer,ch:l.ch,pay:l.pay,items:[],disc:0,hd:0,hdLbl:'',gross:0,balance:x.balance||0,terms:!!x.terms};R.set(l.no,r)}
-    if(l.name==='Discount'&&!l.code){if(l.hd){r.hd+=-l.amount;r.hdLbl=l.label}else r.disc+=-l.amount}else if(l.name==='Delivery fee'&&!l.code)r.fee=(r.fee||0)+l.amount;else{r.items.push(l);r.gross+=l.amount}});
+    if(l.name==='Discount'&&!l.code){if(l.hd){r.hd+=-l.amount;r.hdLbl=l.label}else r.disc+=-l.amount}else if(l.name==='Delivery fee'&&!l.code)r.fee=(r.fee||0)+l.amount;else if(l.name==='Other charge'&&!l.code){(r.oth=r.oth||[]).push(l);r.fee=(r.fee||0)+l.amount}else{r.items.push(l);r.gross+=l.amount}});
   const rows=[...R.values()].sort((a,b)=>a.at-b.at);rows.forEach(r=>{r.net=r2(r.gross+(r.fee||0)-r.disc-r.hd);r.paid=r.ch==='Return'?0:r2(r.net-r.balance)});return rows}
 function crepHTML(){const key=CRF.from+'|'+CRF.to;if((!CR||CR.key!==key)&&!CRerr)crLoad();
   const P=[['today','Today'],['yday','Yesterday'],['week','This week'],['month','This month'],['last','Last month'],['year','This year']];
@@ -2645,7 +2685,7 @@ function crepHTML(){const key=CRF.from+'|'+CRF.to;if((!CR||CR.key!==key)&&!CRerr
 function crRcpt(r){return `<div class="pocard"><div class="poh"><b>${esc(r.no)}</b>${r.dr?' <span class="unit">'+esc(r.dr)+'</span>':''}<span class="unit">&nbsp;· ${srDay(r.d)} · ${esc(r.ch)} · ${esc(r.pay||'')}</span><span style="flex:1"></span>
     ${r.ch==='Return'?badge('RETURN','red'):r.balance>0?badge('UNPAID '+peso(r.balance),'red'):badge('PAID','green')}</div>
     <div class="sc"><table class="stbl"><tbody>${r.items.map(l=>`<tr><td>${esc(l.name)}</td><td class="r">${qf(l.qty)} ${esc(l.unit||'')}</td><td class="r">${peso(l.price)}</td><td class="r">${peso(l.amount)}</td></tr>`).join('')}
-    ${r.fee?`<tr><td colspan="3">Delivery fee</td><td class="r">${peso(r.fee)}</td></tr>`:''}${r.disc?`<tr><td colspan="3">Discount</td><td class="r">−${peso(r.disc)}</td></tr>`:''}${r.hd?`<tr><td colspan="3">${esc(r.hdLbl||'Customer discount')}</td><td class="r">−${peso(r.hd)}</td></tr>`:''}
+    ${r.fee?`<tr><td colspan="3">${r.oth?'Delivery fee & other charges<br><small class="unit">'+r.oth.map(x=>esc(x.label)).join(', ')+'</small>':'Delivery fee'}</td><td class="r">${peso(r.fee)}</td></tr>`:''}${r.disc?`<tr><td colspan="3">Discount</td><td class="r">−${peso(r.disc)}</td></tr>`:''}${r.hd?`<tr><td colspan="3">${esc(r.hdLbl||'Customer discount')}</td><td class="r">−${peso(r.hd)}</td></tr>`:''}
     <tr class="srtot"><td colspan="3"><b>Net</b></td><td class="r"><b>${peso(r.net)}</b></td></tr></tbody></table></div></div>`}
 function crCsv(){const rows=crData(),out=[['Date','Receipt','DR','Customer','Type','Payment','Product','Qty','Unit','Price','Amount','Receipt net','Paid','Unpaid']];
   rows.forEach(r=>{r.items.forEach((l,i)=>out.push([r.d,r.no,r.dr,r.customer,r.ch,r.pay,l.name,l.qty,l.unit,l.price,l.amount,i?'':r.net,i?'':r.paid,i?'':r.balance]));
@@ -3119,13 +3159,65 @@ function owCollect(){const O=OW,cust={},B=[['Not yet due',a=>a.over===0],['1–3
       ${(O.custDisc||[]).map(x=>`<span class="sb sb-violet" style="margin-left:6px">${esc(x.name)} ${x.pct}%</span>`).join('')||' <i>none</i>'} <button class="btn sm" data-cdisc style="margin-left:6px">✏ Edit</button></div></div>
     <div class="panel"><h3>📤 Payables — unpaid suppliers & bills</h3>${O.ap.map(a=>{const late=a.due&&a.due<today();return `<div class="posx-row"><span><b>${esc(a.supplier)}</b> · ${esc(a.no)} <small class="unit">${(TERMS[a.terms]||'').replace(/^\S+ /,'')}${a.received?'':' · not received yet'} · due ${a.due?day(a.due):'on delivery'}${late?' · <b style="color:var(--rose)">overdue</b>':''}</small></span><b>${a.payBy==='cashier'?badge('cashier to pay','violet')+' ':''}${peso(a.amount)} <button class="go sm" data-owpay="${a.kind}:${a.id}">Pay</button></b></div>`}).join('')||'<div class="unit">Nothing unpaid.</div>'}
     <div class="unit">Supplier P.O.s and charged bills. Paid from the drawer? The cashier does it in POS › Cash out.</div></div>`}
+/* ---------- 🧮 STOCK COUNT (inventory reconciliation) ---------- */
+let CT=null,CTload=false,CTerr='',CTL={},CTq='',CTcat='',CTrev=null,CTsaveT=null,CTview=null;
+function ctLoad(){if(CTload)return;CTload=true;CTerr='';api('api_counts',session.token).then(r=>{CT=r;if(r.open&&r.open.status==='counting'){r.open.lines.forEach(l=>{if(CTL[l.code]===undefined&&l.cnt!==''&&l.cnt!=null)CTL[l.code]=String(l.cnt)})}}).catch(e=>CTerr=errMsg(e)).finally(()=>{CTload=false;if(view==='count')drawStock()})}
+const CNTF={none:'No schedule',daily:'Every day',weekly:'Every week',monthly:'Every month'},DOWN=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const cntSched=H=>H.freq==='weekly'?'Every '+DOWN[H.dow]:H.freq==='monthly'?(H.dom==='last'?'Last day of every month':'Every month on day '+H.dom):CNTF[H.freq];
+function ctSave(lines,submit){return api('api_countSave',session.token,CT.open.id,lines,submit)}
+function ctQueue(){clearTimeout(CTsaveT);CTsaveT=setTimeout(()=>{if(!CT||!CT.open||CT.open.status!=='counting')return;const L=CT.open.lines.map(l=>({code:l.code,cnt:CTL[l.code]??''}));ctSave(L,false).then(r=>{const s=$('#ct-saved');if(s)s.textContent='✓ Saved '+new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})}).catch(e=>{const s=$('#ct-saved');if(s)s.textContent='⚠ Not saved — '+errMsg(e)})},1200)}
+function ctVarRows(L,mode){const M=me.role==='manager',show=L.filter(l=>l.diff),rows=(mode==='all'?L:show);
+  return `<div class="sc"><table class="stbl ctv"><thead><tr><th>Product</th><th class="r">System</th><th class="r">Counted</th><th class="r">Difference</th>${M?'<th class="r">Value</th>':''}<th>Reason</th></tr></thead><tbody>
+  ${rows.map(l=>`<tr class="${l.big?'ctbig':''}"><td><b>${esc(l.name)}</b><br><small class="unit">${esc(l.cat)}</small></td><td class="r">${qf(l.sys)} ${esc(l.unit)}</td><td class="r"><b>${qf(l.cnt)}</b></td>
+    <td class="r">${l.diff?`<b style="color:${l.diff<0?'var(--rose)':'var(--green)'}">${l.diff>0?'+':''}${qf(l.diff)}</b>`:'✓'}${l.big?'<br><span class="sb sb-red">BIG</span>':''}</td>${M?`<td class="r" style="color:${l.val<0?'var(--rose)':'var(--green)'}">${l.val?(l.val<0?'−':'+')+peso(Math.abs(l.val)):''}</td>`:''}
+    <td>${mode==='edit'&&l.diff?`<input class="edit-in" data-cw="${esc(l.code)}" value="${esc(CTrev.why[l.code]??l.why??'')}" placeholder="${l.big?'Required — e.g. spoiled, trimming, wrong entry':'optional'}">`:esc(l.why||'')}</td></tr>`).join('')||`<tr><td colspan="${M?6:5}" class="empty">✓ No variances — every count matches the system.</td></tr>`}</tbody></table></div>`}
+function countHTML(){if(!CT&&!CTerr){ctLoad();return '<div class="empty">Loading…</div>'}if(CTerr)return `<div class="empty">⚠ ${esc(CTerr)}<br><br><button class="btn" data-ctre>↻ Try again</button></div>`;
+  const M=me.role==='manager',H=CT.set,X=CT.open;
+  const head=`<div class="shead"><div><h2>🧮 Stock count</h2><div class="unit">${esc(cntSched(H))}${CT.next?' · next '+day(CT.next):''} · big loss / gain = ${peso(H.bigAmt).replace('.00','')} or ${H.bigPct}% and up (needs a reason)</div></div>
+    <div class="sbtns">${M?'<button class="btn sm" data-ctset>⚙ Schedule & rules</button>':''}<button class="btn sm" data-ctre>↻ Refresh</button></div></div>
+    ${CT.dueOpen&&!X?`<div class="snote cntban due">⏰ <b>Stock count due</b> — scheduled ${day(CT.due)}. Start it below.</div>`:''}`;
+  const hist=`<div class="panel"><h3>Past counts</h3><div class="sc"><table class="stbl"><thead><tr><th>Count</th><th>Date</th><th>By</th><th>Status</th>${M?'<th class="r">Loss</th><th class="r">Gain</th>':''}<th></th></tr></thead><tbody>
+    ${CT.list.filter(x=>!X||x.id!==X.id).map(x=>`<tr><td><b>${esc(x.no)}</b></td><td>${stamp(x.at)}</td><td>${esc(x.by)}</td><td>${x.status==='approved'?badge('Approved'+(x.ok?' · '+x.ok.by:''),'green'):x.status==='cancelled'?badge('Cancelled','gray'):badge(x.status,'amber')}</td>${M?`<td class="r" style="color:var(--rose)">${x.loss?'−'+peso(x.loss):''}</td><td class="r" style="color:var(--green)">${x.gain?'+'+peso(x.gain):''}</td>`:''}<td>${x.status==='approved'?`<button class="btn sm" data-ctview="${x.id}">View</button>`:''}</td></tr>`).join('')||'<tr><td colspan="7" class="empty">No count yet.</td></tr>'}</tbody></table></div></div>`;
+  if(CTview)return head+`<div class="panel"><div class="poh"><h3 style="margin:0">${esc(CTview.no)} · ${stamp(CTview.at)}</h3><span style="flex:1"></span><button class="btn sm" data-ctclose>Close</button></div>
+    <div class="unit">Counted by ${esc(CTview.by)}${CTview.ok?' · approved by '+esc(CTview.ok.by)+' '+stamp(CTview.ok.at):''}</div>${M?`<div class="kpis" style="margin:8px 0"><div><b style="color:var(--rose)">−${peso(CTview.loss)}</b><span>loss</span></div><div><b style="color:var(--green)">+${peso(CTview.gain)}</b><span>gain</span></div><div><b>${peso(CTview.gain-CTview.loss)}</b><span>net</span></div></div>`:''}${ctVarRows(CTview.lines,'')}</div>`+hist;
+  if(!X)return head+`<div class="panel ctstart"><h3>Start a stock count</h3><p>Count every product on the shelves, chillers and freezers. You <b>won't see the system qty</b> while counting — type what you really count. Sales can continue.</p>
+    <button class="go" data-ctstart>▶ Start stock count</button></div>`+hist;
+  // submitted
+  if(X.status==='submitted'){const v=X.lines;return head+`<div class="panel"><div class="poh"><h3 style="margin:0">${esc(X.no)} · submitted by ${esc(X.sub.by)} ${stamp(X.sub.at)}</h3></div>
+    ${M?`<div class="kpis" style="margin:8px 0"><div><b style="color:var(--rose)">−${peso(X.loss)}</b><span>loss</span></div><div><b style="color:var(--green)">+${peso(X.gain)}</b><span>gain</span></div><div><b>${peso(X.gain-X.loss)}</b><span>net</span></div><div><b>${v.filter(l=>l.diff).length}</b><span>products with variance · ${v.filter(l=>l.big).length} big</span></div></div>`:'<div class="snote">⏳ Waiting for the manager to review and approve.</div>'}
+    ${ctVarRows(v,'')}
+    ${M?`<div class="fgrid"><label class="full">Note <span class="unit">(required to send back)</span><input class="edit-in" id="ct-note" placeholder="e.g. Recount chicken wings in freezer 2"></label></div>
+      <div class="row-end"><button class="btn" data-ctcancel>Cancel count</button><button class="btn" data-ctback>↩ Send back — recount</button><button class="go" data-ctok>✓ Approve — adjust stock & book loss / gain</button></div>`:''}</div>`+hist}
+  // review before submit
+  if(CTrev&&CTrev.id===X.id)return head+`<div class="panel"><div class="poh"><h3 style="margin:0">Variances · ${esc(X.no)}</h3></div>
+    <div class="unit">System qty when the count started vs what you counted. <b>Big</b> losses or gains need a reason.</div>
+    ${ctVarRows(CTrev.lines,'edit')}
+    <div class="row-end"><button class="btn" data-ctedit>← Back to counting</button><button class="go" data-ctsubmit>Submit for approval</button></div></div>`;
+  // counting
+  const L=X.lines,cats=[...new Set(L.map(l=>l.cat))],q=CTq.trim().toLowerCase(),n=L.filter(l=>(CTL[l.code]??'')!=='').length;
+  const vis=L.filter(l=>(!CTcat||l.cat===CTcat)&&(!q||l.name.toLowerCase().includes(q)));
+  return head+`<div class="panel"><div class="poh"><h3 style="margin:0">${esc(X.no)} · counting</h3><span class="unit">&nbsp;started ${stamp(X.at)} by ${esc(X.by)}</span><span style="flex:1"></span><span class="unit" id="ct-saved"></span></div>
+    ${X.back?`<div class="snote" style="background:#fee2e2">↩ <b>Sent back by ${esc(X.back.by)}:</b> ${esc(X.back.note)}</div>`:''}
+    <div class="ctprog"><i style="width:${Math.round(n/L.length*100)}%"></i></div><div class="unit" id="ct-n"><b>${n}</b> of ${L.length} products counted</div>
+    <div class="srrow"><input class="edit-in" data-k="ctq" value="${esc(CTq)}" placeholder="🔎 Find a product"><div class="chips2"><button class="${CTcat?'':'on'}" data-ctcat="">All</button>${cats.map(c=>`<button class="${CTcat===c?'on':''}" data-ctcat="${esc(c)}">${esc(c)}</button>`).join('')}</div></div>
+    <div class="ctlist">${vis.map(l=>`<label class="ctrow${(CTL[l.code]??'')!==''?' done':''}"><span><b>${esc(l.name)}</b><small>${esc(l.cat)}</small></span><span class="ctin"><input class="edit-in nq" type="number" step="0.001" inputmode="decimal" data-cc="${esc(l.code)}" value="${esc(CTL[l.code]??'')}" placeholder="count"><em>${esc(l.unit)}</em></span></label>`).join('')}</div>
+    <div class="row-end">${M?'<button class="btn" data-ctcancel>Cancel count</button>':''}<button class="go" data-ctreview>Review variances ›</button></div></div>`}
+function ctSetDialog(){const H=CT.set,box=stBox();$('#stb').innerHTML=`<h2>⚙ Stock count schedule & rules</h2><div class="fgrid">
+  <label>How often<select class="edit-in" id="cs-f">${Object.keys(CNTF).map(k=>`<option value="${k}"${H.freq===k?' selected':''}>${CNTF[k]}</option>`).join('')}</select></label>
+  <label>Day of the week<select class="edit-in" id="cs-w">${DOWN.map((d,i)=>`<option value="${i}"${+H.dow===i?' selected':''}>${d}</option>`).join('')}</select></label>
+  <label>Day of the month<select class="edit-in" id="cs-m"><option value="last"${H.dom==='last'?' selected':''}>Last day</option>${Array.from({length:28},(_,i)=>`<option${+H.dom===i+1?' selected':''}>${i+1}</option>`).join('')}</select></label>
+  <label>Big loss / gain from (₱)<input class="edit-in nq" type="number" id="cs-a" value="${H.bigAmt}"></label><label>…or from (% of the system qty)<input class="edit-in nq" type="number" id="cs-p" value="${H.bigPct}"></label></div>
+  <div class="unit">Weekly uses the day of the week; monthly uses the day of the month. Big variances need a reason before the count can be submitted.</div>
+  <div class="row-end"><button class="btn" data-x>Cancel</button><button class="go" id="cs-ok">Save</button></div>`;box.classList.add('on');
+  $('#cs-ok').onclick=async()=>{try{CT=await api('api_countSet',session.token,{freq:$('#cs-f').value,dow:$('#cs-w').value,dom:$('#cs-m').value,bigAmt:$('#cs-a').value,bigPct:$('#cs-p').value});box.classList.remove('on');toast('Saved');drawStock()}catch(e){alert(errMsg(e))}}}
 /* ---------- INVENTORY ---------- */
 function invHTML(){
   const mgr=can('invEdit'),cats=[...new Set(ST.products.map(p=>p.cat))].sort();
   const q=invQ.trim().toLowerCase(),list=ST.products.filter(p=>(!invCat||p.cat===invCat)&&(!q||(p.name+' '+p.code).toLowerCase().includes(q)));
   const low=ST.products.filter(isLow),out=ST.products.filter(p=>p.avail<=0),appr=(ST.pos||[]).filter(p=>p.status==='for approval');
   const val=mgr?ST.products.reduce((s,p)=>s+Math.max(0,p.avail)*(p.cost||0),0):0;
-  return `<div class="shead"><div><h2>🗃️ Inventory</h2><div class="unit">One stock count for the shop. It goes up with <b>Receiving</b> and <b>Production</b>, and down with <b>POS sales</b> (walk-in and delivery orders cashed out by the cashier) and <b>online orders</b>. Prepared orders are <b>not</b> taken out until the cashier rings them up.${mgr?'':' <b>View only</b> — the Manager changes products and counts.'}</div></div>
+  const CN=ST.cnt||{},cban=CN.open==='counting'?`<button class="snote cntban" data-sview="count">🧮 <b>Stock count in progress</b> — tap to continue</button>`:CN.open==='submitted'?`<button class="snote cntban" data-sview="count">🧮 <b>Stock count waiting for approval</b>${me.role==='manager'?' — tap to review':''}</button>`:CN.dueOpen?`<button class="snote cntban due" data-sview="count">⏰ <b>Stock count due</b> (${day(CN.due)}) — tap to start</button>`:'';
+  return cban+`<div class="shead"><div><h2>🗃️ Inventory</h2><div class="unit">One stock count for the shop. It goes up with <b>Receiving</b> and <b>Production</b>, and down with <b>POS sales</b> (walk-in and delivery orders cashed out by the cashier) and <b>online orders</b>. Prepared orders are <b>not</b> taken out until the cashier rings them up.${mgr?'':' <b>View only</b> — the Manager changes products and counts.'}</div></div>
     <div class="sbtns">${mgr?'<button class="go sm" data-padd>+ Add product</button><button class="btn sm" data-pimp>⬆ Import</button>':''}${mgr||me.role==='ops'?'<button class="btn sm" data-pconv>🔁 Convert</button>':''}<button class="btn sm" data-sref>↻ Refresh</button></div></div>
     <div class="kpis"><div><b>${ST.products.length}</b><span>products</span></div><div class="${low.length?'warn':''}"><b>${low.length}</b><span>low stock</span></div><div class="${out.length?'bad':''}"><b>${out.length}</b><span>out of stock</span></div>${mgr?`<div><b>${peso(val)}</b><span>stock value (cost)</span></div>`:''}</div>
     ${mgr&&appr.length?`<div class="snote violet">⚠ <b>${appr.length}</b> receiving(s) don't match the P.O. and wait for your approval. <button class="btn sm" data-sview="po">Open P.O.</button></div>`:''}
@@ -3287,7 +3379,7 @@ function productDialog(code){const p=code?pBy(code):{code:'',name:'',cat:'',unit
     try{ST=await api('api_adjust',session.token,p.code,v,$('#pf-cn').value);stCache();box.classList.remove('on');toast('Stock count saved');drawStock()}catch(e){alert(errMsg(e))}}}
 
 /* ---------- PURCHASE ORDERS (manager) ---------- */
-function poLines(){return poEdit.items.map((l,k)=>{const p=pBy(l.code);return `<tr><td>${uSel(l.code,'','data-pol="'+k+'"')}</td><td><input class="edit-in nq" type="number" step="0.001" inputmode="decimal" data-poq="${k}" data-k="poq${k}" value="${l.qty}" placeholder="Qty"></td><td>${p?esc(p.unit):''}</td><td><input class="edit-in nq" type="number" step="0.01" inputmode="decimal" data-poc="${k}" data-k="poc${k}" value="${l.cost}" placeholder="Cost ₱"></td><td class="r" data-pa="${k}">${peso((+l.qty||0)*(+l.cost||0))}</td><td><button class="del" data-podel="${k}">✕</button></td></tr>`}).join('')}
+function poLines(){return poEdit.items.map((l,k)=>{const p=pBy(l.code);return `<tr><td>${uSel(l.code,'','data-pol="'+k+'"')}</td><td><input class="edit-in nq" type="number" step="0.001" inputmode="decimal" data-poq="${k}" data-k="poq${k}" value="${l.qty}" placeholder="Qty"></td><td>${p?(/^pc/i.test(p.unit)?esc(p.unit):`<select class="edit-in" data-pou="${k}" style="width:auto"><option value=""${l.ounit?'':' selected'}>${esc(p.unit)}</option><option value="Pc"${l.ounit?' selected':''}>Pc</option></select>`):''}</td><td><input class="edit-in nq" type="number" step="0.01" inputmode="decimal" data-poc="${k}" data-k="poc${k}" value="${l.cost}" placeholder="Cost ₱"></td><td class="r" data-pa="${k}">${peso((+l.qty||0)*(+l.cost||0))}</td><td><button class="del" data-podel="${k}">✕</button></td></tr>`}).join('')}
 /* ---------- LIVE PIG / CARCASS P.O. & RECEIVING ---------- */
 const PIECE_CUTS=['Pork Skull'];   // counted per piece — not part of the weight / yield
 const YLOSS={good:17,band:0.5};    // lost weight 17% of liveweight = good (83% yield); below = very good; above = bad (needs a reason)
@@ -3319,7 +3411,7 @@ function expHTML(t,e){return `<div class="panel cc-exp"><h3 style="margin:0 0 6p
     <div class="cc-sum"><span>Total expenses</span><b id="cc-${t}-et">${peso(expTot(e))}</b></div></div>`}
 function carcassPOForm(){const c=poEdit.carcass,m=ccMoney(c);
   return `<div class="shead"><div><h2>🐖 ${poEdit.id?'Edit '+esc(poEdit.no):'New P.O. — live pig / carcass'}</h2><div class="unit">Payment = liveweight × price per kg. <b>Total cost (COGS) = payment + expenses</b> — this cost goes into the cuts when Operations receives and weighs them.</div></div></div>
-    <div class="panel"><div class="fgrid"><label>Supplier<input class="edit-in" id="po-sup" data-k="pos" value="${esc(poEdit.supplier)}" placeholder="Supplier / hog raiser"></label><label>Expected delivery<input class="edit-in" type="date" id="po-exp" value="${esc(poEdit.expected)}"></label>
+    <div class="panel"><div class="fgrid"><label>Supplier<input class="edit-in" id="po-sup" data-k="pos" value="${esc(poEdit.supplier)}" placeholder="Supplier / hog raiser"></label><label>Expected date<input class="edit-in" type="date" id="po-exp" value="${esc(poEdit.expected)}"></label><label>Receiving<select class="edit-in" id="po-rt"><option value="delivery"${(poEdit.rtype||'delivery')==='delivery'?' selected':''}>🚚 Delivered by the supplier</option><option value="pickup"${poEdit.rtype==='pickup'?' selected':''}>🛻 Pick up by us</option></select></label><label>Time <small class="unit">(optional)</small><input class="edit-in" type="time" id="po-et" value="${esc(poEdit.etime||'')}"></label>
       <label>No. of heads (pc)${ccIn('po','heads',c.heads,'1','1')}</label><label>Liveweight (kg)${ccIn('po','lw',c.lw,'e.g. 95','0.01')}</label><label>Price per kg liveweight (₱)${ccIn('po','price',c.price,'e.g. 180')}</label>
       <label>Payment<select class="edit-in" data-cft="po" data-cf="pay">${termOpts(c.pay)}</select></label><label>Who pays<select class="edit-in" id="po-by">${[['mgr','👔 Manager (bank / safe / e-wallet)'],['cashier','🧾 Cashier (from the drawer)']].map(([k,t])=>`<option value="${k}"${(poEdit.payBy||'mgr')===k?' selected':''}>${t}</option>`).join('')}</select></label>
       ${c.pay==='charge'?`<label>Due date<input class="edit-in" type="date" data-cft="po" data-cf="due" value="${esc(c.due)}"></label>`:`<label>OR / receipt no.<input class="edit-in" data-cft="po" data-cf="orNo" data-k="cforno" value="${esc(c.orNo)}" placeholder="optional"></label>`}
@@ -3340,6 +3432,7 @@ function carcassRecvForm(po){const c=po.carcass;
   if(!rcC||rcC.id!==po.id)rcC={id:po.id,lw:'',exp:JSON.parse(JSON.stringify(c.exp)),cuts:PIG_CUTS.map(n=>{const p=matchCut(n);return {name:n,code:p?p.code:'',kg:'',u:PIECE_CUTS.includes(n)||(p&&p.unit==='Pc')?'Pc':'Kg'}}),lossWhy:''};
   if(!rcC.exp.others.length)rcC.exp.others.push({desc:'',amt:''});
   return `<div class="shead"><div><h2>📥 Receive ${esc(po.no)} · ${esc(po.supplier)}</h2><div class="unit">${ccLine(po)}<br>1) Type the <b>actual liveweight</b>. 2) Check the expenses. 3) Weigh each cut and type the kg — leave blank what you didn't get. The cost of each cut is worked out by selling value.</div></div></div>
+    ${rxHTML(po)}
     <div class="panel"><div class="fgrid"><label>Actual liveweight (kg) <small class="unit">P.O.: ${qf(c.lw)} kg</small>${ccIn('rc','lw',rcC.lw,qf(c.lw))}</label></div></div>
     ${expHTML('rc',rcC.exp)}
     <div class="panel"><h3 style="margin:0 0 6px">🔪 Cuts — weigh (kg) or count (pc)</h3><div class="sc"><table class="stbl"><thead><tr><th>Cut</th><th>Product in inventory</th><th style="width:110px">Qty</th><th style="width:80px">Unit</th><th></th></tr></thead><tbody>
@@ -3384,14 +3477,14 @@ function poHTML(){
   if(poEdit&&poEdit.kind==='carcass')return carcassPOForm();
   if(poEdit){const tot=poEdit.items.reduce((s,l)=>s+(+l.qty||0)*(+l.cost||0),0);
     return `<div class="shead"><div><h2>📝 ${poEdit.id?'Edit '+esc(poEdit.no):'New purchase order'}</h2><div class="unit">Operations receives the delivery against this P.O. If what arrives is different, it waits for your approval.</div></div></div>
-    <div class="panel"><div class="fgrid"><label>Supplier<input class="edit-in" data-k="pos" id="po-sup" value="${esc(poEdit.supplier)}" placeholder="Supplier name"></label><label>Expected delivery<input class="edit-in" type="date" id="po-exp" value="${esc(poEdit.expected)}"></label>
+    <div class="panel"><div class="fgrid"><label>Supplier<input class="edit-in" data-k="pos" id="po-sup" value="${esc(poEdit.supplier)}" placeholder="Supplier name"></label><label>Expected date<input class="edit-in" type="date" id="po-exp" value="${esc(poEdit.expected)}"></label><label>Receiving<select class="edit-in" id="po-rt"><option value="delivery"${(poEdit.rtype||'delivery')==='delivery'?' selected':''}>🚚 Delivered by the supplier</option><option value="pickup"${poEdit.rtype==='pickup'?' selected':''}>🛻 Pick up by us</option></select></label><label>Time <small class="unit">(optional)</small><input class="edit-in" type="time" id="po-et" value="${esc(poEdit.etime||'')}"></label>
       <label>Payment<select class="edit-in" id="po-pay">${termOpts(poEdit.pay)}</select></label><label>Due date <small class="unit">(charge only)</small><input class="edit-in" type="date" id="po-due" value="${esc(poEdit.due||'')}"></label><label>Who pays<select class="edit-in" id="po-by">${[['mgr','👔 Manager (bank / safe / e-wallet)'],['cashier','🧾 Cashier (from the drawer)']].map(([k,t])=>`<option value="${k}"${(poEdit.payBy||'mgr')===k?' selected':''}>${t}</option>`).join('')}</select></label>
       <label class="full">Note<input class="edit-in" id="po-note" data-k="pon" value="${esc(poEdit.note)}"></label></div>
       <div class="sc"><table class="stbl lines po"><thead><tr><th>Product</th><th style="width:110px">Qty</th><th>Unit</th><th style="width:110px">Cost / unit</th><th class="r">Amount</th><th></th></tr></thead><tbody>${poLines()}</tbody>
       <tfoot><tr><td colspan="4"><button class="btn sm" data-poadd>+ Add line</button></td><td class="r"><b id="potot">${peso(tot)}</b></td><td></td></tr></tfoot></table></div>
       <div class="row-end"><button class="btn" data-pocancel>Cancel</button><button class="go" data-posave>💾 Save P.O.</button></div></div>`}
-  const row=p=>`<div class="pocard"><div class="poh"><b>${esc(p.no)}</b> · ${esc(p.supplier)} ${poBadge(p)}<span style="flex:1"></span><span class="unit">made ${stamp(p.madeAt)} by ${esc(p.madeBy)}${p.expected?' · expected '+day(p.expected):''}</span></div>
-    <div class="unit">${p.carcass?ccLine(p):p.items.map(i=>`${esc(i.name)} <b>${qf(i.qty)} ${esc(i.unit)}</b>${i.cost?' @ '+peso(i.cost):''}`).join(' · ')}${p.note?'<br>📝 '+esc(p.note):''}</div>
+  const row=p=>`<div class="pocard"><div class="poh"><b>${esc(p.no)}</b> · ${esc(p.supplier)} ${poBadge(p)}<span style="flex:1"></span><span class="unit">made ${stamp(p.madeAt)} by ${esc(p.madeBy)}${p.expected?' · expected '+day(p.expected):''} · ${p.rtype==='pickup'?'🛻 pick up':'🚚 delivery'}${p.etime?' '+time12h(p.etime):''}</span></div>
+    <div class="unit">${p.carcass?ccLine(p):p.items.map(i=>`${esc(i.name)} <b>${qf(i.qty)} ${esc(i.ounit||i.unit)}</b>${i.cost?' @ '+peso(i.cost)+(i.ounit?'/pc':''):''}`).join(' · ')}${p.note?'<br>📝 '+esc(p.note):''}</div>
     ${p.carcass&&p.recv&&p.recv.carcass&&p.status==='received'?`<details><summary class="unit"><b>🔪 Cuts received & cost per kg</b></summary>${cutTable(p.recv.carcass,p.carcass)}</details>`:''}
     ${p.status!=='cancelled'?poPayHTML(p):''}
     ${p.recv&&p.status!=='for approval'?`<div class="unit">📥 Received ${stamp(p.recv.at)} by ${esc(p.recv.by)}${p.recv.diff?' · <b>different from P.O.</b>':''}${p.approval&&p.recv.diff?' · approved by '+esc(p.approval.by):''}</div>`:''}
@@ -3399,8 +3492,8 @@ function poHTML(){
   return `<div class="shead"><div><h2>📝 Purchase orders</h2><div class="unit">Make a P.O. for each supplier delivery. Operations counts what arrives in <b>📥 Receiving</b>. Stock goes up only when it matches — or when you approve the difference.</div></div>
     <div class="sbtns"><button class="go sm" data-ponew>+ New P.O.</button><button class="go sm" data-ponewc>🐖 + Live pig P.O.</button><button class="btn sm" data-sref>↻ Refresh</button></div></div>
     ${retApproveHTML()}
-    ${appr.length?`<div class="panel apprp"><h3>⚠ Waiting for your approval <small>what arrived is different from the P.O.</small></h3>${appr.map(p=>`<div class="pocard"><div class="poh"><b>${esc(p.no)}</b> · ${esc(p.supplier)}<span style="flex:1"></span><span class="unit">received ${stamp(p.recv.at)} by <b>${esc(p.recv.by)}</b></span></div>
-      ${p.carcass?ccRecvDiff(p):recvTable(p.recv.lines)}${p.recv.note?`<div class="unit">📝 ${esc(p.recv.note)}</div>`:''}${p.recv.photo?`<button class="btn sm" data-rphoto="${esc(p.recv.photo)}">📷 Delivery receipt photo</button>`:''}
+    ${appr.length?`<div class="panel apprp"><h3>⚠ Waiting for your approval <small>actual qty is different from the supplier receipt</small></h3>${appr.map(p=>`<div class="pocard"><div class="poh"><b>${esc(p.no)}</b> · ${esc(p.supplier)}<span style="flex:1"></span><span class="unit">received ${stamp(p.recv.at)} by <b>${esc(p.recv.by)}</b></span></div>
+      ${p.carcass?ccRecvDiff(p):recvTable(p.recv.lines,p.recv)}${p.recv.note?`<div class="unit">📝 ${esc(p.recv.note)}</div>`:''}${p.recv.photo?`<button class="btn sm" data-rphoto="${esc(p.recv.photo)}">📷 Delivery receipt photo</button>`:''}
       <div class="fgrid"><label class="full">Note (optional)<input class="edit-in" data-anote="${p.id}"></label></div>
       <div class="row-end"><button class="btn" data-poreject="${p.id}">↩ Send back — receive again</button><button class="go" data-poapprove="${p.id}">✓ Approve — add received qty to stock</button></div></div>`).join('')}</div>`:''}
     <div class="panel"><h3>Purchase orders</h3>${all.filter(p=>p.status!=='for approval').map(row).join('')||'<div class="empty">'+(appr.length?'No other P.O.':'No P.O. yet. Tap <b>+ New P.O.</b>')+'</div>'}</div>`}
@@ -3416,8 +3509,9 @@ function retApproveHTML(){const L=retList('for approval');if(!L.length)return ''
     <div class="row-end"><button class="btn" data-rapp="${o.id}:${r.id}:0">Not approved</button><button class="go" data-rapp="${o.id}:${r.id}:1">✓ Approve return</button></div></div>`).join('')}</div>`}
 function ccRecvDiff(p){const c=p.carcass,rc=p.recv.carcass,a=ccMoney(c),b=ccMoney(c,rc),row=(t,x,y,f)=>`<tr class="${r2(x)!==r2(y)?'rlow':''}"><td>${t}</td><td class="r">${f(x)}</td><td class="r"><b>${f(y)}</b></td></tr>`;
   return `<div class="sc"><table class="stbl"><thead><tr><th></th><th class="r">P.O.</th><th class="r">Received</th></tr></thead><tbody>${row('Liveweight',a.lw,b.lw,v=>qf(v)+' kg')}${row('Payment',a.pay,b.pay,peso)}${row('Expenses',a.et,b.et,peso)}${row('<b>Total cost</b>',a.total,b.total,peso)}</tbody></table></div>${cutTable(rc,c)}`}
-function recvTable(lines){return `<div class="sc"><table class="stbl"><thead><tr><th>Product</th><th class="r">P.O. qty</th><th class="r">Received</th><th class="r">Difference</th></tr></thead><tbody>${lines.map(l=>{const d=r2(l.qty-l.ordered);
-  return `<tr class="${d?'rlow':''}"><td>${esc(l.name)}</td><td class="r">${qf(l.ordered)} ${esc(l.unit)}</td><td class="r"><b>${qf(l.qty)}</b> ${esc(l.unit)}</td><td class="r">${d?`<b style="color:${d<0?'var(--rose)':'var(--amber)'}">${d>0?'+':''}${qf(d)}</b>`:'✓'}</td></tr>`}).join('')}</tbody></table></div>`}
+function recvTable(lines,R){const hasR=lines.some(l=>l.rcpt!=null),u=l=>esc(String(l.ounit||l.unit||'').toLowerCase());return `${R&&(R.notFollowed||R.rcptNo)?`<div class="unit">${R.rcptNo?'🧾 Supplier receipt <b>'+esc(R.rcptNo)+'</b>':''}${R.notFollowed?` <span class="sb sb-amber">⚠ P.O. not followed</span> ${esc(R.nfWhy||'')}`:''}</div>`:''}
+  <div class="sc"><table class="stbl"><thead><tr><th>Product</th><th class="r">P.O.</th>${hasR?'<th class="r">Supplier receipt</th>':''}<th class="r">Actual</th><th class="r">Difference${hasR?' <small>(vs receipt)</small>':''}</th></tr></thead><tbody>${lines.map(l=>{const base=l.rcpt!=null?l.rcpt:l.ordered,got=l.ounit?l.pcs:l.qty,d=r2(got-base);
+  return `<tr class="${d?'rlow':''}"><td>${esc(l.name)}</td><td class="r">${qf(l.ordered)} ${u(l)}</td>${hasR?`<td class="r${l.rcpt!==l.ordered?' rfchg':''}">${qf(l.rcpt)} ${u(l)}</td>`:''}<td class="r"><b>${qf(got)}</b> ${u(l)}${l.ounit?`<br><small class="unit">${qf(l.qty)} ${esc(String(l.unit).toLowerCase())} weighed</small>`:''}</td><td class="r">${d?`<b style="color:${d<0?'var(--rose)':'var(--amber)'}">${d>0?'+':''}${qf(d)}</b>`:'✓'}</td></tr>`}).join('')}</tbody></table></div>`}
 
 /* ---------- PAYING: manager pays from a money account (never the drawer — the cashier pays from the drawer with POS › Cash out) ---------- */
 const noDrawer=L=>(L||[]).filter(a=>a.link!=='pos-cash');
@@ -3476,11 +3570,11 @@ function rvHTML(){const key=RVF.from+'|'+RVF.to;if((!RV||RV.key!==key)&&!RVerr)r
     ${R.pays.length?`<tr class="srtot"><td colspan="5"><b>Total paid</b></td><td class="r"><b>${peso(R.pays.reduce((a,x)=>a+x.amt,0))}</b></td></tr>`:''}</tbody></table></div>`;
   else if(RVtab==='unpaid')body=`<div class="unit">Every supplier P.O. still unpaid (any date).</div><div class="sc"><table class="stbl"><thead><tr><th>P.O.</th><th>Supplier</th><th>Terms</th><th>Due</th><th class="r">Balance</th><th></th></tr></thead><tbody>
     ${RV.unpaid.filter(x=>!RVF.sup||x.name===RVF.sup).map(x=>`<tr><td>${esc(x.no)}${x.received?'':'<br><small class="unit">not received yet</small>'}</td><td>${esc(x.name)}</td><td>${TERMS[x.terms]||''}</td><td>${x.dueDate?`<span style="${x.dueDate<today()?'color:var(--rose);font-weight:800':''}">${day(x.dueDate)}</span>`:'on delivery'}</td><td class="r"><b>${peso(x.bal)}</b>${x.payBy==='cashier'?'<br>'+badge('cashier to pay','violet'):''}</td><td><button class="go sm" data-rvpay="${x.id}">Pay</button></td></tr>`).join('')||'<tr><td colspan="6" class="empty">Nothing unpaid 🎉</td></tr>'}</tbody></table></div>`;
-  else body=R.rows.map(r=>`<div class="pocard"><div class="poh"><b>${esc(r.no)}</b> · ${esc(r.supplier)} <span class="unit">&nbsp;· ${srDay(r.d)} · received by ${esc(r.by)}</span><span style="flex:1"></span>
-      ${r.status==='for approval'?badge('WAITING APPROVAL','amber'):''}${r.diff?badge('DIFFERENT FROM P.O.','amber'):''}${M?payBadge({bal:r.bal,paid:r.paid,terms:r.terms,dueDate:r.dueDate,payBy:r.payBy}):''}</div>
+  else body=R.rows.map(r=>`<div class="pocard"><div class="poh"><b>${esc(r.no)}</b> · ${esc(r.supplier)} <span class="unit">&nbsp;· ${srDay(r.d)} · ${r.rtype==='pickup'?'🛻 picked up':'🚚 delivered'} · received by ${esc(r.by)}${r.rcptNo?' · receipt '+esc(r.rcptNo):''}${r.freight&&M?' · freight '+peso(r.freight):''}</span><span style="flex:1"></span>
+      ${r.status==='for approval'?badge('WAITING APPROVAL','amber'):''}${r.nf?badge('P.O. NOT FOLLOWED','amber'):''}${r.diff?badge('SHORT / OVER VS RECEIPT','red'):''}${M?payBadge({bal:r.bal,paid:r.paid,terms:r.terms,dueDate:r.dueDate,payBy:r.payBy}):''}</div>
       ${r.kind==='pig'?`<div class="unit">🐖 ${r.heads} pc · liveweight ${qf(r.lw)} kg${r.lw!==r.lwPO?' (P.O. '+qf(r.lwPO)+')':''} · cuts ${qf(r.kg)} kg · yield <b>${r.yieldPct}%</b>${M?` · pig ${peso(r.pigPay)} + expenses ${peso(r.exp)} = <b>${peso(r.value)}</b>`:''}</div>`:''}
       <div class="sc"><table class="stbl"><thead><tr><th>${r.kind==='pig'?'Cut':'Product'}</th>${r.kind==='pig'?'':'<th class="r">P.O.</th>'}<th class="r">Received</th>${M?'<th class="r">Cost / unit</th><th class="r">Amount</th>':''}</tr></thead><tbody>
-      ${r.lines.map(l=>`<tr class="${l.ordered!=null&&l.qty!==l.ordered?'rlow':''}"><td>${esc(l.name)}</td>${r.kind==='pig'?'':`<td class="r">${qf(l.ordered)} ${esc(l.unit)}</td>`}<td class="r"><b>${qf(l.qty)}</b> ${esc(l.unit)}</td>${M?`<td class="r">${peso(l.cost)}</td><td class="r">${peso(l.amt)}</td>`:''}</tr>`).join('')}
+      ${r.lines.map(l=>l.fee?`<tr><td>🚛 ${esc(l.name)}</td>${r.kind==='pig'?'':'<td></td>'}<td></td>${M?`<td></td><td class="r">${peso(l.amt)}</td>`:''}</tr>`:`<tr class="${l.ordered!=null&&(l.ounit?l.pcs:l.qty)!==(l.rcpt??l.ordered)?'rlow':''}"><td>${esc(l.name)}${l.ounit?`<br><small class="unit">${qf(l.pcs)} pc received</small>`:''}</td>${r.kind==='pig'?'':`<td class="r">${qf(l.ordered)} ${esc(l.ounit?'pc':l.unit)}${l.rcpt!=null&&l.rcpt!==l.ordered?`<br><small class="rfchg">receipt ${qf(l.rcpt)}</small>`:''}</td>`}<td class="r"><b>${qf(l.qty)}</b> ${esc(l.unit)}</td>${M?`<td class="r">${peso(l.cost)}${l.landed?`<br><small class="unit">with freight ${peso(l.landed)}</small>`:''}</td><td class="r">${peso(l.amt)}</td>`:''}</tr>`).join('')}
       ${M?`<tr class="srtot"><td colspan="${r.kind==='pig'?3:4}"><b>Total${r.kind==='pig'?' (incl. expenses)':''}</b></td><td class="r"><b>${peso(r.value)}</b></td></tr>`:''}</tbody></table></div>
       ${r.note?`<div class="unit">📝 ${esc(r.note)}</div>`:''}${r.photo?`<button class="btn sm" data-rphoto="${esc(r.photo)}">📷 Receipt photo</button>`:''}</div>`).join('')||'<div class="empty">No deliveries received in these dates.</div>';
   return head+kpi+tabs+`<div class="panel">${body}</div>`}
@@ -3500,23 +3594,54 @@ function rvPrint(){const R=rvData(),M=RV.mgr,T=R.tot;
     <table style="width:100%;border-collapse:collapse;margin-top:8px" border="1" cellpadding="4"><thead><tr><th>Date</th><th>P.O.</th><th>Supplier</th><th>Items</th>${M?'<th>Cost</th><th>Unpaid</th>':''}</tr></thead><tbody>
     ${R.rows.slice().reverse().map(r=>`<tr><td>${srDay(r.d)}</td><td>${esc(r.no)}</td><td>${esc(r.supplier)}</td><td>${r.kind==='pig'?`🐖 ${r.heads} pc · LW ${qf(r.lw)} kg · yield ${r.yieldPct}%<br>`:''}${r.lines.map(l=>esc(l.name)+' '+qf(l.qty)+' '+esc(l.unit)+(M&&l.cost?' × '+fmt2(l.cost):'')).join('<br>')}</td>${M?`<td style="text-align:right">${fmt2(r.value)}</td><td style="text-align:right">${r.bal?fmt2(r.bal):'—'}</td>`:''}</tr>`).join('')}
     ${M?`<tr><td colspan="4"><b>TOTAL</b></td><td style="text-align:right"><b>${fmt2(T.value)}</b></td><td style="text-align:right"><b>${fmt2(T.bal)}</b></td></tr>`:''}</tbody></table></div>`;window.print()}
+/* receiving count: supplier receipt qty vs actual qty (that is the difference the manager approves) · P.O. not followed + reason */
+let rvF={};
+// difference = actual vs supplier receipt (per-piece lines: pcs counted vs pcs on the receipt)
+function rfDiff(i,v){const rc=rvF.nf?+v.r||0:+i.qty,got=i.ounit?v.p:v.q;if(got===''||got==null)return '—';const df=r2(+got-rc),u=i.ounit?' pc':'';
+  const kg=i.ounit&&+v.q>0&&+v.p>0?`<br><small class="unit">${qf(r2(+v.q/+v.p))} ${esc(String(i.unit).toLowerCase())}/pc</small>`:'';
+  return (df?`<b style="color:${df<0?'var(--rose)':'var(--amber)'}">${df>0?'+':''}${qf(df)}${u}</b>`:'✓ same')+kg}
+function rfLive(po){document.querySelectorAll('[data-rdc]').forEach(c=>{const i=po.items.find(x=>x.code===c.dataset.rdc);if(i)c.innerHTML=rfDiff(i,rvF.L[i.code]||{})})}
+/* receiving type: delivered / picked up · freight (added to the cost) */
+let rxS={};
+const RXT={delivery:{ic:'🚚',t:'Delivered by supplier',fl:'Delivery charge by the supplier',fh:'Only if the supplier charges for delivery'},pickup:{ic:'🛻',t:'Picked up by us',fl:'Our transport cost',fh:'Fuel, truck / tricycle rental, toll'}};
+function rxHTML(po){if(rxS.id!==po.id)rxS={id:po.id,type:po.rtype||'delivery',amt:'',plan:po.rtype||'delivery',ptime:po.etime||''};const T=RXT[rxS.type];
+  return `<div class="panel rx2"><div class="rx2-l"><div class="rx2-h">How did it arrive?</div>
+      <div class="rx2-seg">${Object.keys(RXT).map(k=>`<button type="button" data-rxt="${k}" class="${rxS.type===k?'on':''}">${RXT[k].ic} ${RXT[k].t}</button>`).join('')}</div>
+      <div class="unit" id="rx-plan">P.O. plan: ${RXT[rxS.plan].ic} ${RXT[rxS.plan].t}${rxS.ptime?' · '+time12h(rxS.ptime):''}${rxS.type!==rxS.plan?' · <b style="color:var(--amber)">changed</b>':''}</div></div>
+    <label class="rx2-r"><span id="rx-fl">${T.fl} (₱)</span><input class="edit-in nq" type="number" step="0.01" inputmode="decimal" id="rx-fa" value="${esc(rxS.amt)}" placeholder="0 — none">
+      <small class="unit" id="rx-fh">${T.fh}. Added to the item cost.</small></label></div>`}
+function rxPaint(){const T=RXT[rxS.type];document.querySelectorAll('[data-rxt]').forEach(b=>b.classList.toggle('on',b.dataset.rxt===rxS.type));
+  const fl=$('#rx-fl');if(fl)fl.textContent=T.fl+' (₱)';const fh=$('#rx-fh');if(fh)fh.textContent=T.fh+'. Added to the item cost.';
+  const pl=$('#rx-plan');if(pl)pl.innerHTML=`P.O. plan: ${RXT[rxS.plan].ic} ${RXT[rxS.plan].t}${rxS.ptime?' · '+time12h(rxS.ptime):''}${rxS.type!==rxS.plan?' · <b style="color:var(--amber)">changed</b>':''}`}
+const rxOut=()=>({type:rxS.type,freight:+rxS.amt>0,freightAmt:rxS.amt});
 /* ---------- RECEIVING (operations) ---------- */
 function recvHTML(){
   const all=ST.pos||[],open=all.filter(p=>p.status==='open'),wait=all.filter(p=>p.status==='for approval'),done=all.filter(p=>p.status==='received').slice(0,10);
   const po=recvId&&open.find(p=>p.id===recvId);
   if(po&&po.kind==='carcass')return carcassRecvForm(po);
-  if(po){return `<div class="shead"><div><h2>📥 Receive ${esc(po.no)} · ${esc(po.supplier)}</h2><div class="unit">Weigh / count what arrived and type the <b>real qty</b>. Nothing came? Type <b>0</b>. If it's different from the P.O., the manager approves it before the stock changes.</div></div></div>
-    <div class="panel"><div class="sc"><table class="stbl"><thead><tr><th>Product</th><th class="r">P.O. qty</th><th style="width:130px">Received qty</th><th class="r">Difference</th></tr></thead><tbody>
-    ${po.items.map((i,k)=>`<tr><td><b>${esc(i.name)}</b></td><td class="r">${qf(i.qty)} ${esc(i.unit)}</td><td><input class="edit-in nq" type="number" step="0.001" inputmode="decimal" data-rq="${esc(i.code)}" data-k="rq${k}" data-ord="${i.qty}"></td><td class="r" id="rd-${k}">—</td></tr>`).join('')}</tbody></table></div>
+  if(po){if(rvF.id!==po.id){rvF={id:po.id,L:{},nf:false,why:'',no:''};po.items.forEach(i=>rvF.L[i.code]={r:String(i.qty),q:'',p:''})}
+    const U=i=>esc(String(i.ounit||i.unit||'').toLowerCase());
+    return `<div class="shead"><div><h2>📥 Receive ${esc(po.no)} · ${esc(po.supplier)}</h2><div class="unit">The supplier receipt follows the P.O. If the supplier sent a different qty, tap <b>P.O. not followed</b> and type what the receipt says. Then type the <b>actual</b> qty you weighed / counted.</div></div></div>
+    ${rxHTML(po)}
+    <div class="panel"><div class="fgrid"><label>Supplier receipt / DR no.<input class="edit-in" id="rf-no" value="${esc(rvF.no)}" placeholder="e.g. DR 004512"></label></div>
+    <div class="rfnf ${rvF.nf?'on':''}"><label class="chk2"><input type="checkbox" id="rf-nf"${rvF.nf?' checked':''}> ⚠ P.O. not followed <small class="unit">— the supplier sent a different qty</small></label>
+      ${rvF.nf?`<label>Reason <span class="unit">(required)</span><input class="edit-in" id="rf-why" value="${esc(rvF.why)}" placeholder="e.g. Supplier only had 80 kg whole chicken"></label>`:''}</div>
+    <div class="sc"><table class="stbl rft"><thead><tr><th>Product</th><th class="r">P.O.</th><th style="width:130px">Supplier receipt</th><th style="width:170px">Actual</th><th class="r">Difference</th></tr></thead><tbody>
+    ${po.items.map(i=>{const v=rvF.L[i.code]||{r:String(i.qty),q:'',p:''},pc=!!i.ounit;return `<tr><td><b>${esc(i.name)}</b>${pc?`<br><small class="unit">bought per pc · stock by ${esc(String(i.unit).toLowerCase())}</small>`:''}</td><td class="r unit">${qf(i.qty)} ${U(i)}</td>
+      <td><div class="rfu"><input class="edit-in nq" type="number" step="0.001" inputmode="decimal" data-rr="${esc(i.code)}" value="${esc(rvF.nf?v.r:String(i.qty))}"${rvF.nf?'':' readonly tabindex="-1"'}><span>${U(i)}</span></div></td>
+      <td>${pc?`<div class="rfu"><input class="edit-in nq" type="number" step="1" inputmode="numeric" data-rqp="${esc(i.code)}" value="${esc(v.p)}" placeholder="0"><span>pc</span></div><div class="rfu"><input class="edit-in nq" type="number" step="0.001" inputmode="decimal" data-rq="${esc(i.code)}" value="${esc(v.q)}" placeholder="0"><span>${esc(String(i.unit).toLowerCase())}</span></div>`
+        :`<div class="rfu"><input class="edit-in nq" type="number" step="0.001" inputmode="decimal" data-rq="${esc(i.code)}" value="${esc(v.q)}" placeholder="0"><span>${U(i)}</span></div>`}</td>
+      <td class="r" data-rdc="${esc(i.code)}">${rfDiff(i,v)}</td></tr>`}).join('')}
+    </tbody></table></div>
     <div class="fgrid"><label class="full">Note (e.g. 2 kg spoiled, sent back)<input class="edit-in" id="rc-note" data-k="rcn"></label>
-      <label class="full">📷 Photo of the supplier's delivery receipt (optional)<input type="file" accept="image/*" capture="environment" id="rc-ph"></label></div><div id="rc-prev" class="unit">${recvPhoto?'✓ Photo ready':''}</div>
+      <label class="full">📷 Photo of the supplier's receipt (optional)<input type="file" accept="image/*" capture="environment" id="rc-ph"></label></div><div id="rc-prev" class="unit">${recvPhoto?'✓ Photo ready':''}</div>
     <div class="row-end"><button class="btn" data-rcback>Back</button><button class="go" data-rcsave="${po.id}">✓ Save receiving</button></div></div>`}
   if(RVrep)return rvHTML();
   return `<div class="shead"><div><h2>📥 Receiving</h2><div class="unit">Deliveries from suppliers are received <b>against the P.O. made by the Manager</b>. Tap <b>Receive</b> when the delivery arrives.</div></div><div class="sbtns">${['manager','ops'].includes(me.role)?'<button class="go sm" data-rvrep>📊 Receiving report</button>':''}<button class="btn sm" data-sref>↻ Refresh</button></div></div>
     ${retCheckHTML()}
-    <div class="panel"><h3>🚚 Waiting for delivery</h3>${open.map(p=>`<div class="pocard"><div class="poh"><b>${esc(p.no)}</b> · ${esc(p.supplier)}<span style="flex:1"></span>${p.expected?`<span class="unit">expected ${day(p.expected)}</span>`:''}<button class="go sm" data-rcopen="${p.id}">📥 Receive</button></div>
-      <div class="unit">${p.carcass?ccLine(p):p.items.map(i=>`${esc(i.name)} <b>${qf(i.qty)} ${esc(i.unit)}</b>`).join(' · ')}${p.note?'<br>📝 '+esc(p.note):''}${p.rejected?`<br><b style="color:var(--rose)">↩ Sent back by ${esc(p.rejected[p.rejected.length-1].by)}${p.rejected[p.rejected.length-1].note?': '+esc(p.rejected[p.rejected.length-1].note):''} — please receive again</b>`:''}</div></div>`).join('')||'<div class="empty">No P.O. waiting for delivery.</div>'}</div>
-    ${wait.length?`<div class="panel"><h3>⏳ Waiting for manager approval</h3>${wait.map(p=>`<div class="pocard"><div class="poh"><b>${esc(p.no)}</b> · ${esc(p.supplier)}<span style="flex:1"></span><span class="unit">received by ${esc(p.recv.by)} ${stamp(p.recv.at)}</span></div>${p.carcass?ccRecvDiff(p):recvTable(p.recv.lines)}</div>`).join('')}</div>`:''}
+    <div class="panel"><h3>🚚 Waiting for delivery</h3>${open.map(p=>`<div class="pocard"><div class="poh"><b>${esc(p.no)}</b> · ${esc(p.supplier)}<span style="flex:1"></span>${p.expected?`<span class="unit">expected ${day(p.expected)}</span>`:''}<span class="unit">&nbsp;${p.rtype==='pickup'?'🛻 Pick up':'🚚 Delivery'}${p.etime?' · '+time12h(p.etime):''}</span><button class="go sm" data-rcopen="${p.id}">📥 Receive</button></div>
+      <div class="unit">${p.carcass?ccLine(p):p.items.map(i=>`${esc(i.name)} <b>${qf(i.qty)} ${esc(i.ounit||i.unit)}</b>`).join(' · ')}${p.note?'<br>📝 '+esc(p.note):''}${p.rejected?`<br><b style="color:var(--rose)">↩ Sent back by ${esc(p.rejected[p.rejected.length-1].by)}${p.rejected[p.rejected.length-1].note?': '+esc(p.rejected[p.rejected.length-1].note):''} — please receive again</b>`:''}</div></div>`).join('')||'<div class="empty">No P.O. waiting for delivery.</div>'}</div>
+    ${wait.length?`<div class="panel"><h3>⏳ Waiting for manager approval</h3>${wait.map(p=>`<div class="pocard"><div class="poh"><b>${esc(p.no)}</b> · ${esc(p.supplier)}<span style="flex:1"></span><span class="unit">received by ${esc(p.recv.by)} ${stamp(p.recv.at)}</span></div>${p.carcass?ccRecvDiff(p):recvTable(p.recv.lines,p.recv)}</div>`).join('')}</div>`:''}
     ${done.length?`<div class="panel"><h3>✅ Recently received</h3>${done.map(p=>`<div class="unit" style="padding:4px 0"><b>${esc(p.no)}</b> · ${esc(p.supplier)} · ${stamp(p.recv.at)} by ${esc(p.recv.by)}</div>`).join('')}</div>`:''}`}
 
 /* ---------- PRODUCTION (operations) ---------- */
@@ -3584,7 +3709,7 @@ function discAmt(){const D=posDiscO;if(!D)return 0;const base=D.on==='sel'?r2(ca
   return r2(Math.min(base,D.pct?base*D.pct/100:+D.amt||0))}
 const DLBL={sc:'Senior Citizen 20%',pwd:'PWD 20%',pct:'Discount',amt:'Discount'};
 const discLabel=D=>D?(D.kind==='pct'?D.pct+'% discount':D.kind==='amt'?'₱ discount':DLBL[D.kind])+(D.on==='sel'?' (item)':'')+(D.name?' · '+D.name:'')+(D.idNo?' · ID '+D.idNo:''):'';
-function resetSale(){posMem=null;posMemUse=0;cart=[];posSel=-1;posDisc='';posDiscO=null;posVoids=[];posCash='';posRef='';posCust='';posOrder=null;posPrice='retail';posPay='cash'}
+function resetSale(){posMem=null;posMemUse=0;posCharges=[];posNote='';cart=[];posSel=-1;posDisc='';posDiscO=null;posVoids=[];posCash='';posRef='';posCust='';posOrder=null;posPrice='retail';posPay='cash'}
 function posTools(){const n=posHolds().length;
   return `<div class="posx-tools"><button data-ptool="hold" ${cart.length?'':'disabled'}>⏸ Hold</button><button data-ptool="recall" ${n?'':'disabled'}>▶ Recall${n?` <i>${n}</i>`:''}</button>
     <button data-ptool="disc" ${cart.length?'':'disabled'}>🏷 Discount</button><button data-ptool="price" ${cart.length?'':'disabled'}>✏️ Change price</button><button data-ptool="void" ${cart.length?'':'disabled'}>✕ Void item</button>
@@ -3600,7 +3725,7 @@ function openCashHTML(){return `<div class="panel opencash"><h2>💵 Open the ca
   <div class="row-end"><button class="go" data-ptool="open">✓ Open drawer & start selling</button></div></div>`}
 function holdSale(){if(!cart.length)return;const cu=(ST.bulk||[]).find(c=>c.id===posCust);
   const lbl=prompt('Name for this held sale (customer / note):',cu?cu.name:'Customer '+(posHolds().length+1));if(lbl==null)return;
-  setHolds(posHolds().concat([{id:uid(),at:Date.now(),label:lbl||'Held sale',cart,posDiscO,posCust,posPrice,posOrder,posVoids,total:cartTotal(),posMem,posMemUse}]));resetSale();drawStock();toast('⏸ Sale held — ▶ Recall to continue')}
+  setHolds(posHolds().concat([{id:uid(),at:Date.now(),label:lbl||'Held sale',cart,posDiscO,posCust,posPrice,posOrder,posVoids,total:cartTotal(),posMem,posMemUse,posCharges,posNote}]));resetSale();drawStock();toast('⏸ Sale held — ▶ Recall to continue')}
 function recallDialog(){const L=posHolds(),box=stBox();
   $('#stb').innerHTML=`<h2>▶ Held sales</h2>${L.map(h=>`<div class="pocard"><div class="poh"><b>${esc(h.label)}</b><span class="unit">· ${stampShort(h.at)} · ${h.cart.length} item(s)</span><span style="flex:1"></span><b>${peso(h.total)}</b>
     <button class="go sm" data-hrec="${h.id}">Recall</button><button class="del" data-hdel="${h.id}" aria-label="Delete">✕</button></div><div class="unit">${h.cart.map(l=>esc(l.name)+' '+fmt(+l.qty||0)+' '+esc(l.unit)).join(' · ')}</div></div>`).join('')||'<div class="empty">No held sale.</div>'}
@@ -3609,7 +3734,7 @@ function recallDialog(){const L=posHolds(),box=stBox();
     if(b.dataset.hdel){if(!confirm('Delete this held sale?'))return;setHolds(posHolds().filter(h=>h.id!==b.dataset.hdel));recallDialog();drawStock();return}
     if(b.dataset.hrec){const h=posHolds().find(x=>x.id===b.dataset.hrec);if(!h)return;
       if(cart.length){if(!confirm('Hold the current sale first and recall this one?'))return;setHolds(posHolds().concat([{id:uid(),at:Date.now(),label:'Held sale',cart,posDiscO,posCust,posPrice,posOrder,posVoids,total:cartTotal()}]))}
-      setHolds(posHolds().filter(x=>x.id!==h.id));cart=h.cart;posDiscO=h.posDiscO;posCust=h.posCust;posMem=h.posMem||null;posMemUse=h.posMemUse||0;posPrice=h.posPrice;posOrder=h.posOrder;posVoids=h.posVoids||[];posSel=-1;box.classList.remove('on');$('#stb').onclick=null;drawStock();toast('▶ '+h.label+' recalled')}}}
+      setHolds(posHolds().filter(x=>x.id!==h.id));cart=h.cart;posDiscO=h.posDiscO;posCust=h.posCust;posMem=h.posMem||null;posMemUse=h.posMemUse||0;posCharges=h.posCharges||[];posNote=h.posNote||'';posPrice=h.posPrice;posOrder=h.posOrder;posVoids=h.posVoids||[];posSel=-1;box.classList.remove('on');$('#stb').onclick=null;drawStock();toast('▶ '+h.label+' recalled')}}}
 function discDialog(){const box=stBox(),sel=cart[posSel],D=posDiscO||{kind:'sc',on:'all'};
   $('#stb').innerHTML=`<h2>🏷 Discount</h2><div class="dkinds">${[['sc','👴 Senior Citizen 20%'],['pwd','♿ PWD 20%'],['pct','% Percent'],['amt','₱ Amount']].map(([k,t])=>`<button data-dk="${k}" class="${D.kind===k?'on':''}">${t}</button>`).join('')}</div>
     <div class="fgrid"><label id="dk-pct-l">Percent (%)<input class="edit-in nq" type="number" step="0.01" id="dk-pct" value="${D.kind==='pct'?D.pct:''}"></label><label id="dk-amt-l">Amount (₱)<input class="edit-in nq" type="number" step="0.01" id="dk-amt" value="${D.kind==='amt'?D.amt:''}"></label>
@@ -3648,7 +3773,7 @@ function readingHTML(R){const L=(t,v,b,cls)=>`<tr${cls?` class="${cls}"`:''}><td
   const pay=R.pay||{},os=R.overShort,tally=R.kind!=='Z'?'':os<0?`SHORT ${P(-os)}`:os>0?`OVER ${P(os)}`:'✓ BALANCED';
   return `<div class="zrep" style="font-family:monospace;max-width:360px;margin:auto;font-size:13px"><h3 style="margin:0;text-align:center">3F MEATSHOP</h3><p style="text-align:center;margin:2px 0;font-size:17px"><b>${R.kind==='Z'?'Z READING · '+esc(R.z):'X READING (not closed)'}</b></p>
   <p style="text-align:center;margin:2px 0">${esc(R.shift)}<br>${tm(R.from)} – ${tm(R.to)}<br>Opened by ${esc(R.openBy)} · ${R.kind==='Z'?'closed':'printed'} by ${esc(R.by)}</p><hr>
-  <table style="width:100%">${H('SALES')}${L('Receipts',R.receipts+(R.first?` (${esc(R.first)} – ${esc(R.last)})`:''))}${L('Gross sales',P(R.gross))}${L('Less SC / PWD discount',P(R.scpwd))}${L('Less other discounts',P(R.otherDisc))}${L('Less returns',P(R.returns))}${L('NET SALES',P(R.net),1)}${L('Average per receipt',P(R.avg||0))}</table><hr>
+  <table style="width:100%">${H('SALES')}${L('Receipts',R.receipts+(R.first?` (${esc(R.first)} – ${esc(R.last)})`:''))}${L('Gross sales',P(R.gross))}${L('Less SC / PWD discount',P(R.scpwd))}${L('Less other discounts',P(R.otherDisc))}${L('Less returns',P(R.returns))}${R.charges?Object.keys(R.chg||{}).map(k=>L('Add: '+esc(k),P(R.chg[k]))).join(''):''}${L('NET SALES',P(R.net),1)}${L('Average per receipt',P(R.avg||0))}</table><hr>
   <table style="width:100%">${H('SALES BY PAYMENT')}${PAYK.map(([k,i])=>L(i+' Total '+k+(k==='Charge'?' (unpaid)':''),P(pay[k]||0))).join('')}${L('TOTAL',P(PAYK.reduce((a,[k])=>a+(pay[k]||0),0)),1)}
   ${Object.keys(R.collections||{}).length?H('CHARGE PAYMENTS COLLECTED')+Object.keys(R.collections).map(k=>L(esc(k),P(R.collections[k]))).join(''):''}</table><hr>
   <table style="width:100%">${H('ADJUSTMENTS')}${L('Voided sales',R.voids+' · '+P(R.voidAmt))}${L('Voided items',R.lineVoids+' · '+P(R.lineVoidAmt))}${L('Price changes',R.priceChanges+' · −'+P(R.priceChangeAmt))}${L('Returns / refunds (cash)',P(R.refunds))}</table><hr>
@@ -3715,7 +3840,7 @@ async function posTool(t,b){
   if(t==='rsetup')return receiptSetup();
   if(t==='open'){const c=denomRead(document.querySelector('.opencash'));if(!confirm(`Opening cash ${peso(c.total)}. Open the drawer?`))return;b.disabled=true;
     try{ST=await api('api_posOpen',session.token,c.denoms);ST.offline=false;stCache();toast('💵 Drawer open — '+peso(c.total));drawStock()}catch(e){alert(errMsg(e));b.disabled=false}}}
-const cartTotal=()=>r2(subTotal()-discAmt()-(posMem?posMemUse:0));
+const cartTotal=()=>r2(subTotal()-discAmt()-(posMem?posMemUse:0)+chgTotal());
 // POS screen laid out like the shop's cashier terminal: search bar on top, the sale as a big table (Qty · Product · Price · Total),
 // and on the right the amount due, sales information and sub totals — on a white background.
 let posSel=-1;
@@ -3737,7 +3862,7 @@ function posHTML(){
         ${posTools()}
         <div class="posx-tw"><table class="posx-tbl"><thead><tr><th class="r" style="width:120px">Qty</th><th>Product</th><th class="r">Price</th><th class="r">Total</th><th style="width:44px"></th></tr></thead><tbody>
         ${cart.map((l,k)=>`<tr class="${k===posSel?'sel':''}" data-psel="${k}"><td class="r"><input class="posx-q" type="number" step="${l.unit==='Kg'?'0.001':'1'}" inputmode="decimal" data-cq="${k}" data-k="cq${k}" value="${l.qty}"> <small>${esc(l.unit)}</small></td>
-          <td><b>${esc(l.name)}</b>${l.why?`<br><small class="unit">✏️ ${esc(l.why)}</small>`:''}</td><td class="r">${l.orig!=null?`<s class="unit">${peso(l.orig)}</s><br>`:''}${peso(l.price)}</td><td class="r" data-lt="${k}"><b>${peso((+l.qty||0)*l.price)}</b></td><td><button class="del" data-cdel="${k}" aria-label="Remove">✕</button></td></tr>`).join('')}
+          <td><b>${esc(l.name)}</b><small class="pm-pr">${peso(l.price)} / ${esc(String(l.unit||'').toLowerCase())}${l.orig!=null?' (was '+peso(l.orig)+')':''}</small>${l.why?`<br><small class="unit">✏️ ${esc(l.why)}</small>`:''}</td><td class="r">${l.orig!=null?`<s class="unit">${peso(l.orig)}</s><br>`:''}${peso(l.price)}</td><td class="r" data-lt="${k}"><b>${peso((+l.qty||0)*l.price)}</b></td><td><button class="del" data-cdel="${k}" aria-label="Remove">✕</button></td></tr>`).join('')}
         </tbody></table>${cart.length?'':'<div class="posx-empty">Type a product above, or bill a DR below.</div>'}</div>
       </div>
       <div class="posx-right">
@@ -3753,6 +3878,9 @@ function posHTML(){
           <label>Customer<select class="edit-in" id="pc-cust"><option value="">Walk-in</option>${(ST.bulk||[]).map(c=>`<option value="${esc(c.id)}"${posCust===c.id?' selected':''}>⭐ ${esc(c.name)} (bulk)</option>`).join('')}</select></label>
           <div class="posx-2"><label>Discount<button class="btn sm pdiscb" data-ptool="disc" ${cart.length?'':'disabled'}>${posDiscO?'🏷 '+esc(discLabel(posDiscO))+' −'+fmt2(discAmt()):'🏷 Add discount'}</button></label>
           </div>
+          <label>Charges<div class="pchg">${posCharges.map((c,k)=>`<div class="pchg-row"><span>${c.kind==='delivery'?'🛵':'➕'} ${esc(c.label)}</span><b>${fmt2(c.amt)}</b><button class="del" data-pchgx="${k}" title="Remove">✕</button></div>`).join('')}
+            <div class="pchg-btns"><button class="btn sm" data-pchg="delivery" ${cart.length?'':'disabled'}>🛵 Delivery charge</button><button class="btn sm" data-pchg="other" ${cart.length?'':'disabled'}>➕ Other charge</button></div></div></label>
+          <label>📝 Note <span class="unit">(optional)</span><input class="edit-in" id="pc-note" value="${esc(posNote)}" placeholder="e.g. deliver 3 PM · Purok 2 near chapel"></label>
           <div class="posx-btns"><button class="btn" data-pclear>Clear</button><button class="go td-btn" data-pdone ${cart.length?'':'disabled'}>💳 Tender ${cart.length?peso(cartTotal()):''}</button></div></div>
       </div>
     </div></div>
@@ -3775,10 +3903,24 @@ function payDialog(no){const x=(ST.unpaid||[]).find(z=>z.no===no);if(!x)return;c
     <label class="full">Reference no. (bank / GCash / check)<input class="edit-in" id="py-r"></label></div>
     <div class="row-end"><button class="btn" data-x>Cancel</button><button class="go" id="py-ok">Save payment</button></div>`;box.classList.add('on');
   $('#py-ok').onclick=async()=>{$('#py-ok').disabled=true;try{ST=await api('api_posPay',session.token,no,$('#py-a').value,$('#py-m').value,$('#py-r').value);stCache();box.classList.remove('on');toast('💳 Payment saved');drawStock()}catch(e){alert(errMsg(e));$('#py-ok').disabled=false}}}
+const CHG_TYPES=['Giniling (grinding) charge','Slicing / cutting charge','Cubing charge','Packaging charge','Marinating charge','Other'];
+function chargeDialog(kind){const box=stBox(),D=kind==='delivery';
+  $('#stb').innerHTML=`<h2>${D?'🛵 Delivery charge':'➕ Other charge'}</h2><div class="unit">${D?'For phone / walk-in orders that we deliver.':'Added to this sale. No cost — counted as sales.'}</div>
+    <div class="fgrid">${D?`<label class="full">Deliver to <span class="unit">(optional)</span><input class="edit-in" id="ch-to" placeholder="e.g. Brgy. Centro, near the chapel"></label>`
+      :`<label>Type of charge<select class="edit-in" id="ch-t">${CHG_TYPES.map(t=>`<option>${t}</option>`).join('')}</select></label><label id="ch-ow" hidden>What charge?<input class="edit-in" id="ch-o" placeholder="e.g. Deboning"></label>`}
+      <label>Amount (₱)<input class="edit-in nq" type="number" step="0.01" inputmode="decimal" id="ch-a"></label>
+      ${D?`<div class="full chips2">${[30,50,80,100,150].map(v=>`<button type="button" data-cq="${v}">₱${v}</button>`).join('')}</div>`:''}</div>
+    <div class="row-end"><button class="btn" data-x>Cancel</button><button class="go" id="ch-ok">Add</button></div>`;box.classList.add('on');
+  $('#stb').querySelectorAll('[data-cq]').forEach(b=>b.onclick=()=>{$('#ch-a').value=b.dataset.cq});
+  if(!D)$('#ch-t').onchange=e=>{$('#ch-ow').hidden=e.target.value!=='Other';if(e.target.value==='Other')$('#ch-o').focus()};
+  setTimeout(()=>$('#ch-a').focus(),50);
+  $('#ch-ok').onclick=()=>{const a=r2(+$('#ch-a').value);if(!(a>0))return alert('Type the amount.');
+    let label;if(D){const to=$('#ch-to').value.trim();label='Delivery charge'+(to?' · '+to:'')}else{label=$('#ch-t').value;if(label==='Other'){label=$('#ch-o').value.trim();if(!label)return alert('Type what the charge is for.')}}
+    posCharges.push({kind:D?'delivery':'other',label,amt:a});box.classList.remove('on');drawStock();toast((D?'🛵 ':'➕ ')+label+' +'+peso(a))}}
 function ptotHTML(){const sub=r2(cart.reduce((s,l)=>s+(+l.qty||0)*l.price,0)),total=cartTotal(),chg=posPay==='cash'&&+posCash?r2(+posCash-total):null;
   const kg=r2(cart.filter(l=>l.unit==='Kg').reduce((s,l)=>s+(+l.qty||0),0)),pk=cart.filter(l=>l.unit!=='Kg').reduce((s,l)=>s+(+l.qty||0),0);
   return `<div class="posx-row"><span>Amount due:</span><b>${fmt2(sub)}</b></div><div class="posx-row"><span>Total quantity:</span><b>${cart.length} item(s)${kg?' · '+fmt(kg)+' kg':''}${pk?' · '+fmt(pk)+' pc/pk':''}</b></div>
-    <div class="posx-row"><span>Total discounts:</span><b>${fmt2(discAmt())}</b></div>${posMem&&posMemUse?`<div class="posx-row"><span>💳 Member credit:</span><b>−${fmt2(posMemUse)}</b></div>`:''}<div class="posx-row pbg"><span>Total amount due:</span><b>${fmt2(total)}</b></div>
+    <div class="posx-row"><span>Total discounts:</span><b>${fmt2(discAmt())}</b></div>${posCharges.map(c=>`<div class="posx-row"><span>${c.kind==='delivery'?'🛵':'➕'} ${esc(c.label)}:</span><b>+${fmt2(c.amt)}</b></div>`).join('')}${posMem&&posMemUse?`<div class="posx-row"><span>💳 Member credit:</span><b>−${fmt2(posMemUse)}</b></div>`:''}<div class="posx-row pbg"><span>Total amount due:</span><b>${fmt2(total)}</b></div>
     ${chg!=null?`<div class="posx-row pbg ${chg<0?'bad':'ok'}"><span>${chg<0?'Short:':'Change:'}</span><b>${fmt2(Math.abs(chg))}</b></div>`:''}${posMem&&posMem.pct?`<div class="posx-row"><span>💳 Earns credit:</span><b>${fmt2(Math.floor(total*posMem.pct)/100)}</b></div>`:''}`}
 function posLive(){const t=$('#ptot');if(t)t.innerHTML=ptotHTML();const tb=document.querySelector('.td-btn');if(tb)tb.textContent='💳 Tender '+(cart.length?peso(cartTotal()):'');const g=$('#pbig');if(g)g.textContent=fmt2(cartTotal());const ps=$('#psel');if(ps)ps.innerHTML=pselHTML();cart.forEach((l,k)=>{const c=document.querySelector(`[data-lt="${k}"]`);if(c)c.innerHTML='<b>'+peso((+l.qty||0)*l.price)+'</b>'})}
 function poLive(){poEdit.items.forEach((l,k)=>{const c=document.querySelector(`[data-pa="${k}"]`);if(c)c.textContent=peso((+l.qty||0)*(+l.cost||0))});const t=$('#potot');if(t)t.textContent=peso(poEdit.items.reduce((s,l)=>s+(+l.qty||0)*(+l.cost||0),0))}
@@ -3800,12 +3942,13 @@ function receiptHTML(s,copy,reprint){const I=(ST&&ST.rcpt)||{name:'3F MEATSHOP',
   ${dash}<div class="rr h"><span>ITEM</span><span>AMOUNT</span></div>${dash}
   ${(s.items||[]).map(i=>`<div class="ri">${esc(i.name)}</div><div class="rr"><span>&nbsp;&nbsp;${qf(i.qty)} ${esc(String(i.unit||'').toLowerCase())} x ${P(i.price)}</span><span>${P(i.qty*i.price)}</span></div>`).join('')}
   ${dash}${row(n+' item(s)','')}${row('SUBTOTAL',P(sub))}
-  ${s.discount-(s.memUse||0)>0.004?row(esc(s.disc?discLabel(s.disc).replace(/ · ID.*/,'').replace(/ · .*/,''):'Discount'),'-'+P(s.discount-(s.memUse||0))):''}${s.memUse?row('Member credit','-'+P(s.memUse)):''}
+  ${s.discount-(s.memUse||0)>0.004?row(esc(s.disc?discLabel(s.disc).replace(/ · ID.*/,'').replace(/ · .*/,''):'Discount'),'-'+P(s.discount-(s.memUse||0))):''}${s.memUse?row('Member credit','-'+P(s.memUse)):''}${(s.charges||[]).map(c=>row(esc(c.label),P(c.amt))).join('')}
   ${row(ret?'TOTAL RETURN':'TOTAL DUE',P(Math.abs(s.total)),1).replace('class="rr b"','class="rr b rbig"')}${dash}
   ${ret?row('Refund',P(s.refund||0)):chg?row('CHARGE (unpaid)',P(s.total),1):row(esc(s.pay||'Cash'),P(s.cash||s.total))+(s.cash?row('CHANGE',P(Math.max(0,s.cash-s.total)),1):'')+(s.ref?row('Ref. No.:',esc(s.ref)):'')}
   ${s.disc&&/^(sc|pwd)$/.test(s.disc.kind)?`${dash}<div class="rc b">${s.disc.kind==='sc'?'SENIOR CITIZEN':'PWD'} DISCOUNT</div>${row('Name:',esc(s.disc.name||''))}${row('ID No.:',esc(s.disc.idNo||''))}<div class="rs">Signature: ______________________</div>`:''}
   ${chg?`${dash}<div class="rs">Received the above in good condition:</div><div class="rs">Name/Signature: _________________</div>`:''}
   ${s.pts?`${dash}${row('⭐ Points earned',s.pts)}`:''}${s.mem?`${dash}<div class="rc b">3F MEMBER · ${esc(s.memTier||'')}</div>${row(esc(s.memName||''),esc(s.memCardFmt||s.mem))}${s.memEarnEst&&!/^(terms|charge)/i.test(s.pay||'')?row('Credit earned',P(s.memEarnEst)):''}${!/^(terms|charge)/i.test(s.pay||'')?row('Credit balance',P(s.memBal||0)):''}`:''}
+  ${s.note?`${dash}<div class="rs">Note: ${esc(s.note)}</div>`:''}
   ${dash}<div class="rc">${esc(I.footer||'')}</div>${I.legal?`<div class="rc b">${esc(I.legal)}</div>`:''}
   ${copy?`<div class="rcopy">${copy}</div>`:''}</div>`}
 function printReceipt(s,reprint){const C=RCPT(),copies=C.copies==='1'?['CUSTOMER COPY']:['CUSTOMER COPY','STORE COPY — DUPLICATE'];
@@ -3949,7 +4092,7 @@ function completeSale(ok){const total=cartTotal();if(!ok)return tenderDialog();
   const cu=(ST.bulk||[]).find(c=>c.id===posCust),ord=posOrder&&(ST.toCash||[]).find(x=>x.id===posOrder);
   const mu=posMem?r2(posMemUse):0;
   const s={mem:posMem?posMem.card:'',memUse:mu,memName:posMem?posMem.name:'',memCardFmt:posMem?posMem.cardFmt:'',memTier:posMem?posMem.tier:'',memEarnEst:posMem&&posMem.pct?Math.floor(total*posMem.pct)/100:0,memBal:posMem?r2(posMem.bal-mu+(posMem.pct?Math.floor(total*posMem.pct)/100:0)):0,cid:'p'+uid()+uid(),at:Date.now(),order:ord?ord.id:'',items:cart.map(l=>({code:l.code,name:l.name,unit:l.unit,qty:+l.qty,price:l.price,...(l.orig!=null?{orig:l.orig,why:l.why}:{})})),disc:posDiscO?{...posDiscO,amount:discAmt()}:null,voidLines:posVoids,shift:ST.shift?ST.shift.id:'',cust:posCust,custName:posMem&&!cu&&!ord?posMem.name:cu?cu.name:ord?ord.customer:'Walk-in',price:posPrice,discount:r2(discAmt()+mu),
-    pay:{cash:'Cash',gcash:'GCash',maya:'Maya',bank:'Bank transfer',terms:'Charge'}[posPay],dr:ord?ord.dr:'',ref:posRef,cash:posPay==='cash'?+posCash||0:0,total,cashier:me.name,pts:cu?Math.floor(total/500):0};
+    pay:{cash:'Cash',gcash:'GCash',maya:'Maya',bank:'Bank transfer',terms:'Charge'}[posPay],dr:ord?ord.dr:'',ref:posRef,cash:posPay==='cash'?+posCash||0:0,total,cashier:me.name,pts:cu?Math.floor(total/500):0,charges:posCharges.map(c=>({kind:c.kind,label:c.label,amt:c.amt})),note:posNote.trim()};
   setPosQueue(posQueue().concat([s]));
   s.items.forEach(i=>{const p=pBy(i.code);if(p)p.avail=r2(p.avail-i.qty)});stCache();
   if(ord)ST.toCash=ST.toCash.filter(x=>x.id!==ord.id);
@@ -3978,6 +4121,18 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const rvr=e.target
   if(view==='recv'){if('rvrep' in d){RVrep=true;RV=null;drawStock();return}if('rvback' in d){RVrep=false;drawStock();return}if(d.rvp){const [f,t]=srPreset(d.rvp);RVF.from=f;RVF.to=t;RVF.pre=d.rvp;drawStock();return}
     if('rvre' in d){RV=null;RVerr='';drawStock();return}if(d.rvt){RVtab=d.rvt;drawStock();return}if('rvcsv' in d){rvCsv();return}if('rvprint' in d){rvPrint();return}
     if(d.rvpay){const x=RV.unpaid.find(u=>u.id===d.rvpay);if(!ST.accounts)return alert('Refresh first.');supPayDialog({title:'Pay '+x.no+' · '+x.name,bal:x.bal,accounts:ST.accounts,method:x.terms==='transfer'?'transfer':'cash',payBy:x.payBy,onAssign:async w=>{ST=await api('api_payAssign',session.token,'po',x.id,w);stCache();RV=null;drawStock()},onPay:async(a,acc,ref,dd)=>{ST=await api('api_payPO',session.token,x.id,ref,acc,a,dd);stCache();RV=null;drawStock()}});return}}
+  if(view==='count'){if('ctre' in d){CT=null;CTerr='';drawStock();return}if('ctset' in d){ctSetDialog();return}
+    if('ctstart' in d){await busy(async()=>{CT=await api('api_countStart',session.token);CTL={};CTrev=null;toast('🧮 Stock count started');drawStock()});return}
+    if(d.ctcat!==undefined){CTcat=d.ctcat;drawStock();return}
+    if('ctreview' in d){clearTimeout(CTsaveT);const L=CT.open.lines.map(l=>({code:l.code,cnt:CTL[l.code]??''}));await busy(async()=>{const r=await ctSave(L,'check');CTrev={id:r.count.id,lines:r.count.lines,why:{}};r.count.lines.forEach(l=>{if(l.why)CTrev.why[l.code]=l.why});drawStock();window.scrollTo({top:0,behavior:'smooth'})});return}
+    if('ctedit' in d){CTrev=null;drawStock();return}
+    if('ctsubmit' in d){const miss=CTrev.lines.filter(l=>l.big&&!(CTrev.why[l.code]||'').trim());if(miss.length){alert('Type the reason for each BIG loss / gain: '+miss.map(l=>l.name).join(', '));return}
+      await busy(async()=>{CT=await ctSave(CTrev.lines.filter(l=>l.diff).map(l=>({code:l.code,why:CTrev.why[l.code]||''})),true);CTrev=null;CTL={};toast('📤 Sent to the manager for approval');drawStock()});return}
+    if('ctok' in d){await busy(async()=>{CT=await api('api_countDecide',session.token,CT.open.id,true,($('#ct-note')||{}).value||'');ST.at=0;toast('✅ Approved — stock adjusted, loss / gain booked');drawStock()});return}
+    if('ctback' in d){const n=($('#ct-note')||{}).value||'';if(!n.trim())return alert('Type what needs to be recounted.');await busy(async()=>{CT=await api('api_countDecide',session.token,CT.open.id,false,n);toast('↩ Sent back for recount');drawStock()});return}
+    if('ctcancel' in d){if(!confirm('Cancel this stock count? Nothing will be adjusted.'))return;await busy(async()=>{CT=await api('api_countCancel',session.token,CT.open.id);CTL={};CTrev=null;drawStock()});return}
+    if(d.ctview){await busy(async()=>{CTview=await api('api_countGet',session.token,d.ctview);drawStock()});return}
+    if('ctclose' in d){CTview=null;drawStock();return}}
   if(view==='crep'){if(d.crp){const [f,t]=srPreset(d.crp);CRF.from=f;CRF.to=t;CRF.pre=d.crp;drawStock();return}if('crre' in d){CR=null;CRerr='';drawStock();return}
     if(d.crcu!==undefined){CRF.cust=d.crcu;drawStock();window.scrollTo({top:0,behavior:'smooth'});return}if('crcsv' in d){crCsv();return}if('crprint' in d){crPrint();return}}
   if(view==='srep'){
@@ -4041,6 +4196,9 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const rvr=e.target
   if('ponewc' in d){poEdit={kind:'carcass',supplier:'',expected:'',note:'',items:[],carcass:{heads:1,lw:'',price:'',pay:'cash',due:'',orNo:'',exp:{transport:'',butcher:'',slaughter:'',others:[{desc:'',amt:''}]}}};drawStock();return}
   if(d.ccoadd){const o=d.ccoadd==='po'?poEdit.carcass:rcC;o.exp.others.push({desc:'',amt:''});drawStock();return}
   if(d.ccodel){const[t,k]=d.ccodel.split(':'),o=t==='po'?poEdit.carcass:rcC;o.exp.others.splice(+k,1);if(!o.exp.others.length)o.exp.others.push({desc:'',amt:''});drawStock();return}
+  if(d.rxt){rxS.type=d.rxt;rxPaint();return}
+  if(d.pchg){chargeDialog(d.pchg);return}
+  if(d.pchgx!==undefined){posCharges.splice(+d.pchgx,1);drawStock();return}
   if('ckbal' in d){ckBalance();return}
   if('ckauto' in d){rcC.cuts.forEach(c=>{delete c.ck;delete c.ckSet});drawStock();return}
   if('cutadd' in d){rcC.cuts.push({name:'',code:'',kg:''});drawStock();return}
@@ -4053,7 +4211,7 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const rvr=e.target
   if('poadd' in d){poEdit.items.push({code:'',qty:'',cost:''});drawStock();return}
   if(d.podel){poEdit.items.splice(+d.podel,1);if(!poEdit.items.length)poEdit.items.push({code:'',qty:'',cost:''});drawStock();return}
   if('pocancel' in d){poEdit=null;drawStock();return}
-  if('posave' in d){poEdit.supplier=$('#po-sup').value;poEdit.expected=$('#po-exp').value;poEdit.note=$('#po-note').value;if($('#po-pay')){poEdit.pay=$('#po-pay').value;poEdit.due=$('#po-due').value}if($('#po-by'))poEdit.payBy=$('#po-by').value;
+  if('posave' in d){poEdit.supplier=$('#po-sup').value;poEdit.expected=$('#po-exp').value;poEdit.note=$('#po-note').value;if($('#po-pay')){poEdit.pay=$('#po-pay').value;poEdit.due=$('#po-due').value}if($('#po-by'))poEdit.payBy=$('#po-by').value;if($('#po-rt')){poEdit.rtype=$('#po-rt').value;poEdit.etime=$('#po-et').value}
     await busy(async()=>{ST=await api('api_savePO',session.token,poEdit);stCache();poEdit=null;toast('P.O. saved — Operations can now receive it');drawStock()});return}
   if(d.pokill){if(!confirm('Cancel this P.O.?'))return;await busy(async()=>{ST=await api('api_cancelPO',session.token,d.pokill);stCache();drawStock()});return}
   if(d.poapprove||d.poreject){const id=d.poapprove||d.poreject,n=document.querySelector(`[data-anote="${id}"]`).value;
@@ -4076,13 +4234,15 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const rvr=e.target
     {const pc=((ST.pos||[]).find(p=>p.id===rcC.id)||{}).carcass,Y=ccSplit(pc,rcC);if(yRate(Y.lossPct).k==='bad'&&!String(rcC.lossWhy||'').trim()){alert('Lost weight is '+Y.lossPct+'% (standard 17%). Type the reason for the bad yield.');const w=$('#rc-why');if(w)w.focus();return}}
     {const S=ckRows(((ST.pos||[]).find(p=>p.id===rcC.id)||{}).carcass);if(Math.abs(S.diff)>1)return alert('The cost of the cuts ('+peso(S.tot)+') must equal the total cost ('+peso(S.total)+').\nAdjust the prices or tap ⚖ Balance the difference.');}
     await busy(async()=>{let ph='';if(recvPhoto){ph='D'+await api('api_uploadPhoto',session.token,recvPhoto,'receiving-'+Date.now());await putPhoto(ph,recvPhoto)}
-      const r=await api('api_receive',session.token,d.rcsave,{lw:rcC.lw,exp:rcC.exp,lossWhy:rcC.lossWhy||'',cuts:cuts.map(k=>({code:k.code,kg:k.kg,u:k.u||'Kg',costKg:(ckRows(((ST.pos||[]).find(p=>p.id===rcC.id)||{}).carcass).rows.find(r=>r.i===rcC.cuts.indexOf(k))||{}).ck}))},$('#rc-note').value,ph);recvId=null;recvPhoto='';rcC=null;
+      const r=await api('api_receive',session.token,d.rcsave,{lw:rcC.lw,exp:rcC.exp,lossWhy:rcC.lossWhy||'',cuts:cuts.map(k=>({code:k.code,kg:k.kg,u:k.u||'Kg',costKg:(ckRows(((ST.pos||[]).find(p=>p.id===rcC.id)||{}).carcass).rows.find(r=>r.i===rcC.cuts.indexOf(k))||{}).ck}))},$('#rc-note').value,ph,rxOut());recvId=null;recvPhoto='';rcC=null;
       toast(r.waiting?'⏳ Saved — liveweight / expenses differ from the P.O., the manager will approve':'✅ Received — cuts added to stock with their cost');await renderStock('recv',true)});return}
-  if(d.rcsave){const lines=[...document.querySelectorAll('[data-rq]')].map(x=>({code:x.dataset.rq,qty:x.value.trim()}));
-    const miss=lines.filter(l=>l.qty==='');if(miss.length){alert('Type the received qty of every product (0 if nothing came).');document.querySelector(`[data-rq="${miss[0].code}"]`).focus();return}
+  if(d.rcsave){const po=(ST.pos||[]).find(p=>p.id===d.rcsave);if(!po)return;
+    const lines=po.items.map(i=>{const v=rvF.L[i.code]||{};return {code:i.code,rcpt:rvF.nf?String(v.r??'').trim():String(i.qty),qty:String(v.q??'').trim(),pcs:i.ounit?String(v.p??'').trim():undefined,name:i.name,pc:!!i.ounit}});
+    const miss=lines.find(l=>l.qty===''||(l.pc&&l.pcs==='')||l.rcpt==='');if(miss){alert(miss.rcpt===''?'Type the supplier receipt qty of '+miss.name+'.':'Type the actual '+(miss.pc?'pcs and kg':'qty')+' of '+miss.name+' (0 if nothing came).');return}
+    if(rvF.nf&&!rvF.why.trim()){alert('P.O. not followed: type the reason.');const w=$('#rf-why');if(w)w.focus();return}
     await busy(async()=>{let ph='';if(recvPhoto){ph='D'+await api('api_uploadPhoto',session.token,recvPhoto,'receiving-'+Date.now());await putPhoto(ph,recvPhoto)}
-      const r=await api('api_receive',session.token,d.rcsave,lines,$('#rc-note').value,ph);recvId=null;recvPhoto='';
-      toast(r.waiting?'⏳ Saved — qty is different from the P.O., the manager will approve':'✅ Received — stock updated');await renderStock('recv',true)});return}
+      const r=await api('api_receive',session.token,d.rcsave,lines.map(l=>({code:l.code,rcpt:l.rcpt,qty:l.qty,pcs:l.pcs})),$('#rc-note').value,ph,Object.assign(rxOut(),{notFollowed:rvF.nf,nfWhy:rvF.why,rcptNo:rvF.no}));recvId=null;recvPhoto='';rxS={};rvF={};
+      toast(r.waiting?'⏳ Saved — actual qty is different from the supplier receipt, the manager will approve':'✅ Received — stock updated');await renderStock('recv',true)});return}
   // production
   if(d.pradd){prodF[d.pradd].push({code:'',qty:''});drawStock();return}
   if(d.prdel){const[k,i]=d.prdel.split(':');prodF[k].splice(+i,1);if(!prodF[k].length)prodF[k].push({code:'',qty:''});drawStock();return}
@@ -4126,9 +4286,16 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const rvr=e.target
 }
 function stockInput(e){if(!STOCKV.includes(view))return;const t=e.target,d=t.dataset;
   if(d.k==='invq'){invQ=t.value;drawStock();return}
+  if(t.id==='pc-note'){posNote=t.value;return}
+  if(d.cc!==undefined){CTL[d.cc]=t.value;t.closest('.ctrow').classList.toggle('done',t.value!=='');const n=CT.open.lines.filter(l=>(CTL[l.code]??'')!=='').length,e=$('#ct-n');if(e)e.innerHTML=`<b>${n}</b> of ${CT.open.lines.length} products counted`;const pb=document.querySelector('.ctprog i');if(pb)pb.style.width=Math.round(n/CT.open.lines.length*100)+'%';const s=$('#ct-saved');if(s)s.textContent='Saving…';ctQueue();return}
+  if(d.cw!==undefined){CTrev.why[d.cw]=t.value;return}
+  if(d.k==='ctq'){CTq=t.value;drawStock();return}
+  if(t.id==='rx-fa'){rxS.amt=t.value;return}
+  if(t.id==='rf-nf'){rvF.nf=t.checked;const po=(ST.pos||[]).find(p=>p.id===rvF.id);if(po&&!t.checked)po.items.forEach(i=>{if(rvF.L[i.code])rvF.L[i.code].r=String(i.qty)});drawStock();setTimeout(()=>{const w=$('#rf-why');if(w)w.focus()},30);return}
   if(d.k==='mbq'){MBq=t.value;drawStock();return}
   if(d.k==='lgq'){LG.q=t.value;drawStock();return}
   if(d.k==='posq'){posQ=t.value;drawStock();return}
+  if(poEdit&&({'po-rt':'rtype','po-et':'etime','po-pay':'pay','po-due':'due','po-by':'payBy'})[t.id]){poEdit[({'po-rt':'rtype','po-et':'etime','po-pay':'pay','po-due':'due','po-by':'payBy'})[t.id]]=t.value;return}
   if(poEdit&&t.id==='po-sup'){poEdit.supplier=t.value;return}if(poEdit&&t.id==='po-exp'){poEdit.expected=t.value;return}if(poEdit&&t.id==='po-note'){poEdit.note=t.value;return}
   if(prodF&&t.id==='pr-note'){prodF.note=t.value;return}
   if(prodF&&t.id==='pr-extra'){prodF.extra=t.value;prodRefresh();return}
@@ -4137,7 +4304,10 @@ function stockInput(e){if(!STOCKV.includes(view))return;const t=e.target,d=t.dat
   if(d.cf){const o=d.cft==='po'?poEdit&&poEdit.carcass:rcC;if(!o)return;setPath(o,d.cf,t.value);if(t.tagName!=='SELECT'&&t.type!=='date')ccLive(d.cft);return}
   if(d.poq!==undefined){poEdit.items[+d.poq].qty=t.value;poLive();return}
   if(d.poc!==undefined){poEdit.items[+d.poc].cost=t.value;poLive();return}
-  if(d.rq!==undefined){const k=t.dataset.k.slice(2),c=$('#rd-'+k);if(c){const v=t.value.trim();if(v===''){c.textContent='—';return}const df=r2(+v-+d.ord);c.innerHTML=df?`<b style="color:${df<0?'var(--rose)':'var(--amber)'}">${df>0?'+':''}${qf(df)}</b>`:'✓ same'}return}
+  if(d.pou!==undefined){poEdit.items[+d.pou].ounit=t.value;return}
+  {const po=(ST&&ST.pos||[]).find(p=>p.id===rvF.id);
+   if(d.rr!==undefined||d.rq!==undefined||d.rqp!==undefined){const c=d.rr??d.rq??d.rqp,v=rvF.L[c]=rvF.L[c]||{r:'',q:'',p:''};if(d.rr!==undefined)v.r=t.value;else if(d.rqp!==undefined)v.p=t.value;else v.q=t.value;if(po)rfLive(po);return}
+   if(t.id==='rf-why'){rvF.why=t.value;return}if(t.id==='rf-no'){rvF.no=t.value;return}}
   if(d.prq!==undefined){const[k,i]=d.prq.split(':');prodF[k][+i].qty=t.value;prodRefresh();return}
   if(d.cq!==undefined){cart[+d.cq].qty=t.value;posLive();return}
   if(d.k==='pdisc'){posDisc=t.value;posLive();return}
@@ -4268,7 +4438,7 @@ function printSlip(o){
   const rows=o.items.filter(i=>!isV(i)).map((i,k)=>{const v=actualVal(i);return `<tr><td>${k+1}</td><td>${esc(i.product)}${i.carryFrom?' <b>(LATE DELIVERY from '+day(i.carryFrom)+')</b>':''}</td><td style="text-align:right">${fmt(i.qty)}</td><td>${i.unit}</td><td style="text-align:right"><b>${v!=null?fmt(v):esc(i.actual)}</b></td><td>${esc([shortText(i),i.remarks].filter(Boolean).join(' · '))}</td></tr>`}).join('');
   const ev=(e,l)=>e?`${l}: <b>${fullStamp(e.at)}</b>${e.by?' by '+esc(e.by):''}${e.receiver?' · received by '+esc(e.receiver):''}`:`${l}: ____________________`;
   $('#print').innerHTML=`${o.dr?`<div style="font-size:28px;font-weight:800;border:3px solid #000;display:inline-block;padding:4px 12px;margin-bottom:6px">${esc(o.dr.no)}</div>`:''}<h2 style="margin:0">DISPATCH SLIP — Delivery ${longDay(o.delivery)}${o.balanceOf?' (BALANCE)':''}${isAdd(o)?' (ADDITIONAL · dispatch by '+t24(o.time)+')':''}</h2>${o.online?`<p style="margin:4px 0"><b>ONLINE ORDER ${esc(o.online.no||'')}</b> · ${esc(o.customer)} · 📍 ${esc(o.online.address)}${o.online.phone?' · 📞 '+esc(o.online.phone):''} · ${PAY[o.online.pay]||''}${o.online.pay==='cod'?' · COLLECT '+onTot(o.online):''}</p>`:''}
-   <p>Customer: <b>${esc(o.customer)}</b> · Date of use: <b>${esc(o.use||'-')}</b>${o.approved?'<br>Short items approved by <b>'+esc(o.approved.by)+'</b> '+fullStamp(o.approved.at):''}<br>${ev(o.dispatched,'Dispatched')}${rating(o)?' · <b>'+RT[rating(o)][0].replace(/^\S+ /,'')+'</b>':''}${o.dispatched&&o.dispatched.riderName?'<br>Rider: <b>'+esc(o.dispatched.riderName)+'</b>'+(o.dispatched.riderPlate?' · Plate '+esc(o.dispatched.riderPlate):'')+(o.dispatched.riderPhone?' · '+esc(o.dispatched.riderPhone):''):''}<br>${ev(o.delivered,'Delivered')}</p>
+   <p>Customer: <b>${esc(o.customer)}</b> · Date of use: <b>${esc(o.use||'-')}</b>${o.note?'<br>📝 Note: <b>'+esc(o.note)+'</b>':''}${o.approved?'<br>Short items approved by <b>'+esc(o.approved.by)+'</b> '+fullStamp(o.approved.at):''}<br>${ev(o.dispatched,'Dispatched')}${rating(o)?' · <b>'+RT[rating(o)][0].replace(/^\S+ /,'')+'</b>':''}${o.dispatched&&o.dispatched.riderName?'<br>Rider: <b>'+esc(o.dispatched.riderName)+'</b>'+(o.dispatched.riderPlate?' · Plate '+esc(o.dispatched.riderPlate):'')+(o.dispatched.riderPhone?' · '+esc(o.dispatched.riderPhone):''):''}<br>${ev(o.delivered,'Delivered')}</p>
    <table style="width:100%;border-collapse:collapse"><tr><th>#</th><th>Product</th><th>Order</th><th>Unit</th><th>Actual</th><th>Remarks</th></tr>${rows}</table>
    ${voids.length?`<p><b>Void (not included in receipt):</b> ${voids.map(i=>esc(i.product)+' '+fmt(i.qty)+' '+i.unit+(i.remarks?' — '+esc(i.remarks):'')).join('; ')}</p>`:''}
    <p style="margin-top:30px">Prepared by: ______________ &nbsp; Checked by: ______________ &nbsp; Received by: ______________</p>`;
