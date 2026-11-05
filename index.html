@@ -928,7 +928,7 @@ details.sec .tile .ic{width:36px;height:36px}details.sec .tile .due{display:none
   <div id="addbox" class="addbox" hidden>
     <label>Deliver on <input type="date" id="adddate" class="edit-in" style="width:auto"></label>
     <label>Dispatch by <input type="time" id="addtime" class="edit-in" style="width:auto"></label>
-    <span class="unit">Used when the message has no date. Late after this time = 🔴 Critical.</span>
+    <span class="unit">Used when the message has no date. Later than this time = 🔴 Very late.</span>
   </div>
   <div class="lbl">3. Order items — type or paste the customer's message (whole week is OK)</div>
   <textarea id="txt" placeholder="DELIVERY DATE:    Oct. 17
@@ -960,8 +960,8 @@ DATE: USE-     Oct. 18-19
   <h2>Users &amp; PINs</h2>
   <div class="unit">Each person logs in with their own <b>User ID + password</b> (at the first login they use their PIN once, then set their own password). The <b>PIN</b> stays for the Time Clock and manager approvals. Forgot password? Tap <b>🔑 Reset password</b>, save, and give them the new one-time password — they choose their own at the next login. Passwords are scrambled: you cannot see them. Their name is saved on every check, approval, dispatch, receiving, batch and sale.<br>
   <b>👔 Manager</b> everything · <b>🔪 Operations</b> preparation, dispatch, receiving, production, inventory (view) — tick <b>🛵 Can deliver</b> to let them use the Rider link · <b>🧾 Cashier</b> POS · <b>💼 Sales</b> online orders &amp; points · <b>🛵 Rider</b> deliveries only.</div>
-  <div class="pinrow" style="margin-top:10px"><b>🕗 Dispatch time targets</b><br><span class="unit">🟢 Standard = before the first time · 🟡 OK = up to the second time · 🔴 Critical = later</span>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:6px">Standard before <input type="time" id="set-std" class="edit-in" style="width:auto"> OK until <input type="time" id="set-ok" class="edit-in" style="width:auto">
+  <div class="pinrow" style="margin-top:10px"><b>🕗 Dispatch time targets</b><br><span class="unit">✅ On time = before the first time · 🟡 Late = up to the second time · 🔴 Very late = later the same day · 📅 days late = not delivered on the delivery date</span>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:6px">On time before <input type="time" id="set-std" class="edit-in" style="width:auto"> Late until <input type="time" id="set-ok" class="edit-in" style="width:auto">
     </div><div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:8px">⚖️ Standard time for advance preparation: finished the <b>day before</b> delivery, until <input type="time" id="set-prep" class="edit-in" style="width:auto">
     <button class="btn" id="set-save">Save times</button></div></div>
   <div class="pinrow" style="margin-top:10px"><b>🏢 Bulk buyer accounts (customer site)</b><br><span class="unit">Make an account for bulk buyers like KUI (unique username + generated password) and give it to them. They can change the password later.</span>
@@ -1132,15 +1132,22 @@ function prepWarn(o){ // only for orders still being prepared
     if(o.delivery===td)return{k:'ok',m:'🛒 '+q+' · prepare today'};
     return{k:'std',m:'🛒 '+q+' · prepare on '+day(o.delivery)}}
   const due=prepDue(o),now=Date.now(),added=(o.online&&o.online.verifiedAt)||o.createdAt,addedLate=added&&added>due;
-  if(now>due)return addedLate?{k:'ok',m:'⚖️ Added late — prepare now'}:{k:'crit',m:'🔴 LATE PREPARATION — standard was '+dueTxt(o)};
+  if(now>due){if(addedLate)return{k:'ok',m:'⚖️ Added late — prepare now'};
+    const byDue=o.items.filter(i=>!isCR(i)&&actualVal(i)!=null&&(i.at||i.prepAt)&&(i.at||i.prepAt)<=due).length;     // some items ready by the standard time = INCOMPLETE (not late)
+    return byDue?{k:'ok',m:'🟡 Incomplete — '+c.notPrep.length+' item'+(c.notPrep.length>1?'s':'')+' left · finish before dispatch'}:{k:'crit',m:'🔴 LATE PREPARATION — nothing ready by '+dueTxt(o)}}
   if(iso(new Date(due))===today())return{k:'ok',m:'⚖️ Prepare TODAY · by '+t24(prepBy())};
   return{k:'std',m:'Prepare on '+dueTxt(o)}}
 // finished, but after the standard time → keeps a LATE PREPARATION tag (like the dispatch rating)
 function prepDoneLate(o){if(o.balanceOf||isAdd(o)||o.online)return null;const its=o.items.filter(i=>!/^v$/i.test(String(i.actual||'').trim()));
   if(!its.length||its.some(i=>String(i.actual||'').trim()===''))return null;const t=its.map(i=>i.at||i.prepAt).filter(Boolean);if(!t.length)return null;
-  const last=Math.max(...t),due=prepDue(o);const added=(o.online&&o.online.verifiedAt)||o.createdAt;if(last<=due||(added&&added>due))return null;return last}
+  const last=Math.max(...t),due=prepDue(o);const added=(o.online&&o.online.verifiedAt)||o.createdAt;if(last<=due||(added&&added>due))return null;return {last,part:t.some(x=>x<=due)}}
 const hm=d=>String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
-const RT={std:['🟢 STANDARD','dt-std'],ok:['🟡 OK','dt-ok'],crit:['🔴 CRITICAL','dt-crit']};
+const RT={std:['✅ ON TIME','dt-std'],ok:['🟡 LATE','dt-ok'],crit:['🔴 VERY LATE','dt-crit']};
+// 📅 MISSED DELIVERY DATE: days after the delivery date until it is DELIVERED (not dispatched). Replaces the same-day time tag.
+function daysLate(o){if(o.closed||(o.delivered&&o.delivered.result))return 0;const end=o.delivered?iso(new Date(o.delivered.at)):today();const n=Math.round((pISO(end)-pISO(o.delivery))/864e5);return n>0?n:0}
+const dlTxt=(o,n)=>'📅 '+(o.delivered?'Delivered ':'')+n+' day'+(n>1?'s':'')+' late';
+// date of use (typed on the order) — when it has passed, the manager can close the order as lapsed
+function useDate(o){const u=String(o.use||'').trim();if(!u||u==='Carry-over')return null;if(/^\d{4}-\d{2}-\d{2}$/.test(u))return u;const p=Date.parse(u+' '+String(o.delivery).slice(0,4));return isNaN(p)?null:iso(new Date(p))}
 // rating of a dispatched order
 function rating(o){if(!o.dispatched)return null;if(o.dispatched.rating)return o.dispatched.rating;return rateNow(o)}
 function rateNow(o){const d=new Date(o.dispatched.at),ds=iso(d),t=hm(d);
@@ -1150,14 +1157,15 @@ function rateNow(o){const d=new Date(o.dispatched.at),ds=iso(d),t=hm(d);
   return t<settings.stdBefore?'std':t<=settings.okUntil?'ok':'crit'}
 // live warning for an order that is not dispatched yet
 function liveWarn(o){if(o.dispatched)return null;const now=new Date(),t=hm(now),td=today();
-  if(o.online)return o.delivery<td?{k:'crit',m:'🔴 CRITICAL — not delivered on '+day(o.delivery)}:null;
-  if(o.balanceOf||isAdd(o)){if(o.delivery<td)return{k:'crit',m:'🔴 CRITICAL — not dispatched on '+day(o.delivery)};if(!o.time||o.delivery!==td)return null;return t>o.time?{k:'crit',m:'🔴 CRITICAL — past '+t24(o.time)}:{k:'std',m:'Dispatch by '+t24(o.time)}}
+  const dl=()=>({k:'crit',m:dlTxt(o,daysLate(o))+' — not dispatched'});
+  if(o.online)return o.delivery<td?{k:'crit',m:dlTxt(o,daysLate(o))+' — not delivered'}:null;
+  if(o.balanceOf||isAdd(o)){if(o.delivery<td)return dl();if(!o.time||o.delivery!==td)return null;return t>o.time?{k:'crit',m:'⚠ Overdue — past '+t24(o.time)}:{k:'std',m:'⏳ Due by '+t24(o.time)}}
   if(o.delivery>td)return null;
-  if(o.delivery<td)return{k:'crit',m:'🔴 CRITICAL — not dispatched on '+day(o.delivery)};
+  if(o.delivery<td)return dl();
   const mins=(a,b)=>{const[h1,m1]=a.split(':').map(Number),[h2,m2]=b.split(':').map(Number);return h2*60+m2-(h1*60+m1)};
-  if(t<settings.stdBefore){const left=mins(t,settings.stdBefore);return{k:'std',m:'Dispatch before '+t24(settings.stdBefore)+' · '+(left>=60?Math.floor(left/60)+'h ':'')+(left%60)+'m left'}}
-  if(t<=settings.okUntil)return{k:'ok',m:'⚠ Dispatch NOW — OK until '+t24(settings.okUntil)};
-  return{k:'crit',m:'🔴 CRITICAL — past '+t24(settings.okUntil)}}
+  if(t<settings.stdBefore){const left=mins(t,settings.stdBefore);return{k:'std',m:'⏳ Due by '+t24(settings.stdBefore)+' · '+(left>=60?Math.floor(left/60)+'h ':'')+(left%60)+'m left'}}
+  if(t<=settings.okUntil)return{k:'ok',m:'🟡 Late — dispatch now (until '+t24(settings.okUntil)+')'};
+  return{k:'crit',m:'⚠ Overdue — past '+t24(settings.okUntil)}}
 const dirtyOrders=()=>db.orders.filter(o=>base[o.id]!==J(o));
 function setSync(s){const el=$('#sync');if(!el)return;
   el.className='sync'+(s==='off'?' off':'');
@@ -1343,7 +1351,7 @@ const okDel=o=>!!o.delivered&&!o.delivered.result; // successfully delivered (no
 const RES={returned:{i:'↩️',t:'Returned'},cancelled:{i:'✕',t:'Cancelled'}};
 const NDR=['Customer not home / no answer','Customer refused the order','Wrong or damaged item','Wrong address / can\'t find the place','Customer cancelled','No cash to pay (COD)'];
 // online (customer site) orders join the team's lists only after the manager confirms the payment (COD = confirmed right away)
-const live=o=>!o.online||o.online.status==='confirmed';
+const live=o=>!o.closed&&(!o.online||o.online.status==='confirmed');   // closed (lapsed) orders are not tasks any more
 const PAY={cod:'💵 COD',bank:'🏦 Bank transfer',ewallet:'📱 GCash / Maya'};
 const onTot=ol=>ol.total!=null?peso(ol.total):peso(ol.subtotal)+' + fee';
 function peso(n){n=Number(n||0);return (n<-0.004?'−':'')+'₱'+Math.abs(n).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2})}
@@ -1523,7 +1531,7 @@ function procHome(msg){
       <div class="grp">Daily process</div>
       <div class="tiles">
         ${tile('paste','t-paste',cl(n.today,'No orders for today','order(s) for today'),'Paste advance orders at least 1 day before delivery · rush orders = Additional order with a dispatch time')}
-        ${tile('prep','t-prep',(n.prepToday==null?cl(n.prep,'Nothing to prepare','order(s) to prepare','hot'):cl(n.prepToday,'Tomorrow\'s orders: none left','for tomorrow — prepare today','hot'))+(n.prepLate?`<span class="bad">🔴 ${n.prepLate} late preparation</span>`:'')+(n.onlineToday?`<span class="hot">🛒 ${n.onlineToday} online today (queue)</span>`:''),'Standard time: prepare the day before delivery, until '+t24(prepBy())+' · after that = LATE PREPARATION')}
+        ${tile('prep','t-prep',(n.prepToday==null?cl(n.prep,'Nothing to prepare','order(s) to prepare','hot'):cl(n.prepToday,'Tomorrow\'s orders: none left','for tomorrow — prepare today','hot'))+(n.prepInc?`<span class="hot">🟡 ${n.prepInc} incomplete</span>`:'')+(n.prepLate?`<span class="bad">🔴 ${n.prepLate} late preparation</span>`:'')+(n.onlineToday?`<span class="hot">🛒 ${n.onlineToday} online today (queue)</span>`:''),'Standard time: prepare the day before delivery, until '+t24(prepBy())+' · after that = LATE PREPARATION')}
         ${tile('disp','t-disp',cl(n.dispatch,'Nothing to dispatch','ready to check & dispatch','hot'),'Delivery day: dispatch before '+t24(settings.stdBefore)+' (OK until '+t24(settings.okUntil)+')')}
         ${tile('mon','t-mon',cl(n.way,'No rider on the road','on the way'),'')}
         ${tile('online','t-paste',cl(n.onlinePending,'Nothing to confirm','order(s) to confirm','hot'),'Orders placed yesterday are confirmed today → prepared & delivered today · queue = order of confirmation')}
@@ -1696,7 +1704,7 @@ function render(){
   if(view==='undel'){$('#list').innerHTML=closedHTML()+undeliveredHTML(und);return}
   if(view==='online'){const af=document.activeElement&&document.activeElement.id==='onq',cp=af?document.activeElement.selectionStart:0;$('#list').innerHTML=onlineHTML(onl);fillPhotos();wireOnline(onl);if(af){const x=$('#onq');x.focus();try{x.setSelectionRange(cp,cp)}catch(e){}}if($('#feesbtn'))$('#feesbtn').onclick=feesDialog;if($('#bulkbtn2'))$('#bulkbtn2').onclick=bulkDialog;return}
   if(view==='way'){let banner2='';if(me.role!=='rider'&&me.role!=='prep'){const td=today(),tod=db.orders.filter(o=>live(o)&&!o.online&&o.delivery===td&&!o.balanceOf);
-      if(tod.length){const n={std:0,ok:0,crit:0};tod.forEach(o=>{const r=rating(o);if(r)n[r]++});if(n.std+n.ok+n.crit)banner2=`<div class="daybar"><b>🕗 Today</b><span class="unit">dispatch before ${t24(settings.stdBefore)}</span><span style="flex:1"></span>${n.std?`<em class="dtag dt-std">🟢 ${n.std} Standard</em>`:''}${n.ok?`<em class="dtag dt-ok">🟡 ${n.ok} OK</em>`:''}${n.crit?`<em class="dtag dt-crit">🔴 ${n.crit} Critical</em>`:''}</div>`}}
+      if(tod.length){const n={std:0,ok:0,crit:0};tod.forEach(o=>{const r=rating(o);if(r)n[r]++});if(n.std+n.ok+n.crit)banner2=`<div class="daybar"><b>🕗 Today</b><span class="unit">dispatch before ${t24(settings.stdBefore)}</span><span style="flex:1"></span>${n.std?`<em class="dtag dt-std">✅ ${n.std} On time</em>`:''}${n.ok?`<em class="dtag dt-ok">🟡 ${n.ok} Late</em>`:''}${n.crit?`<em class="dtag dt-crit">🔴 ${n.crit} Very late</em>`:''}</div>`}}
     const af=document.activeElement&&document.activeElement.id==='wq',cp=af?document.activeElement.selectionStart:0;
     $('#list').innerHTML=banner2+wayHTML(way);fillPhotos();const wq=$('#wq');if(wq){wq.oninput=()=>{wayQ=wq.value;render()};if(af){wq.focus();try{wq.setSelectionRange(cp,cp)}catch(e){}}}return}
   const full={prep:me.role==='ops'||me.role==='manager'?prepTodo:prep,disp:dispTodo,way,delivered:del}[view];
@@ -1711,14 +1719,16 @@ function render(){
   const msg={disp:'Nothing to check or dispatch right now. Prepared orders show up here.',prep:'Nothing to prepare. 🎉',way:me.role==='rider'?'Nothing to deliver right now. New dispatched orders show up here automatically.':'No orders on the way.',delivered:'No delivered orders yet.'}[view];
   let banner='';
   if(me.role!=='rider'&&me.role!=='prep'&&view!=='undel'){const td=today(),tod=db.orders.filter(o=>live(o)&&!o.online&&o.delivery===td&&!o.balanceOf);
-    if(tod.length){const n={std:0,ok:0,crit:0};let pend=0;tod.forEach(o=>{const r=rating(o);if(r)n[r]++;else pend++});const w=pend?liveWarn(tod.find(o=>!o.dispatched)):null;
+    if(tod.length){const n={std:[],ok:[],crit:[]},pl=[];tod.forEach(o=>{const r=rating(o);if(r)n[r].push(o.customer);else pl.push(o)});const pend=pl.length,w=pend?liveWarn(pl.find(o=>!o.dispatched)||pl[0]):null;
+      const nm=L=>{const u=[...new Set(L)];return ' · '+u.slice(0,2).map(esc).join(', ')+(u.length>2?' +'+(u.length-2):'')};
+      const where=pl.map(o=>check(o).notPrep.length||!prepOK(o)?'in Preparation':'in Dispatch');
       banner+=`<div class="daybar"><b>🕗 Today</b><span class="unit">dispatch before ${t24(settings.stdBefore)}</span><span class="grow" style="flex:1"></span>
-        ${n.std?`<em class="dtag dt-std">🟢 ${n.std} Standard</em>`:''}${n.ok?`<em class="dtag dt-ok">🟡 ${n.ok} OK</em>`:''}${n.crit?`<em class="dtag dt-crit">🔴 ${n.crit} Critical</em>`:''}
-        ${pend?`<em class="dtag ${w?RT[w.k][1]:''}${w&&w.k==='crit'?' blink':''}">${pend} not dispatched${w?' · '+esc(w.m):''}</em>`:''}</div>`}}
+        ${n.std.length?`<em class="dtag dt-std" title="Dispatched before ${t24(settings.stdBefore)}">✅ ${n.std.length} On time${nm(n.std)}</em>`:''}${n.ok.length?`<em class="dtag dt-ok" title="Dispatched until ${t24(settings.okUntil)}">🟡 ${n.ok.length} Late${nm(n.ok)}</em>`:''}${n.crit.length?`<em class="dtag dt-crit" title="Dispatched after ${t24(settings.okUntil)}">🔴 ${n.crit.length} Very late${nm(n.crit)}</em>`:''}
+        ${pend?`<em class="dtag ${w?RT[w.k][1]:''}${w&&w.k==='crit'?' blink':''}">${pend} not dispatched${nm(pl.map(o=>o.customer))}${pl.length===1?' · '+where[0]:''}${w?' · '+esc(w.m):''}</em>`:''}</div>`}}
   if(view==='prep'&&me.role!=='rider'){const tm=db.orders.filter(o=>live(o)&&!o.online&&o.delivery===tmr0&&!o.balanceOf&&!isAdd(o)),notDone=tm.filter(o=>!o.dispatched&&check(o).notPrep.length);
     const stale=db.orders.filter(o=>live(o)&&!o.online&&!o.dispatched&&!o.balanceOf&&!isAdd(o)&&o.delivery<=td0&&check(o).notPrep.length);
     const late=Date.now()>prepDue({delivery:tmr0});
-    if(tm.length||stale.length)banner+=`<div class="prepbar${(late&&notDone.length)||stale.length?' late':''}"><b>⚖️ Prepare today</b><span class="unit">standard time: tomorrow's orders ready by ${t24(prepBy())} today · after that = LATE PREPARATION</span><span style="flex:1"></span>
+    if(tm.length||stale.length)banner+=`<div class="prepbar${(late&&notDone.length)||stale.length?' late':''}"><b>⚖️ Prepare today</b><span class="unit">standard time: tomorrow's orders ready by ${t24(prepBy())} today · after that: some items ready = 🟡 Incomplete (finish before dispatch) · nothing ready = 🔴 LATE PREPARATION</span><span style="flex:1"></span>
       ${tm.length?`<em class="dtag ${notDone.length?(late?'dt-crit':'dt-ok'):'dt-std'}">${tm.length-notDone.length} of ${tm.length} order(s) for ${day(tmr0)} prepared</em>`:''}
       ${stale.length?`<em class="dtag dt-crit">🔴 ${stale.length} order(s) for today or earlier still not prepared</em>`:''}</div>`;
     const oq=db.orders.filter(o=>live(o)&&o.online&&!o.dispatched&&o.delivery<=td0).sort((a,b)=>a.delivery.localeCompare(b.delivery)||(a.online.queue||999)-(b.online.queue||999));
@@ -2046,7 +2056,7 @@ function card(o){
   const steps=`<div class="steps">
     <div class="step${s1?' on':''}${!s1?' now':''}"><i>${s1?'✓':1}</i><b>Prepared</b>${c.prepared}/${total} items${o.prepDone?'<br>Sent by '+esc(o.prepDone.by||'')+' · '+time12(new Date(o.prepDone.at)):''}</div>
     <div class="step${s2?' on':''}${s1&&!s2?' now':''}"><i>${s2?'✓':2}</i><b>Checked</b>${c.checkedN}/${total} tally${o.approved?'<br>Approved by '+esc(o.approved.by):''}</div>
-    <div class="step${o.dispatched?' on':''}${s2&&st==='prep'?' now':''}"><i>${o.dispatched?'✓':3}</i><b>Dispatched</b>${ev(o.dispatched,'Dispatched')||'Waiting'}${rating(o)?`<br><em class="dtag ${RT[rating(o)][1]}" style="margin:4px 0 0">${RT[rating(o)][0]}</em>`:''}</div>
+    <div class="step${o.dispatched?' on':''}${s2&&st==='prep'?' now':''}"><i>${o.dispatched?'✓':3}</i><b>Dispatched</b>${ev(o.dispatched,'Dispatched')||'Waiting'}${daysLate(o)&&o.dispatched?`<br><em class="late" style="margin:4px 0 0">${dlTxt(o,daysLate(o))}</em>`:rating(o)?`<br><em class="dtag ${RT[rating(o)][1]}" style="margin:4px 0 0">${RT[rating(o)][0]}</em>`:''}</div>
     <div class="step${o.delivered?' on':''}${st==='way'?' now':''}${o.delivered&&o.delivered.result?' fail':''}"><i>${o.delivered?(o.delivered.result?RES[o.delivered.result].i:'✓'):4}</i><b>${o.delivered&&o.delivered.result?RES[o.delivered.result].t:'Delivered'}</b>${ev(o.delivered,'Delivered')||'Waiting'}${o.delivered&&o.delivered.why?'<br><b style="color:var(--rose)">Reason: '+esc(o.delivered.why)+'</b>':''}</div></div>`;
   let foot;
   if(ed) foot=`<button class="btn" data-additem="${o.id}">+ Add item</button><button class="btn" data-delorder="${o.id}" style="color:var(--rose)">Delete order</button><button class="go" data-editdone="${o.id}">Done</button>`;
@@ -2070,7 +2080,7 @@ function card(o){
   return `<div class="card${isOpen?' open':''}${st!=='prep'&&!ed?' simple':''}" id="c-${o.id}">
     <button class="top" data-open="${o.id}">
       <div class="who2"><div class="cname">${o.online&&o.online.queue?`<em class="qno">🛒 #${o.online.queue}</em> `:''}${esc(o.customer)}</div>
-        <div class="ctags">${o.balanceOf?`<em class="bal">BALANCE${o.time?' · by '+t24(o.time):''}</em>`:''}${isAdd(o)?`<em class="addt">➕ ADDITIONAL${o.delivery===t&&st==='prep'?'':' · dispatch by '+t24(o.time)}</em>`:''}${late?'<em class="late">LATE</em>':''}${(()=>{if(me.role==='rider')return'';const r=rating(o);if(r)return`<em class="dtag ${RT[r][1]}">${RT[r][0]}</em>`;const pw=prepWarn(o);if(pw)return`<em class="dtag ${RT[pw.k][1]}${pw.k==='crit'?' blink':''}">${esc(pw.m)}</em>`;const w=liveWarn(o);return w?`<em class="dtag ${['std','ok','crit'].includes(w.k)?RT[w.k][1]:''}${w.k==='crit'?' blink':''}">${esc(w.m)}</em>`:''})()}${(()=>{const l=prepDoneLate(o);return l?`<em class="late" title="Standard: ${dueTxt(o)}">⏰ LATE PREPARATION · done ${DOW[new Date(l).getDay()]} ${time12(new Date(l))}</em>`:''})()}${o.items.some(i=>i.carryFrom)?`<em class="late">⏰ ${o.items.filter(i=>i.carryFrom).length} LATE DELIVERY</em>`:''}${o.dr?`<em class="drchip">🧾 ${esc(o.dr.no)}</em>`:''}${o.use==='Carry-over'?'<em class="bal">↪ CARRY-OVER</em>':''}${o.apprNo&&!o.approved&&st==='prep'?'<em class="late">✕ NOT APPROVED</em>':''}${o.note?`<em class="nt">📝 ${esc(o.note.length>48?o.note.slice(0,46)+'…':o.note)}</em>`:''}${o.online&&o.online.pay==='cod'&&!o.delivered?`<em class="nt">💵 collect ${onTot(o.online)}</em>`:''}</div></div>
+        <div class="ctags">${o.balanceOf?`<em class="bal">BALANCE${o.time?' · by '+t24(o.time):''}</em>`:''}${isAdd(o)?`<em class="addt">➕ ADDITIONAL${o.delivery===t&&st==='prep'?'':' · dispatch by '+t24(o.time)}</em>`:''}${(()=>{const n=daysLate(o);return n?`<em class="late">${dlTxt(o,n)}</em>`:''})()}${(()=>{const u=useDate(o);return u&&u<t&&!o.dispatched&&!o.closed?`<em class="late">⛔ Use date passed (${day(u)})${me.role==='manager'?' — close it?':''}</em>`:''})()}${(()=>{if(me.role==='rider')return'';const dl=daysLate(o),r=rating(o);if(r)return dl?'':`<em class="dtag ${RT[r][1]}">${RT[r][0]}</em>`;const pw=prepWarn(o);if(pw)return`<em class="dtag ${RT[pw.k][1]}${pw.k==='crit'?' blink':''}">${esc(pw.m)}</em>`;if(dl)return '';const w=liveWarn(o);return w?`<em class="dtag ${['std','ok','crit'].includes(w.k)?RT[w.k][1]:''}${w.k==='crit'?' blink':''}">${esc(w.m)}</em>`:''})()}${(()=>{const l=prepDoneLate(o);return l?(l.part?`<em class="dtag dt-ok" title="Standard: ${dueTxt(o)}">🟡 Incomplete at ${t24(prepBy())} · finished ${DOW[new Date(l.last).getDay()]} ${time12(new Date(l.last))}</em>`:`<em class="late" title="Standard: ${dueTxt(o)}">⏰ LATE PREPARATION · done ${DOW[new Date(l.last).getDay()]} ${time12(new Date(l.last))}</em>`):''})()}${o.items.some(i=>i.carryFrom)?`<em class="late">📅 ${o.items.filter(i=>i.carryFrom).length} item(s) late · balance from an earlier order</em>`:''}${o.dr?`<em class="drchip">🧾 ${esc(o.dr.no)}</em>`:''}${o.use==='Carry-over'?'<em class="bal">↪ CARRY-OVER</em>':''}${o.apprNo&&!o.approved&&st==='prep'?'<em class="late">✕ NOT APPROVED</em>':''}${o.note?`<em class="nt">📝 ${esc(o.note.length>48?o.note.slice(0,46)+'…':o.note)}</em>`:''}${o.online&&o.online.pay==='cod'&&!o.delivered?`<em class="nt">💵 collect ${onTot(o.online)}</em>`:''}</div></div>
       <div class="cright">${pill}<span class="arrow">▾</span></div></button>
     <div class="body">
       <div class="cinfo">📅 <b>${longDay(o.delivery)}</b>${o.use&&o.use!=='Carry-over'?' · use '+esc(o.use):''}${o.balanceOf?' · left qty from the '+day(o.balanceFrom)+' order':''}${o.createdBy?' · by '+esc(o.createdBy):''}</div>
@@ -2275,7 +2285,7 @@ function dashHTML(orders){
   prepRows.filter(r=>r.timed>=5&&r.onPct<75).forEach(r=>ins.push(['⏱️',`<b>${esc(r.n)}</b> (preparation): only ${r.onPct.toFixed(0)}% of items prepared by the day-before deadline${r.perItem?` · ${r.perItem.toFixed(1)} min per item`:''}.`]));
   if(teamComp!=null&&toPrep.length>=10&&teamComp<95)ins.push(['📋',`<b>${toPrep.length-doneItems.length}</b> item(s) were never prepared this month (${teamComp.toFixed(0)}% completion).`]);
   prepRows.filter(r=>r.items>=5&&r.acc<95).forEach(r=>ins.push(['⚖️',`<b>${esc(r.n)}</b> (preparation): ${r.corr} of ${r.items} weights were corrected by Dispatch — accuracy ${r.acc.toFixed(1)}%. Recheck scale use with them.`]));
-  dspRows.filter(r=>r.crit>=2&&r.ot<80).forEach(r=>ins.push(['⏰',`<b>${esc(r.n)}</b> (dispatch): ${r.crit} of ${r.std+r.ok+r.crit} dispatches were <b>Critical</b> (late). On-time ${r.ot.toFixed(0)}%.`]));
+  dspRows.filter(r=>r.crit>=2&&r.ot<80).forEach(r=>ins.push(['⏰',`<b>${esc(r.n)}</b> (dispatch): ${r.crit} of ${r.std+r.ok+r.crit} dispatches were <b>Very late</b> (late). On-time ${r.ot.toFixed(0)}%.`]));
   {const worst=wd.map((x,k)=>({k,c:x.crit,t:x.std+x.ok+x.crit})).filter(x=>x.c>=2).sort((a,b)=>b.c-a.c)[0];if(worst)ins.push(['📅',`Most late dispatches happen on <b>${['Sundays','Mondays','Tuesdays','Wednesdays','Thursdays','Fridays','Saturdays'][worst.k]}</b> (${worst.c} of ${worst.t}). Add prep help the day before.`])}
   ridRows.filter(r=>r.avg!=null&&r.del>=3&&avgMin&&r.avg>avgMin*1.4).forEach(r=>ins.push(['🛵',`<b>${esc(r.n)}</b> takes ${Math.round(r.avg)} min on average from dispatch to delivered (team average ${Math.round(avgMin)} min).`]));
   prepRows.filter(r=>r.items>=10&&r.acc>=99).slice(0,1).forEach(r=>ins.push(['🌟',`<b>${esc(r.n)}</b> weighed ${r.items} items with ${r.acc.toFixed(1)}% accuracy — great work.`]));
@@ -2307,7 +2317,7 @@ function dashHTML(orders){
   const friendly=glance+todo+teamP+prodP;
   return friendly+`<details class="fdet"><summary>📋 Full details (all numbers)</summary><div class="kpis">
      <div class="kpi"><span>Orders</span><b>${orders.length}</b><i>${dlv.length} delivered · ${disp.length-dlv.length} on the way</i></div>
-     <div class="kpi ${ontimePct==null?'':ontimePct>=90?'good':ontimePct>=75?'warn':'bad'}"><span>On-time dispatch</span><b>${ontimePct==null?'—':ontimePct.toFixed(0)+'%'}</b><i>Standard + OK · ${rated.length-onTime} critical</i></div>
+     <div class="kpi ${ontimePct==null?'':ontimePct>=90?'good':ontimePct>=75?'warn':'bad'}"><span>On-time dispatch</span><b>${ontimePct==null?'—':ontimePct.toFixed(0)+'%'}</b><i>On time + Late · ${rated.length-onTime} very late / days late</i></div>
      <div class="kpi ${lvl(fill)}"><span>Fill rate (kg)</span><b>${fill==null?'—':fill.toFixed(1)+'%'}</b><i>${ordKg?fmt(r2(sentKg))+' of '+fmt(r2(ordKg))+' kg delivered':'no completed orders yet'}</i></div>
      <div class="kpi ${shorts?'warn':'good'}"><span>Short items</span><b>${shorts}</b><i>${fmt(forfeitKg)} kg forfeited</i></div>
      <div class="kpi"><span>Avg delivery time</span><b>${avgMin==null?'—':Math.round(avgMin)+'m'}</b><i>dispatch → delivered</i></div>
@@ -2317,7 +2327,7 @@ function dashHTML(orders){
    <div class="panel"><h3>⚖️ Preparation team <small>competency = items completed + preparation time (on time = ready by ${t24(prepBy())} the day before delivery)</small></h3><div class="sc"><table><thead><tr><th>Name</th><th class="r">Items completed</th><th class="r">Share of team</th><th class="r">Completed on time</th><th class="r">Avg time / item</th><th class="r">Avg time / order</th><th class="r">Corrected by Dispatch</th><th class="r">Accuracy</th><th>Rating</th></tr></thead><tbody>
      ${prepRows.map(r=>{const score=r.onPct==null?r.acc:(r.onPct*0.6+(r.acc==null?100:r.acc)*0.4);return `<tr><td><b>${esc(r.n)}</b></td><td class="r"><b>${r.items}</b></td><td class="r">${r.share==null?'—':r.share.toFixed(0)+'%'}</td><td class="r">${pctBadge(r.onPct,90,75)}</td><td class="r">${r.perItem==null?'—':r.perItem.toFixed(1)+' min'}</td><td class="r">${r.perOrder==null?'—':Math.round(r.perOrder)+' min'}</td><td class="r">${r.corr||'—'}</td><td class="r">${pctBadge(r.acc,98,95)}</td><td>${tag(score,92,80)}</td></tr>`}).join('')||'<tr><td colspan="9" class="empty">No weights typed in this period.</td></tr>'}</tbody></table></div>
      <p class="unit" style="margin:8px 2px 0">Team: <b>${teamComp==null?'—':teamComp.toFixed(0)+'%'}</b> of items completed · average <b>${avgPrep==null?'—':Math.round(avgPrep)+' min'}</b> to prepare an order · <b>${finPct==null?'—':finPct.toFixed(0)+'%'}</b> of orders fully prepared by ${t24(prepBy())} the day before delivery. Rating = 60% on-time completion + 40% accuracy.</p></div>
-   <div class="panel"><h3>🚚 Dispatch team <small>on time = Standard or OK</small></h3><div class="sc"><table><thead><tr><th>Name</th><th class="r">Dispatched</th><th class="r">🟢 Std</th><th class="r">🟡 OK</th><th class="r">🔴 Critical</th><th class="r">On time</th><th class="r">Items checked</th><th class="r">Mistakes caught</th><th>Rating</th></tr></thead><tbody>
+   <div class="panel"><h3>🚚 Dispatch team <small>on time = On time or Late</small></h3><div class="sc"><table><thead><tr><th>Name</th><th class="r">Dispatched</th><th class="r">✅ On time</th><th class="r">🟡 Late</th><th class="r">🔴 Very late</th><th class="r">On time</th><th class="r">Items checked</th><th class="r">Mistakes caught</th><th>Rating</th></tr></thead><tbody>
      ${dspRows.map(r=>`<tr><td><b>${esc(r.n)}</b></td><td class="r">${r.orders}</td><td class="r">${r.std}</td><td class="r">${r.ok}</td><td class="r">${r.crit?`<b style="color:var(--rose)">${r.crit}</b>`:0}</td><td class="r">${pctBadge(r.ot,90,75)}</td><td class="r">${r.checked}</td><td class="r">${r.caught}</td><td>${tag(r.ot,90,75)}</td></tr>`).join('')||'<tr><td colspan="9" class="empty">No dispatches in this period.</td></tr>'}</tbody></table></div></div>
    ${(()=>{const on=orders.filter(o=>o.online&&o.online.verifiedBy);if(!on.length)return'';const m=new Map();on.forEach(o=>{const r=m.get(o.online.verifiedBy)||{n:o.online.verifiedBy,c:0,mins:[],val:0};r.c++;r.val+=o.online.total||o.online.subtotal||0;const t=(o.online.verifiedAt-o.online.placedAt)/60000;if(t>=0)r.mins.push(t);m.set(r.n,r)});
      return `<div class="panel"><h3>💼 Sales — online order confirmation <small>time = from customer order to confirmation</small></h3><div class="sc"><table><thead><tr><th>Name</th><th class="r">Orders confirmed</th><th class="r">Value</th><th class="r">Avg time to confirm</th><th class="r">Longest</th></tr></thead><tbody>
@@ -2329,7 +2339,7 @@ function dashHTML(orders){
      ${prod.map(r=>`<tr><td><b>${esc(r.product)}</b></td><td>${esc(r.unit)}</td><td class="r">${fmt(r.ordered)}</td><td>${barCell(r.ordered,maxOrd)}</td><td class="r">${r.days}</td><td class="r">${fmt(r.avg)}</td><td class="r">${fmt(r.peak)}</td><td class="r">${r.times?`<b style="color:${r.times>=2?'var(--rose)':'inherit'}">${r.times}</b>`:'—'}</td><td class="r">${r.forfeit?fmt(r.forfeit):'—'}</td><td class="r"><b>${fmt(r.suggest)}</b></td><td>${r.times>=2||r.forfeit?'<span class="badge b-bad">Stock more</span>':r.times?'<span class="badge b-mid">Watch</span>':'<span class="badge b-good">OK</span>'}</td></tr>`).join('')||'<tr><td colspan="11" class="empty">No items in this period.</td></tr>'}</tbody></table></div></div>
    <div class="panel"><h3>📅 Dispatch timeliness by weekday</h3>
      <div class="wk">${wd.map((x,k)=>{const t=x.std+x.ok+x.crit,h=v=>Math.round(v/wmax*86);return `<div><div class="col">${x.crit?`<i style="height:${h(x.crit)}px;background:var(--rose)"></i>`:''}${x.ok?`<i style="height:${h(x.ok)}px;background:#e0a100"></i>`:''}${x.std?`<i style="height:${h(x.std)}px;background:var(--green)"></i>`:''}</div>${DOW[k]}<span>${t||'—'}</span></div>`}).join('')}</div>
-     <div class="legend"><span><i style="background:var(--green)"></i>Standard</span><span><i style="background:#e0a100"></i>OK</span><span><i style="background:var(--rose)"></i>Critical</span></div></div></details>`;
+     <div class="legend"><span><i style="background:var(--green)"></i>On time</span><span><i style="background:#e0a100"></i>Late</span><span><i style="background:var(--rose)"></i>Very late / days late</span></div></div></details>`;
 }
 /* ---------- toast ---------- */
 function toast(msg,withUndo){const t=$('#toast');$('#tmsg').textContent=msg;$('#tundo').style.display=withUndo?'':'none';t.classList.add('on');clearTimeout(t.h);t.h=setTimeout(()=>t.classList.remove('on'),5000)}
