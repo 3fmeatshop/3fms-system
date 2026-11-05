@@ -41,7 +41,7 @@ main{max-width:860px;margin:0 auto;padding:16px}
 <main>
   <div class="clock"><b id="t">--:--</b><span id="d"></span></div>
   <div class="grid" id="grid"><div class="empty">Loading staff…</div></div>
-  <div class="foot"><span id="pend"></span><span id="fst"></span><span style="flex:1"></span><button id="fsb">⛶ Full screen</button><button id="sync">↻ Sync now</button></div>
+  <div class="foot"><span id="pend"></span><span id="fst"></span><span style="flex:1"></span><button id="snd">🔊 Test sound</button><button id="fsb">⛶ Full screen</button><button id="sync">↻ Sync now</button></div>
 </main>
 <div class="sheet" id="sh"><div class="box" id="box"></div></div>
 <div id="cam"><div class="msg" id="cmsg"></div><video id="v" autoplay playsinline muted></video><div class="bar"><button id="cx">✕</button><button id="shot" aria-label="Take selfie"></button><button id="skip" style="font-size:14px">Skip<br>photo</button></div></div>
@@ -115,7 +115,13 @@ async function enroll(){const mg=(S&&S.staff||[]).filter(p=>p.role==='manager');
 // 🔊 voice — Google's own voice (the one Google Maps uses) when the phone has it
 let VOX=null;function voxPick(){try{const V=speechSynthesis.getVoices();VOX=V.find(v=>/google/i.test(v.name)&&/^en[-_]US/i.test(v.lang))||V.find(v=>/google/i.test(v.name)&&/^en/i.test(v.lang))||V.find(v=>/^en[-_](US|PH)/i.test(v.lang))||V.find(v=>/^en/i.test(v.lang))||null}catch(e){}}
 try{voxPick();speechSynthesis.onvoiceschanged=voxPick}catch(e){}
-function say(txt){try{const S=window.speechSynthesis;if(!S||!txt)return;if(!VOX)voxPick();const u=new SpeechSynthesisUtterance(txt);u.lang=VOX?VOX.lang:'en-US';if(VOX)u.voice=VOX;u.rate=1;u.pitch=1;S.cancel();S.speak(u)}catch(e){}}
+// Android app (WebView): sound may only start from a tap — the first tap "unlocks" one audio player that the voice reuses later
+let AUD=null;document.addEventListener('pointerdown',()=>{if(AUD)return;try{AUD=new Audio('data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=');AUD.play().catch(()=>{})}catch(e){}},true);
+function say(txt){if(!txt)return;let done=false;const audio=()=>{if(done)return;done=true;try{const a=AUD||new Audio();a.src='https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en&ttsspeed=1&q='+encodeURIComponent(txt);a.play().catch(()=>{})}catch(e){}};
+  // 1) the phone's own voice (Chrome: Google voice) · 2) if this device has none (Android app / WebView) → the same Google voice as audio from the internet
+  try{const S=window.speechSynthesis;if(!S||typeof SpeechSynthesisUtterance==='undefined')return audio();if(!VOX)voxPick();
+    const u=new SpeechSynthesisUtterance(txt);u.lang=VOX?VOX.lang:'en-US';if(VOX)u.voice=VOX;u.rate=1;u.pitch=1;u.onstart=()=>{done=true};u.onerror=()=>{if(!done){done=false;audio()}};
+    S.cancel();S.speak(u);setTimeout(()=>{if(!done&&!S.speaking)audio()},900)}catch(e){audio()}}
 const SAYOK={in:'Successful. Thank you! Proceed to opening procedure.',bout:'Successful. Enjoy your break!',bin:'Successful. Welcome back!',out:'Successful. Thank you for today. Ingat!'};
 function sayOK(uid,kind){say(SAYOK[kind]||'Successful. Thank you!')}
 const esc0=v=>String(v||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -135,6 +141,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)r
   if(b.dataset.k!==undefined){const k=b.dataset.k;if(k==='✕'){pin=pin.slice(0,-1);drawPin();return}if(k==='OK'){checkPin();return}if(pin.length<6){pin+=k;drawPin();if(pin.length>=4&&S)sha(S.salt+'|'+pin).then(h=>{if(h===sel.h)checkPin()})}return}
   if(b.dataset.act){act(b.dataset.act,b.dataset.h);return}
   if(b.id==='enr'){enroll();return}
+  if(b.id==='snd'){say('Sound check. Successful.');return}
   if(b.id==='fsb'){const d=document.documentElement;(document.fullscreenElement?document.exitFullscreen():d.requestFullscreen&&d.requestFullscreen()).catch&&0;return}
   if(b.id==='sync'){toast(navigator.onLine?'Syncing…':'📴 Offline — will send when the internet is back');sync()}});
 window.addEventListener('online',()=>{draw();sync()});window.addEventListener('offline',draw);

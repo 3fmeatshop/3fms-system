@@ -1460,11 +1460,11 @@ function hattDialog(){let box=$('#hatm');if(!box){box=document.createElement('di
   const step1=err=>{clearInterval(tick);B.innerHTML=`<div class="ha-top"><div class="ha-clock" id="ha-clk">${nowT()}</div><div class="ha-date">${new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</div></div>
     <label class="ha-lbl">User ID<input class="edit-in ha-in ha-big" id="ha-id" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="e.g. 3F0003" value="${esc(id)}"></label>
     ${err?`<div class="ha-err">⚠ ${esc(err)}</div>`:''}
-    <button class="ha-next" id="ha-go">Next ›</button><div class="ha-foot"><span>Your User ID is on your staff card.</span><button class="btn sm" data-x>Cancel</button></div>`;
+    <button class="ha-next" id="ha-go">Next ›</button><div class="ha-foot"><span>Your User ID is on your staff card.</span><button class="btn sm" id="ha-snd">🔊 Test sound</button><button class="btn sm" data-x>Cancel</button></div>`;
     tick=setInterval(()=>{const c=$('#ha-clk');if(c)c.textContent=nowT()},10000);
     const go=async()=>{id=$('#ha-id').value.trim();if(!id)return step1('Type your User ID.');const g=$('#ha-go');g.disabled=true;g.textContent='Checking…';
       try{A=await api('api_homeWho',KEY,id);step2()}catch(e){const m=errMsg(e);if(/not registered/i.test(m))say('ID number not registered.');step1(/not registered/i.test(m)?'ID number not registered.':m)}};
-    $('#ha-go').onclick=go;$('#ha-id').onkeydown=e=>{if(e.key==='Enter')go()};setTimeout(()=>$('#ha-id').focus(),60)};
+    $('#ha-go').onclick=go;$('#ha-snd').onclick=()=>say('Sound check. Successful.');$('#ha-id').onkeydown=e=>{if(e.key==='Enter')go()};setTimeout(()=>$('#ha-id').focus(),60)};
   // PIN pad — shown when they tap Time in / Break / Time out (or File OT). Wrong PIN: "Sorry, please try again!"
   const pinPad=(title,err)=>new Promise(res=>{let pin='';const draw=e=>{B.innerHTML=`<div class="ha-pin-h"><b>${esc(title)}</b><small>${esc(A.who.name)} · ${esc(A.who.id)}</small></div>
       <div class="ha-lbl">PIN</div><div class="ha-dots" id="ha-dots">${[0,1,2,3,4,5].map(i=>`<i class="${i<pin.length?'on':''}"></i>`).join('')}</div>
@@ -3080,7 +3080,13 @@ function attSelfie(label,who){return new Promise(async res=>{camClose();const fa
 // 🔊 voice — Google's own voice (the one Google Maps uses) when the phone has it
 let VOX=null;function voxPick(){try{const V=speechSynthesis.getVoices();VOX=V.find(v=>/google/i.test(v.name)&&/^en[-_]US/i.test(v.lang))||V.find(v=>/google/i.test(v.name)&&/^en/i.test(v.lang))||V.find(v=>/^en[-_](US|PH)/i.test(v.lang))||V.find(v=>/^en/i.test(v.lang))||null}catch(e){}}
 try{voxPick();speechSynthesis.onvoiceschanged=voxPick}catch(e){}
-function say(txt){try{const S=window.speechSynthesis;if(!S||!txt)return;if(!VOX)voxPick();const u=new SpeechSynthesisUtterance(txt);u.lang=VOX?VOX.lang:'en-US';if(VOX)u.voice=VOX;u.rate=1;u.pitch=1;S.cancel();S.speak(u)}catch(e){}}
+// Android app (WebView): sound may only start from a tap — the first tap "unlocks" one audio player that the voice reuses later
+let AUD=null;document.addEventListener('pointerdown',()=>{if(AUD)return;try{AUD=new Audio('data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=');AUD.play().catch(()=>{})}catch(e){}},true);
+function say(txt){if(!txt)return;let done=false;const audio=()=>{if(done)return;done=true;try{const a=AUD||new Audio();a.src='https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en&ttsspeed=1&q='+encodeURIComponent(txt);a.play().catch(()=>{})}catch(e){}};
+  // 1) the phone's own voice (Chrome: Google voice) · 2) if this device has none (Android app / WebView) → the same Google voice as audio from the internet
+  try{const S=window.speechSynthesis;if(!S||typeof SpeechSynthesisUtterance==='undefined')return audio();if(!VOX)voxPick();
+    const u=new SpeechSynthesisUtterance(txt);u.lang=VOX?VOX.lang:'en-US';if(VOX)u.voice=VOX;u.rate=1;u.pitch=1;u.onstart=()=>{done=true};u.onerror=()=>{if(!done){done=false;audio()}};
+    S.cancel();S.speak(u);setTimeout(()=>{if(!done&&!S.speaking)audio()},900)}catch(e){audio()}}
 const SAYOK={in:'Successful. Thank you! Proceed to opening procedure.',bout:'Successful. Enjoy your break!',bin:'Successful. Welcome back!',out:'Successful. Thank you for today. Ingat!'};
 function sayOK(uid,kind){say(SAYOK[kind]||'Successful. Thank you!')}
 async function punch(kind,b){const L={in:'TIME IN',bout:'BREAK',bin:'BACK FROM BREAK',out:'TIME OUT'}[kind];
