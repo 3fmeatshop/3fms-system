@@ -762,10 +762,12 @@ th.h-inv small{display:block;font-weight:600;color:var(--muted);text-transform:n
 .acside{text-align:right;display:flex;flex-direction:column;gap:2px;align-items:flex-end}.acby{font-size:12px;color:#334155;white-space:nowrap}.actypes{margin:8px 0}.actypes small{opacity:.7}
 @media(max-width:560px){.acrow{grid-template-columns:52px 28px 1fr}.acside{grid-column:3;align-items:flex-start;flex-direction:row;gap:10px}}
 .wsrc{border-top:1px solid var(--line);padding:6px 10px}.wsrc summary{display:flex;gap:8px;align-items:baseline;cursor:pointer;flex-wrap:wrap}.wsrc summary span{flex:1}
+.swb{cursor:pointer;border:1px solid #8b5cf6;background:#f5f3ff;color:#6d28d9;font-weight:700}
 .lapseb{color:var(--rose);border-color:#fecaca}.clcause{display:flex;flex-wrap:wrap;gap:6px}.clcause button{border:1px solid var(--line);background:#fff;border-radius:99px;padding:8px 12px;font-weight:700;cursor:pointer}.clcause button.on{background:var(--rose);color:#fff;border-color:var(--rose)}
 .closedbox{border-color:var(--rose)!important}.closedc{border-left:4px solid var(--rose)}
 .pstbl input.nq{width:80px}.pstbl .pssup{min-width:120px}.psoff td{opacity:.45}.psord summary{cursor:pointer;font-size:12px;color:var(--muted)}.psord div{font-size:12px}
 .ha-big{font-size:22px;text-align:center;letter-spacing:2px;text-transform:uppercase}.ha-pin-h{text-align:center;margin-bottom:8px}.ha-pin-h b{display:block;font-size:20px}.ha-pin-h small{color:var(--muted)}
+.ap-sw{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}.ap-sw .ap-swp{flex:1 1 180px;min-width:0}.ap-sw .ap-swa{flex:1 1 100%}.ap-sw .ap-swq{width:90px}.ap-sw .ap-swu{width:auto}
 .igrp td{background:#f1f5f9;cursor:pointer;font-size:14px}.igrp.on td{background:#e2e8f0}.igc{display:inline-block;width:18px;color:var(--muted)}.igsub td:first-child{padding-left:26px}
 .prkg{margin-top:4px}.prsetb{display:block;margin-top:4px;font-size:11px;padding:3px 8px}.prauto td{background:#f8fafc}.prauto small{display:block}
 .ychip{display:inline-block;border-radius:99px;padding:2px 9px;font-size:12px;font-weight:700;margin-left:4px}.ychip.ok{background:#dcfce7;color:#166534}.ychip.bad{background:#fee2e2;color:#991b1b}.ychip.lrn{background:#e0e7ff;color:#3730a3}.prsum2 div{margin-top:4px}
@@ -1039,7 +1041,7 @@ const PROCS={paste:{n:1,ic:'📋',t:'Customer Orders',s:'Enter the customer\'s o
   po:{ic:'📝',t:'Purchase orders',s:'Order from suppliers · approve receiving',roles:['manager'],view:'po'},
   srep:{ic:'📈',t:'POS · Sales & profit report',s:'Per customer · daily / monthly · total profit',roles:['manager'],view:'srep'}};
 let proc=null, summary=null, roleHint=null;
-const SH={carry:'Carry over',later:'Deliver later today',forfeit:'Forfeited'};
+const SH={carry:'Carry over',later:'Deliver later today',forfeit:'Forfeited',switch:'Switched'};
 const $=s=>document.querySelector(s);
 const uid=()=>Math.random().toString(36).slice(2,10);
 const r2=n=>Math.round(n*100)/100;
@@ -1327,6 +1329,15 @@ function invCell(i,mobile){const p=invOf(i);
   return mobile?`<span class="invm ${cls}">📦 Left: <b>${fmt(left)} ${esc(p.u)}</b>${flag?' · '+flag:''} <small>(${sub})</small></span>`
     :`<span class="inv ${cls}" title="Stock ${fmt(p.q)} minus ${fmt(prep)} already prepared for orders not yet cashed out"><b>${fmt(left)} ${esc(p.u)}</b>${flag?'<small>'+flag+'</small>':''}<i>${sub}</i></span>`}
 
+// 🔁 SWITCH product picker: inventory products with what is LEFT (stock − already prepared)
+function swPick(cls,sel){if(!INV||!INV.list||!INV.list.length)return `<input class="edit-in ${cls}" list="ap-prods" placeholder="Product" value="${esc(sel||'')}">`;
+  const L=[...INV.list].sort((a,b)=>String(a.n).localeCompare(String(b.n)));
+  return `<select class="edit-in ${cls}"><option value="">— choose product —</option>${L.map(p=>{const left=r2((+p.q||0)-(PREPD[p.c]||0));return `<option value="${esc(p.n)}" data-u="${esc(p.u)}" data-left="${left}"${String(sel||'').toUpperCase()===String(p.n).toUpperCase()?' selected':''}>${esc(p.n)} — left ${fmt(left)} ${esc(p.u)}</option>`}).join('')}</select>`}
+const swUnit=u=>{u=String(u||'').toLowerCase();return u.startsWith('pack')?'Pack':u.startsWith('pc')||u.startsWith('piece')?'Pc':'Kg'};
+// check the switch: product chosen, qty, customer agreed, enough left
+function swCheck(product,qty,agreed,selEl){if(!product)return 'Choose the product to give instead.';if(!(qty>0))return 'Type the qty.';if(!agreed)return 'Type who agreed for the customer and how (e.g. Ma\'am Joy · text).';
+  const o=selEl&&selEl.selectedOptions&&selEl.selectedOptions[0];if(o&&o.dataset.left!=null&&+o.dataset.left<qty&&!confirm('Only '+o.dataset.left+' '+o.dataset.u+' of '+product+' left. Switch anyway?'))return 'cancel';return ''}
+
 /* ---------- rules (same as the Excel logsheet) ---------- */
 const isCR=i=>/^[crv]$/i.test(String(i.actual||'').trim());
 function actualVal(i){const a=String(i.actual||'').trim();if(!a||isCR(i))return null;
@@ -1343,7 +1354,7 @@ function status(i){
   if(i.wtReq&&v>0&&!(parseFloat(i.wt)>0))return{t:'Type the kg',c:'need'};
   const bal=r2(i.qty-v), kg=i.unit==='Kg';
   if(kg?bal<=-0.5:bal<0)return{t:'Remove '+fmt(-bal),c:'excess'};
-  if(kg?bal>=SHORT_KG:bal>0)return i.short?{t:'Short '+fmt(bal)+' · '+SH[i.short.d],c:i.short.d==='forfeit'?'off':'follow',ok:true,short:true}
+  if(kg?bal>=SHORT_KG:bal>0)return i.short?{t:'Short '+fmt(bal)+' · '+SH[i.short.d]+(i.short.d==='switch'&&i.short.sw?' → '+i.short.sw.product+' '+fmt(i.short.sw.qty)+' '+i.short.sw.unit:''),c:i.short.d==='forfeit'?'off':'follow',ok:true,short:true}
                                   :{t:'Short '+fmt(bal)+' · for approval',c:'need',short:true,pending:true};
   return{t:'Ready',c:'ready',ok:true};
 }
@@ -1926,6 +1937,22 @@ function onRow(o){
   </div>`;
 }
 const CLC=[['late-prep','⏱ Late preparation'],['late-delivery','🚚 Late delivery'],['customer','🙅 Customer cancelled / not needed'],['other','Other']];
+// 🔁 switch a balance / carry-over item (e.g. "deliver later" 30 kg liempo → the customer wants another product instead)
+function swItemDialog(iid){const[o,i]=findItem(iid);if(!o||!i)return;const box=stBox();
+  $('#stb').innerHTML=`<h2>🔁 Switch item</h2><div class="unit"><b>${esc(o.customer)}</b> · ${o.balanceOf?'balance delivery':'carry-over'} for ${longDay(o.delivery)}</div>
+    <div class="snote" style="margin:8px 0">Now: <b>${esc(i.product)} ${fmt(i.qty)} ${esc(i.unit)}</b>${actualVal(i)!=null?` — already prepared ${fmt(actualVal(i))}. Put it back in the chiller; stock is not affected (only the cashier takes stock out).`:''}<br>It is <b>replaced</b> by the new product — the team prepares that instead.</div>
+    <label class="td-l">Give instead${swPick('sw-p','')}</label>
+    <div style="display:flex;gap:8px"><label class="td-l" style="flex:1">Qty<input class="edit-in" id="sw-q" type="number" step="0.01" min="0" inputmode="decimal" value="${i.qty}"></label><label class="td-l">Unit<select class="edit-in" id="sw-u">${['Kg','Pack','Pc'].map(u=>`<option${i.unit===u?' selected':''}>${u}</option>`).join('')}</select></label></div>
+    <label class="td-l">Customer agreed — who / how <small>(required)</small><input class="edit-in" id="sw-a" placeholder="e.g. Ma'am Joy · told the rider"></label>
+    <div class="row-end"><button class="btn" data-x>Cancel</button><button class="go" id="sw-ok">🔁 Switch</button></div>`;
+  box.classList.add('on');const P=$('#stb .sw-p');P.addEventListener('change',()=>{const op=P.selectedOptions&&P.selectedOptions[0];if(op&&op.dataset.u)$('#sw-u').value=swUnit(op.dataset.u)});
+  $('#sw-ok').onclick=async()=>{const prod=String(P.value||'').trim().toUpperCase(),q=r2(+$('#sw-q').value||0),u=$('#sw-u').value,ag=$('#sw-a').value.trim();
+    const m=swCheck(prod,q,ag,P);if(m==='cancel')return;if(m)return alert(m);
+    let oo=o;if(oo.dr){if(!confirm(oo.dr.no+' was already issued for this delivery. Switching reopens it — the team checks again. Continue?'))return;const r=await retCall('api_reopenDR',oo.id,'Item switched by '+me.name);if(!r)return;oo=find(o.id)}
+    const it=oo.items.find(x=>x.id===iid);if(!it)return;keepUndo();
+    it.switchFrom={product:it.product,qty:it.qty,unit:it.unit,by:me.name,at:Date.now(),agreed:ag};
+    it.product=prod;it.qty=q;it.unit=u;it.actual='';it.checked=null;it.corr=[];it.code='';it.remarks='🔁 Switched from '+it.switchFrom.product+' '+fmt(it.switchFrom.qty)+' '+it.switchFrom.unit+' · customer agreed: '+ag;
+    oo.approved=null;oo.prepDone=null;save();clearTimeout(flushTimer);flush();box.classList.remove('on');render();toast('🔁 Switched to '+prod+' '+fmt(q)+' '+u+' — the team prepares it',true)}}
 function lapseDialog(id){const o=find(id);if(!o)return;const box=stBox(),P=o.items.filter(i=>!isCR(i)&&actualVal(i)!=null&&actualVal(i)>0);let cause='';
   $('#stb').innerHTML=`<h2>⛔ Lapsed – close order</h2><div class="unit"><b>${esc(o.customer)}</b> · for ${longDay(o.delivery)}${o.use?' · use '+esc(o.use):''}${o.dr?' · <b>'+esc(o.dr.no)+' will be voided</b>':''}</div>
     <div class="snote" style="margin:8px 0">The order leaves Prepare / Dispatch, <b>doesn't carry over</b> and is <b>not billed</b>. It stays in history as <b>CLOSED</b> with its Lost Sales and Lost Gross Profit.<br>Some items <b>were delivered</b>? Don't close — edit the order to the delivered qty and dispatch it.</div>
@@ -1986,6 +2013,9 @@ function rowHTML(o,i,st){
     i.asked?`<span class="tag">ordered as “${esc(i.asked)}”</span>`:'',
     i.wtReq?`<span class="tag a">⚖ ordered in ${esc(i.unit)} — type how many ${esc(String(i.unit).toLowerCase())} and the total kilos</span>`:'',
     i.carryFrom?`<span class="late-tag">⏰ LATE DELIVERY</span><span class="tag v">↪ Carried over from ${day(i.carryFrom)} order</span>`:'',
+    i.switchFor?`<span class="tag v">🔁 Switched — approved by the manager</span>`:'',
+    i.carryFrom&&me.role==='manager'&&st==='prep'&&!o.posSale?`<button type="button" class="tag swb" data-swi="${i.id}">🔁 Switch to another product</button>`:'',
+    i.switchFrom?`<span class="tag v">🔁 Switched from ${esc(i.switchFrom.product)} ${fmt(i.switchFrom.qty)} ${esc(i.switchFrom.unit)} · ${esc(i.switchFrom.by)}${i.switchFrom.agreed?' · customer agreed: '+esc(i.switchFrom.agreed):''}</span>`:'',
     ...i.corr.map(c=>`<span class="tag a">✎ Corrected ${esc(c.from||'0')} → ${esc(c.to)} by ${esc(c.by)} · ${time12(new Date(c.at))}</span>`),
     i.short?`<span class="tag v"${i.short.made?` data-jump="${i.short.made.o}" style="cursor:pointer;text-decoration:underline"`:''}>${i.short.made?'➜ ':''}${SH[i.short.d]}${i.short.d==='carry'?' to '+day(i.short.date):''}${i.short.d==='later'&&i.short.time?' by '+t24(i.short.time):''} · ${fmt(i.short.qty)} ${esc(i.unit)} · approved by ${esc(i.short.by)}</span>`:''
   ].join('');
@@ -2073,7 +2103,7 @@ function card(o){
     if(ed) return `<tr class="it"><td class="c-p"><input class="edit-in" data-e="product" data-i="${i.id}" value="${esc(i.product)}" placeholder="Product"></td>
       <td class="c-o"><input class="edit-in" style="width:80px" type="number" step="0.01" data-e="qty" data-i="${i.id}" value="${i.qty||''}"></td>
       <td><input class="edit-in" style="width:70px" data-e="unit" data-i="${i.id}" value="${esc(i.unit)}"></td>
-      <td colspan="${showInv(st)?4:3}" class="r">${i.carryFrom?'<span class="tag v">🔒 Carry-over · can\'t delete</span>':`<button class="del" data-del="${i.id}" title="Remove item">✕</button>`}</td></tr>`;
+      <td colspan="${showInv(st)?4:3}" class="r">${i.carryFrom&&me.role==='manager'&&!o.dispatched&&!o.posSale?`<button class="btn sm" data-swi="${i.id}">🔁 Switch</button> `:''}${i.carryFrom?'<span class="tag v">🔒 Carry-over · can\'t delete</span>':i.switchFor?'<span class="tag v">🔒 Switch · change it in manager approval</span>':`<button class="del" data-del="${i.id}" title="Remove item">✕</button>`}</td></tr>`;
     return rowHTML(o,i,st)}).join('');
   const ev=(e,extra)=>e?`${stamp(e.at)}${e.by?'<br>by '+esc(e.by):''}${e.riderName?`<br>🛵 <span class="rlink" data-rprof="${esc(e.rider)}">${esc(e.riderName)}</span>${e.riderPlate?' · '+esc(e.riderPlate):''}`:''}${e.receiver?'<br>Received: '+esc(e.receiver):''}${e.photo?`<img data-ph="${e.photo}" data-cap="${esc(extra+' · '+fullStamp(e.at))}" alt="photo">`:''}`:'';
   const s1=(c.prepared===total&&prepOK(o))||st!=='prep', s2=(c.checkedN===total&&!c.pend.length)||st!=='prep';
@@ -2378,13 +2408,18 @@ function openApproval(o){
   const tmr=carryDate(o);
   $('#ap-b').innerHTML=`<h2>⚠ Short items — Manager approval</h2>
     <div class="unit">Delivery ${longDay(o.delivery)} · ${esc(o.customer)}. Choose what happens to the missing qty of each item.</div>
+    ${o.dr?`<div class="snote" style="margin:8px 0">🔓 <b>${esc(o.dr.no)}</b> was already issued. Changing the approval <b>reopens it</b> — the team checks the order again and a new DR is made.${me.role!=='manager'?' Only the manager (logged in) can do this.':''}</div>`:''}
     ${items.map(i=>{const s=i.short||{};const q=shortOf(i);return `<div class="ap-item" data-ap="${i.id}">
       <h3>${esc(i.product)}</h3>
       <div class="nums">Order ${fmt(i.qty)} ${esc(i.unit)} · Prepared ${fmt(actualVal(i))} · <b>Short ${fmt(q)} ${esc(i.unit)}</b></div>
       <label class="opt${s.d==='carry'?' sel':''}"><input type="radio" name="d-${i.id}" value="carry"${s.d==='carry'?' checked':''}><span class="grow">↪ Carry over to following day<small>Adds ${fmt(q)} ${esc(i.unit)} to the next delivery</small></span><input type="date" class="ap-date" value="${s.date||tmr}"></label>
       <label class="opt${s.d==='later'?' sel':''}"><input type="radio" name="d-${i.id}" value="later"${s.d==='later'?' checked':''}><span class="grow">🕒 Deliver left qty later today<small>Creates a balance delivery for today — time is optional</small></span><input type="time" class="ap-time" value="${s.time||''}"></label>
       <label class="opt${s.d==='forfeit'?' sel':''}"><input type="radio" name="d-${i.id}" value="forfeit"${s.d==='forfeit'?' checked':''}><span class="grow">✕ Forfeit — usage date already lapsed<small>The missing qty will not be delivered — it will be listed in Undelivered items</small></span></label>
+      <label class="opt opt-sw${s.d==='switch'?' sel':''}"><input type="radio" name="d-${i.id}" value="switch"${s.d==='switch'?' checked':''}><span class="grow">🔁 Switch to another product<small>Added to this same order — the team prepares it and it goes out with this delivery</small>
+        <span class="ap-sw">${swPick('ap-swp',s.sw?s.sw.product:'')}<input class="edit-in ap-swq" type="number" step="0.01" min="0" inputmode="decimal" value="${s.sw?s.sw.qty:q}"><select class="edit-in ap-swu">${['Kg','Pack','Pc'].map(u=>`<option${(s.sw?s.sw.unit:i.unit)===u?' selected':''}>${u}</option>`).join('')}</select>
+          <input class="edit-in ap-swa" placeholder="Customer agreed — who / how (e.g. Ma'am Joy · text)" value="${esc(s.sw?s.sw.agreed||'':'')}"></span></span></label>
     </div>`}).join('')}
+    <datalist id="ap-prods">${[...new Set([...((typeof ST!=='undefined'&&ST&&ST.products)||[]).map(p=>p.name),...db.orders.flatMap(x=>x.items.map(y=>y.product))])].filter(Boolean).sort().map(n=>`<option value="${esc(n)}">`).join('')}</datalist>
     ${me.role==='manager'?`<div class="pinrow">Approving as <b>${esc(me.name)}</b> (Manager)</div>`:`<div class="pinrow"><b>Manager PIN</b><br><span class="unit">Ask the manager to enter their PIN here to approve.</span><br><input id="ap-pin" type="password" inputmode="numeric" maxlength="4"> <span class="bad" id="ap-err"></span></div>`}
     <details class="ap-no"${o.apprNo&&!o.approved?' open':''}><summary><b>✕ Not approved</b> — the team must fix it first</summary>
       <label class="full">Reason <span class="unit">(required)</span><textarea class="edit-in" id="ap-why" rows="2" placeholder="e.g. Get stock from the chiller — customer needs the full 40 kg">${esc(o.apprNo&&!o.approved?o.apprNo.reason:'')}</textarea></label>
@@ -2392,9 +2427,11 @@ function openApproval(o){
     <div class="row-end"><button class="btn" data-x>Cancel</button><button class="big" id="ap-ok">Approve</button></div>`;
   $('#ap').classList.add('on');
 }
+$('#ap').addEventListener('change',e=>{const sp=e.target.closest('select.ap-swp');if(!sp)return;const o=sp.selectedOptions[0];if(o&&o.dataset.u){const us=sp.closest('.ap-sw').querySelector('.ap-swu');us.value=swUnit(o.dataset.u)}});
+['focusin','input'].forEach(ev=>$('#ap').addEventListener(ev,e=>{const f=e.target.closest('.ap-sw input,.ap-sw select');if(!f)return;const r=f.closest('.opt').querySelector('input[type=radio]');if(!r.checked){r.checked=true;r.dispatchEvent(new Event('change',{bubbles:true}))}}));
 $('#ap').addEventListener('change',e=>{if(e.target.type==='radio'){e.target.closest('.ap-item').querySelectorAll('.opt').forEach(l=>l.classList.toggle('sel',l.contains(e.target)))}});
 $('#ap').addEventListener('click',async e=>{
-  const inp=e.target.closest('.opt input[type=date],.opt input[type=time]'); if(inp){const r=inp.closest('.opt').querySelector('input[type=radio]');if(!r.checked){r.checked=true;r.dispatchEvent(new Event('change',{bubbles:true}))}}
+  const inp=e.target.closest('.opt input[type=date],.opt input[type=time],.opt .ap-sw input,.opt .ap-sw select'); if(inp){const r=inp.closest('.opt').querySelector('input[type=radio]');if(!r.checked){r.checked=true;r.dispatchEvent(new Event('change',{bubbles:true}))}}
   if(e.target.id==='ap-no'){const o=find(APO),why=$('#ap-why').value.trim();if(!why){alert('Type the reason why it is not approved.');$('#ap-why').focus();return}
     let mgr=me.role==='manager'?me:null;
     if(!mgr){const pin=($('#ap-pin')||{}).value||'';$('#ap-err').textContent='Checking…';
@@ -2402,17 +2439,24 @@ $('#ap').addEventListener('click',async e=>{
     keepUndo();if(o.approved){removeFollowUps(o);o.items.forEach(i=>{if(i.short)i.short=null});o.approved=null}
     o.apprNo={by:mgr.name,at:Date.now(),reason:why};save();clearTimeout(flushTimer);flush();$('#ap').classList.remove('on');render();toast('✕ Not approved — sent back to the team',true);return}
   if(e.target.id!=='ap-ok')return;
-  const o=find(APO), blocks=[...document.querySelectorAll('#ap .ap-item')];
-  const picks=blocks.map(b=>({id:b.dataset.ap,r:b.querySelector('input[type=radio]:checked'),date:b.querySelector('.ap-date').value,time:b.querySelector('.ap-time').value}));
+  let o=find(APO);const blocks=[...document.querySelectorAll('#ap .ap-item')];
+  const picks=blocks.map(b=>({id:b.dataset.ap,r:b.querySelector('input[type=radio]:checked'),date:b.querySelector('.ap-date').value,time:b.querySelector('.ap-time').value,
+    sw:{product:String(b.querySelector('.ap-swp').value||'').trim().toUpperCase(),qty:r2(+b.querySelector('.ap-swq').value||0),unit:b.querySelector('.ap-swu').value,agreed:String(b.querySelector('.ap-swa').value||'').trim()},el:b.querySelector('.ap-swp')}));
   if(picks.some(p=>!p.r)){alert('Choose an option for every short item.');return}
+  for(const p of picks){if(p.r.value!=='switch')continue;const m=swCheck(p.sw.product,p.sw.qty,p.sw.agreed,p.el);if(m==='cancel')return;if(m){alert('🔁 Switch: '+m);return}}
   let mgr=me.role==='manager'?me:null;
   if(!mgr){const pin=($('#ap-pin')||{}).value||'';$('#ap-err').textContent='Checking…';
     try{const name=await api('api_checkManager',session.token,pin);mgr={name};mgrPinForSync=pin}
     catch(err){const m=errMsg(err);$('#ap-err').textContent=/PIN/.test(m)?'Wrong manager PIN':isNet(m)?'No internet — approval needs internet':'Server error: '+m;return}}
+  if(o.dr){ // DR already issued: its items are locked → reopen it first (manager only)
+    if(me.role!=='manager'){alert(o.dr.no+' was already issued. Only the manager (logged in) can change this approval — it reopens the DR.');return}
+    if(o.posSale){alert('The cashier already billed '+o.dr.no+'. Void that receipt first.');return}
+    if(!confirm('Change the approval?\n\n'+o.dr.no+' will be reopened (cancelled). The team checks the order again and a new DR is made.'))return;
+    const r=await retCall('api_reopenDR',o.id,'Short-item approval changed by '+mgr.name);if(!r)return;o=find(APO);if(!o)return}
   keepUndo(); const at=Date.now(); removeFollowUps(o);
-  picks.forEach(p=>{const[,i]=findItem(p.id);i.short={d:p.r.value,date:p.r.value==='carry'?(p.date||carryDate(o)):'',time:p.r.value==='later'?p.time:'',qty:shortOf(i),by:mgr.name,at}});
+  picks.forEach(p=>{const[,i]=findItem(p.id);i.short={d:p.r.value,date:p.r.value==='carry'?(p.date||carryDate(o)):'',time:p.r.value==='later'?p.time:'',qty:shortOf(i),by:mgr.name,at};if(p.r.value==='switch')i.short.sw=p.sw});
   o.approved={by:mgr.name,at}; o.apprNo=null; spawnFollowUps(o); save(); clearTimeout(flushTimer); flush(); $('#ap').classList.remove('on'); render();
-  const sched=o.items.filter(i=>i.short&&i.short.made).map(i=>i.product+' → '+(i.short.d==='carry'?day(i.short.date):'later today'));
+  const sched=o.items.filter(i=>i.short&&i.short.made).map(i=>i.product+' → '+(i.short.d==='carry'?day(i.short.date):i.short.d==='switch'?i.short.sw.product+' '+fmt(i.short.sw.qty)+' '+i.short.sw.unit+' (this order)':'later today'));
   toast('✓ Approved by '+mgr.name+(sched.length?' · added for prep: '+sched.join(', '):''),true);
 });
 
@@ -2430,6 +2474,9 @@ function spawnFollowUps(o){
   o.items.forEach(i=>reroute(o,i));
   o.items.forEach(i=>{ if(!i.short||i.short.d==='forfeit'||madeOK(i))return; if(i.short.made)delete i.short.made; const q=i.short.qty;
     let t;
+    if(i.short.d==='switch'){const w=i.short.sw;if(!w||!w.product)return;
+      const ni=newItem(w.qty,w.unit,w.product,{switchFor:i.id,remarks:'🔁 Switched for '+i.product+' (short '+fmt(q)+' '+i.unit+')'+(w.agreed?' · customer agreed: '+w.agreed:'')});
+      o.items.push(ni);i.short.made={o:o.id,i:ni.id};return}
     if(i.short.d==='carry'){ t=carryTarget(o,i.short.date) }else{
       t=db.orders.find(x=>x.balanceOf===o.id&&!x.dispatched);
       if(!t){t={id:uid(),customer:o.customer,delivery:today(),use:o.use,balanceOf:o.id,balanceFrom:o.delivery,time:'',dispatched:null,delivered:null,approved:null,items:[],createdAt:Date.now()};db.orders.push(t)}
@@ -2444,7 +2491,7 @@ function removeFollowUp(i){if(!i.short||!i.short.made)return;const t=find(i.shor
   delete i.short.made}
 function removeFollowUps(o){
   o.items.forEach(i=>{if(!i.short||!i.short.made)return;const t=find(i.short.made.o);
-    if(t&&!t.dispatched){t.items=t.items.filter(x=>x.id!==i.short.made.i);if(!t.items.length)db.orders=db.orders.filter(x=>x!==t)}
+    if(t&&!t.dispatched){t.items=t.items.filter(x=>x.id!==i.short.made.i);if(!t.items.length&&t!==o)db.orders=db.orders.filter(x=>x!==t)}
     delete i.short.made});
 }
 
@@ -2573,13 +2620,14 @@ document.addEventListener('click',async e=>{
     if(!confirm(`Done preparing ${o.customer}?\n\n${n} item(s) prepared${sh?` · ${sh} short`:''}.\nSend to Dispatch for checking?`))return;
     keepUndo();o.prepDone={by:me.name,at:Date.now()};save();openId=null;render();toast('✅ '+o.customer+' sent to Dispatch',true);return}
   if(d.lapse){lapseDialog(d.lapse);return}
+  if(d.swi){swItemDialog(d.swi);return}
   if(d.reopen){const o=find(d.reopen);if(!confirm('Reopen '+o.customer+'? It goes back to Prepare / Dispatch.'))return;const r=await retCall('api_reopenOrder',d.reopen);if(r){render();toast('Reopened',true)}return}
   if(d.prepback){const o=find(d.prepback);if(!o)return;if(!confirm('Move '+o.customer+' back to Prepare?'))return;keepUndo();o.prepDone=null;save();render();toast('Back to Prepare',true);return}
   if(d.undisp){keepUndo();const o=find(d.undisp);o.dispatched=null;save();view='prep';openId=d.undisp;render();toast('Dispatch undone',true);return}
   if(d.undeliv){keepUndo();find(d.undeliv).delivered=null;save();view='way';openId=d.undeliv;render();toast('Delivered undone',true);return}
   if(d.print){printSlip(find(d.print));return}
   if(d.edit){editId=d.edit;render();return}
-  if(d.editdone){const o=find(d.editdone);o.items=o.items.filter(i=>i.carryFrom||(i.product.trim()&&i.qty>0));o.items.forEach(i=>i.product=cleanName(i.product));save();editId=null;render();return}
+  if(d.editdone){const o=find(d.editdone);o.items=o.items.filter(i=>i.carryFrom||i.switchFor||(i.product.trim()&&i.qty>0));o.items.forEach(i=>i.product=cleanName(i.product));save();editId=null;render();return}
   if(d.additem){find(d.additem).items.push(newItem(0,'Kg',''));save();render();const x=document.querySelectorAll(`#c-${d.additem} [data-e="product"]`);x[x.length-1].focus();return}
   if(d.del){const [o,i]=findItem(d.del);if(i.carryFrom){toast('🔒 Carry-over items can\'t be deleted');return}keepUndo();o.items=o.items.filter(x=>x!==i);save();render();toast('Item removed',true);return}
   if(d.delorder){const o=find(d.delorder),cf=o.items.filter(i=>i.carryFrom);
