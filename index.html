@@ -1182,7 +1182,19 @@ function setSync(s){const el=$('#sync');if(!el)return;
   el.className='sync'+(s==='off'?' off':'');
   el.textContent={ok:'● Online',saving:'⟳ Saving…',off:'⚠ No internet — will sync',load:'⟳ Loading…'}[s]||s}
 function cacheLocal(){try{localStorage.setItem(CACHE,J({u:me&&me.id,orders:db.orders,base,ver}))}catch(e){}}
-function save(){cacheLocal();clearTimeout(flushTimer);flushTimer=setTimeout(flush,700);if(dirtyOrders().length||deletedIds().length)setSync('saving')}
+// APPROVAL FOLLOWS THE PREPARED QTY: if the prepared qty of an approved short item changes (e.g. 1.79 → 0, or back to preparation),
+// that approval no longer counts → its balance / carry-over is removed and the item goes back to "for approval" with the new short.
+// A follow-up the customer switched or that was cancelled is kept.  Dispatched / billed orders are never touched.
+function shortSync(){let n=0;
+  db.orders.forEach(o=>{if(o.dispatched||o.delivered||o.posSale||o.closed||o.dr)return;
+    o.items.forEach(i=>{if(!i.short||isCR(i))return;const now=shortOf(i);if(Math.abs(r2(now)-r2(+i.short.qty||0))<0.005)return;
+      const m=i.short.made,t=m&&find(m.o),x=t&&t.items.find(y=>y.id===m.i);
+      if(t&&(t.dispatched||t.posSale))return;                       // its balance already went out — leave it
+      if(x&&!keepFU(x)){t.items=t.items.filter(y=>y!==x);if(!t.items.length&&t!==o)db.orders=db.orders.filter(y=>y!==t)}
+      i.short=null;n++});
+    if(n&&o.approved&&o.items.every(i=>!i.short))o.approved=null});
+  if(n)setTimeout(()=>toast('⚖ Prepared qty changed — '+n+' short approval(s) reset · the balance was removed · manager approves again',true),50);return n}
+function save(){shortSync();cacheLocal();clearTimeout(flushTimer);flushTimer=setTimeout(flush,700);if(dirtyOrders().length||deletedIds().length)setSync('saving')}
 const deletedIds=()=>{const ids=new Set(db.orders.map(o=>o.id));return Object.keys(base).filter(id=>!ids.has(id))};
 async function flush(){
   if(!session)return;
@@ -1944,13 +1956,16 @@ function swItemDialog(iid){const[o,i]=findItem(iid);if(!o||!i)return;const box=s
     <label class="td-l">Give instead${swPick('sw-p','')}</label>
     <div style="display:flex;gap:8px"><label class="td-l" style="flex:1">Qty<input class="edit-in" id="sw-q" type="number" step="0.01" min="0" inputmode="decimal" value="${i.qty}"></label><label class="td-l">Unit<select class="edit-in" id="sw-u">${['Kg','Pack','Pc'].map(u=>`<option${i.unit===u?' selected':''}>${u}</option>`).join('')}</select></label></div>
     <label class="td-l">Customer agreed — who / how <small>(required)</small><input class="edit-in" id="sw-a" placeholder="e.g. Ma'am Joy · told the rider"></label>
-    <div class="row-end"><button class="btn" data-x>Cancel</button><button class="go" id="sw-ok">🔁 Switch</button></div>`;
-  box.classList.add('on');const P=$('#stb .sw-p');P.addEventListener('change',()=>{const op=P.selectedOptions&&P.selectedOptions[0];if(op&&op.dataset.u)$('#sw-u').value=swUnit(op.dataset.u)});
+    <div class="row-end"><button class="btn" id="sw-cx" style="color:var(--rose);border-color:#fecaca">✕ Not needed — cancel this item</button><button class="btn" data-x>Close</button><button class="go" id="sw-ok">🔁 Switch</button></div>`;
+  box.classList.add('on');const P=$('#stb .sw-p');
+  $('#sw-cx').onclick=()=>{const why=prompt('Cancel '+i.product+' '+fmt(i.qty)+' '+i.unit+'? It will not be prepared or billed. Reason:','Customer switched / not needed');if(why==null)return;
+    let oo=find(o.id),it=oo&&oo.items.find(x=>x.id===iid);if(!it)return;if(oo.dr){alert(oo.dr.no+' was already issued — reopen it first (🔓).');return}
+    keepUndo();it.actual='C';it.remarks=(it.remarks?it.remarks+' · ':'')+'✕ Cancelled by '+me.name+': '+why;save();clearTimeout(flushTimer);flush();box.classList.remove('on');render();toast('✕ Cancelled — removed from preparation',true)};P.addEventListener('change',()=>{const op=P.selectedOptions&&P.selectedOptions[0];if(op&&op.dataset.u)$('#sw-u').value=swUnit(op.dataset.u)});
   $('#sw-ok').onclick=async()=>{const prod=String(P.value||'').trim().toUpperCase(),q=r2(+$('#sw-q').value||0),u=$('#sw-u').value,ag=$('#sw-a').value.trim();
     const m=swCheck(prod,q,ag,P);if(m==='cancel')return;if(m)return alert(m);
     let oo=o;if(oo.dr){if(!confirm(oo.dr.no+' was already issued for this delivery. Switching reopens it — the team checks again. Continue?'))return;const r=await retCall('api_reopenDR',oo.id,'Item switched by '+me.name);if(!r)return;oo=find(o.id)}
     const it=oo.items.find(x=>x.id===iid);if(!it)return;keepUndo();
-    it.switchFrom={product:it.product,qty:it.qty,unit:it.unit,by:me.name,at:Date.now(),agreed:ag};
+    it.switchFrom={product:it.product,qty:it.qty,unit:it.unit,by:me.name,at:Date.now(),agreed:ag,fromItem:it.fromItem||(db.orders.flatMap(x=>x.items).find(y=>y.short&&y.short.made&&y.short.made.i===iid)||{}).id||''};
     it.product=prod;it.qty=q;it.unit=u;it.actual='';it.checked=null;it.corr=[];it.code='';it.remarks='🔁 Switched from '+it.switchFrom.product+' '+fmt(it.switchFrom.qty)+' '+it.switchFrom.unit+' · customer agreed: '+ag;
     oo.approved=null;oo.prepDone=null;save();clearTimeout(flushTimer);flush();box.classList.remove('on');render();toast('🔁 Switched to '+prod+' '+fmt(q)+' '+u+' — the team prepares it',true)}}
 function lapseDialog(id){const o=find(id);if(!o)return;const box=stBox(),P=o.items.filter(i=>!isCR(i)&&actualVal(i)!=null&&actualVal(i)>0);let cause='';
@@ -2462,7 +2477,10 @@ $('#ap').addEventListener('click',async e=>{
 
 /* create the carry-over / balance deliveries as soon as the manager approves */
 // true only if the carry-over / balance item really still exists
-function madeOK(i){const m=i.short&&i.short.made;if(!m)return false;const t=find(m.o);return !!(t&&t.items.some(x=>x.id===m.i))}
+function madeOK(i){const m=i.short&&i.short.made;if(m){const t=find(m.o);if(t&&t.items.some(x=>x.id===m.i))return true}
+  // pointer lost: look for a follow-up already made from this item (incl. one the customer switched or that was cancelled)
+  for(const t of db.orders){const x=t.items.find(y=>y.fromItem===i.id||(y.switchFrom&&y.switchFrom.fromItem===i.id));if(x){if(i.short)i.short.made={o:t.id,i:x.id};return true}}return false}
+const keepFU=x=>!!(x&&(x.switchFrom||isCR(x)));   // customer-agreed switch or cancelled: changing the approval must not remove / remake it
 function carryTarget(o,date){let t=db.orders.find(x=>x.customer===o.customer&&x.delivery===date&&!x.dispatched&&!x.balanceOf);
   if(!t){t={id:uid(),customer:o.customer,delivery:date,use:'Carry-over',dispatched:null,delivered:null,approved:null,items:[],createdBy:'Carry-over',createdAt:Date.now()};db.orders.push(t)}return t}
 function reroute(o,i){ // keep an approved carry-over on the date the manager chose
@@ -2475,14 +2493,14 @@ function spawnFollowUps(o){
   o.items.forEach(i=>{ if(!i.short||i.short.d==='forfeit'||madeOK(i))return; if(i.short.made)delete i.short.made; const q=i.short.qty;
     let t;
     if(i.short.d==='switch'){const w=i.short.sw;if(!w||!w.product)return;
-      const ni=newItem(w.qty,w.unit,w.product,{switchFor:i.id,remarks:'🔁 Switched for '+i.product+' (short '+fmt(q)+' '+i.unit+')'+(w.agreed?' · customer agreed: '+w.agreed:'')});
+      const ni=newItem(w.qty,w.unit,w.product,{switchFor:i.id,fromItem:i.id,remarks:'🔁 Switched for '+i.product+' (short '+fmt(q)+' '+i.unit+')'+(w.agreed?' · customer agreed: '+w.agreed:'')});
       o.items.push(ni);i.short.made={o:o.id,i:ni.id};return}
     if(i.short.d==='carry'){ t=carryTarget(o,i.short.date) }else{
       t=db.orders.find(x=>x.balanceOf===o.id&&!x.dispatched);
       if(!t){t={id:uid(),customer:o.customer,delivery:today(),use:o.use,balanceOf:o.id,balanceFrom:o.delivery,time:'',dispatched:null,delivered:null,approved:null,items:[],createdAt:Date.now()};db.orders.push(t)}
       if(i.short.time&&(!t.time||i.short.time<t.time))t.time=i.short.time;
     }
-    const ni=newItem(q,i.unit,i.product,{carryFrom:o.delivery,remarks:i.short.d==='later'?'Balance of '+day(o.delivery)+' order':''});
+    const ni=newItem(q,i.unit,i.product,{carryFrom:o.delivery,fromItem:i.id,remarks:i.short.d==='later'?'Balance of '+day(o.delivery)+' order':''});
     t.items.push(ni); t.approved=null; i.short.made={o:t.id,i:ni.id};
   });
 }
@@ -2491,6 +2509,7 @@ function removeFollowUp(i){if(!i.short||!i.short.made)return;const t=find(i.shor
   delete i.short.made}
 function removeFollowUps(o){
   o.items.forEach(i=>{if(!i.short||!i.short.made)return;const t=find(i.short.made.o);
+    if(t&&keepFU(t.items.find(x=>x.id===i.short.made.i)))return;          // switched by the customer / cancelled → keep it, don't remake
     if(t&&!t.dispatched){t.items=t.items.filter(x=>x.id!==i.short.made.i);if(!t.items.length&&t!==o)db.orders=db.orders.filter(x=>x!==t)}
     delete i.short.made});
 }
