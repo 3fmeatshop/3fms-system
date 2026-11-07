@@ -237,7 +237,7 @@ function nav(){
   const nw=news().length;
   const ready=ptsReady();
   const T=(ic,l,c)=>`<i>${ic}</i><span>${l}</span>${c||''}`;
-  const oldPts=!memOn||(pts&&(pts.balance>0||pts.pending)),card=me&&memOn?[['card',T('💳','My card',mine&&mine.me.bal>0?`<span class="cnt" style="background:#F5C518;color:#8E1B22">${peso(mine.me.bal).replace('.00','')}</span>`:'')]]:[];
+  const oldPts=true,card=me&&memOn?[['card',T('💳','My card',mine&&mine.me.bal>0?`<span class="cnt" style="background:#F5C518;color:#8E1B22">${peso(mine.me.bal).replace('.00','')}</span>`:'')]]:[];
   const tabs=isBulk()?[['orders',T('📦','My orders',nw?`<span class="cnt">${nw} new</span>`:'')],...card,...(oldPts?[['points',T('⭐','My points',ready?'<span class="cnt" style="background:#F5C518;color:#8E1B22">🎁</span>':'')]]:[]),['acct',T('👤','Account')]]
     :[['shop',T('🛒','Shop')],['cart',T('🧺','Cart',n?`<span class="cnt">${n}</span>`:'')],['orders',T('📦','My orders',nw?`<span class="cnt">${nw} new</span>`:act?`<span class="cnt">${act}</span>`:'')],...card,['info',T('ℹ️','How to order')],['acct',T('👤',me?'Account':'Log in')]];
   if(view==='login'&&me)view='acct';
