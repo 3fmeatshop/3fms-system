@@ -1137,19 +1137,25 @@ function prepDue(o){const d=pISO(o.delivery);d.setDate(d.getDate()-1);const[h,m]
 const dueTxt=o=>{const d=new Date(prepDue(o)),td=today(),ds=iso(d);return (ds===td?'today':DOW[d.getDay()]+' '+MON[d.getMonth()]+' '+d.getDate())+' '+t24(prepBy())};
 function prepWarn(o){ // only for orders still being prepared
   if(o.balanceOf||o.dispatched)return null;const c=check(o);if(!c.notPrep.length)return null;
-  if(isAdd(o))return null; // additional order: no day-before rule — the dispatch target time shows instead
+  if(isAdd(o))return null;
+  // CARRY-OVER items: NOT under the 2 PM day-before rule (stock may only arrive early tomorrow) → PRIORITY on the delivery morning, before 8 AM
+  const reg=c.notPrep.filter(i=>!i.carryFrom),cro=c.notPrep.length-reg.length;
+  if(!reg.length&&cro&&!o.online){const td=today(),b4=t24(settings.stdBefore);
+    if(o.delivery>td)return{k:'std',m:'⏰ Carry-over · PRIORITY '+day(o.delivery)+' early — before '+b4};
+    if(o.delivery===td)return hm(new Date())<settings.stdBefore?{k:'ok',m:'⏰ Carry-over · PRIORITY — prepare now, before '+b4}:{k:'crit',m:'🔴 Carry-over not prepared — past '+b4};
+    return{k:'crit',m:'🔴 Carry-over not prepared — was due '+day(o.delivery)}} // additional order: no day-before rule — the dispatch target time shows instead
   if(o.online){const q=o.online.queue?'Queue #'+o.online.queue:'Online';const td=today(); // online: prepared ON the delivery day, first come first served
     if(o.delivery<td)return{k:'crit',m:'🔴 '+q+' — was due '+day(o.delivery)};
     if(o.delivery===td)return{k:'ok',m:'🛒 '+q+' · prepare today'};
     return{k:'std',m:'🛒 '+q+' · prepare on '+day(o.delivery)}}
   const due=prepDue(o),now=Date.now(),added=(o.online&&o.online.verifiedAt)||o.createdAt,addedLate=added&&added>due;
   if(now>due){if(addedLate)return{k:'ok',m:'⚖️ Added late — prepare now'};
-    const byDue=o.items.filter(i=>!isCR(i)&&actualVal(i)!=null&&(i.at||i.prepAt)&&(i.at||i.prepAt)<=due).length;     // some items ready by the standard time = INCOMPLETE (not late)
-    return byDue?{k:'ok',m:'🟡 Incomplete — '+c.notPrep.length+' item'+(c.notPrep.length>1?'s':'')+' left · finish before dispatch'}:{k:'crit',m:'🔴 LATE PREPARATION — nothing ready by '+dueTxt(o)}}
-  if(iso(new Date(due))===today())return{k:'ok',m:'⚖️ Prepare TODAY · by '+t24(prepBy())};
+    const byDue=o.items.filter(i=>!isCR(i)&&!i.carryFrom&&actualVal(i)!=null&&(i.at||i.prepAt)&&(i.at||i.prepAt)<=due).length;     // some items ready by the standard time = INCOMPLETE (not late)
+    return byDue?{k:'ok',m:'🟡 Incomplete — '+reg.length+' item'+(reg.length>1?'s':'')+' left'+(cro?' (+'+cro+' carry-over: before '+t24(settings.stdBefore)+')':'')+' · finish before dispatch'}:{k:'crit',m:'🔴 LATE PREPARATION — nothing ready by '+dueTxt(o)}}
+  if(iso(new Date(due))===today())return{k:'ok',m:'⚖️ Prepare TODAY · by '+t24(prepBy())+(cro?' · carry-over: '+day(o.delivery)+' before '+t24(settings.stdBefore):'')};
   return{k:'std',m:'Prepare on '+dueTxt(o)}}
 // finished, but after the standard time → keeps a LATE PREPARATION tag (like the dispatch rating)
-function prepDoneLate(o){if(o.balanceOf||isAdd(o)||o.online)return null;const its=o.items.filter(i=>!/^v$/i.test(String(i.actual||'').trim()));
+function prepDoneLate(o){if(o.balanceOf||isAdd(o)||o.online)return null;const its=o.items.filter(i=>!/^v$/i.test(String(i.actual||'').trim())&&!i.carryFrom);   // carry-over items: not timed against 2 PM
   if(!its.length||its.some(i=>String(i.actual||'').trim()===''))return null;const t=its.map(i=>i.at||i.prepAt).filter(Boolean);if(!t.length)return null;
   const last=Math.max(...t),due=prepDue(o);const added=(o.online&&o.online.verifiedAt)||o.createdAt;if(last<=due||(added&&added>due))return null;return {last,part:t.some(x=>x<=due)}}
 const hm=d=>String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
@@ -1578,7 +1584,7 @@ function procHome(msg){
       <div class="grp">Daily process</div>
       <div class="tiles">
         ${tile('paste','t-paste',cl(n.today,'No orders for today','order(s) for today'),'Paste advance orders at least 1 day before delivery · rush orders = Additional order with a dispatch time')}
-        ${tile('prep','t-prep',(n.prepToday==null?cl(n.prep,'Nothing to prepare','order(s) to prepare','hot'):cl(n.prepToday,'Tomorrow\'s orders: none left','for tomorrow — prepare today','hot'))+(n.prepInc?`<span class="hot">🟡 ${n.prepInc} incomplete</span>`:'')+(n.prepLate?`<span class="bad">🔴 ${n.prepLate} late preparation</span>`:'')+(n.onlineToday?`<span class="hot">🛒 ${n.onlineToday} online today (queue)</span>`:''),'Standard time: prepare the day before delivery, until '+t24(prepBy())+' · after that = LATE PREPARATION')}
+        ${tile('prep','t-prep',(n.prepToday==null?cl(n.prep,'Nothing to prepare','order(s) to prepare','hot'):cl(n.prepToday,'Tomorrow\'s orders: none left','for tomorrow — prepare today','hot'))+(n.prepInc?`<span class="hot">🟡 ${n.prepInc} incomplete</span>`:'')+(n.carryPrio?`<span class="hot">⏰ ${n.carryPrio} carry-over · before ${t24(settings.stdBefore)}</span>`:'')+(n.prepLate?`<span class="bad">🔴 ${n.prepLate} late preparation</span>`:'')+(n.onlineToday?`<span class="hot">🛒 ${n.onlineToday} online today (queue)</span>`:''),'Standard time: prepare the day before delivery, until '+t24(prepBy())+' · after that = LATE PREPARATION')}
         ${tile('disp','t-disp',cl(n.dispatch,'Nothing to dispatch','ready to check & dispatch','hot'),'Delivery day: dispatch before '+t24(settings.stdBefore)+' (OK until '+t24(settings.okUntil)+')')}
         ${tile('mon','t-mon',cl(n.way,'No rider on the road','on the way'),'')}
         ${tile('online','t-paste',cl(n.onlinePending,'Nothing to confirm','order(s) to confirm','hot'),'Orders placed yesterday are confirmed today → prepared & delivered today · queue = order of confirmation')}
@@ -1783,7 +1789,7 @@ function render(){
       ${oq.map(o=>`<em class="dtag ${check(o).notPrep.length?(o.delivery<td0?'dt-crit':'dt-ok'):'dt-std'}" data-jump="${o.id}" style="cursor:pointer">#${o.online.queue||'?'} ${esc(o.customer)}${check(o).notPrep.length?'':' ✓'}</em>`).join('')}
       ${left.length?`<em class="dtag addt">Next: #${left[0].online.queue||'?'}</em>`:'<em class="dtag dt-std">All prepared</em>'}</div>`}}
   if(view==='prep'){const ld=[];prep.forEach(o=>o.items.forEach(i=>{if(i.carryFrom&&!isCR(i))ld.push({o,i})}));
-    if(ld.length)banner=`<div class="ldbox"><b>⏰ Late deliveries — carried over automatically</b>${ld.map(({o,i})=>`<div data-jump="${o.id}">${esc(i.product)} <b>${fmt(i.qty)} ${esc(i.unit)}</b> → <b>${longDay(o.delivery)}</b> <span class="unit">(from ${day(i.carryFrom)} order · ${status(i).t})</span></div>`).join('')}</div>`}
+    if(ld.length)banner=`<div class="ldbox"><b>⏰ Late deliveries — carried over · PRIORITY: prepare on the delivery morning, before ${t24(settings.stdBefore)}</b>${ld.map(({o,i})=>`<div data-jump="${o.id}">${esc(i.product)} <b>${fmt(i.qty)} ${esc(i.unit)}</b> → <b>${longDay(o.delivery)}</b> <span class="unit">(from ${day(i.carryFrom)} order · ${status(i).t})</span></div>`).join('')}</div>`}
   const byDay=[];list.forEach(o=>{let g=byDay[byDay.length-1];if(!g||g.d!==o.delivery){g={d:o.delivery,L:[]};byDay.push(g)}g.L.push(o)});
   const dh=g=>{const d=pISO(g.d),td=today(),rel=g.d===td?'TODAY':g.d===tmr0?'TOMORROW':g.d<td?'PAST':'';
     return `<div class="dayhd${g.d===td?' td':g.d<td?' past':''}"><div class="dh-cal"><small>${MON[d.getMonth()]}</small><b>${d.getDate()}</b></div><div class="dh-t"><b>${DOWL[d.getDay()]}</b><span>${rel?`<em>${rel}</em> · `:''}${g.L.length} order${g.L.length>1?'s':''}${view==='prep'&&g.d===tmr0?' · prepare today':''}</span></div></div>`};
@@ -1989,8 +1995,8 @@ function closedHTML(){const mk=today().slice(0,7),M=me.role==='manager',L=db.ord
     ${L.map(o=>{const c=o.closed;return `<div class="pocard closedc"><div class="poh"><b>${esc(o.customer)}</b><span class="sb sb-red">CLOSED</span><span style="flex:1"></span><span class="unit">for ${day(o.delivery)} · closed ${stamp(c.at)} by ${esc(c.by)}</span></div>
       <div class="unit"><b>${esc(c.causeTxt)}</b> — ${esc(c.reason)}${c.staff&&c.staff.length?' · staff: '+c.staff.map(esc).join(', '):''}${o.drVoid?' · '+esc(o.drVoid.no)+' voided':''}</div>
       ${M?`<div class="rvmoney"><span>Lost Sales<b>${peso(c.lostSales)}</b>${c.disc?`<small>less ${c.disc}% customer discount</small>`:''}</span><span class="ls">Lost Gross Profit<b>${peso(c.lostGP)}</b></span>${c.wasteAmt?`<span class="ls">Waste Loss<b>${peso(c.wasteAmt)}</b><small>${c.waste.map(w=>esc(w.name)+' '+qf(w.qty)).join(', ')}</small></span>`:''}</div>`:''}
-      <div class="unit">${o.items.map(i=>esc(i.product)+' '+qf(i.qty)+' '+esc(i.unit)).join(' · ')}</div>
-      ${M&&!c.wasteAmt?`<div class="row-end"><button class="btn sm" data-reopen="${o.id}">↩ Reopen</button></div>`:''}</div>`}).join('')}`}
+      <div class="unit">${o.items.map(i=>esc(i.product)+' '+qf(i.qty)+' '+esc(i.unit)).join(' · ')}${M&&c.noPrice&&c.noPrice.length?`<br>⚠ No selling price set for <b>${c.noPrice.map(esc).join(', ')}</b> — not counted. Set the price in Inventory, then reopen and close again.`:''}</div>
+      ${M&&!c.wasteAmt?`<div class="row-end"><button class="btn sm" data-clreopen="${o.id}">↩ Reopen</button></div>`:''}</div>`}).join('')}`}
 function undeliveredHTML(und){
   if(!und.length)return '<div class="empty">No undelivered items. 👍<br><span class="unit">Short items the Manager marks as <b>Forfeit</b> (usage date lapsed) are listed here.</span></div>';
   const kg=r2(und.filter(x=>x.i.unit==='Kg').reduce((a,x)=>a+x.i.short.qty,0));
@@ -2626,7 +2632,7 @@ document.addEventListener('click',async e=>{
     if(d.oncancel){if(!confirm('Cancel online order '+(o.online.no||'')+' of '+o.customer+'?\nThe items go back to the shop stock.'))return;why=prompt('Reason (shown to the customer):','Could not reach the customer')||'Cancelled by the shop'}
     b.disabled=true;try{await saveThenAsync();await api('api_onlineAction',session.token,id,d.onconfirm?'confirm':'cancel',why);onSel.delete(id);toast(d.onconfirm?'✓ Confirmed — in today\'s To Prepare':'Order cancelled');poll()}catch(e){alert(errMsg(e));b.disabled=false}return}
   if(d.invlink){linkDialog(d.invlink);return}
-  if(d.reopen){const o=find(d.reopen);const why=prompt('Reopen '+o.dr.no+' to change weights? The DR is cancelled and a new one is made after checking again. Reason:');if(why==null)return;
+  if(d.reopen){const o=find(d.reopen);if(!o||!o.dr)return;const why=prompt('Reopen '+o.dr.no+' to change weights? The DR is cancelled and a new one is made after checking again. Reason:');if(why==null)return;
     saveThen(async()=>{const r=await retCall('api_reopenDR',o.id,why);if(r){toast('🔓 '+(r.drOld||[]).slice(-1)[0].no+' reopened — weigh, tally, then a new DR is made');render()}});return}
   if(d.retwrong){returnDialog(find(d.retwrong),true);return}
   if(d.retn){returnDialog(find(d.retn),false);return}
@@ -2640,7 +2646,7 @@ document.addEventListener('click',async e=>{
     keepUndo();o.prepDone={by:me.name,at:Date.now()};save();openId=null;render();toast('✅ '+o.customer+' sent to Dispatch',true);return}
   if(d.lapse){lapseDialog(d.lapse);return}
   if(d.swi){swItemDialog(d.swi);return}
-  if(d.reopen){const o=find(d.reopen);if(!confirm('Reopen '+o.customer+'? It goes back to Prepare / Dispatch.'))return;const r=await retCall('api_reopenOrder',d.reopen);if(r){render();toast('Reopened',true)}return}
+  if(d.clreopen){const o=find(d.clreopen);if(!o)return;if(!confirm('Reopen '+o.customer+'? It goes back to Prepare / Dispatch.'))return;const r=await retCall('api_reopenOrder',d.clreopen);if(r){render();toast('Reopened',true)}return}
   if(d.prepback){const o=find(d.prepback);if(!o)return;if(!confirm('Move '+o.customer+' back to Prepare?'))return;keepUndo();o.prepDone=null;save();render();toast('Back to Prepare',true);return}
   if(d.undisp){keepUndo();const o=find(d.undisp);o.dispatched=null;save();view='prep';openId=d.undisp;render();toast('Dispatch undone',true);return}
   if(d.undeliv){keepUndo();find(d.undeliv).delivered=null;save();view='way';openId=d.undeliv;render();toast('Delivered undone',true);return}
@@ -3718,7 +3724,7 @@ function ccLive(t){if(t==='po'){const c=poEdit.carcass,m=ccMoney(c);[['pay',m.pa
 let PS=null,PSload=false,PSerr='',PSdays=3,PSx={},PSon=false,PSback=false;
 function psLoad(){if(PSload)return;PSload=true;PSerr='';api('api_poSuggest',session.token,PSdays).then(r=>{PS=r;PSx={};r.rows.forEach(x=>PSx[x.code]={on:!x.made,qty:String(x.suggest),cost:x.cost?String(x.cost):'',sup:x.supplier})}).catch(e=>PSerr=errMsg(e)).finally(()=>{PSload=false;if(view==='inv')drawStock()})}
 function poSugHTML(){if(!PS&&!PSerr)psLoad();const head=`<div class="shead"><div><h2>📈 Inventory Forecast <small class="unit" style="font-weight:600">what to buy &amp; make</small></h2><div class="unit">Open advance orders (not yet billed / dispatched) vs <b>stock + what is already on an open P.O.</b> Suggested = orders need + reorder level − stock − on P.O. Check, change the qty / supplier, then <b>Make P.O.</b></div></div><div class="sbtns"><button class="btn sm" data-psre>↻</button><button class="btn sm" data-psback>‹ Back to Inventory</button></div></div>
-  <div class="chips2" style="margin:6px 0">${[[1,'Today'],[2,'Today + tomorrow'],[3,'Next 3 days'],[7,'Next 7 days'],[14,'Next 14 days']].map(([d,t])=>`<button class="${PSdays===d?'on':''}" data-psd="${d}">${t}</button>`).join('')}</div>`;
+  <div class="chips2" style="margin:6px 0">${[[1,'Today'],[2,'Today + tomorrow'],[3,'Next 3 days'],[7,'Next 7 days'],[14,'Next 14 days']].map(([d,t])=>`<button class="${PSdays===d?'on':''}" data-psdays="${d}">${t}</button>`).join('')}</div>`;
   if(PSerr)return head+`<div class="empty">⚠ ${esc(PSerr)}</div>`;if(!PS)return head+'<div class="empty">Loading…</div>';
   const buy=PS.rows.filter(r=>!r.made),mk=PS.rows.filter(r=>r.made);
   if(!PS.rows.length)return head+`<div class="empty">✅ Nothing to buy — stock and open P.O.s cover the orders ${PS.days>1?'for the next '+PS.days+' days':'for today'}.</div>`+(PS.odd.length?psOdd():'');
@@ -4516,7 +4522,7 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const igr=e.target
   if('posug' in d){PSon=true;PS=null;PSerr='';drawStock();return}
   if('psback' in d){PSon=false;drawStock();return}
   if('psre' in d){PS=null;PSerr='';drawStock();return}
-  if(d.psd){PSdays=+d.psd;PS=null;PSerr='';drawStock();return}
+  if(d.psdays){PSdays=+d.psdays;PS=null;PSerr='';drawStock();return}
   if(d.psmake!==undefined){const sup=d.psmake==='— no supplier yet —'?'':d.psmake,L=PS.rows.filter(r=>!r.made&&PSx[r.code].on&&((PSx[r.code].sup||'').trim()||'— no supplier yet —')===d.psmake);
     const fd=L.map(r=>r.first).filter(Boolean).sort()[0],ex=fd?iso(new Date(pISO(fd).getTime()-864e5)):'',exp=ex&&ex>=today()?ex:today();
     poEdit={supplier:sup,expected:exp,note:'From 📈 Inventory Forecast · for orders up to '+day(PS.to),items:L.map(r=>({code:r.code,qty:PSx[r.code].qty,cost:PSx[r.code].cost}))};PSback=true;view='po';render();window.scrollTo(0,0);toast('Check the P.O. and save it');return}
