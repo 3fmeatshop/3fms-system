@@ -1605,6 +1605,7 @@ $('#login').addEventListener('click',e=>{const b=e.target.closest('button');if(!
   if(b.dataset.proc!==undefined){proc=b.dataset.proc||null;roleHint=null;pickUser=null;if(!proc)summary=null;renderLogin();return}
   if(b.dataset.role){roleHint=b.dataset.role;proc='any';pickUser=null;renderLogin();return}});
 $('#login').addEventListener('toggle',e=>{if(e.target.classList&&e.target.classList.contains('sec'))try{localStorage.setItem('dp_home_tasks',e.target.open?'1':'0')}catch(_){}},true);
+const tl=m=>{const n=(String(m).match(/PIN(?:NOTPW)? (\d)/)||[])[1];return n==null?'':n==='0'?' — locked for 15 minutes':' — '+n+' tr'+(n==='1'?'y':'ies')+' left'};
 $('#login').addEventListener('submit',async e=>{e.preventDefault();
   const login=$('#lgu').value.trim(),pin=$('#pin').value.trim(),btn=e.target.querySelector('button[type=submit]');
   if(!login){$('#pinerr').textContent='Type your username';$('#lgu').focus();return}
@@ -1613,7 +1614,7 @@ $('#login').addEventListener('submit',async e=>{e.preventDefault();
   let r;
   try{r=await api('api_login',login,pin,KEY)}
   catch(err){btn.disabled=false;$('#pin').value='';const m=errMsg(err);
-    $('#pinerr').innerHTML=/BADLINK/.test(m)?'This link is no longer valid — ask the manager for the new link':/WRONGAPP/.test(m)?(MODE==='rider'?'This link is for riders only':'Riders use the Rider link'):/LOCKED/.test(m)?'Too many wrong tries — try again in '+(m.match(/\d+/)||[15])[0]+' minute(s), or tap Forgot password':/USER/.test(m)?'User ID not found':/^PIN$|Error: PIN$/.test(m)||m==='PIN'?'Wrong password, try again':isNet(m)?'No internet — try again':serverErr(m);
+    $('#pinerr').innerHTML=/BADLINK/.test(m)?'This link is no longer valid — ask the manager for the new link':/WRONGAPP/.test(m)?(MODE==='rider'?'This link is for riders only':'Riders use the Rider link'):/LOCKED/.test(m)?'Too many wrong tries — try again in '+(m.match(/\d+/)||[15])[0]+' minute(s), or tap Forgot password':/USER/.test(m)?'User ID not found':/PINNOTPW/.test(m)?'That is your Time Clock PIN — log in with your <b>password</b>. Forgot it? Ask the Manager to reset it.'+tl(m):/\bPIN\b/.test(m)?'Wrong password'+tl(m)+'<br><small>Check CAPITAL letters and symbols. Tap 👁 to see what you typed.</small>':isNet(m)?'No internet — try again':serverErr(m);
     (/USER/.test(m)?$('#lgu'):$('#pin')).focus();return}
   if(r.must){btn.disabled=false;$('#pinerr').textContent='';const ok=await staffSecure(r,pin);if(!ok)return;r=ok}
   // logged in — open the screens (an error here is an app problem, not the internet)
