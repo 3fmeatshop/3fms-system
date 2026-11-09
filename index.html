@@ -1049,6 +1049,22 @@ details.oh-card>summary::-webkit-details-marker{display:none}
 .oh-li{display:flex;align-items:center;gap:8px;width:100%;text-align:left;font:inherit;font-size:14px;border:0;border-left:4px solid var(--line);background:var(--soft,#FAFAF8);border-radius:8px;padding:8px 10px;cursor:pointer;color:var(--ink)}
 .oh-li span{flex:1;min-width:0;overflow-wrap:anywhere}.oh-li b{white-space:nowrap;font-size:13px}.oh-li i{font-style:normal;color:var(--muted)}
 .oh-li small{color:var(--muted)}
+/* customer rows in Today cards = dropdowns */
+details.oh-dd{display:block;padding:0;cursor:default}
+details.oh-dd>summary{display:flex;align-items:center;gap:8px;padding:9px 10px;cursor:pointer;list-style:none}
+details.oh-dd>summary::-webkit-details-marker{display:none}
+details.oh-dd>summary::after,details.oh-dd[open]>summary::after{content:none!important;display:none!important}
+.oh-card .oh-list{max-height:560px}
+.oh-ith b{font-size:11.5px!important;font-weight:700}
+details.oh-dd>summary i{transition:transform .15s}details.oh-dd[open]>summary i{transform:rotate(180deg)}
+details.oh-dd[open]{background:#fff;box-shadow:0 0 0 1px var(--line)}
+.oh-ddb{padding:2px 10px 10px;display:flex;flex-direction:column;gap:2px}
+.oh-it{display:grid;grid-template-columns:minmax(0,1fr) auto 76px;gap:8px;align-items:center;font-size:14px;padding:5px 0;border-bottom:1px dashed var(--line)}
+.oh-it>span:first-child{overflow-wrap:anywhere}.oh-q{color:var(--muted);white-space:nowrap}
+.oh-it b{text-align:right;font-size:13.5px}.oh-it b.ok{color:#2A9888}.oh-it b.sh{color:#C1121F}.oh-it b.np{color:var(--muted)}
+.oh-ith{font-size:11.5px!important;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);font-weight:700}.oh-ith b{color:var(--muted)!important;font-size:11.5px}
+.oh-note{font-size:13px;color:var(--muted);padding:6px 0}
+.oh-open{align-self:flex-end;margin-top:6px}
 .oh-li.oh-ok{border-left-color:var(--green)}.oh-li.oh-warn{border-left-color:#C1121F}.oh-li.oh-bad{border-left-color:var(--rose);background:var(--rbg)}
 .oh-warn-box{background:var(--abg);color:var(--amber);border-radius:8px;padding:8px 10px;font-size:13px;font-weight:600}
 @media (max-width:1100px){.oh-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media (max-width:520px){.oh-grid{grid-template-columns:minmax(0,1fr)}}
@@ -1106,7 +1122,15 @@ h2,h3{color:#13222D}
 .oh-card::after{content:"";position:absolute;z-index:-1;width:120px;height:120px;right:30px;bottom:-60px;border-radius:50%;background:rgba(255,255,255,.08)}
 .oh-card.oh-warn{background:linear-gradient(140deg,#E84A55 0%,#F06F6B 55%,#F7A08C 100%)!important;box-shadow:0 10px 24px -12px rgba(224,53,63,.55),0 2px 6px rgba(19,34,45,.06)!important}
 .oh-card.oh-bad{background:linear-gradient(140deg,#C1121F 0%,#DA2E3C 55%,#EE6A6F 100%)!important;box-shadow:0 10px 24px -12px rgba(193,18,31,.6),0 2px 6px rgba(19,34,45,.06)!important}
-.oh-card.oh-none{background:linear-gradient(140deg,#D7E7F1 0%,#E9F2F8 60%,#F6FAFC 100%)!important;box-shadow:0 8px 20px -14px rgba(63,115,153,.45),0 0 0 1px #E1ECF3 inset!important}
+/* Today cards: one solid colour per card */
+.oh-card::before,.oh-card::after{display:none!important}
+.oh-card.oh-card[data-ohk="prep"]{background:#E5535C!important;box-shadow:0 10px 24px -12px rgba(232,74,85,.55),0 2px 6px rgba(19,34,45,.06)!important}
+.oh-card.oh-card[data-ohk="disp"]{background:#4A88B5!important;box-shadow:0 10px 24px -12px rgba(74,136,181,.55),0 2px 6px rgba(19,34,45,.06)!important}
+.oh-card.oh-card[data-ohk="ontime"]{background:#2A9888!important;box-shadow:0 10px 24px -12px rgba(42,152,136,.55),0 2px 6px rgba(19,34,45,.06)!important}
+.oh-card.oh-card[data-ohk="over"]{background:#B3121F!important;box-shadow:0 10px 24px -12px rgba(179,18,31,.55),0 2px 6px rgba(19,34,45,.06)!important}
+.oh-card.oh-card[data-ohk="late"]{background:#E0742A!important;box-shadow:0 10px 24px -12px rgba(224,116,42,.55),0 2px 6px rgba(19,34,45,.06)!important}
+.oh-card.oh-card[data-ohk="short"]{background:#8657C0!important;box-shadow:0 10px 24px -12px rgba(134,87,192,.55),0 2px 6px rgba(19,34,45,.06)!important}
+.oh-card.oh-card[data-ohk="appr"]{background:#4760C8!important;box-shadow:0 10px 24px -12px rgba(71,96,200,.55),0 2px 6px rgba(19,34,45,.06)!important}
 .oh-card>summary{padding:20px 22px 18px!important;gap:6px!important;color:#fff}
 .oh-hd{display:flex;align-items:center;gap:10px;margin-bottom:4px}
 .oh-card .oh-ic{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;font-size:21px;background:rgba(255,255,255,.22);box-shadow:inset 0 0 0 1px rgba(255,255,255,.35);backdrop-filter:blur(4px)}
@@ -1118,17 +1142,14 @@ h2,h3{color:#13222D}
 .oh-card .oh-more{align-self:flex-start;margin-top:10px;font-size:13px!important;font-weight:700;color:#fff!important;text-decoration:none!important;background:rgba(255,255,255,.2);box-shadow:inset 0 0 0 1px rgba(255,255,255,.4);padding:6px 14px;border-radius:99px}
 .oh-card .oh-more i{font-style:normal;margin-left:2px}
 .oh-card .oh-more:empty{display:none}
-.oh-card.oh-none>summary,.oh-card.oh-none .oh-t,.oh-card.oh-none .oh-big,.oh-card.oh-none .oh-sub,.oh-card.oh-none .oh-more{color:#003049!important}
-.oh-card.oh-none .oh-big small{color:#5B88A8!important}.oh-card.oh-none .oh-ic{background:#fff;box-shadow:0 1px 3px rgba(0,48,73,.08)}
-.oh-card.oh-none .oh-bar{background:rgba(0,48,73,.08)!important}.oh-card.oh-none .oh-bar i{background:#669BBC!important}
 .oh-card .oh-list{position:relative;background:#fff;color:var(--ink);border-top:0;margin:0 8px 8px;border-radius:14px;padding:8px}
 .oh-card .oh-li{font-size:15px}.oh-card .oh-li b{font-size:14px}
 .oh-card .oh-warn-box{margin:0 0 4px}
 .oh-now{padding:18px 22px!important;border-radius:20px!important;box-shadow:0 10px 24px -14px rgba(19,34,45,.45)}
 .oh-now b{font-size:24px!important}.oh-now span{font-size:16px}
-.oh-now.oh-green,.oh-now.oh-blue{background:linear-gradient(120deg,#5C95BB,#8DBBD7)!important}
-.oh-now.oh-amber{background:linear-gradient(120deg,#E84A55,#F39182)!important}
-.oh-now.oh-red{background:linear-gradient(120deg,#C1121F,#E5525A)!important}
+.oh-now.oh-green,.oh-now.oh-blue{background:#4A88B5!important}
+.oh-now.oh-amber{background:#E5535C!important}
+.oh-now.oh-red{background:#B3121F!important}
 @media(max-width:600px){.oh-card .oh-big{font-size:46px!important}.oh-now b{font-size:21px!important}.oh-card>summary{padding:18px 18px 16px!important}}
 /* Today cards in the palette (inner lists) */
 .oh-li.oh-ok{border-left-color:#669BBC}.oh-li.oh-warn{border-left-color:#C1121F}.oh-li.oh-bad{border-left-color:#780000;background:#FDF0D5}
@@ -1163,7 +1184,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 09 · 09:00 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 10 · 06:55 AM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -1300,6 +1321,13 @@ const day=s=>{const d=pISO(s);return DOW[d.getDay()]+', '+MON[d.getMonth()]+' '+
 const longDay=s=>{const d=pISO(s);return DOWL[d.getDay()]+', '+MONL[d.getMonth()]+' '+d.getDate()};
 const time12=d=>{let h=d.getHours();const m=String(d.getMinutes()).padStart(2,'0'),ap=h<12?'AM':'PM';h=h%12||12;return h+':'+m+' '+ap};
 const t24=s=>{if(!s)return'';const[h,m]=s.split(':').map(Number);return time12(new Date(2000,0,1,h,m))};
+/* delivery time window per order: dtf (from) – dtt (to); blank → this customer's usual (latest order that has one) → standard 'by 8:00 AM' */
+function dWin(o){if(o.balanceOf||isAdd(o))return{t:o.time?'by '+t24(o.time):'later today',k:o.time||'99'};
+  let f=o.dtf,t=o.dtt,u=false;if(!f&&!t){const L=db.orders.filter(x=>x!==o&&x.customer===o.customer&&(x.dtf||x.dtt)).sort((a,b)=>String(b.delivery).localeCompare(a.delivery))[0];if(L){f=L.dtf;t=L.dtt;u=true}}
+  const sh=x=>t24(x).replace(':00','');
+  if(f&&t)return{t:sh(f).replace(/ (AM|PM)$/,(m)=>sh(t).endsWith(m.trim())?'':m)+'–'+sh(t),k:f,u};
+  if(f||t)return{t:sh(f||t),k:f||t,u};
+  return{t:'by '+sh(settings.stdBefore),k:settings.stdBefore||'08:00',u:false}}
 const stamp=t=>{const d=new Date(t);return DOW[d.getDay()]+', '+MON[d.getMonth()]+' '+d.getDate()+' · '+time12(d)};
 const fullStamp=t=>{const d=new Date(t);return MON[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear()+' '+time12(d)};
 
@@ -2445,7 +2473,7 @@ function card(o){
         <input class="edit-in" style="max-width:160px" data-oe="customer" value="${esc(o.customer)}" placeholder="Customer">
         <input class="edit-in" style="flex:1;min-width:200px" data-oe="note" value="${esc(o.note||'')}" placeholder="📝 Note (optional)">
         ${!o.balanceOf?`<select class="edit-in" style="max-width:220px" data-oe="kind"><option value=""${isAdd(o)?'':' selected'}>📅 Advance preparation</option><option value="add"${isAdd(o)?' selected':''}>➕ Additional order</option></select>
-        ${isAdd(o)?`<label class="unit" style="display:flex;gap:6px;align-items:center">Dispatch by <input class="edit-in" style="width:auto" type="time" data-oe="time" value="${esc(o.time||'')}"></label>`:''}`:''}</div>`:''}
+        ${isAdd(o)?`<label class="unit" style="display:flex;gap:6px;align-items:center">Dispatch by <input class="edit-in" style="width:auto" type="time" data-oe="time" value="${esc(o.time||'')}"></label>`:`<label class="unit" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">🕖 Delivery time <input class="edit-in" style="width:auto" type="time" data-oe="dtf" value="${esc(o.dtf||'')}" title="from (or exact time)"> – <input class="edit-in" style="width:auto" type="time" data-oe="dtt" value="${esc(o.dtt||'')}" title="until (optional)"></label>`}`:''}</div>`:''}
       <table><thead><tr><th>Product</th><th class="r">Order</th>${showInv(st)?`<th class="r h-inv">${ed?'':'Left <small>stock − prepared · live</small>'}</th>`:''}<th class="r">${ed?'Unit':st==='prep'?'Prepared':'Sent'}</th><th class="h-s">${ed?'':'Status'}</th><th class="h-k">${ed?'':'Check'}</th><th>${ed?'':'Note'}</th></tr></thead><tbody>${rows}</tbody></table>
       <div class="foot">${foot}</div>
     </div></div>`;
@@ -3097,8 +3125,9 @@ function opsHomeHTML(prepTodo,dispTodo,way){
   const pN=pRows.reduce((a,r)=>a+r.n,0),pD=pRows.reduce((a,r)=>a+r.d,0);
   // DISPATCHED TODAY = delivery date today only: items dispatched / items prepared
   const dO=db.orders.filter(o=>!o.closed&&o.delivery===td);
-  const dRows=dO.filter(o=>!o.balanceOf).map(o=>{const p=act(o).filter(done).length;return {o,p,x:out(o)?p:0}}).filter(r=>r.p||act(r.o).length);   // 'deliver later today' balances: shown as a warning only
-  const dP=dRows.reduce((a,r)=>a+r.p,0),dX=dRows.reduce((a,r)=>a+r.x,0);
+  // ITEMS FOR DISPATCH TODAY = orders (customers) delivering today: dispatched / total, each with its delivery time
+  const dRows=dO.filter(o=>!o.posSale&&act(o).length).map(o=>({o,n:act(o).length,p:act(o).filter(done).length,x:out(o),w:dWin(o)})).sort((a,b)=>a.x-b.x||String(a.w.k).localeCompare(b.w.k));
+  const dP=dRows.length,dX=dRows.filter(r=>r.x).length;
   const fuO=i=>madeOK(i)?find(i.short.made.o):null;   // where the follow-up really is now
   const later=[],carried=[];dO.forEach(o=>act(o).forEach(i=>{if(!i.short||(i.short.d!=='later'&&!(i.short.mv&&i.short.d==='carry')))return;const t=fuO(i);
     if(t&&t.delivery>td)carried.push({o,i,t});else if(i.short.d==='later'&&(!t||!out(t)))later.push({o,i})}));   // later-today: hide once it went out · moved to another day: show as carried over
@@ -3118,18 +3147,20 @@ function opsHomeHTML(prepTodo,dispTodo,way){
   if(hm<dCut){now1=`🚚 Dispatch today's orders`;now2=`before ${t24(settings.stdBefore)} · ${left(dCut-hm)}${carry?` · ⏰ ${carry} carry-over to finish first`:''}`;nc='blue'}
   else if(hm<pCut){now1=`⚖️ Prepare tomorrow's orders`;now2=`deadline ${t24(prepBy())} today · ${left(pCut-hm)}`;nc='amber'}
   else{now1=pD<pN?`⚖️ Finish tomorrow's orders — past ${t24(prepBy())}`:`✅ Tomorrow's orders are ready`;now2=pD<pN?'late preparation — finish them now':'receive deliveries · production · clean & arrange the chiller';nc=pD<pN?'red':'green'}
-  const row=(o,txt,k)=>`<button class="oh-li${k?' oh-'+k:''}" data-jump="${o.id}"><span>${esc(o.customer)}</span><b>${txt}</b><i>›</i></button>`;
+  // each customer = a dropdown: tap to see the items (ordered · prepared), then "Open order ›"
+  const ddItems=o=>act(o).map(i=>{const v=actualVal(i),q=shortOf(i);return `<div class="oh-it"><span>${esc(i.product)}${i.carryFrom?' <small>⏰ late</small>':''}</span><span class="oh-q">${fmt(i.qty)} ${esc(i.unit)}</span><b class="${v==null?'np':q?'sh':'ok'}">${v==null?'—':(q?'⚠ ':'✓ ')+fmt(v)}</b></div>`}).join('');
+  const row=(o,txt,k)=>`<details class="oh-li oh-dd${k?' oh-'+k:''}"><summary><span>${esc(o.customer)}</span><b>${txt}</b><i>▾</i></summary><div class="oh-ddb"><div class="oh-it oh-ith"><span>Product</span><span class="oh-q">Order</span><b>Prepared</b></div>${ddItems(o)||'<div class="oh-it"><span>No items</span></div>'}${o.note?`<div class="oh-note">📝 ${esc(o.note)}</div>`:''}<button class="btn sm oh-open" data-jump="${o.id}">Open order ›</button></div></details>`;
   const card=(key,ic,title,big,sub,st,pct,body)=>`<details class="oh-card oh-${st}"${OHOPEN.has(key)?' open':''} data-ohk="${key}"><summary><span class="oh-hd"><span class="oh-ic">${ic}</span><span class="oh-t">${title}</span></span><span class="oh-big">${big}</span><span class="oh-sub">${sub}</span>${pct!=null?`<span class="oh-bar"><i style="width:${Math.round(pct*100)}%"></i></span>`:''}<span class="oh-more">${body?'View list <i>›</i>':''}</span></summary>${body?`<div class="oh-list">${body}</div>`:''}</details>`;
   const pSt=!pN?'ok':pD===pN?'ok':hm>=pCut?'bad':'warn',dSt=!dP?'ok':dX===dP?'ok':hm>=dCut?'bad':'warn';
   const pBody=pRows.sort((a,b)=>(a.d===a.n)-(b.d===b.n)).map(r=>row(r.o,`${r.o.delivery===td?(r.o.balanceOf?'🕒 later today · ':'today · '):''}${r.d}/${r.n} items`,r.d===r.n?'ok':hm>=pCut?'bad':'warn')).join('');
   const dBody=(later.length?`<div class="oh-warn-box">⚠ Deliver later today: ${later.map(x=>esc(x.i.product)+' '+fmt(shortOf(x.i))+' '+esc(x.i.unit)+' ('+esc(x.o.customer)+')').join(' · ')}</div>`:'')
-    +(carried.length?`<div class="oh-warn-box" style="background:#EEF3F7;color:#003049">↪ Carried over (not delivered later today): ${carried.map(x=>esc(x.i.product)+' '+fmt(shortOf(x.i))+' '+esc(x.i.unit)+' ('+esc(x.o.customer)+') → '+day(x.t.delivery)).join(' · ')}</div>`:'')+dRows.sort((a,b)=>(a.x===a.p)-(b.x===b.p)).map(r=>row(r.o,`${r.x}/${r.p} items`,r.x===r.p&&r.p?'ok':hm>=dCut?'bad':'warn')).join('');
+    +(carried.length?`<div class="oh-warn-box" style="background:#EEF3F7;color:#003049">↪ Carried over (not delivered later today): ${carried.map(x=>esc(x.i.product)+' '+fmt(shortOf(x.i))+' '+esc(x.i.unit)+' ('+esc(x.o.customer)+') → '+day(x.t.delivery)).join(' · ')}</div>`:'')+dRows.map(r=>row(r.o,`🕖 ${r.w.t}${r.w.u?' <small>(usual)</small>':''} · ${r.x?'✓ out '+time12(new Date(r.o.dispatched.at)):r.p+'/'+r.n+' prepared'}`,r.x?'ok':hm>=dCut?'bad':'warn')).join('');
   const tm=o=>o.dispatched?time12(new Date(o.dispatched.at)):'not yet out';
   return `<div class="oh">
     <div class="oh-now oh-${nc}"><span class="oh-nl">NOW</span><b>${now1}</b><span>${now2}</span></div>
     <div class="oh-grid">
       ${card('prep','⚖️','Prepare today',`${pD}<small>/${pN}</small>`,pN?`items prepared · deadline ${t24(prepBy())}`:'nothing to prepare yet',pSt,pN?pD/pN:null,pBody)}
-      ${card('disp','🚚','Dispatched today',`${dX}<small>/${dP}</small>`,dP?`items dispatched / prepared · before ${t24(settings.stdBefore)}`:'no deliveries today',dSt,dP?dX/dP:null,dBody)}
+      ${card('disp','🚚','Items for dispatch today',`${dX}<small>/${dP}</small>`,dP?`orders dispatched · ${dRows.filter(r=>!r.x).length?'next: '+esc(dRows.find(r=>!r.x).o.customer)+' '+dRows.find(r=>!r.x).w.t:'all out ✓'}`:'no deliveries today',dSt,dP?dX/dP:null,dBody)}
       ${card('ontime','✅','On-time dispatch',onT.length,`out before ${t24(settings.stdBefore)}`,onT.length?'ok':'none',null,onT.map(o=>row(o,tm(o),'ok')).join(''))}
       ${overO.length?card('over','🚨','Overdue — not yet out',overO.length,'past '+t24(settings.stdBefore)+' — dispatch now','bad',null,overO.map(o=>row(o,'not yet out','bad')).join('')):''}
       ${card('late','⏱','Late dispatch',lateO.length,lateO.length?'dispatched after '+t24(settings.stdBefore):'none late',lateO.length?'bad':'ok',null,lateO.map(o=>row(o,'out '+tm(o),'bad')).join(''))}
