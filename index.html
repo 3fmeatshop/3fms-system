@@ -1049,7 +1049,7 @@ details.oh-card>summary::-webkit-details-marker{display:none}
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 09 · 06:08 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 09 · 06:20 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -1934,8 +1934,8 @@ function render(){
     if(oq.length){const left=oq.filter(o=>check(o).notPrep.length);banner+=`<div class="prepbar" style="border-left-color:#7c3aed"><b>🛒 Online orders today</b><span class="unit">prepared today, first come first served (queue = order of Sales confirmation)</span><span style="flex:1"></span>
       ${oq.map(o=>`<em class="dtag ${check(o).notPrep.length?(o.delivery<td0?'dt-crit':'dt-ok'):'dt-std'}" data-jump="${o.id}" style="cursor:pointer">#${o.online.queue||'?'} ${esc(o.customer)}${check(o).notPrep.length?'':' ✓'}</em>`).join('')}
       ${left.length?`<em class="dtag addt">Next: #${left[0].online.queue||'?'}</em>`:'<em class="dtag dt-std">All prepared</em>'}</div>`}}
-  if(view==='prep'){const ld=[];prep.forEach(o=>o.items.forEach(i=>{if(i.carryFrom&&!isCR(i))ld.push({o,i})}));
-    if(ld.length)banner=`<div class="ldbox"><b>⏰ Late deliveries — carried over · PRIORITY: prepare on the delivery morning, before ${t24(settings.stdBefore)}</b>${ld.map(({o,i})=>`<div data-jump="${o.id}">${esc(i.product)} <b>${fmt(i.qty)} ${esc(i.unit)}</b> → <b>${longDay(o.delivery)}</b> <span class="unit">(from ${day(i.carryFrom)} order · ${status(i).t})</span></div>`).join('')}</div>`}
+  if(view==='prep'){const ld=[];prep.forEach(o=>o.items.forEach(i=>{if(i.carryFrom&&!isCR(i)&&o.delivery<=td0)ld.push({o,i})/* only items still owed TODAY; next-day carry-overs are in Short deliveries */}));
+    if(ld.length)banner=`<div class="ldbox"><b>⏰ Late deliveries — not delivered yet · PRIORITY: deliver later today</b>${ld.map(({o,i})=>`<div data-jump="${o.id}">${esc(i.product)} <b>${fmt(i.qty)} ${esc(i.unit)}</b> → <b>${longDay(o.delivery)}</b> <span class="unit">(from ${day(i.carryFrom)} order · ${status(i).t})</span></div>`).join('')}</div>`}
   const byDay=[];list.forEach(o=>{let g=byDay[byDay.length-1];if(!g||g.d!==o.delivery){g={d:o.delivery,L:[]};byDay.push(g)}g.L.push(o)});
   const dh=g=>{const d=pISO(g.d),td=today(),rel=g.d===td?'TODAY':g.d===tmr0?'TOMORROW':g.d<td?'PAST':'';
     return `<div class="dayhd${g.d===td?' td':g.d<td?' past':''}"><div class="dh-cal"><small>${MON[d.getMonth()]}</small><b>${d.getDate()}</b></div><div class="dh-t"><b>${DOWL[d.getDay()]}</b><span>${rel?`<em>${rel}</em> · `:''}${g.L.length} order${g.L.length>1?'s':''}${view==='prep'&&g.d===tmr0?' · prepare today':''}</span></div></div>`};
