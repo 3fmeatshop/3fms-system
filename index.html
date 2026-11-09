@@ -1621,7 +1621,7 @@ $('#login').addEventListener('submit',async e=>{e.preventDefault();
   try{r.user.role=normRole(r.user.role);
     try{localStorage.setItem('dp_last_login_'+MODE,login)}catch(_){}
     let note='';if(proc&&PROCS[proc]&&!PROCS[proc].roles.includes(r.user.role)){note=' — '+PROCS[proc].t+' is not for your account, here are your screens';proc=null}
-    session={token:r.token,user:r.user};localStorage.setItem(SESS,J(session));pickUser=null;start(true);land();toast('Welcome, '+r.user.name+note)}
+    session={token:r.token,user:r.user,at:Date.now()};localStorage.setItem(SESS,J(session));pickUser=null;start(true);land();toast('Welcome, '+r.user.name+note)}
   catch(err){console.error(err);btn.disabled=false;$('#login').classList.add('on');$('#pinerr').innerHTML='⚠ The app could not open your screen: <b>'+esc(errMsg(err))+'</b><br>Take a screenshot of this and send it to the developer.'}});
 /* ---------- STAFF ACCOUNT: User ID + password (forgot it -> the Manager resets it) ---------- */
 const PWR=[['8+ characters',p=>p.length>=8],['UPPERCASE',p=>/[A-Z]/.test(p)],['lowercase',p=>/[a-z]/.test(p)],['number',p=>/\d/.test(p)],['symbol',p=>/[^A-Za-z0-9]/.test(p)]];
@@ -4811,13 +4811,22 @@ $('#file').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileR
   r.readAsText(f);e.target.value=''};
 
 tick(); setInterval(tick,1000);
+// keep the app on the device so it opens without internet (shared with the Time Clock)
+if('serviceWorker' in navigator&&window.isSecureContext)navigator.serviceWorker.register('clock-sw.js').catch(()=>{});
 if(MODE==='rider'&&$('#lsub'))$('#lsub').textContent='Rider · Deliveries';
 if(MODE==='rider'){$('#apptitle').innerHTML='<span class="b3 logo3f">3F</span><span class="tt">3FMS SYSTEM<small>Rider · Deliveries</small></span>';document.title='3FMS SYSTEM – Rider'}
 idbOpen().then(()=>{try{session=JSON.parse(localStorage.getItem(SESS)||'null')}catch(e){session=null}
   if(MODE!=='rider'&&session&&session.token){
     try{const c=JSON.parse(localStorage.getItem(CACHE)||'null');if(c&&c.u===session.user.id){me=session.user;db={orders:c.orders||[]};base=c.base||{}}}catch(e){}
     const quiet=()=>{try{api('api_logout',session.token).catch(()=>{})}catch(e){}session=null;me=null;localStorage.removeItem(SESS);db={orders:[]};base={};showLogin()};
-    if(me&&dirtyOrders().length){$('#login').classList.add('on');$('#lg').innerHTML='<h1>3FMS SYSTEM</h1><p>Saving your last changes…</p>';flush().then(quiet,quiet)}else quiet();return}
+    // NO INTERNET when the app is reopened: continue the last login (same tablet, within 24 h) instead of logging out — work saves here and sends when online
+    const resume=()=>{start(false);setSync('off');setTimeout(()=>toast('📴 No internet — continued as '+me.name+'. Your work is saved on this device and sent when online.',true),300)};
+    const fresh=session.at&&Date.now()-session.at<24*3600e3;
+    const ping=()=>Promise.race([api('api_users',KEY),new Promise((_,j)=>setTimeout(()=>j(new Error('timed out')),7000))]);
+    $('#login').classList.add('on');$('#lg').innerHTML='<h1>3FMS SYSTEM</h1><p>Connecting…</p>';
+    (navigator.onLine===false?Promise.reject(new Error('offline')):ping()).then(()=>{
+      if(me&&dirtyOrders().length){$('#lg').innerHTML='<h1>3FMS SYSTEM</h1><p>Saving your last changes…</p>';flush().then(quiet,quiet)}else quiet()},
+      e=>{if(fresh&&me&&isNet(errMsg(e)))resume();else quiet()});return}
   if(session&&session.token)start(false);else showLogin()});
 })();
 </script>
