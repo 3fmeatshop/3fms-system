@@ -1682,15 +1682,15 @@ function start(fresh){
 /* ---------- screen ---------- */
 let view='prep', openId=null, editId=null, dateF=null, notes=new Set(); const fixing=new Set();
 /* ---------- MANAGER: 4 departments ---------- */
-const DEPT_OF={owner:'fin',hr:'hr',srep:'sales',crep:'sales',points:'sales',memb:'sales'};
+const DEPT_OF={owner:'fin',hr:'hr',kpi:'hr',srep:'sales',crep:'sales',points:'sales',memb:'sales'};
 const deptOf=v=>DEPT_OF[v]||'ops';
 let DLAST={};try{DLAST=JSON.parse(localStorage.getItem('fms_dlast')||'{}')}catch(e){}
 function deptDefs(c){return {
   ops:{ic:'🔪',t:'Operations',d:'Orders · stock · POS · deliveries',c:'#B91C1C',n:c.onP+c.prep+c.disp+c.poA,tabs:[
     {act:'neworder',t:'📋 Customer Orders'},{v:'online',t:'🛒 Online',n:c.onP},{v:'po',t:'📝 P.O.',n:c.poA},{v:'recv',t:'📥 Receiving'},{v:'prep',t:'⚖️ Preparation',n:c.prep},{v:'disp',t:'✅ Dispatch',n:c.disp},
     {v:'pos',t:'🧾 POS'},{v:'inv',t:'📦 Inventory',n:c.out?c.out+' out':0,g:[['inv','📦 Stock'],['count','🧮 Stock count'],['prod','🏭 Production']]},{v:'way',t:'🛵 Deliveries',n:c.way,g:[['way','🛵 Out for delivery',c.way],['delivered','✅ '+c.delLbl,c.delOK],['undel','↩ Undelivered / ⛔ Closed',c.und]]},
-    {v:'mgr',t:'📊 Reports',g:[['mgr','📊 Operations dashboard'],['month','📦 Monthly report']]},{v:'kpi',t:'🎯 Ops KPI'},{v:'act',t:'📜 Activity history'}]},
-  hr:{ic:'🧑‍💼',t:'HR',d:'Schedule · OT · payroll',c:'#0F766E',n:c.otP,tabs:[{v:'hr',sub:'sched',t:'📅 Schedule'},{v:'hr',sub:'ot',t:'⏱ OT requests',n:c.otP},{v:'hr',sub:'pay',t:'💵 Payroll & attendance'},{v:'hr',sub:'set',t:'⚙ Shifts & rules'},{act:'users',t:'🔑 Users & PINs'}]},
+    {v:'mgr',t:'📊 Reports',g:[['mgr','📊 Operations dashboard'],['month','📦 Monthly report']]},{v:'act',t:'📜 Activity history'}]},
+  hr:{ic:'🧑‍💼',t:'HR',d:'Schedule · OT · payroll',c:'#0F766E',n:c.otP,tabs:[{v:'hr',sub:'sched',t:'📅 Schedule'},{v:'hr',sub:'ot',t:'⏱ OT requests',n:c.otP},{v:'hr',sub:'pay',t:'💵 Payroll & attendance'},{v:'hr',sub:'set',t:'⚙ Shifts & rules'},{v:'kpi',t:'🎯 Staff KPI'},{act:'users',t:'🔑 Users & PINs'}]},
   fin:{ic:'💰',t:'Accounting & Finance',d:'Money · expenses · P&L',c:'#B45309',n:c.zP,tabs:[{v:'owner',sub:'dash',t:'📊 Dashboard'},{v:'owner',sub:'acc',t:'💰 Accounts'},{v:'owner',sub:'hist',t:'📜 Money history'},{v:'owner',sub:'exp',t:'🧾 Expenses'},{v:'owner',sub:'col',t:'📥 Collect & pay',n:c.zP},
     {v:'owner',sub:'loan',t:'🤝 Loans'},{v:'owner',sub:'avg',t:'⏱ Profit averages'},{v:'owner',sub:'fa',t:'🏢 Fixed assets'},{v:'owner',sub:'rep',t:'📑 P&L · Balance sheet'}]},
   sales:{ic:'📈',t:'Sales & Marketing',d:'Sales · customers · loyalty',c:'#7C3AED',n:0,tabs:[{v:'memb',t:'💳 Membership'},{v:'srep',t:'📈 Sales & profit'},{v:'crep',t:'👥 Customer sales'},{v:'points',t:'⭐ Points (old)'},{act:'bulk',t:'🏢 Bulk buyer accounts'},{act:'cdisc',t:'🏷 Customer discounts'}]}}}
@@ -2805,7 +2805,7 @@ function actHTML(){if(!ACF.from){const[f,t]=srPreset('today');ACF.from=f;ACF.to=
 function acCsv(){downloadCsv([['Date','Time','Type','What','Details','Reference','Staff','Amount']].concat(acRows().map(r=>{const d=new Date(r.t);return [ymdL(d),r.x&&r.x.nt?'':time12(d),(ACT[r.type]||[,r.type])[1],r.act,r.what,r.ref,r.by,r.amt!=null?r.amt:'']})),'3FMS-activity-'+ACF.from+'-to-'+ACF.to+'.csv')}
 
 /* ---------- OPERATIONS KPI (manager): scorecard per staff per month, counted from the records ---------- */
-const KPPROF={senior:'Senior operations',junior:'Junior operations',general:'General operations'};
+const KPPROF={senior:'Senior Operation Staff',junior:'Junior Operation Staff',general:'General operations'};
 let KPF='',KP=null,KPload=false,KPerr='';
 const kpYm=(o=0)=>{const d=new Date();d.setDate(1);d.setMonth(d.getMonth()+o);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')};
 function kpLoad(){if(KPload)return;KPload=true;KPerr='';const ym=KPF||kpYm();api('api_opsKpi',session.token,ym).then(r=>{KP=r}).catch(e=>KPerr=errMsg(e)).finally(()=>{KPload=false;if(view==='kpi')drawStock()})}
@@ -2813,7 +2813,7 @@ const kpBand=s=>s==null?['var(--muted,#777)','No data yet']:s>=90?['#15803d','Ex
 const kpNotes=n=>{const a=[],m={late:'late',longBreak:'long break',undertime:'undertime',absent:'absent',corrected:'item corrected at dispatch',wrongOut:'wrong item reached customer',offDuty:'record on a day not timed in (not counted)',yieldOff:'batch yield off',targetMiss:'production target missed',recvBack:'receiving sent back',countBack:'count sent back'};Object.keys(m).forEach(k=>{if(n[k])a.push(n[k]+' '+m[k])});return a};
 function kpiHTML(){const ym=KPF||kpYm();if((!KP||KP.ym!==ym)&&!KPerr)kpLoad();
   const M=[0,-1,-2].map(o=>kpYm(o)),lbl=y=>{const [a,b]=y.split('-');return SMON[+b-1]+' '+a};
-  let h=`<div class="panel"><div class="poh"><h3 style="margin:0">🎯 Operations KPI</h3><span style="flex:1"></span><button class="btn sm" data-kpre>↻</button></div>
+  let h=`<div class="panel"><div class="poh"><h3 style="margin:0">🎯 Staff KPI · Operations</h3><span style="flex:1"></span><button class="btn sm" data-kpre>↻</button></div>
     <div class="chips2">${M.map(y=>`<button class="${y===ym?'on':''}" data-kpym="${y}">${lbl(y)}</button>`).join('')}</div>
     <div class="unit" style="margin-top:6px">Counted from 3FMS records. Meet the target = full points · 20% below the target = 0. Work recorded under an account counts only on days that person timed in. A KPI with no data that month is left out.</div></div>`;
   if(KPerr)return h+`<div class="empty">⚠ ${esc(KPerr)}</div>`;
