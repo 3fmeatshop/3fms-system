@@ -652,7 +652,18 @@ select.chipsel{display:inline-block;width:auto;min-width:150px;max-width:100%;ma
 .chips2 button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;font-weight:700;color:var(--navy)}.chips2 button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
 .stbl{width:100%;border-collapse:collapse;font-size:14px}.stbl th{text-align:left;font-size:12px;color:var(--muted);text-transform:uppercase;padding:8px 6px;border-bottom:1px solid var(--line)}
 .stbl td{padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:middle}.stbl .r{text-align:right}.stbl select.edit-in{min-width:150px;width:100%}
-.stbl tr.rlow td{background:#FFF8E6}.stbl tr.rout td{background:#FDECEA}.stq{font-size:16px}
+.stbl tr.rlow td{background:#FFF8E6}
+/* receiving report on the phone: one card per product (no cut names) */
+@media(max-width:700px){
+ .sc:has(>.rvtb){overflow:visible}
+ .rvtb,.rvtb tbody{display:block;width:100%}.rvtb thead{display:none}
+ .rvtb tr{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px 10px;padding:10px 8px;border-bottom:1px solid var(--line)}
+ .rvtb tr td{display:block;border:0!important;padding:0!important;text-align:left!important;background:none!important}
+ .rvtb tr td:first-child{grid-column:1/-1;font-weight:800;font-size:15px}
+ .rvtb tr td[data-l]::before{content:attr(data-l);display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.3px}
+ .rvtb tr.rlow{background:#FFF8E6;border-radius:10px}
+}
+.stbl tr.rout td{background:#FDECEA}.stq{font-size:16px}
 .stbl input.nq{width:100%;min-width:70px;text-align:right}
 .sb{display:inline-block;border-radius:999px;padding:2px 9px;font-size:12px;font-weight:800;white-space:nowrap}
 .sb-green{background:var(--gbg);color:var(--green)}.sb-amber{background:var(--abg);color:var(--amber)}.sb-red{background:var(--rbg);color:var(--rose)}.sb-violet{background:var(--vbg);color:var(--violet)}.sb-gray{background:var(--grbg);color:var(--gray)}
@@ -1138,26 +1149,15 @@ select.chipsel:focus,.edit-in:focus{outline:2px solid #F5C518;outline-offset:0}
 .oh-card.oh-bad{background:linear-gradient(140deg,#C1121F 0%,#DA2E3C 55%,#EE6A6F 100%)!important;box-shadow:0 10px 24px -12px rgba(193,18,31,.6),0 2px 6px rgba(19,34,45,.06)!important}
 /* Today cards: one solid colour per card */
 .oh-card::before,.oh-card::after{display:none!important}
-.oh-card.oh-card[data-ohk="prep"]{background:#C8102E!important;box-shadow:0 10px 24px -12px rgba(200,16,46,.6),0 2px 6px rgba(0,0,0,.06)!important}
-.oh-card.oh-card[data-ohk="disp"]{background:#F5C518!important;box-shadow:0 10px 24px -12px rgba(245,197,24,.6),0 2px 6px rgba(0,0,0,.06)!important}
-.oh-card.oh-card[data-ohk="ontime"]{background:#FFFFFF!important;box-shadow:0 10px 24px -12px rgba(245,197,24,.6),0 2px 6px rgba(0,0,0,.06)!important}
-.oh-card.oh-card[data-ohk="over"]{background:#8E1B22!important;box-shadow:0 10px 24px -12px rgba(142,27,34,.6),0 2px 6px rgba(0,0,0,.06)!important}
-.oh-card.oh-card[data-ohk="late"]{background:#8E1B22!important;box-shadow:0 10px 24px -12px rgba(142,27,34,.6),0 2px 6px rgba(0,0,0,.06)!important}
-.oh-card.oh-card[data-ohk="short"]{background:#E8A317!important;box-shadow:0 10px 24px -12px rgba(232,163,23,.6),0 2px 6px rgba(0,0,0,.06)!important}
-.oh-card.oh-card[data-ohk="appr"]{background:#FFFFFF!important;box-shadow:0 10px 24px -12px rgba(179,25,27,.6),0 2px 6px rgba(0,0,0,.06)!important}
-/* light cards (yellow / white): dark text */
-.oh-card[data-ohk="disp"],.oh-card[data-ohk="short"]{--tx:#3A2A00}
-.oh-card[data-ohk="ontime"],.oh-card[data-ohk="appr"]{--tx:#1C1C1C}
-.oh-card.oh-card.oh-card[data-ohk="ontime"]{box-shadow:0 0 0 2px #F5C518 inset,0 10px 24px -14px rgba(0,0,0,.2)!important}
-.oh-card.oh-card.oh-card[data-ohk="appr"]{box-shadow:0 0 0 2px #B3191B inset,0 10px 24px -14px rgba(0,0,0,.2)!important}
-.oh-card:is([data-ohk="disp"],[data-ohk="short"],[data-ohk="ontime"],[data-ohk="appr"])>summary,
-.oh-card:is([data-ohk="disp"],[data-ohk="short"],[data-ohk="ontime"],[data-ohk="appr"]) :is(.oh-t,.oh-big,.oh-sub,.oh-more){color:var(--tx)!important}
-.oh-card:is([data-ohk="disp"],[data-ohk="short"],[data-ohk="ontime"],[data-ohk="appr"]) .oh-big small{color:var(--tx)!important;opacity:.6}
-.oh-card:is([data-ohk="disp"],[data-ohk="short"],[data-ohk="ontime"],[data-ohk="appr"]) .oh-ic{background:rgba(0,0,0,.07);box-shadow:none}
-.oh-card:is([data-ohk="disp"],[data-ohk="short"],[data-ohk="ontime"],[data-ohk="appr"]) .oh-bar{background:rgba(0,0,0,.12)!important}
-.oh-card:is([data-ohk="disp"],[data-ohk="short"],[data-ohk="ontime"],[data-ohk="appr"]) .oh-bar i{background:#B3191B!important}
-.oh-card:is([data-ohk="disp"],[data-ohk="short"],[data-ohk="ontime"],[data-ohk="appr"]) .oh-more{background:rgba(0,0,0,.06);box-shadow:inset 0 0 0 1px rgba(0,0,0,.18)}
-.oh-card:is([data-ohk="ontime"],[data-ohk="appr"]) .oh-list{box-shadow:0 0 0 1px #EEE}
+.oh-card.oh-card[data-ohk="prep"]{background:linear-gradient(135deg,#7A4A00 0%,#C98A0B 100%)!important;box-shadow:0 12px 26px -12px rgba(122,74,0,.65),0 2px 6px rgba(0,0,0,.08)!important}
+.oh-card.oh-card[data-ohk="disp"]{background:linear-gradient(135deg,#6E0B12 0%,#C8102E 100%)!important;box-shadow:0 12px 26px -12px rgba(110,11,18,.65),0 2px 6px rgba(0,0,0,.08)!important}
+.oh-card.oh-card[data-ohk="ontime"]{background:linear-gradient(135deg,#0F4D2E 0%,#1F8A4C 100%)!important;box-shadow:0 12px 26px -12px rgba(15,77,46,.65),0 2px 6px rgba(0,0,0,.08)!important}
+.oh-card.oh-card[data-ohk="over"]{background:linear-gradient(135deg,#3D0609 0%,#8E1B22 100%)!important;box-shadow:0 12px 26px -12px rgba(61,6,9,.65),0 2px 6px rgba(0,0,0,.08)!important}
+.oh-card.oh-card[data-ohk="late"]{background:linear-gradient(135deg,#4F080D 0%,#9B1B22 100%)!important;box-shadow:0 12px 26px -12px rgba(79,8,13,.65),0 2px 6px rgba(0,0,0,.08)!important}
+.oh-card.oh-card[data-ohk="short"]{background:linear-gradient(135deg,#8A3300 0%,#D9640F 100%)!important;box-shadow:0 12px 26px -12px rgba(138,51,0,.65),0 2px 6px rgba(0,0,0,.08)!important}
+.oh-card.oh-card[data-ohk="appr"]{background:linear-gradient(135deg,#1E1E1E 0%,#4A4A4A 100%)!important;box-shadow:0 12px 26px -12px rgba(30,30,30,.65),0 2px 6px rgba(0,0,0,.08)!important}
+.oh-card .oh-ic{background:rgba(255,255,255,.16)!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.25)!important}
+.oh-card .oh-bar i{background:#F5C518!important}
 .oh-card>summary{padding:20px 22px 18px!important;gap:6px!important;color:#fff}
 .oh-hd{display:flex;align-items:center;gap:10px;margin-bottom:4px}
 .oh-card .oh-ic{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;font-size:21px;background:rgba(255,255,255,.22);box-shadow:inset 0 0 0 1px rgba(255,255,255,.35);backdrop-filter:blur(4px)}
@@ -1211,7 +1211,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 10 · 07:25 AM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 10 · 08:05 AM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -3160,7 +3160,7 @@ function opsHomeHTML(prepTodo,dispTodo,way){
   const dO=db.orders.filter(o=>!o.closed&&o.delivery===td);
   // ITEMS FOR DISPATCH TODAY = orders (customers) delivering today: dispatched / total, each with its delivery time
   // PREPARATION & DISPATCH TODAY = every order delivering today: prepare what's left + dispatch · carry-overs / balances = ⏰ PRIORITY (on top)
-  const dRows=dO.filter(o=>!o.posSale&&act(o).length).map(o=>({o,n:act(o).length,p:act(o).filter(done).length,x:out(o),w:dWin(o),pr:!!(o.balanceOf||o.items.some(i=>i.carryFrom))})).sort((a,b)=>a.x-b.x||b.pr-a.pr||String(a.w.k).localeCompare(b.w.k));
+  const dRows=dO.filter(o=>act(o).length).map(o=>({o,n:act(o).length,p:act(o).filter(done).length,x:out(o),w:dWin(o),pr:!!(o.balanceOf||o.items.some(i=>i.carryFrom))})).sort((a,b)=>a.x-b.x||b.pr-a.pr||String(a.w.k).localeCompare(b.w.k));
   const dP=dRows.length,dX=dRows.filter(r=>r.x).length,dIN=dRows.reduce((a,r)=>a+r.n,0),dIP=dRows.reduce((a,r)=>a+r.p,0),dPr=dRows.filter(r=>r.pr&&!r.x).length;
   const fuO=i=>madeOK(i)?find(i.short.made.o):null;   // where the follow-up really is now
   const later=[],carried=[];dO.forEach(o=>act(o).forEach(i=>{if(!i.short||(i.short.d!=='later'&&!(i.short.mv&&i.short.d==='carry')))return;const t=fuO(i);
@@ -3200,8 +3200,8 @@ function opsHomeHTML(prepTodo,dispTodo,way){
   return `<div class="oh">
     <div class="oh-now oh-${nc}"><span class="oh-nl">NOW</span><b>${now1}</b><span>${now2}</span></div>
     <div class="oh-grid">
-      ${card('disp','🚚','Preparation & dispatch today',`${dX}<small>/${dP}</small>`,dP?`orders out · ${dIP}/${dIN} items ready${dPr?` · <b>⏰ ${dPr} priority carry-over</b>`:''}${dRows.filter(r=>!r.x).length?' · next: '+esc(dRows.find(r=>!r.x).o.customer)+' '+dRows.find(r=>!r.x).w.t:' · all out ✓'}`:'no deliveries today',dSt,dP?dX/dP:null,dBody)}
-      ${card('prep','⚖️','Preparation today',`${pD}<small>/${pN}</small>`,pN?`items for tomorrow (${day(tmr)}) · deadline ${t24(prepBy())}`:'nothing to prepare for tomorrow yet',pSt,pN?pD/pN:null,pBody)}
+      ${card('disp','🚚','Preparation & dispatch today',`${dX}<small>/${dP}</small>`,dP?`dispatch today (${day(td)}) · orders out · ${dIP}/${dIN} items ready${dPr?` · <b>⏰ ${dPr} priority carry-over</b>`:''}${dRows.filter(r=>!r.x).length?' · next: '+esc(dRows.find(r=>!r.x).o.customer)+' '+dRows.find(r=>!r.x).w.t:' · all out ✓'}`:'no deliveries today',dSt,dP?dX/dP:null,dBody)}
+      ${card('prep','⚖️','Preparation today',`${pD}<small>/${pN}</small>`,pN?`items prepared · prepare today, dispatch ${day(tmr)} · deadline ${t24(prepBy())}`:`nothing to prepare for ${day(tmr)} yet`,pSt,pN?pD/pN:null,pBody)}
       ${card('ontime','✅','On-time dispatch',onT.length,`out before ${t24(settings.stdBefore)}`,onT.length?'ok':'none',null,onT.map(o=>row(o,'✓ '+tm(o),'ok')).join(''))}
       ${overO.length?card('over','🚨','Overdue — not yet out',overO.length,'past '+t24(settings.stdBefore)+' — dispatch now','bad',null,overO.map(o=>row(o,'Not yet out','bad')).join('')):''}
       ${card('late','⏱','Late dispatch',lateO.length,lateO.length?'dispatched after '+t24(settings.stdBefore):'none late',lateO.length?'bad':'ok',null,lateO.map(o=>row(o,'Out '+tm(o),'bad')).join(''))}
@@ -4269,8 +4269,8 @@ function recvTable(lines,R){const hasR=lines.some(l=>l.rcpt!=null),u=l=>esc(Stri
   ${hasR&&(nR||nA)?`<div class="rvchk"><span class="${nR?'bad':''}">🧾 Supplier receipt vs P.O.: <b>${nR?nR+' changed':'same ✓'}</b></span><span class="${nA?'bad':''}">📦 Actual count vs receipt: <b>${nA?nA+' different':'same ✓'}</b></span></div>`:''}
   ${hasR&&me&&me.role==='manager'&&lines.some(l=>l.cost!=null)?(()=>{let pay=0,stk=0,ls=0,gn=0;lines.forEach(l=>{const c=+l.cost||0,v=r2(aD(l)*c);pay+=rcOf(l)*c;stk+=gotOf(l)*c;if(v<0)ls-=v;else gn+=v});
     return `<div class="rvmoney"><span>💳 Pay supplier <small>(receipt qty)</small><b>${peso(pay)}</b></span><span>📦 Into stock <small>(actual qty)</small><b>${peso(stk)}</b></span>${ls?`<span class="ls">📉 Loss <small>(trim / short vs receipt)</small><b>${peso(ls)}</b></span>`:''}${gn?`<span class="gn">📈 Gain <small>(over the receipt)</small><b>${peso(gn)}</b></span>`:''}</div>`})():''}
-  <div class="sc"><table class="stbl"><thead><tr><th>Product</th><th class="r">P.O.</th>${hasR?'<th class="r">Supplier receipt</th>':''}<th class="r">Actual count</th>${showR?'<th class="r">Receipt vs P.O.</th>':''}<th class="r">Actual vs ${hasR?'receipt':'P.O.'}</th></tr></thead><tbody>${lines.map(l=>{const d=aD(l),e=rD(l);
-  return `<tr class="${d||e?'rlow':''}"><td>${esc(l.name)}</td><td class="r">${qf(l.ordered)} ${u(l)}</td>${hasR?`<td class="r${e?' rfchg':''}"><b>${qf(rcOf(l))}</b> ${u(l)}</td>`:''}<td class="r"><b>${qf(gotOf(l))}</b> ${u(l)}${l.ounit?`<br><small class="unit">${qf(l.qty)} ${esc(String(l.unit).toLowerCase())} weighed</small>`:l.kg!=null?`<br><small class="unit">${qf(l.kg)} kg weighed${l.qty>0?' · '+qf(r2(l.kg/l.qty))+' kg/pc':''}</small>`:l.pcn?`<br><small class="unit">${qf(l.pcn)} pc counted · ${qf(r2(l.qty/l.pcn))} ${esc(String(l.unit).toLowerCase())}/pc</small>`:''}</td>${showR?`<td class="r">${dc(e)}</td>`:''}<td class="r">${dc(d)}</td></tr>`}).join('')}</tbody></table></div>`}
+  <div class="sc"><table class="stbl rvtb"><thead><tr><th>Product</th><th class="r">P.O.</th>${hasR?'<th class="r">Supplier receipt</th>':''}<th class="r">Actual count</th>${showR?'<th class="r">Receipt vs P.O.</th>':''}<th class="r">Actual vs ${hasR?'receipt':'P.O.'}</th></tr></thead><tbody>${lines.map(l=>{const d=aD(l),e=rD(l);
+  return `<tr class="${d||e?'rlow':''}"><td>${esc(l.name)}</td><td class="r" data-l="P.O.">${qf(l.ordered)} ${u(l)}</td>${hasR?`<td class="r${e?' rfchg':''}" data-l="Receipt"><b>${qf(rcOf(l))}</b> ${u(l)}</td>`:''}<td class="r" data-l="Actual"><b>${qf(gotOf(l))}</b> ${u(l)}${l.ounit?`<br><small class="unit">${qf(l.qty)} ${esc(String(l.unit).toLowerCase())} weighed</small>`:l.kg!=null?`<br><small class="unit">${qf(l.kg)} kg weighed${l.qty>0?' · '+qf(r2(l.kg/l.qty))+' kg/pc':''}</small>`:l.pcn?`<br><small class="unit">${qf(l.pcn)} pc counted · ${qf(r2(l.qty/l.pcn))} ${esc(String(l.unit).toLowerCase())}/pc</small>`:''}</td>${showR?`<td class="r" data-l="Receipt vs P.O.">${dc(e)}</td>`:''}<td class="r" data-l="Actual vs ${hasR?'receipt':'P.O.'}">${dc(d)}</td></tr>`}).join('')}</tbody></table></div>`}
 
 /* ---------- PAYING: manager pays from a money account (never the drawer — the cashier pays from the drawer with POS › Cash out) ---------- */
 const noDrawer=L=>(L||[]).filter(a=>a.link!=='pos-cash');
@@ -4355,11 +4355,12 @@ function rvPrint(){const R=rvData(),M=RV.mgr,T=R.tot;
     ${M?`<tr><td colspan="4"><b>TOTAL</b></td><td style="text-align:right"><b>${fmt2(T.value)}</b></td><td style="text-align:right"><b>${fmt2(T.bal)}</b></td></tr>`:''}</tbody></table></div>`;window.print()}
 /* receiving count: supplier receipt qty vs actual qty (that is the difference the manager approves) · P.O. not followed + reason */
 let rvF={};
+const rvK=(po,i)=>i.code+'#'+po.items.indexOf(i);   // one key per P.O. LINE (the same product can be on 2 lines)
 // difference = actual vs supplier receipt (per-piece lines: pcs counted vs pcs on the receipt)
 function rfDiff(i,v){const rc=rvF.nf?+v.r||0:+i.qty,got=i.ounit?v.p:v.q;if(got===''||got==null)return '—';const df=r2(+got-rc),u=i.ounit?' pc':'';
   const kg=i.ounit&&+v.q>0&&+v.p>0?`<br><small class="unit">${qf(r2(+v.q/+v.p))} ${esc(String(i.unit).toLowerCase())}/pc</small>`:'';
   return (df?`<b style="color:${df<0?'var(--rose)':'var(--amber)'}">${df>0?'+':''}${qf(df)}${u}</b>`:'✓ same')+kg}
-function rfLive(po){document.querySelectorAll('[data-rdc]').forEach(c=>{const i=po.items.find(x=>x.code===c.dataset.rdc);if(i)c.innerHTML=rfDiff(i,rvF.L[i.code]||{})})}
+function rfLive(po){document.querySelectorAll('[data-rdc]').forEach(c=>{const i=po.items.find(x=>rvK(po,x)===c.dataset.rdc);if(i)c.innerHTML=rfDiff(i,rvF.L[rvK(po,i)]||{})})}
 /* receiving type: delivered / picked up · freight (added to the cost) */
 let rxS={};
 const RXT={delivery:{ic:'🚚',t:'Delivered by supplier',fl:'Delivery charge by the supplier',fh:'Only if the supplier charges for delivery'},pickup:{ic:'🛻',t:'Picked up by us',fl:'Our transport cost',fh:'Fuel, truck / tricycle rental, toll'}};
@@ -4378,7 +4379,7 @@ function recvHTML(){
   const all=ST.pos||[],open=all.filter(p=>p.status==='open'),wait=all.filter(p=>p.status==='for approval'),done=all.filter(p=>p.status==='received').slice(0,10);
   const po=recvId&&open.find(p=>p.id===recvId);
   if(po&&po.kind==='carcass')return carcassRecvForm(po);
-  if(po){if(rvF.id!==po.id){rvF={id:po.id,L:{},nf:false,why:'',no:''};po.items.forEach(i=>rvF.L[i.code]={r:String(i.qty),q:'',p:''})}
+  if(po){if(rvF.id!==po.id){rvF={id:po.id,L:{},nf:false,why:'',no:''};po.items.forEach(i=>rvF.L[rvK(po,i)]={r:String(i.qty),q:'',p:''})}
     const U=i=>esc(String(i.ounit||i.unit||'').toLowerCase());
     return `<div class="shead"><div><h2>📥 Receive ${esc(po.no)} · ${esc(po.supplier)}</h2><div class="unit">The supplier receipt follows the P.O. If the supplier sent a different qty, tap <b>P.O. not followed</b> and type what the receipt says. Then type the <b>actual</b> qty you weighed / counted.</div></div></div>
     ${rxHTML(po)}
@@ -4386,11 +4387,11 @@ function recvHTML(){
     <div class="rfnf ${rvF.nf?'on':''}"><label class="chk2"><input type="checkbox" id="rf-nf"${rvF.nf?' checked':''}> ⚠ P.O. not followed <small class="unit">— the supplier sent a different qty</small></label>
       ${rvF.nf?`<label>Reason <span class="unit">(required)</span><input class="edit-in" id="rf-why" value="${esc(rvF.why)}" placeholder="e.g. Supplier only had 80 kg whole chicken"></label>`:''}</div>
     <div class="sc"><table class="stbl rft"><thead><tr><th>Product</th><th class="r">P.O.</th><th style="width:130px">Supplier receipt</th><th style="width:170px">Actual</th><th class="r">Difference</th></tr></thead><tbody>
-    ${po.items.map(i=>{const v=rvF.L[i.code]||{r:String(i.qty),q:'',p:''},pc=!!i.ounit;return `<tr><td><b>${esc(i.name)}</b>${pc?`<br><small class="unit">bought per pc · stock by ${esc(String(i.unit).toLowerCase())}</small>`:pcU(i)?'<br><small class="unit">count the pcs + weigh the kg</small>':''}</td><td class="r unit">${qf(i.qty)} ${U(i)}</td>
-      <td><div class="rfu"><input class="edit-in nq" type="number" step="0.001" inputmode="decimal" data-rr="${esc(i.code)}" value="${esc(rvF.nf?v.r:String(i.qty))}"${rvF.nf?'':' readonly tabindex="-1"'}><span>${U(i)}</span></div></td>
-      <td>${pc?`<div class="rfu"><input class="edit-in nq" type="number" step="1" inputmode="numeric" data-rqp="${esc(i.code)}" value="${esc(v.p)}" placeholder="0"><span>pc</span></div><div class="rfu"><input class="edit-in nq" type="number" step="0.001" inputmode="decimal" data-rq="${esc(i.code)}" value="${esc(v.q)}" placeholder="0"><span>${esc(String(i.unit).toLowerCase())}</span></div>`
-        :`${!pcU(i)?`<select class="edit-in" data-rqu="${esc(i.code)}" style="width:auto;margin-bottom:4px" aria-label="Count by"><option value=""${v.u==='pc'?'':' selected'}>${U(i)}</option><option value="pc"${v.u==='pc'?' selected':''}>Pc + ${U(i)}</option></select>${v.u==='pc'?`<div class="rfu"><input class="edit-in nq" type="number" step="1" inputmode="numeric" data-rqp="${esc(i.code)}" value="${esc(v.p||'')}" placeholder="0"><span>pc</span></div>`:''}`:''}<div class="rfu"><input class="edit-in nq" type="number" step="0.001" inputmode="decimal" data-rq="${esc(i.code)}" value="${esc(v.q)}" placeholder="0"><span>${U(i)}</span></div>${pcU(i)?`<div class="rfu"><input class="edit-in nq" type="number" step="0.001" inputmode="decimal" data-rqk="${esc(i.code)}" value="${esc(v.k||'')}" placeholder="0"><span>kg</span></div>`:''}`}</td>
-      <td class="r" data-rdc="${esc(i.code)}">${rfDiff(i,v)}</td></tr>`}).join('')}
+    ${po.items.map(i=>{const K=rvK(po,i),v=rvF.L[K]||{r:String(i.qty),q:'',p:''},pc=!!i.ounit;return `<tr><td><b>${esc(i.name)}</b>${pc?`<br><small class="unit">bought per pc · stock by ${esc(String(i.unit).toLowerCase())}</small>`:pcU(i)?'<br><small class="unit">count the pcs + weigh the kg</small>':''}</td><td class="r unit">${qf(i.qty)} ${U(i)}</td>
+      <td><div class="rfu"><input class="edit-in nq" type="number" step="0.001" inputmode="decimal" data-rr="${esc(K)}" value="${esc(rvF.nf?v.r:String(i.qty))}"${rvF.nf?'':' readonly tabindex="-1"'}><span>${U(i)}</span></div></td>
+      <td>${pc?`<div class="rfu"><input class="edit-in nq" type="number" step="1" inputmode="numeric" data-rqp="${esc(K)}" value="${esc(v.p)}" placeholder="0"><span>pc</span></div><div class="rfu"><input class="edit-in nq" type="number" step="0.001" inputmode="decimal" data-rq="${esc(K)}" value="${esc(v.q)}" placeholder="0"><span>${esc(String(i.unit).toLowerCase())}</span></div>`
+        :`${!pcU(i)?`<select class="edit-in" data-rqu="${esc(K)}" style="width:auto;margin-bottom:4px" aria-label="Count by"><option value=""${v.u==='pc'?'':' selected'}>${U(i)}</option><option value="pc"${v.u==='pc'?' selected':''}>Pc + ${U(i)}</option></select>${v.u==='pc'?`<div class="rfu"><input class="edit-in nq" type="number" step="1" inputmode="numeric" data-rqp="${esc(K)}" value="${esc(v.p||'')}" placeholder="0"><span>pc</span></div>`:''}`:''}<div class="rfu"><input class="edit-in nq" type="number" step="0.001" inputmode="decimal" data-rq="${esc(K)}" value="${esc(v.q)}" placeholder="0"><span>${U(i)}</span></div>${pcU(i)?`<div class="rfu"><input class="edit-in nq" type="number" step="0.001" inputmode="decimal" data-rqk="${esc(K)}" value="${esc(v.k||'')}" placeholder="0"><span>kg</span></div>`:''}`}</td>
+      <td class="r" data-rdc="${esc(K)}">${rfDiff(i,v)}</td></tr>`}).join('')}
     </tbody></table></div>
     <div class="fgrid"><label class="full">Note (e.g. 2 kg spoiled, sent back)<input class="edit-in" id="rc-note" data-k="rcn"></label>
       <label class="full">📷 Photo of the supplier's receipt (optional)<input type="file" accept="image/*" capture="environment" id="rc-ph"></label></div><div id="rc-prev" class="unit">${recvPhoto?'✓ Photo ready':''}</div>
@@ -5079,11 +5080,11 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const igr=e.target
       const r=await api('api_receive',session.token,d.rcsave,{lw:rcC.lw,exp:rcC.exp,lossWhy:rcC.lossWhy||'',cuts:cuts.map(k=>({code:k.code,kg:k.kg,u:k.u||'Kg',costKg:(ckRows(((ST.pos||[]).find(p=>p.id===rcC.id)||{}).carcass).rows.find(r=>r.i===rcC.cuts.indexOf(k))||{}).ck}))},$('#rc-note').value,ph,rxOut());recvId=null;recvPhoto='';rcC=null;
       toast(r.waiting?'⏳ Saved — liveweight / expenses differ from the P.O., the manager will approve':'✅ Received — cuts added to stock. 🏷 Label every cut before storing.');await renderStock('recv',true)});return}
   if(d.rcsave){const po=(ST.pos||[]).find(p=>p.id===d.rcsave);if(!po)return;
-    const lines=po.items.map(i=>{const v=rvF.L[i.code]||{};return {code:i.code,rcpt:rvF.nf?String(v.r??'').trim():String(i.qty),qty:String(v.q??'').trim(),pcs:i.ounit?String(v.p??'').trim():undefined,kg:pcU(i)?String(v.k??'').trim():undefined,pcn:!i.ounit&&!pcU(i)&&v.u==='pc'?String(v.p??'').trim():undefined,name:i.name,pc:!!i.ounit,pk:pcU(i)}});
+    const lines=po.items.map((i,ix)=>{const v=rvF.L[rvK(po,i)]||{};return {ix,code:i.code,rcpt:rvF.nf?String(v.r??'').trim():String(i.qty),qty:String(v.q??'').trim(),pcs:i.ounit?String(v.p??'').trim():undefined,kg:pcU(i)?String(v.k??'').trim():undefined,pcn:!i.ounit&&!pcU(i)&&v.u==='pc'?String(v.p??'').trim():undefined,name:i.name,pc:!!i.ounit,pk:pcU(i)}});
     const miss=lines.find(l=>l.qty===''||(l.pc&&l.pcs==='')||l.rcpt===''||(l.pk&&+l.qty>0&&l.kg==='')||(l.pcn!==undefined&&+l.qty>0&&l.pcn===''));if(miss){alert(miss.rcpt===''?'Type the supplier receipt qty of '+miss.name+'.':'Type the actual '+(miss.pc||miss.pk?'pcs and kg':'qty')+' of '+miss.name+' (0 if nothing came).');return}
     if(rvF.nf&&!rvF.why.trim()){alert('P.O. not followed: type the reason.');const w=$('#rf-why');if(w)w.focus();return}
     await busy(async()=>{let ph='';if(recvPhoto){ph='D'+await api('api_uploadPhoto',session.token,recvPhoto,'receiving-'+Date.now());await putPhoto(ph,recvPhoto)}
-      const r=await api('api_receive',session.token,d.rcsave,lines.map(l=>({code:l.code,rcpt:l.rcpt,qty:l.qty,pcs:l.pcs,kg:l.kg,pcn:l.pcn})),$('#rc-note').value,ph,Object.assign(rxOut(),{notFollowed:rvF.nf,nfWhy:rvF.why,rcptNo:rvF.no}));recvId=null;recvPhoto='';rxS={};rvF={};
+      const r=await api('api_receive',session.token,d.rcsave,lines.map(l=>({ix:l.ix,code:l.code,rcpt:l.rcpt,qty:l.qty,pcs:l.pcs,kg:l.kg,pcn:l.pcn})),$('#rc-note').value,ph,Object.assign(rxOut(),{notFollowed:rvF.nf,nfWhy:rvF.why,rcptNo:rvF.no}));recvId=null;recvPhoto='';rxS={};rvF={};
       toast(r.waiting?'⏳ Saved — actual qty is different from the supplier receipt, the manager will approve':'✅ Received — stock updated. 🏷 Label every item (product · kg · date · GRN) before storing.');await renderStock('recv',true)});return}
   // production
   if(d.pradd){prodF[d.pradd].push(d.pradd==='made'?{code:'',qty:'',kg:''}:{code:'',qty:''});drawStock();return}
@@ -5135,7 +5136,7 @@ function stockInput(e){if(!STOCKV.includes(view))return;const t=e.target,d=t.dat
   if(d.cw!==undefined){CTrev.why[d.cw]=t.value;return}
   if(d.k==='ctq'){CTq=t.value;drawStock();return}
   if(t.id==='rx-fa'){rxS.amt=t.value;return}
-  if(t.id==='rf-nf'){rvF.nf=t.checked;const po=(ST.pos||[]).find(p=>p.id===rvF.id);if(po&&!t.checked)po.items.forEach(i=>{if(rvF.L[i.code])rvF.L[i.code].r=String(i.qty)});drawStock();setTimeout(()=>{const w=$('#rf-why');if(w)w.focus()},30);return}
+  if(t.id==='rf-nf'){rvF.nf=t.checked;const po=(ST.pos||[]).find(p=>p.id===rvF.id);if(po&&!t.checked)po.items.forEach(i=>{const K=rvK(po,i);if(rvF.L[K])rvF.L[K].r=String(i.qty)});drawStock();setTimeout(()=>{const w=$('#rf-why');if(w)w.focus()},30);return}
   if(d.k==='mbq'){MBq=t.value;drawStock();return}
   if(d.k==='lgq'){LG.q=t.value;drawStock();return}
   if(d.k==='posq'){posQ=t.value;drawStock();return}
