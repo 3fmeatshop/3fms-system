@@ -557,6 +557,7 @@ header h1 .tt small{display:block;font-size:11px;color:var(--sky2);letter-spacin
 .lgbtn{text-align:center;margin-top:16px}
 .stk{gap:12px}.stk .go.sm{background:var(--navy);color:#fff;display:inline-block;margin:0;flex-direction:row}.stk .btn.sm{background:#fff;display:inline-block;margin:0;flex-direction:row}.stk .go.sm:hover{background:var(--navy2)}.stk .panel{padding:14px 16px}.stk details.panel summary{cursor:pointer;padding:2px 0}.stk h2{margin:0 0 2px;color:var(--navy);font-size:20px}.stk h3{margin:0 0 8px;color:var(--navy)}.stk h3 small{font-weight:500;color:var(--muted);font-size:13px}
 .shead{display:flex;gap:12px;justify-content:space-between;align-items:flex-start;flex-wrap:wrap}.sbtns{display:flex;gap:8px;flex-wrap:wrap}
+.stupd{position:sticky;top:0;z-index:5;float:right;font-size:12px;color:var(--mute,#777);background:var(--card,#fff);border:1px solid var(--line,#ddd);border-radius:99px;padding:2px 10px;margin:-4px 0 4px}
 .stoff{background:var(--abg);color:var(--amber);padding:8px 12px;border-radius:10px;font-weight:700}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
 .ckt input{text-align:right}
@@ -1249,7 +1250,7 @@ async function poll(){
 }
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&session)poll()});
 function handleErr(e){const m=errMsg(e);
-  if(/AUTH/.test(m)){if(session&&session.offline){setSync('off');reauth();return}logout('Please log in again.');return}
+  if(/AUTH/.test(m)){logout('Please log in again.');return}
   if(isNet(m)){setSync('off');return}
   setSync('⚠ Server error');if(!handleErr.t||Date.now()-handleErr.t>60000){handleErr.t=Date.now();toast('⚠ Server error: '+m.replace(/^(Script)?Error:\s*/,'')+' — check Code.gs / deployment')}}
 function renderSafe(){const a=document.activeElement;
@@ -1424,7 +1425,7 @@ let pickUser=null;
 async function showLogin(msg){
   $('#login').classList.add('on');
   $('#lg').innerHTML='<h1>3FMS SYSTEM</h1><p>Connecting…</p>';
-  try{users=await api('api_users',KEY);try{localStorage.setItem('dp_users_'+MODE,J(users))}catch(e){}offPrune(users)}
+  try{users=await api('api_users',KEY);try{localStorage.setItem('dp_users_'+MODE,J(users))}catch(e){}}
   catch(e){if(/BADLINK/.test(errMsg(e))){$('#lg').innerHTML='<h1>🔒 This link is not valid</h1><p>Please use the app link given by your manager.</p>';return}
     try{users=JSON.parse(localStorage.getItem('dp_users_'+MODE)||'[]')}catch(_){users=[]}
     if(!users.length){$('#lg').innerHTML='<h1>3FMS SYSTEM</h1><p>Can\'t reach the server. Check the internet connection, then reload.</p><div class="row-end" style="justify-content:flex-start"><button class="btn" onclick="location.reload()">Reload</button></div>';return}}
@@ -1605,37 +1606,6 @@ $('#login').addEventListener('click',e=>{const b=e.target.closest('button');if(!
   if(b.dataset.proc!==undefined){proc=b.dataset.proc||null;roleHint=null;pickUser=null;if(!proc)summary=null;renderLogin();return}
   if(b.dataset.role){roleHint=b.dataset.role;proc='any';pickUser=null;renderLogin();return}});
 $('#login').addEventListener('toggle',e=>{if(e.target.classList&&e.target.classList.contains('sec'))try{localStorage.setItem('dp_home_tasks',e.target.open?'1':'0')}catch(_){}},true);
-/* OFFLINE LOGIN — each online login saves a scrambled password check for THAT person on THIS device (never the password itself).
-   No internet → staff who logged in here before (last 30 days) can still log in; their work is sent after they re-type the password online. */
-const OFFK='dp_offl_'+MODE,OFFDAYS=30;
-const offAll=()=>{try{return JSON.parse(localStorage.getItem(OFFK)||'{}')||{}}catch(e){return {}}};
-const offPut=A=>{try{localStorage.setItem(OFFK,J(A))}catch(e){}};
-const b64=a=>btoa(String.fromCharCode(...new Uint8Array(a)));
-async function offHash(pw,salt){const k=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveBits']);
-  return b64(await crypto.subtle.deriveBits({name:'PBKDF2',hash:'SHA-256',salt:new TextEncoder().encode(salt),iterations:120000},k,256))}
-async function offStore(login,pw,user){try{if(!window.crypto||!crypto.subtle)return;const salt=b64(crypto.getRandomValues(new Uint8Array(16))),A=offAll();
-  A[user.id]={user,login:String(login).toLowerCase(),salt,h:await offHash(pw,salt),at:Date.now()};offPut(A)}catch(e){}}
-async function offLogin(login,pw){if(!window.crypto||!crypto.subtle)return null;const l=String(login).trim().toLowerCase(),A=offAll(),now=Date.now();
-  const x=Object.values(A).find(r=>r.login===l||r.user.id.toLowerCase()===l||String(r.user.name||'').toLowerCase()===l);
-  if(!x||now-x.at>OFFDAYS*864e5)return null;return (await offHash(pw,x.salt))===x.h?x:false}
-function offPrune(list){if(!Array.isArray(list)||!list.length)return;const ids=new Set(list.map(u=>u.id)),A=offAll();let ch=false;
-  Object.keys(A).forEach(k=>{if(!ids.has(k)){delete A[k];ch=true}});if(ch)offPut(A)}
-// back online after an offline login: confirm the password once, then the saved work is sent
-let reauthOn=false;
-function reauth(){if(reauthOn||!session||!session.offline)return;reauthOn=true;
-  const d=document.createElement('div');d.id='reauth';d.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px';
-  d.innerHTML=`<form style="background:#fff;color:#222;border-radius:12px;padding:18px;max-width:360px;width:100%;display:flex;flex-direction:column;gap:10px"><b style="font-size:18px">🔐 Internet is back</b>
-    <span>Type your password, <b>${esc(me.name)}</b>, to send the work saved on this device.</span><input id="ra-pw" type="password" autocomplete="current-password" class="edit-in" placeholder="Password">
-    <span id="ra-err" style="color:#B91C1C;font-size:13px"></span><button class="btn pri" type="submit">Continue</button><button class="btn" type="button" id="ra-later">Later</button></form>`;
-  document.body.appendChild(d);setTimeout(()=>{const i=$('#ra-pw');if(i)i.focus()},50);
-  $('#ra-later').onclick=()=>{d.remove();setTimeout(()=>{reauthOn=false},120000)};    // ask again in 2 minutes
-  d.querySelector('form').onsubmit=async e=>{e.preventDefault();const pw=$('#ra-pw').value.trim();if(!pw)return;$('#ra-err').textContent='Checking…';
-    try{const r=await api('api_login',session.login||me.id,pw,KEY);
-      if(r.must){$('#ra-err').textContent='The manager reset your password — log out, then log in online.';return}
-      if(r.user.id!==me.id){$('#ra-err').textContent='That is a different account.';return}
-      session.token=r.token;session.offline=false;session.at=Date.now();localStorage.setItem(SESS,J(session));offStore(session.login||me.id,pw,r.user);
-      d.remove();reauthOn=false;toast('✓ Back online — sending your saved work');flush();poll();try{posFlush()}catch(_){}}
-    catch(err){const m=errMsg(err);$('#ra-err').textContent=/\bPIN\b/.test(m)?'Wrong password':isNet(m)?'Still no internet — try again':m}}}
 const tl=m=>{const n=(String(m).match(/PIN(?:NOTPW)? (\d)/)||[])[1];return n==null?'':n==='0'?' — locked for 15 minutes':' — '+n+' tr'+(n==='1'?'y':'ies')+' left'};
 $('#login').addEventListener('submit',async e=>{e.preventDefault();
   const login=$('#lgu').value.trim(),pin=$('#pin').value.trim(),btn=e.target.querySelector('button[type=submit]');
@@ -1645,16 +1615,11 @@ $('#login').addEventListener('submit',async e=>{e.preventDefault();
   let r;
   try{r=await api('api_login',login,pin,KEY)}
   catch(err){const m=errMsg(err);
-    if(isNet(m)){const x=await offLogin(login,pin);btn.disabled=false;
-      if(x){x.user.role=normRole(x.user.role);session={token:'OFFLINE',user:x.user,at:Date.now(),offline:true,login};localStorage.setItem(SESS,J(session));pickUser=null;start(false);land();setSync('off');
-        toast('📴 Offline login — '+x.user.name+'. Your work is saved on this device; type your password again when the internet is back to send it.',true);return}
-      $('#pin').value='';$('#pinerr').innerHTML=x===false?'Wrong password <small>(offline check)</small>':'No internet — offline login works only for staff who logged in <b>on this device</b> before (last '+OFFDAYS+' days).';return}
     btn.disabled=false;$('#pin').value='';
     $('#pinerr').innerHTML=/BADLINK/.test(m)?'This link is no longer valid — ask the manager for the new link':/WRONGAPP/.test(m)?(MODE==='rider'?'This link is for riders only':'Riders use the Rider link'):/LOCKED/.test(m)?'Too many wrong tries — try again in '+(m.match(/\d+/)||[15])[0]+' minute(s), or tap Forgot password':/USER/.test(m)?'User ID not found':/PINNOTPW/.test(m)?'That is your Time Clock PIN — log in with your <b>password</b>. Forgot it? Ask the Manager to reset it.'+tl(m):/\bPIN\b/.test(m)?'Wrong password'+tl(m)+'<br><small>Check CAPITAL letters and symbols. Tap 👁 to see what you typed.</small>':isNet(m)?'No internet — try again':serverErr(m);
     (/USER/.test(m)?$('#lgu'):$('#pin')).focus();return}
   const wasMust=!!r.must;
   if(r.must){btn.disabled=false;$('#pinerr').textContent='';const ok=await staffSecure(r,pin);if(!ok)return;r=ok}
-  if(!wasMust)offStore(login,pin,r.user);
   // logged in — open the screens (an error here is an app problem, not the internet)
   try{r.user.role=normRole(r.user.role);
     try{localStorage.setItem('dp_last_login_'+MODE,login)}catch(_){}
@@ -1708,7 +1673,7 @@ function start(fresh){
   session.user.role=normRole(session.user.role);me=session.user; view=me.role==='rider'?'way':me.role==='cashier'?'pos':me.role==='sales'?'online':'prep'; openId=null;roleHint=null;
   if(me.role==='ops')setTimeout(()=>loadStock().then(()=>{if(!STOCKV.includes(view))render()}).catch(()=>{}),800);
   if(fresh){db={orders:[]};base={};ver=0}
-  else{try{const c=JSON.parse(localStorage.getItem(CACHE)||'null');if(c&&(c.u===me.id||session.offline)){db={orders:c.orders||[]};base=c.base||{};ver=0}}catch(e){}}
+  else{try{const c=JSON.parse(localStorage.getItem(CACHE)||'null');if(c&&c.u===me.id){db={orders:c.orders||[]};base=c.base||{};ver=0}}catch(e){}}
   renderLogin(); setSync('load'); render(); poll(); flush();
 }
 
@@ -2777,19 +2742,27 @@ const qf=n=>fmt(n);
 const uSel=(sel,cls,data,filter)=>`<select class="edit-in ${cls}" ${data}><option value="">— choose product —</option>${ST.products.filter(filter||(()=>true)).map(p=>`<option value="${esc(p.code)}"${p.code===sel?' selected':''}>${esc(p.name)} (${esc(p.unit)})</option>`).join('')}</select>`;
 function posQueue(){try{return JSON.parse(localStorage.getItem('dp_posq')||'[]')}catch(e){return[]}}
 const setPosQueue=q=>{try{localStorage.setItem(POSQ,J(q))}catch(e){}};
-function stCache(){try{localStorage.setItem(STKEY,J(ST))}catch(e){}}
+function stCache(){try{if(ST&&me)ST.uid=me.id;localStorage.setItem(STKEY,J(ST))}catch(e){}}
 async function loadStock(force){
-  if(!force&&ST&&!ST.offline&&Date.now()-ST.at<45000)return ST;
-  try{ST=await api('api_stock',session.token);ST.offline=false;stCache()}
-  catch(e){if(/AUTH/.test(errMsg(e)))throw e;if(!ST){try{ST=JSON.parse(localStorage.getItem(STKEY)||'null')}catch(_){}}if(!ST)throw e;ST.offline=true}
+  if(!force&&ST&&!ST.offline&&!ST.stale&&Date.now()-(ST.rt||ST.at)<45000)return ST;
+  try{ST=await api('api_stock',session.token);ST.offline=false;ST.stale=false;ST.rt=Date.now();stCache()}
+  catch(e){if(/AUTH/.test(errMsg(e)))throw e;if(!ST){try{const c=JSON.parse(localStorage.getItem(STKEY)||'null');if(c&&(!c.uid||!me||c.uid===me.id))ST=c}catch(_){}}if(!ST)throw e;ST.offline=true;ST.stale=false}
   return ST}
+// SPEED: show the last data at once and refresh behind it (the screen updates a moment later); forced loads (after a save) still wait
+const stIdle=()=>!cart.length&&!poEdit&&!recvId&&!document.querySelector('.modal.on')&&!(document.activeElement&&document.activeElement.closest&&document.activeElement.closest('#list')&&/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName));
+let stBg=false;
 async function renderStock(v,force){
+  if(!ST&&me){try{const c=JSON.parse(localStorage.getItem(STKEY)||'null');if(c&&c.products&&c.uid===me.id){ST=c;ST.stale=true;ST.offline=false}}catch(e){}}
+  if(ST&&!force&&!ST.offline&&(ST.stale||Date.now()-(ST.rt||ST.at)>=45000)){
+    ST.stale=true;if(view===v&&me)drawStock();
+    if(!stBg){stBg=true;loadStock(true).then(()=>{if(view===v&&me&&stIdle())drawStock()}).catch(e=>{if(/AUTH/.test(errMsg(e)))handleErr(e);else if(ST){ST.stale=false;if(view===v&&me&&stIdle())drawStock()}}).finally(()=>{stBg=false})}
+    return}
   if(!ST)$('#list').innerHTML=`<div class="rep" data-v="${v}"><div class="empty">Loading…</div></div>`;
   try{await loadStock(force)}catch(e){if(/AUTH/.test(errMsg(e))){handleErr(e);return}$('#list').innerHTML=`<div class="rep" data-v="${v}"><div class="empty">Needs internet — ${esc(errMsg(e))}<br><br><button class="btn" data-sref>↻ Try again</button></div></div>`;$('#list').onclick=stockClick;return}
   if(view!==v||!me)return;drawStock()}
 function drawStock(){const v=view;if(!me||!session||!STOCKV.includes(v))return;                 // logged out while something was loading
   const a=document.activeElement,keep=a&&a.closest&&a.closest('#list')&&a.dataset&&a.dataset.k?{k:a.dataset.k,s:a.selectionStart}:null;
-  $('#list').innerHTML=`<div class="rep stk" data-v="${v}">${(ST.offline?'<div class="stoff">📴 Offline — showing the last saved data.</div>':'')+{inv:invHTML,count:countHTML,po:poHTML,recv:recvHTML,prod:prodHTML,pos:posHTML,srep:srepHTML,crep:crepHTML,memb:membHTML,owner:ownerHTML,hr:hrHTML,att:attHTML,act:actHTML}[v]()}</div>`;
+  $('#list').innerHTML=`<div class="rep stk" data-v="${v}">${(ST.offline?'<div class="stoff">📴 Offline — showing the last saved data.</div>':ST.stale?'<div class="stupd">↻ Updating…</div>':'')+{inv:invHTML,count:countHTML,po:poHTML,recv:recvHTML,prod:prodHTML,pos:posHTML,srep:srepHTML,crep:crepHTML,memb:membHTML,owner:ownerHTML,hr:hrHTML,att:attHTML,act:actHTML}[v]()}</div>`;
   $('#list').onclick=stockClick;$('#list').oninput=stockInput;$('#list').onchange=stockChange;
   $('#list').onkeydown=e=>{if(view!=='pos'||e.key!=='Enter')return;const t=e.target;
     if(t.id==='posq'){e.preventDefault();const f=posSug()[0];if(f)addToCart(f.code);return}
@@ -4851,23 +4824,13 @@ $('#file').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileR
   r.readAsText(f);e.target.value=''};
 
 tick(); setInterval(tick,1000);
-// keep the app on the device so it opens without internet (shared with the Time Clock)
-if('serviceWorker' in navigator&&window.isSecureContext)navigator.serviceWorker.register('clock-sw.js').catch(()=>{});
 if(MODE==='rider'&&$('#lsub'))$('#lsub').textContent='Rider · Deliveries';
 if(MODE==='rider'){$('#apptitle').innerHTML='<span class="b3 logo3f">3F</span><span class="tt">3FMS SYSTEM<small>Rider · Deliveries</small></span>';document.title='3FMS SYSTEM – Rider'}
 idbOpen().then(()=>{try{session=JSON.parse(localStorage.getItem(SESS)||'null')}catch(e){session=null}
   if(MODE!=='rider'&&session&&session.token){
     try{const c=JSON.parse(localStorage.getItem(CACHE)||'null');if(c&&c.u===session.user.id){me=session.user;db={orders:c.orders||[]};base=c.base||{}}}catch(e){}
     const quiet=()=>{try{api('api_logout',session.token).catch(()=>{})}catch(e){}session=null;me=null;localStorage.removeItem(SESS);db={orders:[]};base={};showLogin()};
-    // NO INTERNET when the app is reopened: continue the last login (same tablet, within 24 h) instead of logging out — work saves here and sends when online
-    const resume=()=>{start(false);setSync('off');setTimeout(()=>toast('📴 No internet — continued as '+me.name+'. Your work is saved on this device and sent when online.',true),300)};
-    const fresh=session.at&&Date.now()-session.at<24*3600e3;
-    const ping=()=>Promise.race([api('api_users',KEY),new Promise((_,j)=>setTimeout(()=>j(new Error('timed out')),7000))]);
-    $('#login').classList.add('on');$('#lg').innerHTML='<h1>3FMS SYSTEM</h1><p>Connecting…</p>';
-    if(session.offline&&me){resume();return}     // logged in offline: keep the work — when online it asks the password once, then sends
-    (navigator.onLine===false?Promise.reject(new Error('offline')):ping()).then(()=>{
-      if(me&&dirtyOrders().length){$('#lg').innerHTML='<h1>3FMS SYSTEM</h1><p>Saving your last changes…</p>';flush().then(quiet,quiet)}else quiet()},
-      e=>{if(fresh&&me&&isNet(errMsg(e)))resume();else quiet()});return}
+    if(me&&dirtyOrders().length){$('#login').classList.add('on');$('#lg').innerHTML='<h1>3FMS SYSTEM</h1><p>Saving your last changes…</p>';flush().then(quiet,quiet)}else quiet();return}
   if(session&&session.token)start(false);else showLogin()});
 })();
 </script>
