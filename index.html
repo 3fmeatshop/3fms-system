@@ -1049,7 +1049,7 @@ details.oh-card>summary::-webkit-details-marker{display:none}
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 09 · 06:20 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 09 · 06:45 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -2108,11 +2108,19 @@ function swItemDialog(iid){const[o,i]=findItem(iid);if(!o||!i)return;const box=s
     <label class="td-l">Give instead${swPick('sw-p','')}</label>
     <div style="display:flex;gap:8px"><label class="td-l" style="flex:1">Qty<input class="edit-in" id="sw-q" type="number" step="0.01" min="0" inputmode="decimal" value="${i.qty}"></label><label class="td-l">Unit<select class="edit-in" id="sw-u">${['Kg','Pack','Pc'].map(u=>`<option${i.unit===u?' selected':''}>${u}</option>`).join('')}</select></label></div>
     <label class="td-l">Customer agreed — who / how <small>(required)</small><input class="edit-in" id="sw-a" placeholder="e.g. Ma'am Joy · told the rider"></label>
+    ${o.balanceOf?`<div class="snote" style="margin:10px 0;border-left:4px solid #B3191B">🕒 <b>Not delivered later today as scheduled?</b> Move it to another day — it becomes a <b>carry-over</b> (priority on that morning, before ${t24(settings.stdBefore)}).<div style="display:flex;gap:8px;align-items:center;margin-top:6px;flex-wrap:wrap"><label>Carry over to <input type="date" class="edit-in" id="sw-cd" style="width:auto" value="${carryDate({delivery:today()})}"></label><button class="go" id="sw-co">↪ Carry over</button></div></div>`:''}
     <div class="row-end"><button class="btn" id="sw-cx" style="color:var(--rose);border-color:#fecaca">✕ Not needed — cancel this item</button><button class="btn" data-x>Close</button><button class="go" id="sw-ok">🔁 Switch</button></div>`;
   box.classList.add('on');const P=$('#stb .sw-p');
   $('#sw-cx').onclick=()=>{const why=prompt('Cancel '+i.product+' '+fmt(i.qty)+' '+i.unit+'? It will not be prepared or billed. Reason:','Customer switched / not needed');if(why==null)return;
     let oo=find(o.id),it=oo&&oo.items.find(x=>x.id===iid);if(!it)return;if(oo.dr){alert(oo.dr.no+' was already issued — reopen it first (🔓).');return}
     keepUndo();it.actual='C';it.remarks=(it.remarks?it.remarks+' · ':'')+'✕ Cancelled by '+me.name+': '+why;save();clearTimeout(flushTimer);flush();box.classList.remove('on');render();toast('✕ Cancelled — removed from preparation',true)};P.addEventListener('change',()=>{const op=P.selectedOptions&&P.selectedOptions[0];if(op&&op.dataset.u)$('#sw-u').value=swUnit(op.dataset.u)});
+  if($('#sw-co'))$('#sw-co').onclick=()=>{const d=$('#sw-cd').value;if(!d||d<=today()){alert('Choose a date after today.');return}
+    const oo=find(o.id),it=oo&&oo.items.find(x=>x.id===iid),src=oo&&find(oo.balanceOf);if(!it||!src)return;if(oo.dispatched){alert('Already dispatched.');return}
+    const oi=src.items.find(x=>x.short&&x.short.made&&x.short.made.i===iid)||src.items.find(x=>x.id===it.fromItem);
+    if(!oi||!oi.short){alert('The original order line was not found.');return}
+    if(!confirm('Carry over '+it.product+' '+fmt(it.qty)+' '+it.unit+' ('+oo.customer+') to '+longDay(d)+'?'))return;
+    keepUndo();oi.short.made={o:oo.id,i:iid};oi.short.d='carry';oi.short.date=d;oi.short.time='';oi.short.mv={by:me.name,at:Date.now(),from:'later'};it.remarks='Carry-over · was "deliver later today" ('+day(today())+') · moved by '+me.name;
+    reroute(src,oi);save();clearTimeout(flushTimer);flush();box.classList.remove('on');render();toast('↪ Carried over to '+day(d),true)};
   $('#sw-ok').onclick=async()=>{const prod=String(P.value||'').trim().toUpperCase(),q=r2(+$('#sw-q').value||0),u=$('#sw-u').value,ag=$('#sw-a').value.trim();
     const m=swCheck(prod,q,ag,P);if(m==='cancel')return;if(m)return alert(m);
     let oo=o;if(oo.dr){if(!confirm(oo.dr.no+' was already issued for this delivery. Switching reopens it — the team checks again. Continue?'))return;const r=await retCall('api_reopenDR',oo.id,'Item switched by '+me.name);if(!r)return;oo=find(o.id)}
@@ -2181,7 +2189,7 @@ function rowHTML(o,i,st){
     i.wtReq?`<span class="tag a">⚖ ordered in ${esc(i.unit)} — type how many ${esc(String(i.unit).toLowerCase())} and the total kilos</span>`:'',
     i.carryFrom?`<span class="late-tag">⏰ LATE DELIVERY</span><span class="tag v">↪ Carried over from ${day(i.carryFrom)} order</span>`:'',
     i.switchFor?`<span class="tag v">🔁 Switched — approved by the manager</span>`:'',
-    i.carryFrom&&me.role==='manager'&&st==='prep'&&!o.posSale?`<button type="button" class="tag swb" data-swi="${i.id}">🔁 Switch to another product</button>`:'',
+    i.carryFrom&&me.role==='manager'&&st==='prep'&&!o.posSale?`<button type="button" class="tag swb" data-swi="${i.id}">🔁 Switch to another product${o.balanceOf?' / ↪ carry over':''}</button>`:'',
     i.switchFrom?`<span class="tag v">🔁 Switched from ${esc(i.switchFrom.product)} ${fmt(i.switchFrom.qty)} ${esc(i.switchFrom.unit)} · ${esc(i.switchFrom.by)}${i.switchFrom.agreed?' · customer agreed: '+esc(i.switchFrom.agreed):''}</span>`:'',
     ...i.corr.map(c=>`<span class="tag a">✎ Corrected ${esc(c.from||'0')} → ${esc(c.to)} by ${esc(c.by)} · ${time12(new Date(c.at))}</span>`),
     i.short?`<span class="tag v"${i.short.made?` data-jump="${i.short.made.o}" style="cursor:pointer;text-decoration:underline"`:''}>${i.short.made?'➜ ':''}${SH[i.short.d]}${i.short.d==='carry'?' to '+day(i.short.date):''}${i.short.d==='later'&&i.short.time?' by '+t24(i.short.time):''} · ${fmt(i.short.qty)} ${esc(i.unit)} · approved by ${esc(i.short.by)}</span>`:''
@@ -2270,7 +2278,7 @@ function card(o){
     if(ed) return `<tr class="it"><td class="c-p"><input class="edit-in" data-e="product" data-i="${i.id}" value="${esc(i.product)}" placeholder="Product"></td>
       <td class="c-o"><input class="edit-in" style="width:80px" type="number" step="0.01" data-e="qty" data-i="${i.id}" value="${i.qty||''}"></td>
       <td><input class="edit-in" style="width:70px" data-e="unit" data-i="${i.id}" value="${esc(i.unit)}"></td>
-      <td colspan="${showInv(st)?4:3}" class="r">${i.carryFrom&&me.role==='manager'&&!o.dispatched&&!o.posSale?`<button class="btn sm" data-swi="${i.id}">🔁 Switch</button> `:''}${i.carryFrom?'<span class="tag v">🔒 Carry-over · can\'t delete</span>':i.switchFor?'<span class="tag v">🔒 Switch · change it in manager approval</span>':`<button class="del" data-del="${i.id}" title="Remove item">✕</button>`}</td></tr>`;
+      <td colspan="${showInv(st)?4:3}" class="r">${i.carryFrom&&me.role==='manager'&&!o.dispatched&&!o.posSale?`<button class="btn sm" data-swi="${i.id}">${o.balanceOf?'🔁 Switch / ↪ Carry over':'🔁 Switch'}</button> `:''}${i.carryFrom?'<span class="tag v">🔒 Carry-over · can\'t delete</span>':i.switchFor?'<span class="tag v">🔒 Switch · change it in manager approval</span>':`<button class="del" data-del="${i.id}" title="Remove item">✕</button>`}</td></tr>`;
     return rowHTML(o,i,st)}).join('');
   const ev=(e,extra)=>e?`${stamp(e.at)}${e.by?'<br>by '+esc(e.by):''}${e.riderName?`<br>🛵 <span class="rlink" data-rprof="${esc(e.rider)}">${esc(e.riderName)}</span>${e.riderPlate?' · '+esc(e.riderPlate):''}`:''}${e.receiver?'<br>Received: '+esc(e.receiver):''}${e.photo?`<img data-ph="${e.photo}" data-cap="${esc(extra+' · '+fullStamp(e.at))}" alt="photo">`:''}`:'';
   const s1=(c.prepared===total&&prepOK(o))||st!=='prep', s2=(c.checkedN===total&&!c.pend.length)||st!=='prep';
@@ -2966,8 +2974,10 @@ function opsHomeHTML(prepTodo,dispTodo,way){
   const act=o=>o.items.filter(i=>realItem(i)&&!isCR(i)),done=i=>actualVal(i)!=null,out=o=>!!(o.dispatched||o.delivered);
   const U=x=>esc(String(x||'').toLowerCase());
   // PREPARE TODAY = orders whose preparation day is today (advance orders for tomorrow · online / rush orders for today)
-  const pO=db.orders.filter(o=>!o.closed&&!out(o)&&((o.delivery===tmr&&!o.online&&!o.balanceOf&&!isAdd(o))||(o.delivery===td&&(o.online||isAdd(o)))));
-  const pRows=pO.map(o=>({o,n:act(o).length,d:act(o).filter(done).length})).filter(r=>r.n);
+  // + TODAY's 'deliver later today' balances and today's carry-overs · tomorrow's carry-overs are NOT counted (prepared on the delivery morning)
+  const pAct=o=>o.delivery===tmr?act(o).filter(i=>!i.carryFrom):(o.online||isAdd(o)||o.balanceOf)?act(o):act(o).filter(i=>i.carryFrom);
+  const pO=db.orders.filter(o=>!o.closed&&!out(o)&&((o.delivery===tmr&&!o.online&&!o.balanceOf&&!isAdd(o))||(o.delivery===td&&(o.online||isAdd(o)||o.balanceOf||o.items.some(i=>i.carryFrom)))));
+  const pRows=pO.map(o=>({o,n:pAct(o).length,d:pAct(o).filter(done).length})).filter(r=>r.n);
   const pN=pRows.reduce((a,r)=>a+r.n,0),pD=pRows.reduce((a,r)=>a+r.d,0);
   // DISPATCHED TODAY = delivery date today only: items dispatched / items prepared
   const dO=db.orders.filter(o=>!o.closed&&o.delivery===td);
@@ -2978,7 +2988,9 @@ function opsHomeHTML(prepTodo,dispTodo,way){
   const due=dO.filter(o=>!o.online&&!o.balanceOf);
   const onT=due.filter(o=>out(o)&&rating(o)==='std'),lateO=due.filter(o=>out(o)&&rating(o)&&rating(o)!=='std'),overO=hm>=dCut?due.filter(o=>!out(o)):[];   // late = already dispatched late · overdue = still not out
   // SHORT DELIVERIES (today): short qty or carried to another day — "deliver later today" is not counted (warning above)
-  const shortL=[];dO.forEach(o=>act(o).forEach(i=>{const q=shortOf(i);if(!q)return;if(i.short&&(i.short.d==='later'||i.short.d==='switch'))return;shortL.push({o,i,q})}));
+  // SHORT DELIVERIES (today): carried over + 'deliver later today' — a later-today item already sent out the same day is not counted
+  const fuOut=i=>{if(!madeOK(i))return false;const t=find(i.short.made.o);return !!(t&&out(t))};
+  const shortL=[];dO.filter(o=>!o.balanceOf).forEach(o=>act(o).forEach(i=>{const q=shortOf(i);if(!q)return;if(i.short&&i.short.d==='switch')return;if(i.short&&i.short.d==='later'&&fuOut(i))return;shortL.push({o,i,q})}));
   // APPROVAL LIST: short items waiting for the manager (any date)
   const appr=[];db.orders.filter(o=>live(o)&&!out(o)&&!o.posSale).forEach(o=>check(o).pend.forEach(i=>appr.push({o,i,q:shortOf(i)})));   // only orders still waiting to go out — already dispatched / delivered / billed ones are history
   appr.sort((a,b)=>a.o.delivery.localeCompare(b.o.delivery));
@@ -2991,7 +3003,7 @@ function opsHomeHTML(prepTodo,dispTodo,way){
   const row=(o,txt,k)=>`<button class="oh-li${k?' oh-'+k:''}" data-jump="${o.id}"><span>${esc(o.customer)}</span><b>${txt}</b><i>›</i></button>`;
   const card=(key,ic,title,big,sub,st,pct,body)=>`<details class="oh-card oh-${st}"${OHOPEN.has(key)?' open':''} data-ohk="${key}"><summary><span class="oh-ic">${ic}</span><span class="oh-t">${title}</span><span class="oh-big">${big}</span><span class="oh-sub">${sub}</span>${pct!=null?`<span class="oh-bar"><i style="width:${Math.round(pct*100)}%"></i></span>`:''}<span class="oh-more">${body?'tap to see the list ▾':''}</span></summary>${body?`<div class="oh-list">${body}</div>`:''}</details>`;
   const pSt=!pN?'ok':pD===pN?'ok':hm>=pCut?'bad':'warn',dSt=!dP?'ok':dX===dP?'ok':hm>=dCut?'bad':'warn';
-  const pBody=pRows.sort((a,b)=>(a.d===a.n)-(b.d===b.n)).map(r=>row(r.o,`${r.d}/${r.n} items`,r.d===r.n?'ok':hm>=pCut?'bad':'warn')).join('');
+  const pBody=pRows.sort((a,b)=>(a.d===a.n)-(b.d===b.n)).map(r=>row(r.o,`${r.o.delivery===td?(r.o.balanceOf?'🕒 later today · ':'today · '):''}${r.d}/${r.n} items`,r.d===r.n?'ok':hm>=pCut?'bad':'warn')).join('');
   const dBody=(later.length?`<div class="oh-warn-box">⚠ Deliver later today: ${later.map(x=>esc(x.i.product)+' '+fmt(shortOf(x.i))+' '+esc(x.i.unit)+' ('+esc(x.o.customer)+')').join(' · ')}</div>`:'')+dRows.sort((a,b)=>(a.x===a.p)-(b.x===b.p)).map(r=>row(r.o,`${r.x}/${r.p} items`,r.x===r.p&&r.p?'ok':hm>=dCut?'bad':'warn')).join('');
   const tm=o=>o.dispatched?time12(new Date(o.dispatched.at)):'not yet out';
   return `<div class="oh">
