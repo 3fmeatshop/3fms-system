@@ -906,6 +906,7 @@ details.sec .tile .ic{width:36px;height:36px}details.sec .tile .due{display:none
   <h1 id="apptitle"><span class="b3 logo3f">3F</span><span class="tt">3FMS SYSTEM<small>3F Meatshop</small></span></h1>
   <button class="me" id="home" style="display:none">🏠<small>Processes</small></button>
   <span class="sync" id="sync">…</span>
+  <button class="me" id="swu" style="display:none" title="Log out so the next person logs in with their own account">⇄<small>Switch user</small></button>
   <button class="me" id="me"></button>
   <div class="clock"><b id="clk">--:--:--</b><small id="clkd"></small></div>
 </div></header>
@@ -1661,6 +1662,7 @@ async function saveThen(fn){ // send unsaved work first, then leave
   if(dirtyOrders().length||deletedIds().length){setSync('saving');try{clearTimeout(flushTimer);await flush()}catch(e){}}
   if((dirtyOrders().length||deletedIds().length)&&!confirm('Some changes are not saved online yet (no internet?). Leave anyway?'))return;fn()}
 $('#home').onclick=()=>saveThen(()=>logout());
+$('#swu').onclick=()=>{if(dirtyOrders().length&&!confirm('Some changes are not saved online yet. Switch user anyway? (They are saved first if there is internet.)'))return;saveThen(()=>{logout('⇄ Next person: log in with YOUR own account.');$('#swu').style.display='none'})};
 $('#me').onclick=()=>{if(me&&me.role==='rider'){openRiderProfile(me.id);return}myAccount()};
 function land(){ // open the screen of the process the person chose
   try{if(me&&!localStorage.getItem('dp_help_'+me.role))setTimeout(helpDialog,600)}catch(e){}
@@ -1687,7 +1689,7 @@ function deptDefs(c){return {
   ops:{ic:'🔪',t:'Operations',d:'Orders · stock · POS · deliveries',c:'#B91C1C',n:c.onP+c.prep+c.disp+c.poA,tabs:[
     {act:'neworder',t:'📋 Customer Orders'},{v:'online',t:'🛒 Online',n:c.onP},{v:'po',t:'📝 P.O.',n:c.poA},{v:'recv',t:'📥 Receiving'},{v:'prep',t:'⚖️ Preparation',n:c.prep},{v:'disp',t:'✅ Dispatch',n:c.disp},
     {v:'pos',t:'🧾 POS'},{v:'inv',t:'📦 Inventory',n:c.out?c.out+' out':0,g:[['inv','📦 Stock'],['count','🧮 Stock count'],['prod','🏭 Production']]},{v:'way',t:'🛵 Deliveries',n:c.way,g:[['way','🛵 Out for delivery',c.way],['delivered','✅ '+c.delLbl,c.delOK],['undel','↩ Undelivered / ⛔ Closed',c.und]]},
-    {v:'mgr',t:'📊 Reports',g:[['mgr','📊 Operations dashboard'],['month','📦 Monthly report']]},{v:'act',t:'📜 Activity history'}]},
+    {v:'mgr',t:'📊 Reports',g:[['mgr','📊 Operations dashboard'],['month','📦 Monthly report']]},{v:'kpi',t:'🎯 Ops KPI'},{v:'act',t:'📜 Activity history'}]},
   hr:{ic:'🧑‍💼',t:'HR',d:'Schedule · OT · payroll',c:'#0F766E',n:c.otP,tabs:[{v:'hr',sub:'sched',t:'📅 Schedule'},{v:'hr',sub:'ot',t:'⏱ OT requests',n:c.otP},{v:'hr',sub:'pay',t:'💵 Payroll & attendance'},{v:'hr',sub:'set',t:'⚙ Shifts & rules'},{act:'users',t:'🔑 Users & PINs'}]},
   fin:{ic:'💰',t:'Accounting & Finance',d:'Money · expenses · P&L',c:'#B45309',n:c.zP,tabs:[{v:'owner',sub:'dash',t:'📊 Dashboard'},{v:'owner',sub:'acc',t:'💰 Accounts'},{v:'owner',sub:'hist',t:'📜 Money history'},{v:'owner',sub:'exp',t:'🧾 Expenses'},{v:'owner',sub:'col',t:'📥 Collect & pay',n:c.zP},
     {v:'owner',sub:'loan',t:'🤝 Loans'},{v:'owner',sub:'avg',t:'⏱ Profit averages'},{v:'owner',sub:'fa',t:'🏢 Fixed assets'},{v:'owner',sub:'rep',t:'📑 P&L · Balance sheet'}]},
@@ -1701,6 +1703,7 @@ function render(){
   renderAttBar();
   PREPD=calcPrepd();
   if(can('dispatch')){db.orders.slice().forEach(spawnFollowUps);if(dirtyOrders().length)save()}
+  $('#swu').style.display=me.role==='rider'?'none':'';
   $('#me').innerHTML=`<b>${ROLES[me.role].i} ${esc(me.name)}</b><small>${me.role==='rider'?'My profile':ROLES[me.role].t+' · Account'}</small>`;
   $('#home').style.display='none';   // no 'Processes' link in the header — log out from your name button
   $('#newbtn').style.display=can('paste')&&me.role!=='manager'?'':'none';
@@ -2437,6 +2440,7 @@ function openApproval(o){
     ${items.map(i=>{const s=i.short||{};const q=shortOf(i);return `<div class="ap-item" data-ap="${i.id}">
       <h3>${esc(i.product)}</h3>
       <div class="nums">Order ${fmt(i.qty)} ${esc(i.unit)} · Prepared ${fmt(actualVal(i))} · <b>Short ${fmt(q)} ${esc(i.unit)}</b></div>
+      <label class="ap-whyl" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:4px 0 6px"><b>Why short?</b><select class="edit-in ap-why2" style="width:auto">${[['','— choose —'],['nostock','No stock — not bought / not received in time'],['supplier','Supplier late / short delivery'],['prep','Preparation problem (weighing, cutting, slow)'],['customer','Customer changed the order']].map(([v,t])=>`<option value="${v}"${(s.why||'')===v?' selected':''}>${t}</option>`).join('')}</select><small class="unit">used for the staff KPI</small></label>
       <label class="opt${s.d==='carry'?' sel':''}"><input type="radio" name="d-${i.id}" value="carry"${s.d==='carry'?' checked':''}><span class="grow">↪ Carry over to following day<small>Adds ${fmt(q)} ${esc(i.unit)} to the next delivery</small></span><input type="date" class="ap-date" value="${s.date||tmr}"></label>
       <label class="opt${s.d==='later'?' sel':''}"><input type="radio" name="d-${i.id}" value="later"${s.d==='later'?' checked':''}><span class="grow">🕒 Deliver left qty later today<small>Creates a balance delivery for today — time is optional</small></span><input type="time" class="ap-time" value="${s.time||''}"></label>
       <label class="opt${s.d==='forfeit'?' sel':''}"><input type="radio" name="d-${i.id}" value="forfeit"${s.d==='forfeit'?' checked':''}><span class="grow">✕ Forfeit — usage date already lapsed<small>The missing qty will not be delivered — it will be listed in Undelivered items</small></span></label>
@@ -2465,9 +2469,10 @@ $('#ap').addEventListener('click',async e=>{
     o.apprNo={by:mgr.name,at:Date.now(),reason:why};save();clearTimeout(flushTimer);flush();$('#ap').classList.remove('on');render();toast('✕ Not approved — sent back to the team',true);return}
   if(e.target.id!=='ap-ok')return;
   let o=find(APO);const blocks=[...document.querySelectorAll('#ap .ap-item')];
-  const picks=blocks.map(b=>({id:b.dataset.ap,r:b.querySelector('input[type=radio]:checked'),date:b.querySelector('.ap-date').value,time:b.querySelector('.ap-time').value,
+  const picks=blocks.map(b=>({id:b.dataset.ap,why:b.querySelector('.ap-why2').value,r:b.querySelector('input[type=radio]:checked'),date:b.querySelector('.ap-date').value,time:b.querySelector('.ap-time').value,
     sw:{product:String(b.querySelector('.ap-swp').value||'').trim().toUpperCase(),qty:r2(+b.querySelector('.ap-swq').value||0),unit:b.querySelector('.ap-swu').value,agreed:String(b.querySelector('.ap-swa').value||'').trim()},el:b.querySelector('.ap-swp')}));
   if(picks.some(p=>!p.r)){alert('Choose an option for every short item.');return}
+  if(picks.some(p=>!p.why)){alert('Choose WHY each item is short (used for the staff KPI).');const b=blocks.find(x=>!x.querySelector('.ap-why2').value);if(b)b.querySelector('.ap-why2').focus();return}
   for(const p of picks){if(p.r.value!=='switch')continue;const m=swCheck(p.sw.product,p.sw.qty,p.sw.agreed,p.el);if(m==='cancel')return;if(m){alert('🔁 Switch: '+m);return}}
   let mgr=me.role==='manager'?me:null;
   if(!mgr){const pin=($('#ap-pin')||{}).value||'';$('#ap-err').textContent='Checking…';
@@ -2479,7 +2484,7 @@ $('#ap').addEventListener('click',async e=>{
     if(!confirm('Change the approval?\n\n'+o.dr.no+' will be reopened (cancelled). The team checks the order again and a new DR is made.'))return;
     const r=await retCall('api_reopenDR',o.id,'Short-item approval changed by '+mgr.name);if(!r)return;o=find(APO);if(!o)return}
   keepUndo(); const at=Date.now(); removeFollowUps(o);
-  picks.forEach(p=>{const[,i]=findItem(p.id);i.short={d:p.r.value,date:p.r.value==='carry'?(p.date||carryDate(o)):'',time:p.r.value==='later'?p.time:'',qty:shortOf(i),by:mgr.name,at};if(p.r.value==='switch')i.short.sw=p.sw});
+  picks.forEach(p=>{const[,i]=findItem(p.id);i.short={why:p.why,d:p.r.value,date:p.r.value==='carry'?(p.date||carryDate(o)):'',time:p.r.value==='later'?p.time:'',qty:shortOf(i),by:mgr.name,at};if(p.r.value==='switch')i.short.sw=p.sw});
   o.approved={by:mgr.name,at}; o.apprNo=null; spawnFollowUps(o); save(); clearTimeout(flushTimer); flush(); $('#ap').classList.remove('on'); render();
   const sched=o.items.filter(i=>i.short&&i.short.made).map(i=>i.product+' → '+(i.short.d==='carry'?day(i.short.date):i.short.d==='switch'?i.short.sw.product+' '+fmt(i.short.sw.qty)+' '+i.short.sw.unit+' (this order)':'later today'));
   toast('✓ Approved by '+mgr.name+(sched.length?' · added for prep: '+sched.join(', '):''),true);
@@ -2730,7 +2735,7 @@ $('#save').onclick=()=>{const res=preview();if(!cust)return alert('Pick a custom
    INVENTORY · P.O. · RECEIVING · PRODUCTION · POS
    One stock count for the shop (Products tab › Available qty).
    ================================================================ */
-var STOCKV=['inv','count','po','recv','prod','pos','srep','crep','memb','owner','hr','att','act'];
+var STOCKV=['inv','count','po','recv','prod','pos','srep','crep','memb','owner','hr','att','act','kpi'];
 var STKEY='dp_stock_'+MODE, POSQ='dp_posq';
 let posMem=null, posMemUse=0, posCharges=[], posNote='';
 const chgTotal=()=>r2(posCharges.reduce((a,c)=>a+(+c.amt||0),0));
@@ -2762,8 +2767,8 @@ async function renderStock(v,force){
   if(view!==v||!me)return;drawStock()}
 function drawStock(){const v=view;if(!me||!session||!STOCKV.includes(v))return;                 // logged out while something was loading
   const a=document.activeElement,keep=a&&a.closest&&a.closest('#list')&&a.dataset&&a.dataset.k?{k:a.dataset.k,s:a.selectionStart}:null;
-  $('#list').innerHTML=`<div class="rep stk" data-v="${v}">${(ST.offline?'<div class="stoff">📴 Offline — showing the last saved data.</div>':ST.stale?'<div class="stupd">↻ Updating…</div>':'')+{inv:invHTML,count:countHTML,po:poHTML,recv:recvHTML,prod:prodHTML,pos:posHTML,srep:srepHTML,crep:crepHTML,memb:membHTML,owner:ownerHTML,hr:hrHTML,att:attHTML,act:actHTML}[v]()}</div>`;
-  $('#list').onclick=stockClick;$('#list').oninput=stockInput;$('#list').onchange=stockChange;
+  $('#list').innerHTML=`<div class="rep stk" data-v="${v}">${(ST.offline?'<div class="stoff">📴 Offline — showing the last saved data.</div>':ST.stale?'<div class="stupd">↻ Updating…</div>':'')+{inv:invHTML,count:countHTML,po:poHTML,recv:recvHTML,prod:prodHTML,pos:posHTML,srep:srepHTML,crep:crepHTML,memb:membHTML,owner:ownerHTML,hr:hrHTML,att:attHTML,act:actHTML,kpi:kpiHTML}[v]()}</div>`;
+  $('#list').onclick=stockClick;$('#list').oninput=stockInput;$('#list').onchange=e=>{const kp=e.target.closest&&e.target.closest('[data-kpprof]');if(kp&&view==='kpi'){api('api_kpiProfile',session.token,kp.dataset.kpprof,kp.value).then(r=>{if(r.ym===(KPF||kpYm()))KP=r;else KP=null;toast('Scorecard changed');drawStock()}).catch(er=>alert(errMsg(er)));return}stockChange(e)};
   $('#list').onkeydown=e=>{if(view!=='pos'||e.key!=='Enter')return;const t=e.target;
     if(t.id==='posq'){e.preventDefault();const f=posSug()[0];if(f)addToCart(f.code);return}
     if(t.dataset.cq!==undefined){e.preventDefault();drawStock();const s=$('#posq');if(s)s.focus();return}
@@ -2798,6 +2803,40 @@ function actHTML(){if(!ACF.from){const[f,t]=srPreset('today');ACF.from=f;ACF.to=
   return head+`<div class="chips2 actypes"><button class="${ACF.type?'':'on'}" data-actype="">All <small>${base.length}</small></button>${Object.entries(ACT).map(([k,[ic,t]])=>{const n=cnt(k);return n||ACF.type===k?`<button class="${ACF.type===k?'on':''}" data-actype="${k}">${ic} ${t} <small>${n}</small></button>`:''}).join('')}</div>
     <div class="panel">${rows||'<div class="empty">Nothing here for these filters.</div>'}${L.length>show.length?`<div class="row-end"><button class="btn" data-acmore>Show more (${L.length-show.length} left)</button></div>`:''}${AC.more?`<div class="unit">Only the latest 5,000 are shown — pick fewer days.</div>`:''}</div>`}
 function acCsv(){downloadCsv([['Date','Time','Type','What','Details','Reference','Staff','Amount']].concat(acRows().map(r=>{const d=new Date(r.t);return [ymdL(d),r.x&&r.x.nt?'':time12(d),(ACT[r.type]||[,r.type])[1],r.act,r.what,r.ref,r.by,r.amt!=null?r.amt:'']})),'3FMS-activity-'+ACF.from+'-to-'+ACF.to+'.csv')}
+
+/* ---------- OPERATIONS KPI (manager): scorecard per staff per month, counted from the records ---------- */
+const KPPROF={senior:'Senior operations',junior:'Junior operations',general:'General operations'};
+let KPF='',KP=null,KPload=false,KPerr='';
+const kpYm=(o=0)=>{const d=new Date();d.setDate(1);d.setMonth(d.getMonth()+o);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')};
+function kpLoad(){if(KPload)return;KPload=true;KPerr='';const ym=KPF||kpYm();api('api_opsKpi',session.token,ym).then(r=>{KP=r}).catch(e=>KPerr=errMsg(e)).finally(()=>{KPload=false;if(view==='kpi')drawStock()})}
+const kpBand=s=>s==null?['var(--muted,#777)','No data yet']:s>=90?['#15803d','Excellent']:s>=80?['#1d5fa8','Meets target']:s>=70?['#b45309','Needs improvement']:['#b91c1c','Action plan'];
+const kpNotes=n=>{const a=[],m={late:'late',longBreak:'long break',undertime:'undertime',absent:'absent',corrected:'item corrected at dispatch',wrongOut:'wrong item reached customer',offDuty:'record on a day not timed in (not counted)',yieldOff:'batch yield off',targetMiss:'production target missed',recvBack:'receiving sent back',countBack:'count sent back'};Object.keys(m).forEach(k=>{if(n[k])a.push(n[k]+' '+m[k])});return a};
+function kpiHTML(){const ym=KPF||kpYm();if((!KP||KP.ym!==ym)&&!KPerr)kpLoad();
+  const M=[0,-1,-2].map(o=>kpYm(o)),lbl=y=>{const [a,b]=y.split('-');return SMON[+b-1]+' '+a};
+  let h=`<div class="panel"><div class="poh"><h3 style="margin:0">🎯 Operations KPI</h3><span style="flex:1"></span><button class="btn sm" data-kpre>↻</button></div>
+    <div class="chips2">${M.map(y=>`<button class="${y===ym?'on':''}" data-kpym="${y}">${lbl(y)}</button>`).join('')}</div>
+    <div class="unit" style="margin-top:6px">Counted from 3FMS records. Meet the target = full points · 20% below the target = 0. Work recorded under an account counts only on days that person timed in. A KPI with no data that month is left out.</div></div>`;
+  if(KPerr)return h+`<div class="empty">⚠ ${esc(KPerr)}</div>`;
+  if(!KP||KP.ym!==ym)return h+'<div class="empty">Loading…</div>';
+  const T=KP.team,tb=(x,t,l,s)=>`<div><b>${x.pct==null?'—':x.pct+'%'}</b><span>${l}<br><small>${x.ok}/${x.of} · target ≥ ${t}% · ${s}</small></span></div>`;
+  h+=`<div class="kpis">${tb(T.stockReady,95,'Stock ready before prep day','purchasing')}${tb(T.teamPrep,95,'Orders prepared by 2 PM','team')}${tb(T.teamDisp,95,'Dispatched before 8 AM','team')}</div>`;
+  h+=KP.rows.length?KP.rows.map(r=>{const [c,l]=kpBand(r.score),nt=kpNotes(r.note);
+    return `<div class="panel"><div class="poh" style="flex-wrap:wrap;gap:8px"><b style="font-size:17px">${esc(r.name)}</b>
+      <select class="edit-in" data-kpprof="${esc(r.id)}" style="width:auto">${Object.keys(KPPROF).map(k=>`<option value="${k}"${r.prof===k?' selected':''}>${KPPROF[k]}</option>`).join('')}</select>
+      <span style="flex:1"></span><span style="text-align:right"><b style="font-size:26px;color:${c}">${r.score==null?'—':r.score}</b><br><small style="color:${c};font-weight:700">${l}</small></span></div>
+      <div class="sc"><table class="stbl"><thead><tr><th>KPI</th><th class="r">Result</th><th class="r">Target</th><th class="r">Points</th></tr></thead><tbody>
+      ${r.kpi.map(k=>{const col=k.pct==null?'':k.pct>=k.t?'var(--green,#15803d)':k.pts>=k.w/2?'#b45309':'var(--rose,#b91c1c)';
+        return `<tr><td>${esc(k.n)}${k.team?' <small class="unit">· team</small>':''}</td><td class="r">${k.pct==null?'<span class="unit">no data</span>':`<b style="color:${col}">${k.pct}%</b> <small class="unit">${k.ok}/${k.of}</small>`}</td><td class="r">≥ ${k.t}%</td><td class="r">${k.pts==null?'—':k.pts} / ${k.w}</td></tr>`}).join('')}
+      </tbody></table></div>${nt.length?`<div class="unit">⚠ ${esc(nt.join(' · '))}</div>`:''}</div>`}).join(''):'<div class="empty">No operations records for this month yet.</div>';
+  h+=`<details class="panel unit"><summary><b>How each KPI is counted</b></summary>
+    <div><b>Purchasing · stock ready</b> — advance-order items not short because of <i>no stock</i> (manager's "why short"). Supplier-late shorts are left out. Shorts with no reason count as no stock.</div>
+    <div><b>Orders prepared by 2 PM</b> — items weighed by the deadline (2 PM the day before; carry-over by 8 AM). Items short because of no stock / supplier are left out.</div>
+    <div><b>Dispatch before 8 AM</b> — advance orders with DISPATCH tapped before 8:00 AM on the delivery day.</div>
+    <div><b>Dispatch tally & accuracy</b> — items checked on the person's own account on days they timed in; an item fails if a wrong item reached the customer. Checks done by the manager are not counted for anyone.</div>
+    <div><b>Prep accuracy</b> — items the person weighed with no correction at dispatch and no wrong-item return.</div>
+    <div><b>Attendance</b> — scheduled days: no more than 5 min late, breaks within the allowance, no undertime; absences count.</div>
+    <div>Rating: 90–100 Excellent · 80–89 Meets target · 70–79 Needs improvement · below 70 Action plan.</div></details>`;
+  return h}
 
 /* ---------- SALES & PROFIT REPORT (manager) ---------- */
 const ymdL=d=>{const z=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+z(d.getMonth()+1)+'-'+z(d.getDate())};
@@ -3707,7 +3746,8 @@ function carcassRecvForm(po){const c=po.carcass;
     <div class="panel" id="cc-yield">${yieldHTML(c)}</div>
     <div class="panel"><h3 style="margin:0 0 6px">🧮 Cost per cut</h3><div id="cc-split">${ckHTML(c)}</div>
       <div class="fgrid"><label class="full">Note<input class="edit-in" id="rc-note" data-k="rcn"></label><label class="full">📷 Photo of the receipt (optional)<input type="file" accept="image/*" capture="environment" id="rc-ph"></label></div><div id="rc-prev" class="unit">${recvPhoto?'✓ Photo ready':''}</div>
-      <div class="row-end"><button class="btn" data-rcback>Back</button><button class="go" data-rcsave="${po.id}">✓ Save receiving</button></div></div>`}
+      <div class="stoff" style="margin:8px 0">🏷 After saving: <b>LABEL every item</b> — product · kg / pcs · date received · GRN no. — before it goes to the chiller / inventory or a bulk order delivery.</div>
+    <div class="row-end"><button class="btn" data-rcback>Back</button><button class="go" data-rcsave="${po.id}">✓ Save receiving</button></div></div>`}
 function yieldHTML(cc){const s=ccSplit(cc,rcC);if(!(s.lw>0)||!s.kgAll)return '<h3 style="margin:0">⚖ Yield</h3><div class="unit">Type the liveweight and the kg of the cuts.</div>';const y=yRate(s.lossPct);
   return `<h3 style="margin:0 0 6px">⚖ Yield</h3><div class="ygrid"><div><span>Liveweight</span><b>${qf(s.lw)} kg</b></div><div><span>Cuts (kg only)</span><b>${qf(s.kgAll)} kg</b></div><div class="${y.k==='bad'?'bad':''}"><span>Total lost weight</span><b>${qf(s.loss)} kg</b><small>${s.lossPct}% of liveweight</small></div><div><span>Yield</span><b>${s.yieldPct}%</b></div></div>
     <div class="yrem y-${y.k}">${y.k==='bad'?'⚠':'✓'} <b>${y.t}</b> <span class="unit">· standard: 83% yield / 17% lost weight</span></div>
@@ -3930,6 +3970,7 @@ function recvHTML(){
     </tbody></table></div>
     <div class="fgrid"><label class="full">Note (e.g. 2 kg spoiled, sent back)<input class="edit-in" id="rc-note" data-k="rcn"></label>
       <label class="full">📷 Photo of the supplier's receipt (optional)<input type="file" accept="image/*" capture="environment" id="rc-ph"></label></div><div id="rc-prev" class="unit">${recvPhoto?'✓ Photo ready':''}</div>
+    <div class="stoff" style="margin:8px 0">🏷 After saving: <b>LABEL every item</b> — product · kg / pcs · date received · GRN no. — before it goes to the chiller / inventory or a bulk order delivery.</div>
     <div class="row-end"><button class="btn" data-rcback>Back</button><button class="go" data-rcsave="${po.id}">✓ Save receiving</button></div></div>`}
   if(RVrep)return rvHTML();
   return `<div class="shead"><div><h2>📥 Receiving</h2><div class="unit">Deliveries from suppliers are received <b>against the P.O. made by the Manager</b>. Tap <b>Receive</b> when the delivery arrives.</div></div><div class="sbtns">${['manager','ops'].includes(me.role)?'<button class="go sm" data-rvrep>📊 Receiving report</button>':''}<button class="btn sm" data-sref>↻ Refresh</button></div></div>
@@ -4440,6 +4481,10 @@ window.addEventListener('online',()=>{if(session)posFlush()});
 /* ---------- clicks & typing on these screens ---------- */
 async function stockClick(e){if(!STOCKV.includes(view))return;const igr=e.target.closest('tr[data-igrp]');if(igr&&!e.target.closest('button')){const g=igr.dataset.igrp;invOpenG.has(g)?invOpenG.delete(g):invOpenG.add(g);drawStock();return}const rvr=e.target.closest('tr[data-rvsup]');if(rvr&&view==='recv'){RVF.sup=rvr.dataset.rvsup;RVtab='all';drawStock();return}const crr=e.target.closest('tr[data-crcu]');if(crr&&view==='crep'){CRF.cust=crr.dataset.crcu;drawStock();window.scrollTo({top:0,behavior:'smooth'});return}const srr=e.target.closest('tr[data-srcu]');if(srr&&view==='srep'){SRF.cust=srr.dataset.srcu;drawStock();window.scrollTo({top:0,behavior:'smooth'});return}const tr=e.target.closest('[data-psel]');if(tr&&!e.target.closest('button')){posSel=+tr.dataset.psel;document.querySelectorAll('[data-psel]').forEach(r=>r.classList.toggle('sel',r===tr));const ps=$('#psel');if(ps)ps.innerHTML=pselHTML();return}
   const b=e.target.closest('button');if(!b)return;const d=b.dataset;
+  if(view==='kpi'){
+    if(d.kpym!==undefined){KPF=d.kpym;KP=null;KPerr='';drawStock();return}
+    if('kpre' in d){KP=null;KPerr='';drawStock();return}
+  }
   if(view==='act'){
     if(d.acpre){const [f,t]=srPreset(d.acpre);ACF.from=f;ACF.to=t;ACF.pre=d.acpre;ACF.n=300;ACerr='';drawStock();return}
     if(d.actype!==undefined){ACF.type=d.actype;ACF.n=300;drawStock();return}
@@ -4587,14 +4632,14 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const igr=e.target
     {const S=ckRows(((ST.pos||[]).find(p=>p.id===rcC.id)||{}).carcass);if(Math.abs(S.diff)>1)return alert('The cost of the cuts ('+peso(S.tot)+') must equal the total cost ('+peso(S.total)+').\nAdjust the prices or tap ⚖ Balance the difference.');}
     await busy(async()=>{let ph='';if(recvPhoto){ph='D'+await api('api_uploadPhoto',session.token,recvPhoto,'receiving-'+Date.now());await putPhoto(ph,recvPhoto)}
       const r=await api('api_receive',session.token,d.rcsave,{lw:rcC.lw,exp:rcC.exp,lossWhy:rcC.lossWhy||'',cuts:cuts.map(k=>({code:k.code,kg:k.kg,u:k.u||'Kg',costKg:(ckRows(((ST.pos||[]).find(p=>p.id===rcC.id)||{}).carcass).rows.find(r=>r.i===rcC.cuts.indexOf(k))||{}).ck}))},$('#rc-note').value,ph,rxOut());recvId=null;recvPhoto='';rcC=null;
-      toast(r.waiting?'⏳ Saved — liveweight / expenses differ from the P.O., the manager will approve':'✅ Received — cuts added to stock with their cost');await renderStock('recv',true)});return}
+      toast(r.waiting?'⏳ Saved — liveweight / expenses differ from the P.O., the manager will approve':'✅ Received — cuts added to stock. 🏷 Label every cut before storing.');await renderStock('recv',true)});return}
   if(d.rcsave){const po=(ST.pos||[]).find(p=>p.id===d.rcsave);if(!po)return;
     const lines=po.items.map(i=>{const v=rvF.L[i.code]||{};return {code:i.code,rcpt:rvF.nf?String(v.r??'').trim():String(i.qty),qty:String(v.q??'').trim(),pcs:i.ounit?String(v.p??'').trim():undefined,kg:pcU(i)?String(v.k??'').trim():undefined,pcn:!i.ounit&&!pcU(i)&&v.u==='pc'?String(v.p??'').trim():undefined,name:i.name,pc:!!i.ounit,pk:pcU(i)}});
     const miss=lines.find(l=>l.qty===''||(l.pc&&l.pcs==='')||l.rcpt===''||(l.pk&&+l.qty>0&&l.kg==='')||(l.pcn!==undefined&&+l.qty>0&&l.pcn===''));if(miss){alert(miss.rcpt===''?'Type the supplier receipt qty of '+miss.name+'.':'Type the actual '+(miss.pc||miss.pk?'pcs and kg':'qty')+' of '+miss.name+' (0 if nothing came).');return}
     if(rvF.nf&&!rvF.why.trim()){alert('P.O. not followed: type the reason.');const w=$('#rf-why');if(w)w.focus();return}
     await busy(async()=>{let ph='';if(recvPhoto){ph='D'+await api('api_uploadPhoto',session.token,recvPhoto,'receiving-'+Date.now());await putPhoto(ph,recvPhoto)}
       const r=await api('api_receive',session.token,d.rcsave,lines.map(l=>({code:l.code,rcpt:l.rcpt,qty:l.qty,pcs:l.pcs,kg:l.kg,pcn:l.pcn})),$('#rc-note').value,ph,Object.assign(rxOut(),{notFollowed:rvF.nf,nfWhy:rvF.why,rcptNo:rvF.no}));recvId=null;recvPhoto='';rxS={};rvF={};
-      toast(r.waiting?'⏳ Saved — actual qty is different from the supplier receipt, the manager will approve':'✅ Received — stock updated');await renderStock('recv',true)});return}
+      toast(r.waiting?'⏳ Saved — actual qty is different from the supplier receipt, the manager will approve':'✅ Received — stock updated. 🏷 Label every item (product · kg · date · GRN) before storing.');await renderStock('recv',true)});return}
   // production
   if(d.pradd){prodF[d.pradd].push(d.pradd==='made'?{code:'',qty:'',kg:''}:{code:'',qty:''});drawStock();return}
   if(d.prset){prodSetDialog(d.prset);return}
