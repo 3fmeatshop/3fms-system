@@ -953,8 +953,18 @@ details.sec .tile .ic{width:36px;height:36px}details.sec .tile .due{display:none
 .oh-now b{font-size:22px}.oh-now span{opacity:.92}
 .oh-now .oh-nl{font-size:11px;font-weight:800;letter-spacing:.12em;background:rgba(255,255,255,.22);border-radius:99px;padding:2px 8px;opacity:1}
 .oh-now.oh-blue{background:var(--blue)}.oh-now.oh-amber{background:#b45309}.oh-now.oh-red{background:var(--rose)}.oh-now.oh-green{background:var(--green)}
-.oh-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
-@media (max-width:820px){.oh-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.oh-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:start}
+details.oh-card{display:block;padding:0}details.oh-card>summary{list-style:none;display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:12px 14px;cursor:pointer}
+details.oh-card>summary::-webkit-details-marker{display:none}
+.oh-card.oh-none{border-top-color:var(--line)}
+.oh-more{font-size:12px;color:var(--red);font-weight:700;margin-top:4px}details[open] .oh-more{display:none}
+.oh-list{border-top:1px solid var(--line);padding:6px;display:flex;flex-direction:column;gap:4px;max-height:320px;overflow:auto}
+.oh-li{display:flex;align-items:center;gap:8px;width:100%;text-align:left;font:inherit;font-size:14px;border:0;border-left:4px solid var(--line);background:var(--soft,#f7f7f7);border-radius:8px;padding:8px 10px;cursor:pointer;color:var(--ink)}
+.oh-li span{flex:1;min-width:0;overflow-wrap:anywhere}.oh-li b{white-space:nowrap;font-size:13px}.oh-li i{font-style:normal;color:var(--muted)}
+.oh-li small{color:var(--muted)}
+.oh-li.oh-ok{border-left-color:var(--green)}.oh-li.oh-warn{border-left-color:#d97706}.oh-li.oh-bad{border-left-color:var(--rose);background:var(--rbg)}
+.oh-warn-box{background:var(--abg);color:var(--amber);border-radius:8px;padding:8px 10px;font-size:13px;font-weight:600}
+@media (max-width:1100px){.oh-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media (max-width:520px){.oh-grid{grid-template-columns:minmax(0,1fr)}}
 .oh-card{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;background:#fff;border:1px solid var(--line);border-top:5px solid var(--green);border-radius:14px;padding:12px 14px;cursor:pointer;font:inherit;color:var(--ink)}
 .oh-card.oh-warn{border-top-color:#d97706}.oh-card.oh-bad{border-top-color:var(--rose);background:var(--rbg)}
 .oh-ic{font-size:22px}.oh-t{font-weight:700;font-size:15px}
@@ -1770,6 +1780,7 @@ async function deptAct(a){if(!me)return;if(a==='neworder')return $('#newbtn').cl
   if(a==='cdisc'){if(!OW){toast('Loading…');try{OW=await api('api_owner',session.token,OWym||'')}catch(e){return alert(errMsg(e))}}return custDiscDialog()}}
 function render(){
   if(!me)return;
+  if(view!=='ohome')OHOPEN.clear();                     // leaving Today: every card closes again (names hidden until tapped)
   renderAttBar();
   PREPD=calcPrepd();
   if(can('dispatch')){db.orders.slice().forEach(spawnFollowUps);if(dirtyOrders().length)save()}
@@ -2901,41 +2912,54 @@ function opsHomeHTML(prepTodo,dispTodo,way){
   const now=new Date(),td=today(),t=new Date();t.setDate(t.getDate()+1);const tmr=iso(t),hm=now.getHours()*60+now.getMinutes();
   const mins=s=>{const[h,m]=s.split(':').map(Number);return h*60+m},dCut=mins(settings.stdBefore),pCut=mins(prepBy());
   const left=m=>m<=0?'':m>=60?Math.floor(m/60)+'h '+(m%60)+'m left':m+'m left';
-  const notClosed=o=>!o.closed&&!o.posSaleOnly;
-  // dispatch today
-  const dT=db.orders.filter(o=>notClosed(o)&&o.delivery===td&&!o.balanceOf),dDone=dT.filter(o=>o.dispatched||o.delivered).length;
-  // prepare for tomorrow (advance orders)
-  const pT=db.orders.filter(o=>notClosed(o)&&o.delivery===tmr&&!o.online&&!o.balanceOf),pDone=pT.filter(o=>o.dispatched||o.delivered||(!check(o).notPrep.length&&prepOK(o))).length;
+  const act=o=>o.items.filter(i=>realItem(i)&&!isCR(i)),done=i=>actualVal(i)!=null,out=o=>!!(o.dispatched||o.delivered);
+  const U=x=>esc(String(x||'').toLowerCase());
+  // PREPARE TODAY = orders whose preparation day is today (advance orders for tomorrow · online / rush orders for today)
+  const pO=db.orders.filter(o=>!o.closed&&!out(o)&&((o.delivery===tmr&&!o.online&&!o.balanceOf&&!isAdd(o))||(o.delivery===td&&(o.online||isAdd(o)))));
+  const pRows=pO.map(o=>({o,n:act(o).length,d:act(o).filter(done).length})).filter(r=>r.n);
+  const pN=pRows.reduce((a,r)=>a+r.n,0),pD=pRows.reduce((a,r)=>a+r.d,0);
+  // DISPATCHED TODAY = delivery date today only: items dispatched / items prepared
+  const dO=db.orders.filter(o=>!o.closed&&o.delivery===td);
+  const dRows=dO.filter(o=>!o.balanceOf).map(o=>{const p=act(o).filter(done).length;return {o,p,x:out(o)?p:0}}).filter(r=>r.p||act(r.o).length);   // 'deliver later today' balances: shown as a warning only
+  const dP=dRows.reduce((a,r)=>a+r.p,0),dX=dRows.reduce((a,r)=>a+r.x,0);
+  const later=[];dO.forEach(o=>act(o).forEach(i=>{if(i.short&&i.short.d==='later')later.push({o,i})}));
+  // ON-TIME / LATE dispatch (advance orders due today)
+  const due=dO.filter(o=>!o.online&&!o.balanceOf);
+  const onT=due.filter(o=>out(o)&&rating(o)==='std'),lateO=due.filter(o=>out(o)&&rating(o)&&rating(o)!=='std'),overO=hm>=dCut?due.filter(o=>!out(o)):[];   // late = already dispatched late · overdue = still not out
+  // SHORT DELIVERIES (today): short qty or carried to another day — "deliver later today" is not counted (warning above)
+  const shortL=[];dO.forEach(o=>act(o).forEach(i=>{const q=shortOf(i);if(!q)return;if(i.short&&(i.short.d==='later'||i.short.d==='switch'))return;shortL.push({o,i,q})}));
+  // APPROVAL LIST: short items waiting for the manager (any date)
+  const appr=[];db.orders.filter(o=>live(o)).forEach(o=>check(o).pend.forEach(i=>appr.push({o,i,q:shortOf(i)})));
+  appr.sort((a,b)=>a.o.delivery.localeCompare(b.o.delivery));
   const carry=db.orders.filter(o=>live(o)&&o.delivery<=tmr&&o.items.some(i=>i.carryFrom&&!/\d/.test(String(i.actual||'')))).length;
-  const pend=db.orders.filter(o=>live(o)&&check(o).pend.length);
-  const overdue=db.orders.filter(o=>live(o)&&o.delivery<td&&!o.dispatched&&!o.delivered);
-  const rcv=ST&&ST.pos?ST.pos.filter(p=>p.status==='open'):[],rcvA=ST&&ST.pos?ST.pos.filter(p=>p.status==='for approval').length:0,ret=retList('to check').length;
-  const out=INV?INV.list.filter(p=>p.q<=0).length:0,cnt=ST&&ST.cnt&&ST.cnt.dueOpen;
   // NOW: one clear instruction by the clock
   let now1,now2,nc;
   if(hm<dCut){now1=`🚚 Dispatch today's orders`;now2=`before ${t24(settings.stdBefore)} · ${left(dCut-hm)}${carry?` · ⏰ ${carry} carry-over to finish first`:''}`;nc='blue'}
   else if(hm<pCut){now1=`⚖️ Prepare tomorrow's orders`;now2=`deadline ${t24(prepBy())} today · ${left(pCut-hm)}`;nc='amber'}
-  else{now1=pDone<pT.length?`⚖️ Finish tomorrow's orders — past ${t24(prepBy())}`:`✅ Tomorrow's orders are ready`;now2=pDone<pT.length?'late preparation — finish them now':'receive deliveries · production · clean & arrange the chiller';nc=pDone<pT.length?'red':'green'}
-  const card=(v,ic,title,big,sub,st,pct)=>`<button class="oh-card oh-${st}" data-view="${v}"><span class="oh-ic">${ic}</span><span class="oh-t">${title}</span><span class="oh-big">${big}</span><span class="oh-sub">${sub}</span>${pct!=null?`<span class="oh-bar"><i style="width:${Math.round(pct*100)}%"></i></span>`:''}</button>`;
-  const dSt=!dT.length?'ok':dDone===dT.length?'ok':hm>=dCut?'bad':'warn',pSt=!pT.length?'ok':pDone===pT.length?'ok':hm>=pCut?'bad':'warn';
-  const alerts=[];
-  overdue.forEach(o=>alerts.push(['bad',`⚠ ${esc(o.customer)} — delivery ${day(o.delivery)} not dispatched`,o.id]));
-  if(dT.length&&hm>=dCut)dT.filter(o=>!o.dispatched&&!o.delivered).forEach(o=>alerts.push(['bad',`🚚 ${esc(o.customer)} — not yet dispatched (past ${t24(settings.stdBefore)})`,o.id]));
-  pend.forEach(o=>alerts.push(['warn',`⏳ ${esc(o.customer)} — ${check(o).pend.length} short item(s) waiting for the manager`,o.id]));
-  if(hm>=pCut)pT.filter(o=>check(o).notPrep.length).forEach(o=>alerts.push(['bad',`⚖️ ${esc(o.customer)} — ${check(o).notPrep.length} item(s) not prepared`,o.id]));
-  const more=[rcv.length?[`📥 ${rcv.length} P.O. waiting for delivery`,'recv']:null,rcvA?[`⏳ ${rcvA} receiving waiting for approval`,'recv']:null,ret?[`↩ ${ret} return(s) to check`,'recv']:null,
-    out?[`📦 ${out} product(s) out of stock`,'inv']:null,cnt?[`🧮 Stock count is due`,'count']:null,way.length?[`🛵 ${way.length} out for delivery`,'way']:null].filter(Boolean);
+  else{now1=pD<pN?`⚖️ Finish tomorrow's orders — past ${t24(prepBy())}`:`✅ Tomorrow's orders are ready`;now2=pD<pN?'late preparation — finish them now':'receive deliveries · production · clean & arrange the chiller';nc=pD<pN?'red':'green'}
+  const row=(o,txt,k)=>`<button class="oh-li${k?' oh-'+k:''}" data-jump="${o.id}"><span>${esc(o.customer)}</span><b>${txt}</b><i>›</i></button>`;
+  const card=(key,ic,title,big,sub,st,pct,body)=>`<details class="oh-card oh-${st}"${OHOPEN.has(key)?' open':''} data-ohk="${key}"><summary><span class="oh-ic">${ic}</span><span class="oh-t">${title}</span><span class="oh-big">${big}</span><span class="oh-sub">${sub}</span>${pct!=null?`<span class="oh-bar"><i style="width:${Math.round(pct*100)}%"></i></span>`:''}<span class="oh-more">${body?'tap to see the list ▾':''}</span></summary>${body?`<div class="oh-list">${body}</div>`:''}</details>`;
+  const pSt=!pN?'ok':pD===pN?'ok':hm>=pCut?'bad':'warn',dSt=!dP?'ok':dX===dP?'ok':hm>=dCut?'bad':'warn';
+  const pBody=pRows.sort((a,b)=>(a.d===a.n)-(b.d===b.n)).map(r=>row(r.o,`${r.d}/${r.n} items`,r.d===r.n?'ok':hm>=pCut?'bad':'warn')).join('');
+  const dBody=(later.length?`<div class="oh-warn-box">⚠ Deliver later today: ${later.map(x=>esc(x.i.product)+' '+fmt(shortOf(x.i))+' '+esc(x.i.unit)+' ('+esc(x.o.customer)+')').join(' · ')}</div>`:'')+dRows.sort((a,b)=>(a.x===a.p)-(b.x===b.p)).map(r=>row(r.o,`${r.x}/${r.p} items`,r.x===r.p&&r.p?'ok':hm>=dCut?'bad':'warn')).join('');
+  const tm=o=>o.dispatched?time12(new Date(o.dispatched.at)):'not yet out';
   return `<div class="oh">
     <div class="oh-now oh-${nc}"><span class="oh-nl">NOW</span><b>${now1}</b><span>${now2}</span></div>
     <div class="oh-grid">
-      ${card('disp','🚚','Dispatch today',`${dDone}<small>/${dT.length}</small>`,dT.length?`dispatched · target before ${t24(settings.stdBefore)}`:'no deliveries today',dSt,dT.length?dDone/dT.length:null)}
-      ${card('prep','⚖️','Prepare for tomorrow',`${pDone}<small>/${pT.length}</small>`,pT.length?`orders ready · deadline ${t24(prepBy())}`:'no orders for tomorrow yet',pSt,pT.length?pDone/pT.length:null)}
-      ${card('prep','⏰','Carry-over',carry,carry?`priority — before ${t24(settings.stdBefore)}`:'none',carry?'warn':'ok',null)}
-      ${card('disp','⏳','Waiting for manager',pend.length,pend.length?'order(s) with short items':'nothing waiting',pend.length?'warn':'ok',null)}
+      ${card('prep','⚖️','Prepare today',`${pD}<small>/${pN}</small>`,pN?`items prepared · deadline ${t24(prepBy())}`:'nothing to prepare yet',pSt,pN?pD/pN:null,pBody)}
+      ${card('disp','🚚','Dispatched today',`${dX}<small>/${dP}</small>`,dP?`items dispatched / prepared · before ${t24(settings.stdBefore)}`:'no deliveries today',dSt,dP?dX/dP:null,dBody)}
+      ${card('ontime','✅','On-time dispatch',onT.length,`out before ${t24(settings.stdBefore)}`,onT.length?'ok':'none',null,onT.map(o=>row(o,tm(o),'ok')).join(''))}
+      ${overO.length?card('over','🚨','Overdue — not yet out',overO.length,'past '+t24(settings.stdBefore)+' — dispatch now','bad',null,overO.map(o=>row(o,'not yet out','bad')).join('')):''}
+      ${card('late','⏱','Late dispatch',lateO.length,lateO.length?'dispatched after '+t24(settings.stdBefore):'none late',lateO.length?'bad':'ok',null,lateO.map(o=>row(o,'out '+tm(o),'bad')).join(''))}
+      ${card('short','📉','Short deliveries',shortL.length,shortL.length?`product${shortL.length>1?'s':''} short / carried over`:'none today',shortL.length?'warn':'ok',null,
+        shortL.map(({o,i,q})=>`<button class="oh-li oh-warn" data-jump="${o.id}"><span>${esc(i.product)} <small>· ${esc(o.customer)}</small></span><b>${fmt(q)} ${esc(i.unit)} · ${i.short?SH[i.short.d]:'for approval'}</b><i>›</i></button>`).join(''))}
+      ${card('appr','✋','Approval list',appr.length,appr.length?'short item(s) waiting for the manager':'nothing waiting',appr.length?'warn':'ok',null,
+        appr.map(({o,i,q})=>`<button class="oh-li oh-warn" data-jump="${o.id}"><span>${esc(o.customer)} <small>· ${day(o.delivery)}</small></span><b>${esc(i.product)} short ${fmt(q)} ${esc(i.unit)}</b><i>›</i></button>`).join(''))}
     </div>
-    ${alerts.length?`<div class="oh-sec"><h3>Needs attention</h3>${alerts.slice(0,8).map(([k,tx,id])=>`<button class="oh-al oh-${k}" data-jump="${id}">${tx}<span>›</span></button>`).join('')}${alerts.length>8?`<div class="unit">+ ${alerts.length-8} more</div>`:''}</div>`:`<div class="oh-sec oh-okbox">✅ Nothing urgent. Keep the chiller clean and arranged — first in, first out.</div>`}
-    ${more.length?`<div class="oh-sec"><h3>Also today</h3><div class="oh-chips">${more.map(([tx,v])=>`<button data-view="${v}">${tx}</button>`).join('')}</div></div>`:''}
   </div>`}
+let OHOPEN=new Set();
+document.addEventListener('toggle',e=>{const d=e.target;if(!(d&&d.dataset&&d.dataset.ohk))return;
+  if(d.open){OHOPEN.clear();OHOPEN.add(d.dataset.ohk);document.querySelectorAll('details.oh-card[open]').forEach(x=>{if(x!==d)x.open=false})}else OHOPEN.delete(d.dataset.ohk)},true);   // one list open at a time
 
 /* ---------- OPERATIONS KPI (manager): scorecard per staff per month, counted from the records ---------- */
 const KPPROF={senior:'Senior Operation Staff',junior:'Junior Operation Staff',general:'General operations'};
