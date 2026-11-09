@@ -2611,7 +2611,7 @@ document.addEventListener('click',async e=>{
   const im=e.target.closest('img[data-ph]');if(im){$('#v-img').src=im.src;$('#v-cap').textContent=im.dataset.cap;$('#viewer').classList.add('on');return}
   const j=e.target.closest('[data-jump]');if(j){const t=find(j.dataset.jump);if(t){view=stage(t);openId=t.id;editId=null;dateF=t.delivery;render();const el=document.getElementById('c-'+t.id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'})}return}
   const b=e.target.closest('button');if(!b||b.closest('.modal')||b.closest('#login'))return;const d=b.dataset;
-  if(d.dept){fixing.clear();const L=DLAST[d.dept];if(L)return deptGo(L.v,L.sub);const T=deptDefs({}),f=T[d.dept].tabs.find(t=>t.v);return deptGo(f.v,f.sub)}
+  if(d.dept){fixing.clear();const L=DLAST[d.dept];if(L&&deptOf(L.v)===d.dept)return deptGo(L.v,L.sub);const T=deptDefs({}),f=T[d.dept].tabs.find(t=>t.v);return deptGo(f.v,f.sub)}
   if(d.dview){fixing.clear();return deptGo(d.dview,d.dsub)}
   if(d.dact){return deptAct(d.dact)}
   if(d.view){view=d.view;openId=null;editId=null;dateF=null;fixing.clear();if(me&&me.role==='manager'){DLAST[deptOf(view)]={v:view,sub:''};try{localStorage.setItem('fms_dlast',JSON.stringify(DLAST))}catch(e){}}render();return}
@@ -2768,7 +2768,7 @@ async function renderStock(v,force){
 function drawStock(){const v=view;if(!me||!session||!STOCKV.includes(v))return;                 // logged out while something was loading
   const a=document.activeElement,keep=a&&a.closest&&a.closest('#list')&&a.dataset&&a.dataset.k?{k:a.dataset.k,s:a.selectionStart}:null;
   $('#list').innerHTML=`<div class="rep stk" data-v="${v}">${(ST.offline?'<div class="stoff">📴 Offline — showing the last saved data.</div>':ST.stale?'<div class="stupd">↻ Updating…</div>':'')+{inv:invHTML,count:countHTML,po:poHTML,recv:recvHTML,prod:prodHTML,pos:posHTML,srep:srepHTML,crep:crepHTML,memb:membHTML,owner:ownerHTML,hr:hrHTML,att:attHTML,act:actHTML,kpi:kpiHTML}[v]()}</div>`;
-  $('#list').onclick=stockClick;$('#list').oninput=stockInput;$('#list').onchange=e=>{const kp=e.target.closest&&e.target.closest('[data-kpprof]');if(kp&&view==='kpi'){api('api_kpiProfile',session.token,kp.dataset.kpprof,kp.value).then(r=>{if(r.ym===(KPF||kpYm()))KP=r;else KP=null;toast('Scorecard changed');drawStock()}).catch(er=>alert(errMsg(er)));return}stockChange(e)};
+  $('#list').onclick=stockClick;$('#list').oninput=stockInput;$('#list').onchange=e=>{const kp=e.target.closest&&e.target.closest('[data-kpprof]');if(kp&&view==='kpi'){api('api_kpiProfile',session.token,kp.dataset.kpprof,kp.value).then(r=>{if(!KPF||r.ym===KPF)KP=r;else KP=null;toast('Scorecard changed');drawStock()}).catch(er=>alert(errMsg(er)));return}stockChange(e)};
   $('#list').onkeydown=e=>{if(view!=='pos'||e.key!=='Enter')return;const t=e.target;
     if(t.id==='posq'){e.preventDefault();const f=posSug()[0];if(f)addToCart(f.code);return}
     if(t.dataset.cq!==undefined){e.preventDefault();drawStock();const s=$('#posq');if(s)s.focus();return}
@@ -2807,17 +2807,18 @@ function acCsv(){downloadCsv([['Date','Time','Type','What','Details','Reference'
 /* ---------- OPERATIONS KPI (manager): scorecard per staff per month, counted from the records ---------- */
 const KPPROF={senior:'Senior Operation Staff',junior:'Junior Operation Staff',general:'General operations'};
 let KPF='',KP=null,KPload=false,KPerr='';
-const kpYm=(o=0)=>{const d=new Date();d.setDate(1);d.setMonth(d.getMonth()+o);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')};
-function kpLoad(){if(KPload)return;KPload=true;KPerr='';const ym=KPF||kpYm();api('api_opsKpi',session.token,ym).then(r=>{KP=r}).catch(e=>KPerr=errMsg(e)).finally(()=>{KPload=false;if(view==='kpi')drawStock()})}
+// period = payroll cut-off ('from|to'); blank = the current cut-off (the server decides)
+function kpLoad(){if(KPload)return;KPload=true;KPerr='';const ym=KPF;api('api_opsKpi',session.token,ym).then(r=>{KP=r}).catch(e=>KPerr=errMsg(e)).finally(()=>{KPload=false;if(view==='kpi')drawStock()})}
 const kpBand=s=>s==null?['var(--muted,#777)','No data yet']:s>=90?['#15803d','Excellent']:s>=80?['#1d5fa8','Meets target']:s>=70?['#b45309','Needs improvement']:['#b91c1c','Action plan'];
 const kpNotes=n=>{const a=[],m={late:'late',longBreak:'long break',undertime:'undertime',absent:'absent',corrected:'item corrected at dispatch',wrongOut:'wrong item reached customer',offDuty:'record on a day not timed in (not counted)',yieldOff:'batch yield off',targetMiss:'production target missed',recvBack:'receiving sent back',countBack:'count sent back'};Object.keys(m).forEach(k=>{if(n[k])a.push(n[k]+' '+m[k])});return a};
-function kpiHTML(){const ym=KPF||kpYm();if((!KP||KP.ym!==ym)&&!KPerr)kpLoad();
-  const M=[0,-1,-2].map(o=>kpYm(o)),lbl=y=>{const [a,b]=y.split('-');return SMON[+b-1]+' '+a};
+function kpiHTML(){const ym=KPF||(KP&&!KPF?KP.ym:'');if((!KP||(KPF&&KP.ym!==KPF))&&!KPerr)kpLoad();
+  const sd=d=>{const [y,m,dd]=d.split('-');return SMON[+m-1]+' '+(+dd)},lbl=p=>{const [f,t]=p.split('|');return sd(f)+' – '+sd(t)};
+  const M=KP&&KP.periods?KP.periods.slice(0,4):[];
   let h=`<div class="panel"><div class="poh"><h3 style="margin:0">🎯 Staff KPI · Operations</h3><span style="flex:1"></span><button class="btn sm" data-kpre>↻</button></div>
-    <div class="chips2">${M.map(y=>`<button class="${y===ym?'on':''}" data-kpym="${y}">${lbl(y)}</button>`).join('')}</div>
-    <div class="unit" style="margin-top:6px">Counted from 3FMS records. Meet the target = full points · 20% below the target = 0. Work recorded under an account counts only on days that person timed in. A KPI with no data that month is left out.</div></div>`;
+    <div class="unit" style="margin-top:4px">Payroll cut-off</div><div class="chips2">${M.map(y=>`<button class="${KP&&y===KP.ym?'on':''}" data-kpym="${y}">${lbl(y)}${KP&&y===KP.periods[0]?' · now':''}</button>`).join('')}</div>
+    <div class="unit" style="margin-top:6px">Counted from 3FMS records. Meet the target = full points · 20% below the target = 0. Work recorded under an account counts only on days that person timed in. A KPI with no data in the cut-off is left out.</div></div>`;
   if(KPerr)return h+`<div class="empty">⚠ ${esc(KPerr)}</div>`;
-  if(!KP||KP.ym!==ym)return h+'<div class="empty">Loading…</div>';
+  if(!KP||(KPF&&KP.ym!==KPF))return h+'<div class="empty">Loading…</div>';
   const T=KP.team,tb=(x,t,l,s)=>`<div><b>${x.pct==null?'—':x.pct+'%'}</b><span>${l}<br><small>${x.ok}/${x.of} · target ≥ ${t}% · ${s}</small></span></div>`;
   h+=`<div class="kpis">${tb(T.stockReady,95,'Stock ready before prep day','purchasing')}${tb(T.teamPrep,95,'Orders prepared by 2 PM','team')}${tb(T.teamDisp,95,'Dispatched before 8 AM','team')}</div>`;
   h+=KP.rows.length?KP.rows.map(r=>{const [c,l]=kpBand(r.score),nt=kpNotes(r.note);
