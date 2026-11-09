@@ -610,6 +610,32 @@ tr.srclick{cursor:pointer}tr.srclick:hover td{background:#FFF7E0}tr.srtot td{bor
 .kpis .warn b{color:var(--amber)}.kpis .bad b{color:var(--rose)}
 .snote{background:#fff;border:1px solid var(--line);border-left:5px solid var(--gold);border-radius:12px;padding:10px 14px}.snote.violet{border-left-color:var(--violet)}
 .sfilt{display:grid;gap:8px}.chips2{display:flex;gap:6px;flex-wrap:wrap}
+/* ===== filters as dropdowns (all chip filters) + mobile-friendly Money history ===== */
+.chips2.cv{display:none!important}
+.csrow{display:flex;gap:8px;flex-wrap:wrap}.csrow select.chipsel{flex:1 1 0;min-width:140px;margin-right:0}
+select.chipsel{display:inline-block;width:auto;min-width:150px;max-width:100%;margin:6px 8px 0 0;padding:9px 34px 9px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;font:inherit;font-weight:700;color:var(--ink)}
+.panel.lg{max-width:none!important;margin:10px 0 0!important;padding:14px 16px!important;color:var(--ink)!important}
+.lg-h{flex-wrap:nowrap}.lg-btns{display:flex;gap:6px;flex:none}
+.panel{min-width:0;max-width:100%}
+@media(max-width:600px){
+ select.chipsel{width:100%;margin-right:0;padding:9px 22px 9px 10px;font-size:14px}
+ .csrow{gap:6px}.csrow select.chipsel{min-width:0}
+ .lg-bt{display:none}
+ .lg-kp{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px}.lg-kp>div{padding:8px 9px}.lg-kp b{font-size:13px!important;overflow-wrap:anywhere}.lg-kp span{font-size:11px}
+ .lg-kp.has4{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .panel.lg{padding:8px!important}.panel.lg .sc{overflow:visible}
+ .lg-tb,.lg-tb tbody{display:block;width:100%}.lg-tb thead{display:none}
+ .lg-tb tr.lg-day{display:block}.lg-tb tr.lg-day td{display:flex;justify-content:space-between;gap:8px;padding:8px 6px}.lg-day span{float:none}
+ .lg-tb tr.lg-r{display:grid;grid-template-columns:30px minmax(0,1fr) auto;column-gap:8px;padding:9px 4px;border-bottom:1px solid var(--line)}
+ .lg-tb tr.lg-r>td{display:block;padding:0;border:0;min-width:0}
+ .lg-tb tr.lg-r>td:nth-child(2){grid-column:1;grid-row:1 / span 3}
+ .lg-tb tr.lg-r>td:nth-child(3){grid-column:2;grid-row:1;overflow-wrap:anywhere}
+ .lg-tb tr.lg-r>td.lg-t{grid-column:2;grid-row:2;font-size:12px;color:var(--muted)}
+ .lg-tb tr.lg-r>td:nth-child(4){grid-column:2;grid-row:3;font-size:12px}
+ .lg-tb tr.lg-r>td.lg-in,.lg-tb tr.lg-r>td.lg-out{grid-column:3;grid-row:1;white-space:nowrap;font-weight:800}
+ .lg-tb tr.lg-r>td.lg-in:empty,.lg-tb tr.lg-r>td.lg-out:empty{display:none}
+ .lg-tb tr.lg-r>td:nth-child(7){grid-column:3;grid-row:2;font-size:12px;text-align:right}
+}
 .chips2 button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;font-weight:700;color:var(--navy)}.chips2 button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
 .stbl{width:100%;border-collapse:collapse;font-size:14px}.stbl th{text-align:left;font-size:12px;color:var(--muted);text-transform:uppercase;padding:8px 6px;border-bottom:1px solid var(--line)}
 .stbl td{padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:middle}.stbl .r{text-align:right}.stbl select.edit-in{min-width:150px;width:100%}
@@ -953,6 +979,7 @@ details.sec .tile .ic{width:36px;height:36px}details.sec .tile .due{display:none
  body.sidenav #seg{display:block!important;background:transparent;border:0;box-shadow:none;padding:0;min-width:0}
  body.sidenav #seg .sn-mbar{display:flex;align-items:center;gap:10px;width:100%;border:1px solid var(--line)!important;border-radius:12px!important;background:#fff!important;padding:10px 12px!important;font:inherit;color:var(--ink)!important;cursor:pointer;white-space:normal}
  .sn-mb{font-size:22px;line-height:1}.sn-ml{flex:1;min-width:0;text-align:left;font-weight:800;font-size:16px;color:#B3191B}.sn-mm{font-size:13px;color:var(--muted);font-weight:700}
+ @media(max-width:899px){.sy-t{display:none}}   /* phone: header shows only the green dot */
  body.sidenav.snopen .sn-back{display:block;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:40}
  body.sidenav .snav{display:none}
  body.sidenav.snopen .snav{display:flex;flex-direction:column;gap:2px;position:fixed;z-index:41;top:0;bottom:0;left:0;width:min(86vw,320px);background:#fff;overflow:auto;padding:calc(10px + env(safe-area-inset-top,0px)) 10px 16px;box-shadow:4px 0 20px rgba(0,0,0,.2)}
@@ -1049,7 +1076,7 @@ details.oh-card>summary::-webkit-details-marker{display:none}
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 09 · 06:45 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 09 · 07:30 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -1315,7 +1342,8 @@ function liveWarn(o){if(o.dispatched)return null;const now=new Date(),t=hm(now),
 const dirtyOrders=()=>db.orders.filter(o=>base[o.id]!==J(o));
 function setSync(s){const el=$('#sync');if(!el)return;
   el.className='sync'+(s==='off'?' off':'');
-  el.textContent={ok:'● Online',saving:'⟳ Saving…',off:'⚠ No internet — will sync',load:'⟳ Loading…'}[s]||s}
+  if(s==='ok'){el.innerHTML='● <span class="sy-t">Online</span>';el.title='Online';return}el.title='';
+  el.textContent={saving:'⟳ Saving…',off:'⚠ No internet — will sync',load:'⟳ Loading…'}[s]||s}
 function cacheLocal(){try{localStorage.setItem(CACHE,J({u:me&&me.id,orders:db.orders,base,ver}))}catch(e){}}
 // APPROVAL FOLLOWS THE PREPARED QTY: if the prepared qty of an approved short item changes (e.g. 1.79 → 0, or back to preparation),
 // that approval no longer counts → its balance / carry-over is removed and the item goes back to "for approval" with the new short.
@@ -1752,7 +1780,8 @@ $('#login').addEventListener('submit',async e=>{e.preventDefault();
   try{r.user.role=normRole(r.user.role);
     try{localStorage.setItem('dp_last_login_'+MODE,login)}catch(_){}
     let note='';if(proc&&PROCS[proc]&&!PROCS[proc].roles.includes(r.user.role)){note=' — '+PROCS[proc].t+' is not for your account, here are your screens';proc=null}
-    session={token:r.token,user:r.user,at:Date.now(),login};localStorage.setItem(SESS,J(session));pickUser=null;start(true);land();toast('Welcome, '+r.user.name+note)}
+    session={token:r.token,user:r.user,at:Date.now(),login};localStorage.setItem(SESS,J(session));pickUser=null;document.body.classList.add('sncol');try{localStorage.setItem('fms_sncol','1')}catch(_){}   /* PC: menu starts collapsed (icons only) after login */
+    start(true);land();toast('Welcome, '+r.user.name+note)}
   catch(err){console.error(err);btn.disabled=false;$('#login').classList.add('on');$('#pinerr').innerHTML='⚠ The app could not open your screen: <b>'+esc(errMsg(err))+'</b><br>Take a screenshot of this and send it to the developer.'}});
 /* ---------- STAFF ACCOUNT: User ID + password (forgot it -> the Manager resets it) ---------- */
 const PWR=[['8+ characters',p=>p.length>=8],['UPPERCASE',p=>/[A-Z]/.test(p)],['lowercase',p=>/[a-z]/.test(p)],['number',p=>/\d/.test(p)],['symbol',p=>/[^A-Za-z0-9]/.test(p)]];
@@ -2957,14 +2986,14 @@ function acCsv(){downloadCsv([['Date','Time','Type','What','Details','Reference'
 
 /* ---------- SIDE MENU (tablet / computer) ---------- */
 let SNST={};try{SNST=JSON.parse(localStorage.getItem('fms_snst')||'{}')||{}}catch(e){}   // open / closed state of each dropdown
-try{if(localStorage.getItem('fms_sncol')==='1')document.body.classList.add('sncol')}catch(e){}
+try{if(localStorage.getItem('fms_sncol')!=='0')document.body.classList.add('sncol')}catch(e){document.body.classList.add('sncol')}   // default: collapsed
 const snIc=t=>{const m=String(t).match(/^(\p{Extended_Pictographic}️?|[↩⏱⇄✕])\s*/u);return m?[m[1],String(t).slice(m[0].length)]:['•',String(t)]};
 // node: {ic,t,n,c,attrs,on,kids:[...],key}
 function snNode(x,lvl){const open=x.kids&&x.kids.length&&(x.key in SNST?SNST[x.key]:!!(x.on||x.kidOn));
   return `<div class="sn-row${x.on?' on':''}${x.g?' sn-main g-'+x.g:''}" style="${x.c?'--oc:'+x.c:''}"><button class="sn-item" ${x.attrs} title="${esc(x.t)}"><span class="sn-ic">${x.ic}</span><span class="sn-lbl">${esc(x.t)}</span>${x.n?`<span class="sn-n">${x.n}</span>`:''}</button>${x.kids&&x.kids.length?`<button class="sn-car" data-sntog="${esc(x.key)}" aria-label="Show / hide">${open?'▾':'▸'}</button>`:''}</div>
     ${open?`<div class="sn-sub">${x.kids.map(k=>snNode(k,lvl+1)).join('')}</div>`:''}`}
 function snCur(nodes){let r=null;const w=xs=>xs.forEach(x=>{if(x.on)r=x;if(x.kids)w(x.kids)});w(nodes);return r}
-function snavHTML(nodes,title){const c=snCur(nodes);return `<button class="sn-mbar" data-snm aria-label="Open the menu"><span class="sn-mb">☰</span><span class="sn-ml">${c?c.ic+' '+esc(c.t):esc(title)}</span><span class="sn-mm">Menu ▾</span></button><div class="sn-back" data-snm></div><nav class="snav"><div class="sn-top"><button class="sn-burger" data-snb title="Collapse / expand the menu">☰</button><span class="sn-title">${esc(title)}</span></div>${nodes.map(x=>snNode(x,0)).join('')}</nav>`}
+function snavHTML(nodes,title){const c=snCur(nodes);return `<button class="sn-mbar" data-snm aria-label="Open the menu"><span class="sn-mb">☰</span><span class="sn-ml">${c?c.ic+' '+esc(c.t):esc(title)}</span></button><div class="sn-back" data-snm></div><nav class="snav"><div class="sn-top"><button class="sn-burger" data-snb title="Collapse / expand the menu">☰</button><span class="sn-title">${esc(title)}</span></div>${nodes.map(x=>snNode(x,0)).join('')}</nav>`}
 
 /* ---------- OPERATIONS HOME: what matters NOW (clean, one look) ---------- */
 function opsHomeHTML(prepTodo,dispTodo,way){
@@ -2983,7 +3012,9 @@ function opsHomeHTML(prepTodo,dispTodo,way){
   const dO=db.orders.filter(o=>!o.closed&&o.delivery===td);
   const dRows=dO.filter(o=>!o.balanceOf).map(o=>{const p=act(o).filter(done).length;return {o,p,x:out(o)?p:0}}).filter(r=>r.p||act(r.o).length);   // 'deliver later today' balances: shown as a warning only
   const dP=dRows.reduce((a,r)=>a+r.p,0),dX=dRows.reduce((a,r)=>a+r.x,0);
-  const later=[];dO.forEach(o=>act(o).forEach(i=>{if(i.short&&i.short.d==='later')later.push({o,i})}));
+  const fuO=i=>madeOK(i)?find(i.short.made.o):null;   // where the follow-up really is now
+  const later=[],carried=[];dO.forEach(o=>act(o).forEach(i=>{if(!i.short||(i.short.d!=='later'&&!(i.short.mv&&i.short.d==='carry')))return;const t=fuO(i);
+    if(t&&t.delivery>td)carried.push({o,i,t});else if(i.short.d==='later'&&(!t||!out(t)))later.push({o,i})}));   // later-today: hide once it went out · moved to another day: show as carried over
   // ON-TIME / LATE dispatch (advance orders due today)
   const due=dO.filter(o=>!o.online&&!o.balanceOf);
   const onT=due.filter(o=>out(o)&&rating(o)==='std'),lateO=due.filter(o=>out(o)&&rating(o)&&rating(o)!=='std'),overO=hm>=dCut?due.filter(o=>!out(o)):[];   // late = already dispatched late · overdue = still not out
@@ -3004,7 +3035,8 @@ function opsHomeHTML(prepTodo,dispTodo,way){
   const card=(key,ic,title,big,sub,st,pct,body)=>`<details class="oh-card oh-${st}"${OHOPEN.has(key)?' open':''} data-ohk="${key}"><summary><span class="oh-ic">${ic}</span><span class="oh-t">${title}</span><span class="oh-big">${big}</span><span class="oh-sub">${sub}</span>${pct!=null?`<span class="oh-bar"><i style="width:${Math.round(pct*100)}%"></i></span>`:''}<span class="oh-more">${body?'tap to see the list ▾':''}</span></summary>${body?`<div class="oh-list">${body}</div>`:''}</details>`;
   const pSt=!pN?'ok':pD===pN?'ok':hm>=pCut?'bad':'warn',dSt=!dP?'ok':dX===dP?'ok':hm>=dCut?'bad':'warn';
   const pBody=pRows.sort((a,b)=>(a.d===a.n)-(b.d===b.n)).map(r=>row(r.o,`${r.o.delivery===td?(r.o.balanceOf?'🕒 later today · ':'today · '):''}${r.d}/${r.n} items`,r.d===r.n?'ok':hm>=pCut?'bad':'warn')).join('');
-  const dBody=(later.length?`<div class="oh-warn-box">⚠ Deliver later today: ${later.map(x=>esc(x.i.product)+' '+fmt(shortOf(x.i))+' '+esc(x.i.unit)+' ('+esc(x.o.customer)+')').join(' · ')}</div>`:'')+dRows.sort((a,b)=>(a.x===a.p)-(b.x===b.p)).map(r=>row(r.o,`${r.x}/${r.p} items`,r.x===r.p&&r.p?'ok':hm>=dCut?'bad':'warn')).join('');
+  const dBody=(later.length?`<div class="oh-warn-box">⚠ Deliver later today: ${later.map(x=>esc(x.i.product)+' '+fmt(shortOf(x.i))+' '+esc(x.i.unit)+' ('+esc(x.o.customer)+')').join(' · ')}</div>`:'')
+    +(carried.length?`<div class="oh-warn-box" style="background:#EEF4FF;color:#1D4ED8">↪ Carried over (not delivered later today): ${carried.map(x=>esc(x.i.product)+' '+fmt(shortOf(x.i))+' '+esc(x.i.unit)+' ('+esc(x.o.customer)+') → '+day(x.t.delivery)).join(' · ')}</div>`:'')+dRows.sort((a,b)=>(a.x===a.p)-(b.x===b.p)).map(r=>row(r.o,`${r.x}/${r.p} items`,r.x===r.p&&r.p?'ok':hm>=dCut?'bad':'warn')).join('');
   const tm=o=>o.dispatched?time12(new Date(o.dispatched.at)):'not yet out';
   return `<div class="oh">
     <div class="oh-now oh-${nc}"><span class="oh-nl">NOW</span><b>${now1}</b><span>${now2}</span></div>
@@ -3015,12 +3047,24 @@ function opsHomeHTML(prepTodo,dispTodo,way){
       ${overO.length?card('over','🚨','Overdue — not yet out',overO.length,'past '+t24(settings.stdBefore)+' — dispatch now','bad',null,overO.map(o=>row(o,'not yet out','bad')).join('')):''}
       ${card('late','⏱','Late dispatch',lateO.length,lateO.length?'dispatched after '+t24(settings.stdBefore):'none late',lateO.length?'bad':'ok',null,lateO.map(o=>row(o,'out '+tm(o),'bad')).join(''))}
       ${card('short','📉','Short deliveries',shortL.length,shortL.length?`product${shortL.length>1?'s':''} short / carried over`:'none today',shortL.length?'warn':'ok',null,
-        shortL.map(({o,i,q})=>`<button class="oh-li oh-warn" data-jump="${o.id}"><span>${esc(i.product)} <small>· ${esc(o.customer)}</small></span><b>${fmt(q)} ${esc(i.unit)} · ${i.short?SH[i.short.d]:'for approval'}</b><i>›</i></button>`).join(''))}
+        shortL.map(({o,i,q})=>`<button class="oh-li oh-warn" data-jump="${o.id}"><span>${esc(i.product)} <small>· ${esc(o.customer)}</small></span><b>${fmt(q)} ${esc(i.unit)} · ${(()=>{if(!i.short)return 'for approval';const t=fuO(i);return t&&t.delivery>td?'Carry over → '+day(t.delivery):SH[i.short.d]})()}</b><i>›</i></button>`).join(''))}
       ${card('appr','✋','Approval list',appr.length,appr.length?'short item(s) waiting for the manager':'nothing waiting',appr.length?'warn':'ok',null,
         appr.map(({o,i,q})=>`<button class="oh-li oh-warn" data-jump="${o.id}"><span>${esc(o.customer)} <small>· ${day(o.delivery)}</small></span><b>${esc(i.product)} short ${fmt(q)} ${esc(i.unit)}</b><i>›</i></button>`).join(''))}
     </div>
   </div>`}
 let OHOPEN=new Set();
+/* every single-choice chip filter (.chips2 with a selected button) shows as ONE dropdown — simpler, cleaner, phone-friendly */
+function chipsToSelect(){document.querySelectorAll('.chips2:not(.cv):not(.owtabs):not(.nosel)').forEach(box=>{
+  const B=[...box.children].filter(b=>b.tagName==='BUTTON');if(B.length<2||!B.some(b=>b.classList.contains('on'))||box.querySelector('[data-rw]'))return;
+  const sel=document.createElement('select');sel.className='chipsel';
+  B.forEach((b,k)=>{const o=document.createElement('option');o.value=k;o.textContent=b.textContent.replace(/\s+/g,' ').trim();if(b.disabled)o.disabled=true;if(b.classList.contains('on'))o.selected=true;sel.appendChild(o)});
+  sel.addEventListener('change',()=>{const b=B[+sel.value];if(b)b.click()});
+  box.classList.add('cv');
+  let pv=box.previousElementSibling;while(pv&&pv.classList.contains('cv'))pv=pv.previousElementSibling;   // two filters in a row → side by side
+  if(pv&&pv.matches('select.chipsel,.csrow')){let row=pv;if(pv.tagName==='SELECT'){row=document.createElement('div');row.className='csrow';pv.before(row);row.appendChild(pv)}row.appendChild(sel)}   // the hidden chips stay in place: the dropdown clicks them
+  else box.after(sel)})}
+new MutationObserver(()=>{if(chipsToSelect.t)return;chipsToSelect.t=requestAnimationFrame(()=>{chipsToSelect.t=0;chipsToSelect()})}).observe(document.documentElement,{childList:true,subtree:true});
+
 document.addEventListener('toggle',e=>{const d=e.target;if(!(d&&d.dataset&&d.dataset.ohk))return;
   if(d.open){OHOPEN.clear();OHOPEN.add(d.dataset.ohk);document.querySelectorAll('details.oh-card[open]').forEach(x=>{if(x!==d)x.open=false})}else OHOPEN.delete(d.dataset.ohk)},true);   // one list open at a time
 
@@ -3064,7 +3108,7 @@ const ymdL=d=>{const z=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+z
 function srPreset(k){const t=new Date(),y=t.getFullYear(),m=t.getMonth();
   return {today:[t,t],yday:[new Date(y,m,t.getDate()-1),new Date(y,m,t.getDate()-1)],week:[new Date(y,m,t.getDate()-((t.getDay()+6)%7)),t],
     month:[new Date(y,m,1),t],last:[new Date(y,m-1,1),new Date(y,m,0)],year:[new Date(y,0,1),t]}[k].map(ymdL)}
-let SRF={from:ymdL(new Date(new Date().getFullYear(),new Date().getMonth(),1)),to:ymdL(new Date()),pre:'month',group:'day',cust:'',ch:''},SR=null,SRload=false,SRerr='';
+let SRF={from:ymdL(new Date()),to:ymdL(new Date()),pre:'today',group:'day',cust:'',ch:''},SR=null,SRload=false,SRerr='';
 function srLoad(){if(SRload)return;SRload=true;SRerr='';const k=SRF.from+'|'+SRF.to;
   api('api_salesReport',session.token,SRF.from,SRF.to).then(r=>{SR=r;SR.key=k}).catch(e=>{SRerr=errMsg(e)}).finally(()=>{SRload=false;if(view==='srep')drawStock()})}
 const SMON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -3116,7 +3160,7 @@ function srepHTML(){
       ${L.slice().reverse().slice(0,400).map(l=>`<tr><td>${srDay(l.d)}</td><td>${esc(l.no)}${l.dr?'<br><small class="unit">'+esc(l.dr)+'</small>':''}</td><td>${esc(l.customer)}</td><td>${esc(l.ch)}</td><td>${esc(l.name)}${l.label&&!l.code&&l.name!=='Discount'?' · '+esc(l.label):''}</td><td class="r">${qf(l.qty)} ${esc(l.unit||'')}</td><td class="r">${peso(l.price)}</td><td class="r">${peso(l.amount)}</td>${l.pend?'<td class="r" colspan="2"><b class="warn">⏳ cost pending</b></td>':`<td class="r">${peso(l.costAmt)}${l.est?'*':''}${l.settled?'<br><small class="unit">cost from '+esc(l.settled)+'</small>':''}</td><td class="r">${peso(l.amount-l.costAmt)}</td>`}</tr>`).join('')}</tbody></table></div>
       ${L.length>400?'<div class="unit">Showing the latest 400 — download the CSV for all.</div>':''}</details>`}`}
 /* ---------- CUSTOMER SALES — detailed report by customer and date range (statement-style) ---------- */
-let CRF={from:ymdL(new Date(new Date().getFullYear(),new Date().getMonth(),1)),to:ymdL(new Date()),pre:'month',cust:''},CR=null,CRload=false,CRerr='';
+let CRF={from:ymdL(new Date()),to:ymdL(new Date()),pre:'today',cust:''},CR=null,CRload=false,CRerr='';
 function crLoad(){if(CRload)return;CRload=true;CRerr='';const k=CRF.from+'|'+CRF.to;
   api('api_salesReport',session.token,CRF.from,CRF.to).then(r=>{CR=r;CR.key=k}).catch(e=>{CRerr=errMsg(e)}).finally(()=>{CRload=false;if(view==='crep')drawStock()})}
 function crData(){const L=CR.lines.filter(l=>!CRF.cust||l.customer===CRF.cust),R=new Map();
@@ -3219,7 +3263,7 @@ function owAccounts(){const O=OW;
     <div class="panel"><h3>⇄ Transfers · owner's capital & drawings · loans · ${ymLbl(O.ym)}</h3>${O.moves.map(m=>`<div class="posx-row"><span>${day(m.d)} · <b>${esc(m.type)}</b> ${m.from?esc(owAcc(m.from)):''}${m.from&&m.to?' → ':''}${m.to?esc(owAcc(m.to)):''} <small class="unit">${esc(m.note)}</small></span><b>${peso(m.amt)} <button class="del" data-owdel="move:${m.id}">✕</button></b></div>`).join('')||'<div class="unit">None this month.</div>'}</div>
     <div class="row-end" style="justify-content:flex-start"><button class="go" data-owhist="">📜 Money history — every peso in and out, all accounts</button></div>`}
 /* ---------- 📜 MONEY HISTORY: statement per account — time, what, from / to, who, in, out, running balance ---------- */
-let LG={acc:'',from:ymdL(new Date(new Date().getFullYear(),new Date().getMonth(),1)),to:ymdL(new Date()),pre:'month',q:'',kind:'',grp:true},LGD=null,LGload=false,LGerr='';
+let LG={acc:'',from:ymdL(new Date()),to:ymdL(new Date()),pre:'today',q:'',kind:'',grp:true},LGD=null,LGload=false,LGerr='';
 const lgKey=()=>LG.acc+'|'+LG.from+'|'+LG.to;
 function lgLoad(){if(LGload)return;LGload=true;LGerr='';const k=lgKey();api('api_accLedger',session.token,LG.acc,LG.from,LG.to).then(r=>{LGD=r;LGD.key=k}).catch(e=>LGerr=errMsg(e)).finally(()=>{LGload=false;if(view==='owner'&&OWtab==='hist')drawStock()})}
 const LGK={sale:['🧾','Sales'],collection:['💳','Charge collected'],transfer:['⇄','Transfer'],cashin:['➕','Cash in'],expense:['💸','Expense'],purchase:['🚚','Supplier'],billpay:['📄','Bill paid'],cashshort:['⚖','Short / over'],
@@ -3233,7 +3277,7 @@ function lgRows(){const q=LG.q.trim().toLowerCase();let L=LGD.rows.filter(r=>lgM
 const lgTime=r=>r.t?new Date(r.t).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}):'';
 function owHist(){if((!LGD||LGD.key!==lgKey())&&!LGerr)lgLoad();const ok=LGD&&LGD.key===lgKey(),A=OW.accounts;
   const P=[['today','Today'],['yday','Yesterday'],['week','This week'],['month','This month'],['last','Last month']];
-  const head=`<div class="panel"><div class="poh"><h3 style="margin:0">📜 Money history</h3><span style="flex:1"></span><button class="btn sm" data-lgprint${ok?'':' disabled'}>🖨 Print</button><button class="btn sm" data-lgcsv${ok?'':' disabled'}>⬇ CSV</button><button class="btn sm" data-lgre>↻</button></div>
+  const head=`<div class="panel"><div class="poh lg-h"><h3 style="margin:0">📜 Money history</h3><span style="flex:1"></span><span class="lg-btns"><button class="btn sm" data-lgprint${ok?'':' disabled'} title="Print">🖨<span class="lg-bt"> Print</span></button><button class="btn sm" data-lgcsv${ok?'':' disabled'} title="Download CSV">⬇<span class="lg-bt"> CSV</span></button><button class="btn sm" data-lgre title="Refresh">↻</button></span></div>
     <div class="chips2 lg-acc"><button class="${LG.acc===''?'on':''}" data-lga="">🗂 All accounts</button>${A.map(a=>`<button class="${LG.acc===a.id?'on':''}" data-lga="${a.id}">${ACCI[a.type]||''} ${esc(a.name)}</button>`).join('')}</div>
     <div class="chips2" style="margin-top:6px">${P.map(([k,t])=>`<button class="${LG.pre===k?'on':''}" data-lgp="${k}">${t}</button>`).join('')}</div>
     <div class="srrow"><label>From <input type="date" class="edit-in" data-lgf="from" value="${LG.from}"></label><label>To <input type="date" class="edit-in" data-lgf="to" value="${LG.to}"></label>
@@ -3243,7 +3287,7 @@ function owHist(){if((!LGD||LGD.key!==lgKey())&&!LGerr)lgLoad();const ok=LGD&&LG
   if(LGerr)return head+`<div class="empty">⚠ ${esc(LGerr)}</div>`;
   if(!ok)return head+'<div class="empty">Loading…</div>';
   const D=LGD,L=lgRows(),one=!!D.acc,fil=LG.kind||LG.q.trim(),sIn=L.reduce((a,r)=>a+(r.amt>0?r.amt:0),0),sOut=L.reduce((a,r)=>a+(r.amt<0?-r.amt:0),0);
-  const kp=`<div class="kpis lg-kp">${one?`<div><b>${peso(D.open)}</b><span>balance at the start · ${day(D.from)}</span></div>`:''}<div><b style="color:var(--green)">+${peso(fil?sIn:D.tin)}</b><span>money in</span></div><div><b style="color:var(--rose)">−${peso(fil?sOut:D.tout)}</b><span>money out</span></div>
+  const kp=`<div class="kpis lg-kp${one?' has4':''}">${one?`<div><b>${peso(D.open)}</b><span>balance at the start · ${day(D.from)}</span></div>`:''}<div><b style="color:var(--green)">+${peso(fil?sIn:D.tin)}</b><span>money in</span></div><div><b style="color:var(--rose)">−${peso(fil?sOut:D.tout)}</b><span>money out</span></div>
     ${one?`<div class="big"><b>${peso(D.close)}</b><span>balance at the end · ${day(D.to)}</span></div>`:`<div><b>${peso(D.tin-D.tout)}</b><span>net</span></div>`}</div>`;
   if(!L.length)return head+kp+'<div class="empty">No money moved in these dates.</div>';
   const days=[];L.forEach(r=>{let g=days[days.length-1];if(!g||g.d!==r.d){g={d:r.d,rows:[],in:0,out:0};days.push(g)}g.rows.push(r);if(r.amt>0)g.in+=r.amt;else g.out-=r.amt;g.end=r.bal});
@@ -4097,7 +4141,7 @@ function poPayHTML(p){const I=p.payInfo;if(!I||me.role!=='manager')return '';con
     ${I.pays.map(x=>`<br>&nbsp;&nbsp;· ${stamp(x.at)} <b>${peso(x.amt)}</b> ${x.via==='drawer'?'from the POS drawer (cashier)':x.via==='auto'?'cash (old record)':esc(x.method||'')+' from '+esc(acc(x.acc))}${x.ref?' · ref '+esc(x.ref):''}${x.by?' · '+esc(x.by):''}${x.via==='mgr'?` <button class="del" data-ppdel="${p.id}:${x.id}" title="Remove this payment">✕</button>`:''}`).join('')}</div>
     ${I.bal>0.009&&p.status!=='cancelled'?`<div class="row-end" style="justify-content:flex-start"><button class="go sm" data-popay="${p.id}">💳 Pay${I.paid?' balance':''}</button></div>`:''}`}
 /* ---------- RECEIVING REPORT ---------- */
-let RVrep=false,RVF={from:ymdL(new Date(new Date().getFullYear(),new Date().getMonth(),1)),to:ymdL(new Date()),pre:'month',sup:''},RV=null,RVload=false,RVerr='',RVtab='all';
+let RVrep=false,RVF={from:ymdL(new Date()),to:ymdL(new Date()),pre:'today',sup:''},RV=null,RVload=false,RVerr='',RVtab='all';
 function rvLoad(){if(RVload)return;RVload=true;RVerr='';const k=RVF.from+'|'+RVF.to;api('api_recvReport',session.token,RVF.from,RVF.to).then(r=>{RV=r;RV.key=k}).catch(e=>RVerr=errMsg(e)).finally(()=>{RVload=false;if(view==='recv'&&RVrep)drawStock()})}
 function rvHTML(){const key=RVF.from+'|'+RVF.to;if((!RV||RV.key!==key)&&!RVerr)rvLoad();const ok=RV&&RV.key===key,M=ok&&RV.mgr;
   const P=[['today','Today'],['yday','Yesterday'],['week','This week'],['month','This month'],['last','Last month'],['year','This year']];
