@@ -487,6 +487,15 @@ header h1 .tt small{display:block;font-size:11px;color:var(--sky2);letter-spacin
 .rcpt .rr{display:flex;justify-content:space-between;gap:8px}.rcpt .rr span:last-child{text-align:right;white-space:nowrap}.rcpt .rr.h{font-weight:900}.rcpt .ri{font-weight:900;margin-top:3px}
 .rcpt .rd{border-top:2px dashed #000;margin:6px 0}.rcpt .rs{margin-top:8px}.rcpt .rcopy{text-align:center;margin-top:8px;font-weight:900;border:2px solid #000;padding:3px}.rcpt s{text-decoration-thickness:2px}
 .rcut{text-align:center;color:#888;margin:8px 0;font-family:monospace}
+/* 🔔 approvals button + inbox */
+.me.apb{position:relative}.me.apb .apn{position:absolute;top:-6px;right:-6px;min-width:20px;height:20px;border-radius:99px;background:#F5C518;color:#3A2A00;font-size:12px;font-weight:900;display:none;place-items:center;padding:0 5px;box-shadow:0 0 0 2px #B3191B}
+.me.apb.has .apn{display:grid}.me.apb.has{animation:apbp 2.4s ease-in-out infinite}
+@keyframes apbp{0%,100%{box-shadow:0 0 0 0 rgba(245,197,24,0)}50%{box-shadow:0 0 0 4px rgba(245,197,24,.35)}}
+@media(max-width:600px){.me.apb small{display:none}}
+.apr-g{margin-top:12px}.apr-h{font-weight:800;font-size:14px;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;margin-bottom:6px}.apr-h b{background:#B3191B;color:#fff;border-radius:99px;padding:1px 8px;margin-left:4px;font-size:12px}
+.apr-i{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:6px;cursor:pointer;font:inherit;color:var(--ink)}
+.apr-i:hover{border-color:#F5C518;background:#FFFBEA}.apr-i span{flex:1;min-width:0;display:flex;flex-direction:column}.apr-i small{color:var(--muted);font-size:12.5px}
+.apr-i em{font-style:normal;font-weight:800;font-size:12.5px;background:#FFF6D1;color:#7A4E00;padding:4px 10px;border-radius:99px;white-space:nowrap}.apr-i i{color:#9AA8B3;font-style:normal}
 /* phone print preview */
 #pvw{display:none;position:fixed;inset:0;z-index:9999;background:#F4F4F4;flex-direction:column}
 #pvw.on{display:flex}
@@ -1194,6 +1203,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
   <h1 id="apptitle"><span class="b3 logo3f">3F</span><span class="tt">3FMS SYSTEM<small>3F Meatshop</small></span></h1>
   <button class="me" id="home" style="display:none">🏠<small>Processes</small></button>
   <span class="sync" id="sync">…</span>
+  <button class="me apb" id="apb" style="display:none" title="Pending approval">🔔<b class="apn" id="apn"></b><small>Approvals</small></button>
   <button class="me" id="swu" style="display:none" title="Log out so the next person logs in with their own account">⇄<small>Switch user</small></button>
   <button class="me" id="me"></button>
   <div class="clock"><b id="clk">--:--:--</b><small id="clkd"></small></div>
@@ -1211,7 +1221,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 10 · 08:05 AM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 10 · 12:00 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -1987,6 +1997,33 @@ let view='prep', openId=null, editId=null, dateF=null, notes=new Set(); const fi
 const DEPT_OF={pos:'pos',owner:'fin',hr:'hr',kpi:'hr',srep:'sales',crep:'sales',points:'sales',memb:'sales'};
 const deptOf=v=>DEPT_OF[v]||'ops';
 let DLAST={};try{DLAST=JSON.parse(localStorage.getItem('fms_dlast')||'{}')}catch(e){}
+/* ---------- 🔔 PENDING APPROVAL — manager inbox in the header (all departments) ---------- */
+let APR=null,aprBusy=false;
+function aprShorts(){const L=[];db.orders.filter(o=>live(o)&&!(o.dispatched||o.delivered)&&!o.posSale).forEach(o=>check(o).pend.forEach(i=>L.push({o,i,q:shortOf(i)})));return L}
+function aprGroups(){const A=APR||{rcv:[],ot:[],z:[],claims:[],ws:[]},sh=aprShorts(),ret=retList('for approval'),onl=db.orders.filter(o=>o.online&&o.online.status==='pending');
+  return [
+   {k:'rcv',ic:'📥',t:'Receiving',L:A.rcv.map(p=>({t:esc(p.no||'P.O.')+' · '+esc(p.supplier),s:(p.by?'by '+esc(p.by)+' · ':'')+(p.at?time12(new Date(p.at)):''),pill:p.diff?'Short / over':'Check',go:'v:po'}))},
+   {k:'short',ic:'⚖️',t:'Short items',L:sh.map(({o,i,q})=>({t:esc(i.product)+' · '+esc(o.customer),s:day(o.delivery),pill:'Short '+fmt(q)+' '+esc(i.unit),go:'o:'+o.id}))},
+   {k:'ret',ic:'↩',t:'Returns',L:ret.map(({o})=>({t:esc(o.customer),s:day(o.delivery),pill:'Return',go:'o:'+o.id}))},
+   {k:'onl',ic:'🛒',t:'Online orders to confirm',L:onl.map(o=>({t:esc(o.customer),s:esc(o.online.no||'')+' · '+day(o.delivery),pill:'Confirm',go:'v:online'}))},
+   {k:'cnt',ic:'🧮',t:'Stock count',L:A.cnt?[{t:'Stock count submitted',s:(A.cnt.by?'by '+esc(A.cnt.by)+' · ':'')+(A.cnt.at?stamp(A.cnt.at):''),pill:'Review',go:'v:count'}]:[]},
+   {k:'ot',ic:'⏱',t:'OT requests',L:A.ot.map(o=>({t:esc(o.name),s:day(o.d)+' · '+esc(o.from||'')+'–'+esc(o.to||''),pill:Math.round(o.min||0)+' min',go:'h:ot'}))},
+   {k:'z',ic:'💵',t:'Cash over / short (Z)',L:A.z.map(q=>({t:'Shift '+esc(q.shift)+' · '+esc(q.closeBy||''),s:day(q.d),pill:(q.amt>0?'Over ':'Short ')+peso(Math.abs(q.amt)),go:'f:col'}))},
+   {k:'cl',ic:'⭐',t:'Points claims',L:A.claims.map(x=>({t:esc(x.name),s:'',pill:fmt(x.pts)+' pts',go:'v:points'}))},
+   {k:'ws',ic:'🏪',t:'Wholesale requests',L:A.ws.map(x=>({t:esc(x.name),s:'asked for wholesale prices',pill:'Review',go:'v:memb'}))}].filter(g=>g.L.length)}
+function aprCount(){return aprGroups().reduce((a,g)=>a+g.L.length,0)}
+function aprBadge(){const b=$('#apn');if(!b||!me||me.role!=='manager')return;const n=aprCount();b.textContent=n?String(n):'';$('#apb').classList.toggle('has',n>0)}
+async function aprLoad(force){if(!me||me.role!=='manager'||aprBusy)return;if(!force&&APR&&Date.now()-APR.at<60000)return aprBadge();aprBusy=true;
+  try{APR=await api('api_approvals',session.token);APR.at=Date.now()}catch(e){}aprBusy=false;aprBadge();if($('#stm.on #apr-list'))aprOpen()}
+function aprOpen(){const box=stBox(),G=aprGroups(),n=G.reduce((a,g)=>a+g.L.length,0);
+  $('#stb').innerHTML=`<h2>🔔 Pending approval</h2><div class="unit">${n?n+' waiting for you':'Nothing waiting — all clear ✓'} · <a href="#" id="apr-re">↻ refresh</a></div><div id="apr-list">${G.map(g=>`<div class="apr-g"><div class="apr-h">${g.ic} ${g.t} <b>${g.L.length}</b></div>${g.L.map(x=>`<button class="apr-i" data-aprgo="${x.go}"><span><b>${x.t}</b>${x.s?`<small>${x.s}</small>`:''}</span><em>${x.pill}</em><i>›</i></button>`).join('')}</div>`).join('')}</div>
+   <div class="row-end"><button class="btn" id="apr-x">Close</button></div>`;
+  box.classList.add('on');$('#apr-x').onclick=()=>box.classList.remove('on');$('#apr-re').onclick=e=>{e.preventDefault();aprLoad(true)};
+  $('#apr-list').onclick=e=>{const b=e.target.closest('[data-aprgo]');if(!b)return;box.classList.remove('on');const[k,v]=b.dataset.aprgo.split(':');
+    if(k==='o'){const t=find(v);if(t){view=stage(t);openId=t.id;editId=null;dateF=t.delivery;render();setTimeout(()=>{const el=document.getElementById('c-'+t.id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'})},60)}return}
+    if(k==='h')return deptGo('hr',v);if(k==='f')return deptGo('owner',v);deptGo(v)}}
+$('#apb').onclick=()=>{aprOpen();aprLoad(true)};
+setInterval(()=>{if(me&&me.role==='manager'&&!document.hidden)aprLoad()},60000);
 function deptDefs(c){return {
   ops:{ic:'🔪',t:'Operations',d:'Orders · stock · deliveries',c:'#B91C1C',n:c.onP+c.prep+c.disp+c.poA,tabs:[
     {v:'ohome',t:'🏠 Today'},{act:'neworder',t:'📋 Customer Orders'},{v:'online',t:'🛒 Online',n:c.onP},{v:'po',t:'📝 P.O.',n:c.poA},{v:'recv',t:'📥 Receiving'},{v:'prep',t:'⚖️ Preparation',n:c.prep},{v:'disp',t:'✅ Dispatch',n:c.disp},
@@ -2003,12 +2040,14 @@ async function deptAct(a){if(!me)return;if(a==='neworder')return $('#newbtn').cl
   if(a==='cdisc'){if(!OW){toast('Loading…');try{OW=await api('api_owner',session.token,OWym||'')}catch(e){return alert(errMsg(e))}}return custDiscDialog()}}
 function render(){
   if(!me)return;
+  if(me&&me.role==='manager')setTimeout(aprBadge,0);
   fixWtReq();   // older / carried-over lines ordered in pcs of a kg-stocked product → ask pcs + kg
   if(view!=='ohome')OHOPEN.clear();                     // leaving Today: every card closes again (names hidden until tapped)
   renderAttBar();
   PREPD=calcPrepd();
   if(can('dispatch')){db.orders.slice().forEach(spawnFollowUps);if(dirtyOrders().length)save()}
   $('#swu').style.display='none';   // Switch user button removed (use Account → Log out)
+  $('#apb').style.display=me.role==='manager'?'':'none';if(me.role==='manager')aprLoad();
   $('#me').innerHTML=`<b>${ROLES[me.role].i} ${esc(me.name)}</b><small>${me.role==='rider'?'My profile':ROLES[me.role].t+' · Account'}</small>`;
   $('#home').style.display='none';   // no 'Processes' link in the header — log out from your name button
   $('#newbtn').style.display=can('paste')&&me.role!=='manager'?'':'none';
@@ -2936,6 +2975,7 @@ document.addEventListener('click',async e=>{
   if(e.target.closest('[data-snb]')){if(window.innerWidth<900){document.body.classList.remove('snopen');return}const c=document.body.classList.toggle('sncol');try{localStorage.setItem('fms_sncol',c?'1':'0')}catch(_){}return}
   const tg=e.target.closest('[data-sntog]');if(tg){const k=tg.dataset.sntog;SNST[k]=tg.textContent.trim()!=='▾';try{localStorage.setItem('fms_snst',JSON.stringify(SNST))}catch(_){}render();return}
   const im=e.target.closest('img[data-ph]');if(im){$('#v-img').src=im.src;$('#v-cap').textContent=im.dataset.cap;$('#viewer').classList.add('on');return}
+  const og=e.target.closest('[data-ohgo]');if(og){view=og.dataset.ohgo;openId=null;editId=null;render();window.scrollTo(0,0);return}
   const j=e.target.closest('[data-jump]');if(j){const t=find(j.dataset.jump);if(t){view=stage(t);openId=t.id;editId=null;dateF=t.delivery;render();const el=document.getElementById('c-'+t.id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'})}return}
   const b=e.target.closest('button');if(!b||b.closest('.modal')||b.closest('#login'))return;const d=b.dataset;
   if(d.dept){fixing.clear();const L=DLAST[d.dept];if(L&&deptOf(L.v)===d.dept)return deptGo(L.v,L.sub);const T=deptDefs({}),f=T[d.dept].tabs.find(t=>t.v);return deptGo(f.v,f.sub)}
@@ -3173,6 +3213,7 @@ function opsHomeHTML(prepTodo,dispTodo,way){
   const fuOut=i=>{if(!madeOK(i))return false;const t=find(i.short.made.o);return !!(t&&out(t))};
   const shortL=[];dO.filter(o=>!o.balanceOf).forEach(o=>act(o).forEach(i=>{const q=shortOf(i);if(!q)return;if(i.short&&i.short.d==='switch')return;if(i.short&&i.short.d==='later'&&fuOut(i))return;shortL.push({o,i,q})}));
   // APPROVAL LIST: short items waiting for the manager (any date)
+  // PENDING APPROVAL (manager): receiving waiting · returns waiting · short items on orders not yet out
   const appr=[];db.orders.filter(o=>live(o)&&!out(o)&&!o.posSale).forEach(o=>check(o).pend.forEach(i=>appr.push({o,i,q:shortOf(i)})));   // only orders still waiting to go out — already dispatched / delivered / billed ones are history
   appr.sort((a,b)=>a.o.delivery.localeCompare(b.o.delivery));
   const carry=db.orders.filter(o=>live(o)&&o.delivery<=tmr&&o.items.some(i=>i.carryFrom&&!/\d/.test(String(i.actual||'')))).length;
@@ -3207,8 +3248,6 @@ function opsHomeHTML(prepTodo,dispTodo,way){
       ${card('late','⏱','Late dispatch',lateO.length,lateO.length?'dispatched after '+t24(settings.stdBefore):'none late',lateO.length?'bad':'ok',null,lateO.map(o=>row(o,'Out '+tm(o),'bad')).join(''))}
       ${card('short','📉','Short deliveries',shortL.length,shortL.length?`product${shortL.length>1?'s':''} short / carried over`:'none today',shortL.length?'warn':'ok',null,
         shortL.map(({o,i,q})=>`<button class="oh-li oh-pr oh-warn" data-jump="${o.id}">${av(o.customer)}<span class="oh-nm"><b>${esc(i.product)}</b><small>${esc(o.customer)} · short ${fmt(q)} ${esc(i.unit)}</small></span>${pill((()=>{if(!i.short)return 'For approval';const t=fuO(i);return t&&t.delivery>td?'↪ '+day(t.delivery):SH[i.short.d]})(),'warn')}<i>›</i></button>`).join(''))}
-      ${card('appr','✋','Approval list',appr.length,appr.length?'short item(s) waiting for the manager':'nothing waiting',appr.length?'warn':'ok',null,
-        appr.map(({o,i,q})=>`<button class="oh-li oh-pr oh-warn" data-jump="${o.id}">${av(o.customer)}<span class="oh-nm"><b>${esc(i.product)}</b><small>${esc(o.customer)} · ${day(o.delivery)}</small></span>${pill('Short '+fmt(q)+' '+esc(i.unit),'warn')}<i>›</i></button>`).join(''))}
     </div>
   </div>`}
 let OHOPEN=new Set();
