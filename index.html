@@ -500,6 +500,7 @@ header h1 .tt small{display:block;font-size:11px;color:var(--sky2);letter-spacin
 .ctm-h{font-weight:800;font-size:14px;margin-bottom:4px}.ctm-k{margin:4px 0!important}
 .ctm-top{font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px;align-items:center}.ctm-top span{background:#fff;border:1px solid var(--line);border-radius:99px;padding:3px 10px}.ctm-top b{color:var(--rose)}
 .rfx thead{display:table-header-group!important}.rfx tr{display:table-row!important}.rfx td,.rfx th{display:table-cell!important;padding:6px 4px!important}.rfx input{width:72px!important}
+.ctdd{display:inline-grid;place-items:center;width:20px;height:20px;margin-left:5px;vertical-align:1px;cursor:pointer;border-radius:6px;background:#fff;border:1px solid var(--line);padding:0;color:var(--muted);font-size:11px;line-height:1}.ctdd:hover{border-color:#F5C518;color:var(--ink)}.ctdd.on{background:#FFF6D1;border-color:#F5C518;color:var(--ink);transform:rotate(180deg)}.ctlist{display:block;max-width:420px;margin-left:auto;margin-top:3px;line-height:1.5}.ctlist[hidden]{display:none}
 /* phone print preview */
 #pvw{display:none;position:fixed;inset:0;z-index:9999;background:#F4F4F4;flex-direction:column}
 #pvw.on{display:flex}
@@ -1226,7 +1227,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 10 · 10:00 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 10 · 10:20 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -3945,7 +3946,7 @@ function ctMoneyHTML(m,label){return `<div class="ctmoney"><div class="ctm-h">�
   ${m.top.length?`<div class="ctm-top">Biggest losses: ${m.top.map(x=>`<span>${esc(x.l.name)} <b>${x.d>0?'+':''}${qf(x.d)} ${esc(String(x.l.unit).toLowerCase())} · −${peso(-x.v)}</b></span>`).join('')}</div>`:''}</div>`}
 function ctVarRows(L,mode){const M=me.role==='manager',show=L.filter(l=>l.diff),rows=(mode==='all'?L:show);
   return `<div class="sc"><table class="stbl ctv"><thead><tr><th>Product</th><th class="r">System</th><th class="r">Counted</th><th class="r">Difference</th>${M?'<th class="r">Value</th>':''}<th>Reason</th></tr></thead><tbody>
-  ${rows.map(l=>`<tr class="${l.big?'ctbig':''}"><td><b>${esc(l.name)}</b><br><small class="unit">${esc(l.cat)}</small></td><td class="r">${qf(l.sys)} ${esc(l.unit)}</td><td class="r"><b>${qf(l.cnt)}</b>${l.ent&&l.ent.length>1?`<br><small class="unit">${l.ent.map((v,i)=>(i?(v<0?' − ':' + '):(v<0?'−':''))+qf(Math.abs(v))).join('')}</small>`:''}</td>
+  ${rows.map(l=>`<tr class="${l.big?'ctbig':''}"><td><b>${esc(l.name)}</b><br><small class="unit">${esc(l.cat)}</small></td><td class="r">${qf(l.sys)} ${esc(l.unit)}</td><td class="r"><b>${qf(l.cnt)}</b></td>
     <td class="r">${l.diff?`<b style="color:${l.diff<0?'var(--rose)':'var(--green)'}">${l.diff>0?'+':''}${qf(l.diff)}</b>`:'✓'}${l.big?'<br><span class="sb sb-red">BIG</span>':''}</td>${M?(()=>{const v=l.val!=null?l.val:(l.cost&&l.diff?r2(l.diff*l.cost):0);return `<td class="r" style="color:${v<0?'var(--rose)':'var(--green)'}"><b>${v?(v<0?'−':'+')+peso(Math.abs(v)):''}</b>${v&&l.cost?`<br><small class="unit">@ ${peso(l.cost)}/${esc(String(l.unit).toLowerCase())}</small>`:''}</td>`})():''}
     <td>${mode==='edit'&&l.diff?`<input class="edit-in" data-cw="${esc(l.code)}" value="${esc(CTrev.why[l.code]??l.why??'')}" placeholder="${l.big?'Required — e.g. spoiled, trimming, wrong entry':'optional'}">`:esc(l.why||'')}</td></tr>`).join('')||`<tr><td colspan="${M?6:5}" class="empty">✓ No variances — every count matches the system.</td></tr>`}</tbody></table></div>`}
 function countHTML(){if(!CT&&!CTerr){ctLoad();return '<div class="empty">Loading…</div>'}if(CTerr)return `<div class="empty">⚠ ${esc(CTerr)}<br><br><button class="btn" data-ctre>↻ Try again</button></div>`;
