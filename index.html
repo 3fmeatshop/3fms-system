@@ -499,6 +499,7 @@ header h1 .tt small{display:block;font-size:11px;color:var(--sky2);letter-spacin
 .ctmoney{border:1px solid #F3DDB0;background:#FFFBEA;border-radius:12px;padding:10px 12px;margin:10px 0}
 .ctm-h{font-weight:800;font-size:14px;margin-bottom:4px}.ctm-k{margin:4px 0!important}
 .ctm-top{font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px;align-items:center}.ctm-top span{background:#fff;border:1px solid var(--line);border-radius:99px;padding:3px 10px}.ctm-top b{color:var(--rose)}
+.rfx thead{display:table-header-group!important}.rfx tr{display:table-row!important}.rfx td,.rfx th{display:table-cell!important;padding:6px 4px!important}.rfx input{width:72px!important}
 /* phone print preview */
 #pvw{display:none;position:fixed;inset:0;z-index:9999;background:#F4F4F4;flex-direction:column}
 #pvw.on{display:flex}
@@ -511,6 +512,7 @@ header h1 .tt small{display:block;font-size:11px;color:var(--sky2);letter-spacin
 .pvw-paper .rcpt{max-width:none;margin:0}.pvw-paper .rcut{margin:14px 0}
 .pvw-paper table{width:100%;border-collapse:collapse}.pvw-paper td,.pvw-paper th{border:1px solid #999;padding:4px;font-size:12px;color:#000}
 @media print{#pvw{display:none!important}}
+.pvw-paper{overflow-x:auto}.pvw-paper thead{display:table-header-group!important}.pvw-paper tbody{display:table-row-group!important}.pvw-paper tr{display:table-row!important}.pvw-paper td,.pvw-paper th{display:table-cell!important}
 
 .onadmin{display:flex;gap:8px;justify-content:flex-end;margin:0 0 10px}
 .btn.sm,.go.sm{padding:7px 11px;font-size:14px;min-height:0}
@@ -1224,7 +1226,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 10 · 05:05 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 10 · 07:10 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -3506,6 +3508,24 @@ function owHist(){if((!LGD||LGD.key!==lgKey())&&!LGerr)lgLoad();const ok=LGD&&LG
 function lgCsv(){const L=lgRows(),one=!!LGD.acc,out=[['Date','Time','Account','Type','What','From / to','By','Ref','In','Out'].concat(one?['Balance']:[])];
   L.forEach(r=>out.push([r.d,lgTime(r),r.accName,(LGK[r.kind]||[])[1]||r.kind,r.what,r.other,r.by,r.ref,r.amt>0?r.amt:'',r.amt<0?-r.amt:''].concat(one?[r.bal]:[])));
   downloadCsv(out,'3FMS-money-'+(one?LGD.acc.name:'all').replace(/\W+/g,'_')+'-'+LG.from+'-to-'+LG.to+'.csv')}
+/* 🧮 STOCK COUNT REPORT — print / Save as PDF (variances first, then every product counted) */
+function ctPrint(X){const M=me.role==='manager',L=X.lines||[],V=L.filter(l=>l.diff).sort((a,b)=>(a.val||0)-(b.val||0)),u=l=>esc(String(l.unit||'').toLowerCase());
+  const loss=X.loss!=null?X.loss:V.reduce((a,l)=>a+(l.val<0?-l.val:0),0),gain=X.gain!=null?X.gain:V.reduce((a,l)=>a+(l.val>0?l.val:0),0);
+  const td='style="border:1px solid #999;padding:4px 6px"',tr='style="border:1px solid #999;padding:4px 6px;text-align:right"',th='style="border:1px solid #999;padding:5px 6px;background:#FFF6D1;text-align:left"';
+  $('#print').className='';
+  $('#print').innerHTML=`<div style="font-family:Arial,sans-serif;font-size:12px;color:#000"><div style="display:flex;align-items:center;gap:10px"><img src="${LOGO_3F}" style="width:56px;height:56px"><div><h2 style="margin:0">3F MEATSHOP</h2><div><b>Stock count report — ${esc(X.no)}</b></div><div>${stamp(X.at)}</div></div></div><hr>
+   <div>Counted by <b>${esc(X.by)}</b>${X.sub?' · submitted '+stamp(X.sub.at):''}${X.ok?' · approved by <b>'+esc(X.ok.by)+'</b> '+stamp(X.ok.at):' · <b>not approved yet</b>'}</div>
+   ${M?`<table style="border-collapse:collapse;margin:10px 0"><tr><td ${td}>Loss</td><td ${tr}><b>−${fmt2(loss)}</b></td><td ${td}>Gain</td><td ${tr}><b>+${fmt2(gain)}</b></td><td ${td}>Net</td><td ${tr}><b>${gain-loss<0?'−':'+'}${fmt2(Math.abs(gain-loss))}</b></td><td ${td}>Products with variance</td><td ${tr}><b>${V.length}</b> of ${L.length}</td></tr></table>`:''}
+   <h3 style="margin:12px 0 4px">Variances</h3>
+   <table style="width:100%;border-collapse:collapse"><thead><tr><th ${th}>Product</th><th ${th}>Category</th><th ${th}>System</th><th ${th}>Counted</th><th ${th}>Variance</th>${M?`<th ${th}>Cost</th><th ${th}>Value</th>`:''}<th ${th}>Reason</th></tr></thead><tbody>
+   ${V.map(l=>`<tr><td ${td}><b>${esc(l.name)}</b>${l.big?' ⚠':''}</td><td ${td}>${esc(l.cat)}</td><td ${tr}>${qf(l.sys)} ${u(l)}</td><td ${tr}>${qf(l.cnt)} ${u(l)}</td><td ${tr}><b>${l.diff>0?'+':''}${qf(l.diff)}</b></td>${M?`<td ${tr}>${fmt2(l.cost||0)}</td><td ${tr}><b>${(l.val||0)<0?'−':'+'}${fmt2(Math.abs(l.val||0))}</b></td>`:''}<td ${td}>${esc(l.why||'')}</td></tr>`).join('')||`<tr><td ${td} colspan="8">No variance — everything matched ✓</td></tr>`}
+   </tbody></table>
+   <h3 style="margin:14px 0 4px">All products counted</h3>
+   <table style="width:100%;border-collapse:collapse"><thead><tr><th ${th}>Product</th><th ${th}>Category</th><th ${th}>System</th><th ${th}>Counted</th><th ${th}>Variance</th></tr></thead><tbody>
+   ${L.map(l=>`<tr><td ${td}>${esc(l.name)}</td><td ${td}>${esc(l.cat)}</td><td ${tr}>${l.sys!=null?qf(l.sys)+' '+u(l):''}</td><td ${tr}>${l.cnt!==''&&l.cnt!=null?qf(l.cnt)+' '+u(l):'—'}</td><td ${tr}>${l.diff?(l.diff>0?'+':'')+qf(l.diff):'✓'}</td></tr>`).join('')}
+   </tbody></table>
+   <div style="margin-top:28px;display:flex;gap:40px"><div>Counted by: ____________________<br><small>${esc(X.by)}</small></div><div>Approved by: ____________________<br><small>${X.ok?esc(X.ok.by):''}</small></div></div>
+   <div style="margin-top:8px;font-size:10px;color:#666">Printed ${stamp(Date.now())} · 3FMS</div></div>`;window.print()}
 function lgPrint(){const L=lgRows(),D=LGD,one=!!D.acc;$('#print').className='';
   $('#print').innerHTML=`<div style="font-family:Arial,sans-serif;font-size:12px"><div style="display:flex;align-items:center;gap:10px"><img src="${LOGO_3F}" style="width:56px;height:56px"><div><h2 style="margin:0">3F MEATSHOP</h2><div><b>Money history — ${esc(one?D.acc.name:'All accounts')}</b></div><div>${day(D.from)} – ${day(D.to)}</div></div></div><hr>
     ${one?`<div>Balance at the start: <b>${fmt2(D.open)}</b> · In: ${fmt2(D.tin)} · Out: ${fmt2(D.tout)} · Balance at the end: <b>${fmt2(D.close)}</b></div>`:''}
@@ -3934,13 +3954,13 @@ function countHTML(){if(!CT&&!CTerr){ctLoad();return '<div class="empty">Loading
     <div class="sbtns">${M?'<button class="btn sm" data-ctset>⚙ Schedule & rules</button>':''}<button class="btn sm" data-ctre>↻ Refresh</button></div></div>
     ${CT.dueOpen&&!X?`<div class="snote cntban due">⏰ <b>Stock count due</b> — scheduled ${day(CT.due)}. Start it below.</div>`:''}`;
   const hist=`<div class="panel"><h3>Past counts</h3><div class="sc"><table class="stbl"><thead><tr><th>Count</th><th>Date</th><th>By</th><th>Status</th>${M?'<th class="r">Loss</th><th class="r">Gain</th>':''}<th></th></tr></thead><tbody>
-    ${CT.list.filter(x=>!X||x.id!==X.id).map(x=>`<tr><td><b>${esc(x.no)}</b></td><td>${stamp(x.at)}</td><td>${esc(x.by)}</td><td>${x.status==='approved'?badge('Approved'+(x.ok?' · '+x.ok.by:''),'green'):x.status==='cancelled'?badge('Cancelled','gray'):badge(x.status,'amber')}</td>${M?`<td class="r" style="color:var(--rose)">${x.loss?'−'+peso(x.loss):''}</td><td class="r" style="color:var(--green)">${x.gain?'+'+peso(x.gain):''}</td>`:''}<td>${x.status==='approved'?`<button class="btn sm" data-ctview="${x.id}">View</button>`:''}</td></tr>`).join('')||'<tr><td colspan="7" class="empty">No count yet.</td></tr>'}</tbody></table></div></div>`;
-  if(CTview)return head+`<div class="panel"><div class="poh"><h3 style="margin:0">${esc(CTview.no)} · ${stamp(CTview.at)}</h3><span style="flex:1"></span><button class="btn sm" data-ctclose>Close</button></div>
+    ${CT.list.filter(x=>!X||x.id!==X.id).map(x=>`<tr><td><b>${esc(x.no)}</b></td><td>${stamp(x.at)}</td><td>${esc(x.by)}</td><td>${x.status==='approved'?badge('Approved'+(x.ok?' · '+x.ok.by:''),'green'):x.status==='cancelled'?badge('Cancelled','gray'):badge(x.status,'amber')}</td>${M?`<td class="r" style="color:var(--rose)">${x.loss?'−'+peso(x.loss):''}</td><td class="r" style="color:var(--green)">${x.gain?'+'+peso(x.gain):''}</td>`:''}<td>${x.status==='approved'?`<button class="btn sm" data-ctview="${x.id}">View</button> <button class="btn sm" data-ctpr="${x.id}" title="Print / Save as PDF">🖨</button>`:''}</td></tr>`).join('')||'<tr><td colspan="7" class="empty">No count yet.</td></tr>'}</tbody></table></div></div>`;
+  if(CTview)return head+`<div class="panel"><div class="poh"><h3 style="margin:0">${esc(CTview.no)} · ${stamp(CTview.at)}</h3><span style="flex:1"></span><button class="btn sm" data-ctprint="view">🖨 Print / PDF</button> <button class="btn sm" data-ctclose>Close</button></div>
     <div class="unit">Counted by ${esc(CTview.by)}${CTview.ok?' · approved by '+esc(CTview.ok.by)+' '+stamp(CTview.ok.at):''}</div>${M?`<div class="kpis" style="margin:8px 0"><div><b style="color:var(--rose)">−${peso(CTview.loss)}</b><span>loss</span></div><div><b style="color:var(--green)">+${peso(CTview.gain)}</b><span>gain</span></div><div><b>${peso(CTview.gain-CTview.loss)}</b><span>net</span></div></div>`:''}${ctVarRows(CTview.lines,'')}</div>`+hist;
   if(!X)return head+`<div class="panel ctstart"><h3>Start a stock count</h3><p>Count every product on the shelves, chillers and freezers. You <b>won't see the system qty</b> while counting — type what you really count. Sales can continue.</p>
     <button class="go" data-ctstart>▶ Start stock count</button></div>`+hist;
   // submitted
-  if(X.status==='submitted'){const v=X.lines;return head+`<div class="panel"><div class="poh"><h3 style="margin:0">${esc(X.no)} · submitted by ${esc(X.sub.by)} ${stamp(X.sub.at)}</h3></div>
+  if(X.status==='submitted'){const v=X.lines;return head+`<div class="panel"><div class="poh"><h3 style="margin:0">${esc(X.no)} · submitted by ${esc(X.sub.by)} ${stamp(X.sub.at)}</h3><span style="flex:1"></span>${M?'<button class="btn sm" data-ctprint="open">🖨 Print / PDF</button>':''}</div>
     ${M?`<div class="kpis" style="margin:8px 0"><div><b style="color:var(--rose)">−${peso(X.loss)}</b><span>loss</span></div><div><b style="color:var(--green)">+${peso(X.gain)}</b><span>gain</span></div><div><b>${peso(X.gain-X.loss)}</b><span>net</span></div><div><b>${v.filter(l=>l.diff).length}</b><span>products with variance · ${v.filter(l=>l.big).length} big</span></div></div>`:'<div class="snote">⏳ Waiting for the manager to review and approve.</div>'}
     ${ctVarRows(v,'')}
     ${M?`<div class="fgrid"><label class="full">Note <span class="unit">(required to send back)</span><input class="edit-in" id="ct-note" placeholder="e.g. Recount chicken wings in freezer 2"></label></div>
@@ -3997,7 +4017,7 @@ function invHTML0(){
   const val=mgr?ST.products.reduce((s,p)=>s+Math.max(0,p.avail)*(p.cost||0),0):0;
   const CN=ST.cnt||{},cban=CN.open==='counting'?`<button class="snote cntban" data-sview="count">🧮 <b>Stock count in progress</b> — tap to continue</button>`:CN.open==='submitted'?`<button class="snote cntban" data-sview="count">🧮 <b>Stock count waiting for approval</b>${me.role==='manager'?' — tap to review':''}</button>`:CN.dueOpen?`<button class="snote cntban due" data-sview="count">⏰ <b>Stock count due</b> (${day(CN.due)}) — tap to start</button>`:'';
   return cban+`<div class="shead"><div><h2>🗃️ Inventory</h2><div class="unit">One stock count for the shop. It goes up with <b>Receiving</b> and <b>Production</b>, and down with <b>POS sales</b> (walk-in and delivery orders cashed out by the cashier) and <b>online orders</b>. Prepared orders are <b>not</b> taken out until the cashier rings them up.${mgr?'':' <b>View only</b> — the Manager changes products and counts.'}</div></div>
-    <div class="sbtns">${me.role==='manager'?'<button class="go sm sugb" data-posug>📈 Inventory Forecast</button>':''}${mgr?'<button class="go sm" data-padd>+ Add product</button><button class="btn sm" data-pimp>⬆ Import</button>':''}${mgr||me.role==='ops'?'<button class="btn sm" data-pconv>🔁 Convert</button>':''}<button class="btn sm" data-sref>↻ Refresh</button></div></div>
+    <div class="sbtns">${me.role==='manager'?'<button class="go sm sugb" data-posug>📈 Inventory Forecast</button>':''}${mgr?'<button class="go sm" data-padd>+ Add product</button><button class="btn sm" data-pimp>⬆ Import</button><button class="btn sm" data-precost>🔧 Correct costs</button>':''}${mgr||me.role==='ops'?'<button class="btn sm" data-pconv>🔁 Convert</button>':''}<button class="btn sm" data-sref>↻ Refresh</button></div></div>
     <div class="kpis"><div><b>${ST.products.length}</b><span>products</span></div><div class="${low.length?'warn':''}"><b>${low.length}</b><span>low stock</span></div><div class="${out.length?'bad':''}"><b>${out.length}</b><span>out of stock</span></div>${mgr?`<div><b>${peso(val)}</b><span>stock value (cost)</span></div>`:''}</div>
     ${mgr&&appr.length?`<div class="snote violet">⚠ <b>${appr.length}</b> receiving(s) don't match the P.O. and wait for your approval. <button class="btn sm" data-sview="po">Open P.O.</button></div>`:''}
     ${mgr&&ST.unmatched&&ST.unmatched.length?`<div class="snote">🔎 These order names did not match a product, so dispatch could not take them out of stock: <b>${ST.unmatched.map(esc).join(', ')}</b>. Edit the product and add the name under <b>Other names</b>.</div>`:''}
@@ -4079,6 +4099,58 @@ function parseImport(aoa){
   if(!('name' in map))throw new Error('Could not find the Product column');
   const out=rows.slice(hi+1).filter(r=>r[map.name]).map(r=>{const o={};Object.keys(map).forEach(k=>o[k]=r[map[k]]);return o});
   return {kind:'Product list',rows:out}}
+/* 🔧 CORRECT COST OF PAST SALES — fix wrong costs from the first import; the P&L / gross profit update */
+/* ✏ CORRECT AN APPROVED RECEIVING (manager) */
+function recvFixDialog(id){const po=(ST.pos||[]).find(p=>p.id===id);if(!po||!po.recv)return;const box=stBox(),L=po.recv.lines,u=l=>esc(String(l.unit||'kg').toLowerCase());
+  $('#stb').innerHTML=`<h2>✏ Correct receiving · ${esc(po.no)}</h2><div class="unit">${esc(po.supplier)} · received ${stamp(po.recv.at)} by ${esc(po.recv.by)}${po.approval?' · approved by '+esc(po.approval.by):''}</div>
+   <div class="snote" style="margin:8px 0">Change only the wrong lines. Stock moves by the <b>difference</b> (logged as “Receiving correction”), the average cost is adjusted back, and the supplier amount follows the corrected <b>receipt</b> qty.</div>
+   <div class="sc"><table class="stbl rfx"><thead><tr><th>Product</th><th class="r">P.O.</th><th class="r">Receipt</th><th class="r">Actual</th><th class="r">Change</th></tr></thead><tbody>
+   ${L.map((l,ix)=>`<tr><td><b>${esc(l.name)}</b></td><td class="r">${l.ordered!=null?`<input class="edit-in nq" type="number" step="0.001" min="0" data-rfo="${ix}" value="${l.ordered}" style="width:80px;text-align:right">`:'—'}${L.length>1?`<br><label class="unit" style="white-space:nowrap"><input type="checkbox" data-rfx="${ix}"> remove line</label>`:''}</td>
+     <td class="r">${l.rcpt!=null?`<input class="edit-in nq" type="number" step="0.001" min="0" data-rfr="${ix}" value="${l.rcpt}" style="width:96px;text-align:right">`:'—'}</td>
+     <td class="r"><input class="edit-in nq" type="number" step="0.001" min="0" data-rfq="${ix}" value="${l.qty}" style="width:96px;text-align:right"> ${u(l)}</td><td class="r" data-rfd="${ix}"></td></tr>`).join('')}</tbody></table></div>
+   <label class="td-l" style="margin-top:8px">Reason <small>(required)</small><input class="edit-in" id="rf-why" placeholder="e.g. Pork belly entered twice — 2nd line was 0"></label>
+   <div class="row-end"><button class="btn" data-x>Cancel</button><button class="go" id="rf-ok">✓ Save correction</button></div>`;
+  box.classList.add('on');
+  $('#stb').onchange=e=>{const x=e.target.closest('[data-rfx]');if(!x)return;const ix=+x.dataset.rfx;['rfq','rfr','rfo'].forEach(k=>{const i=$(`[data-${k}="${ix}"]`);if(i)i.disabled=x.checked});$(`[data-rfd="${ix}"]`).innerHTML=x.checked?`<b style="color:var(--rose)">−${qf(L[ix].qty)}</b>`:''};
+  $('#stb').oninput=e=>{const q=e.target.closest('[data-rfq]');if(!q)return;const ix=+q.dataset.rfq,d=r2(parseFloat(q.value||0)-L[ix].qty);$(`[data-rfd="${ix}"]`).innerHTML=Math.abs(d)>0.0005?`<b style="color:${d<0?'var(--rose)':'var(--green)'}">${d>0?'+':''}${qf(d)}</b>`:''};
+  $('#rf-ok').onclick=async()=>{const why=$('#rf-why').value.trim();if(!why){alert('Type the reason for the correction.');$('#rf-why').focus();return}
+    const ch=L.map((l,ix)=>{const q=$(`[data-rfq="${ix}"]`),r=$(`[data-rfr="${ix}"]`),o=$(`[data-rfo="${ix}"]`),x=$(`[data-rfx="${ix}"]`),drop=!!(x&&x.checked);
+      return{ix,qty:drop?'0':q?q.value:'',rcpt:drop?'0':r?r.value:'',ordered:o?o.value:'',drop,d:drop?-l.qty:q?r2(parseFloat(q.value||0)-l.qty):0,dr:r&&l.rcpt!=null?r2((drop?0:parseFloat(r.value||0))-l.rcpt):0,dO:o&&l.ordered!=null?r2(parseFloat(o.value||0)-l.ordered):0}}).filter(x=>x.drop||Math.abs(x.d)>0.0005||Math.abs(x.dr)>0.0005||Math.abs(x.dO)>0.0005);
+    if(!ch.length){alert('Nothing changed.');return}
+    if(!confirm('Save this correction?\n\n'+ch.map(x=>L[x.ix].name+(x.drop?': REMOVE this line (actual '+qf(L[x.ix].qty)+' → 0)':': '+(x.dO?'P.O. '+qf(L[x.ix].ordered)+' → '+x.ordered+' · ':'')+'actual '+qf(L[x.ix].qty)+' → '+x.qty+(x.dr?' · receipt '+qf(L[x.ix].rcpt)+' → '+x.rcpt:''))).join('\n')+'\n\nStock changes by the difference.'))return;
+    const b=$('#rf-ok');b.disabled=true;b.textContent='Saving…';
+    try{ST=await api('api_recvFix',session.token,id,ch.map(({ix,qty,rcpt,ordered,drop})=>({ix,qty,rcpt,ordered,drop})),why);ST.offline=false;ST.rt=Date.now();stCache();box.classList.remove('on');toast('✅ Receiving corrected — stock adjusted',true);drawStock()}
+    catch(e){alert(errMsg(e));b.disabled=false;b.textContent='✓ Save correction'}}}
+async function recostDialog(){const box=stBox();let R=null,q='',only=true,NEW={};
+  const load=async(f,t)=>{$('#stb').innerHTML='<h2>🔧 Correct cost of past sales</h2><div class="empty">Loading the sales…</div>';box.classList.add('on');
+    try{R=await api('api_recostScan',session.token,f||'',t||'')}catch(e){$('#stb').innerHTML=`<h2>🔧 Correct cost of past sales</h2><div class="snote">⚠ ${esc(errMsg(e))}</div><div class="row-end"><button class="btn" data-x>Close</button></div>`;return}draw()};
+  const rowsVis=()=>R.rows.filter(r=>(!only||r.lines||NEW[r.code]!=null)&&(!q||(r.name+' '+r.code).toLowerCase().includes(q)));
+  const chg=()=>R.rows.filter(r=>NEW[r.code]!=null&&NEW[r.code]!==''&&Math.abs(parseFloat(NEW[r.code])-r.avg)>0.004||(NEW[r.code]!=null&&NEW[r.code]!==''&&Math.abs(parseFloat(NEW[r.code])-r.cost)>0.004));
+  const tot=()=>{let b=0,a=0;chg().forEach(r=>{b+=r.amt;a+=r.qty*parseFloat(NEW[r.code])});return{b:r2(b),a:r2(a),d:r2(a-b),n:chg().length}};
+  const sumHTML=()=>{const T=tot();return T.n?`<b>${T.n}</b> product${T.n>1?'s':''} to correct · cost of sales <b>${peso(T.b)}</b> → <b>${peso(T.a)}</b> · gross profit <b style="color:${T.d>0?'var(--rose)':'var(--green)'}">${T.d>0?'−':'+'}${peso(Math.abs(T.d))}</b>`:'Type the correct cost on the products that were wrong.'};
+  function draw(){const V=rowsVis();
+    $('#stb').innerHTML=`<h2>🔧 Correct cost of past sales</h2>
+    <div class="unit">Each sale keeps the cost it had when sold — that is what your P&L uses. Type the <b>correct cost</b>; the sales in the dates below are re-costed and the product cost is updated. Every change is logged in the sheet <b>Cost Corrections</b>.</div>
+    <div class="fgrid" style="margin-top:8px"><label>From <input class="edit-in" type="date" id="rc-f" value="${esc(R.from)}"></label><label>To <input class="edit-in" type="date" id="rc-t" value="${esc(R.to)}"></label>
+      <label class="full" style="display:flex;gap:8px;align-items:center"><input class="edit-in" id="rc-q" placeholder="🔎 Find a product" value="${esc(q)}" style="flex:1"><label class="chk2" style="white-space:nowrap"><input type="checkbox" id="rc-only"${only?' checked':''}> Sold in these dates only</label></label></div>
+    <div class="sc" style="max-height:48vh;overflow:auto;border:1px solid var(--line);border-radius:10px;margin-top:8px"><table class="stbl rctb"><thead><tr><th>Product</th><th class="r">Sold</th><th class="r">Cost used</th><th class="r">Correct cost</th><th class="r">COGS change</th></tr></thead><tbody>
+    ${V.map(r=>{const nv=NEW[r.code],has=nv!=null&&nv!=='',d=has?r2(r.qty*parseFloat(nv)-r.amt):0;return `<tr><td><b>${esc(r.name)}</b><br><small class="unit">${esc(r.code)} · now ${peso(r.cost)}/${esc(String(r.unit).toLowerCase())}</small></td>
+      <td class="r">${r.lines?qf(r.qty)+' '+esc(String(r.unit).toLowerCase())+'<br><small class="unit">'+r.lines+' sale'+(r.lines>1?'s':'')+'</small>':'<span class="unit">—</span>'}</td><td class="r">${r.lines?peso(r.avg):'—'}</td>
+      <td class="r"><input class="edit-in nq" type="number" step="0.01" min="0" inputmode="decimal" data-rcc="${esc(r.code)}" value="${has?esc(nv):''}" placeholder="${r.cost}" style="width:110px;text-align:right"></td>
+      <td class="r" data-rcd="${esc(r.code)}">${has&&d?`<b style="color:${d>0?'var(--rose)':'var(--green)'}">${d>0?'+':'−'}${peso(Math.abs(d))}</b>`:''}</td></tr>`}).join('')||'<tr><td colspan="5" class="empty">No product sold in these dates.</td></tr>'}
+    </tbody></table></div>
+    <div class="snote" id="rc-sum" style="margin-top:8px">${sumHTML()}</div>
+    <div class="row-end"><button class="btn" data-x>Cancel</button><button class="go" id="rc-go">✓ Correct the costs</button></div>`;
+    const reload=()=>load($('#rc-f').value,$('#rc-t').value);$('#rc-f').onchange=reload;$('#rc-t').onchange=reload;
+    $('#rc-only').onchange=e=>{only=e.target.checked;draw()};$('#rc-q').oninput=e=>{q=e.target.value.trim().toLowerCase();const y=$('#rc-q');draw();const z=$('#rc-q');z.focus();z.setSelectionRange(z.value.length,z.value.length)};
+    $('#stb').oninput=e=>{const i=e.target.closest('[data-rcc]');if(!i)return;const k=i.dataset.rcc,r=R.rows.find(x=>x.code===k);NEW[k]=i.value;const c=$(`[data-rcd="${CSS.escape(k)}"]`);
+      if(c){const d=i.value===''?0:r2(r.qty*parseFloat(i.value)-r.amt);c.innerHTML=i.value!==''&&d?`<b style="color:${d>0?'var(--rose)':'var(--green)'}">${d>0?'+':'−'}${peso(Math.abs(d))}</b>`:''}$('#rc-sum').innerHTML=sumHTML()};
+    $('#rc-go').onclick=async()=>{const L=chg().map(r=>({code:r.code,cost:parseFloat(NEW[r.code])}));if(!L.length){alert('Type the correct cost on at least one product.');return}
+      const T=tot();if(!confirm(`Correct ${L.length} product cost${L.length>1?'s':''} for sales ${day($('#rc-f').value)} – ${day($('#rc-t').value)}?\n\nCost of sales ${peso(T.b)} → ${peso(T.a)} (${T.d>0?'gross profit −':'gross profit +'}${peso(Math.abs(T.d))}).\nThe product costs are updated too.`))return;
+      const b=$('#rc-go');b.disabled=true;b.textContent='Saving…';
+      try{const x=await api('api_recostApply',session.token,L,$('#rc-f').value,$('#rc-t').value);box.classList.remove('on');OW=null;ST&&(ST.at=0);toast(`✅ ${x.products} cost${x.products>1?'s':''} corrected · ${x.sales} sale${x.sales===1?'':'s'} re-costed · P&L updated`,true);loadStock(true).then(()=>drawStock()).catch(()=>{})}
+      catch(e){alert(errMsg(e));b.disabled=false;b.textContent='✓ Correct the costs'}}}
+  load('','')}
 function importDialog(){const box=stBox(),hasSample=ST.products.some(p=>/^[PCS]00\d$/.test(p.code));
   let parsed=null,fname='',smOn=true;
   const slugc=s=>String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'');
@@ -4293,6 +4365,8 @@ function poHTML(){
     ${p.carcass&&p.recv&&p.recv.carcass&&p.status==='received'?`<details><summary class="unit"><b>🔪 Cuts received & cost per kg</b></summary>${cutTable(p.recv.carcass,p.carcass)}</details>`:''}
     ${p.status!=='cancelled'?poPayHTML(p):''}
     ${p.recv&&p.status!=='for approval'?`<div class="unit">📥 Received ${stamp(p.recv.at)} by ${esc(p.recv.by)}${p.recv.diff?' · <b>different from P.O.</b>':''}${p.approval&&p.recv.diff?' · approved by '+esc(p.approval.by):''}</div>`:''}
+    ${p.fixes&&p.fixes.length?`<div class="unit">✏ Corrected ${p.fixes.map(f=>`${stamp(f.at)} by ${esc(f.by)} — ${esc(f.reason)} (${f.ch.map(x=>esc(x.name)+' '+qf(x.qty[0])+'→'+qf(x.qty[1])).join(', ')})`).join(' · ')}</div>`:''}
+    ${p.status==='received'&&!p.carcass&&p.kind!=='carcass'&&me.role==='manager'&&p.recv&&p.recv.lines?`<div class="row-end" style="justify-content:flex-start"><button class="btn sm" data-recvfix="${p.id}">✏ Correct receiving</button></div>`:''}
     ${p.status==='open'?`<div class="row-end" style="justify-content:flex-start"><button class="btn sm" data-poedit="${p.id}">✎ Edit</button><button class="btn sm" data-pokill="${p.id}" style="color:var(--rose)">✕ Cancel P.O.</button></div>`:''}</div>`;
   return `<div class="shead"><div><h2>📝 Purchase orders</h2><div class="unit">Make a P.O. for each supplier delivery. Operations counts what arrives in <b>📥 Receiving</b>. Stock goes up only when it matches — or when you approve the difference.</div></div>
     <div class="sbtns"><button class="go sm" data-ponew>+ New P.O.</button><button class="go sm" data-ponewc>🐖 + Live pig P.O.</button><button class="btn sm" data-sref>↻ Refresh</button></div></div>
@@ -5020,7 +5094,9 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const igr=e.target
     if('ctback' in d){const n=($('#ct-note')||{}).value||'';if(!n.trim())return alert('Type what needs to be recounted.');await busy(async()=>{CT=await api('api_countDecide',session.token,CT.open.id,false,n);toast('↩ Sent back for recount');drawStock()});return}
     if('ctcancel' in d){if(!confirm('Cancel this stock count? Nothing will be adjusted.'))return;await busy(async()=>{CT=await api('api_countCancel',session.token,CT.open.id);CTL={};CTrev=null;drawStock()});return}
     if(d.ctview){await busy(async()=>{CTview=await api('api_countGet',session.token,d.ctview);drawStock()});return}
-    if('ctclose' in d){CTview=null;drawStock();return}}
+    if('ctclose' in d){CTview=null;drawStock();return}
+    if(d.ctprint){const X=d.ctprint==='view'?CTview:CT&&CT.open;if(X)ctPrint(X);return}
+    if(d.ctpr){await busy(async()=>{const X=await api('api_countGet',session.token,d.ctpr);ctPrint(X)});return}}
   if(view==='crep'){if(d.crp){const [f,t]=srPreset(d.crp);CRF.from=f;CRF.to=t;CRF.pre=d.crp;drawStock();return}if('crre' in d){CR=null;CRerr='';drawStock();return}
     if(d.crcu!==undefined){CRF.cust=d.crcu;drawStock();window.scrollTo({top:0,behavior:'smooth'});return}if('crcsv' in d){crCsv();return}if('crprint' in d){crPrint();return}}
   if(view==='srep'){
@@ -5079,6 +5155,8 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const igr=e.target
   if(d.icat!==undefined){invCat=d.icat;drawStock();return}
   if('padd' in d){productDialog('');return}
   if('pimp' in d){importDialog();return}
+  if('precost' in d){recostDialog();return}
+  if(d.recvfix){recvFixDialog(d.recvfix);return}
   if(d.pedit){productDialog(d.pedit);return}
   // P.O.
   if('posug' in d){PSon=true;PS=null;PSerr='';drawStock();return}
