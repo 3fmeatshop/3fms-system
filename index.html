@@ -1221,7 +1221,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 10 · 12:00 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 10 · 12:20 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -2000,7 +2000,10 @@ let DLAST={};try{DLAST=JSON.parse(localStorage.getItem('fms_dlast')||'{}')}catch
 /* ---------- 🔔 PENDING APPROVAL — manager inbox in the header (all departments) ---------- */
 let APR=null,aprBusy=false;
 function aprShorts(){const L=[];db.orders.filter(o=>live(o)&&!(o.dispatched||o.delivered)&&!o.posSale).forEach(o=>check(o).pend.forEach(i=>L.push({o,i,q:shortOf(i)})));return L}
-function aprGroups(){const A=APR||{rcv:[],ot:[],z:[],claims:[],ws:[]},sh=aprShorts(),ret=retList('for approval'),onl=db.orders.filter(o=>o.online&&o.online.status==='pending');
+function aprGroups(){const A=Object.assign({rcv:[],ot:[],z:[],claims:[],ws:[]},APR||{}),sh=aprShorts();
+  // receiving also from the loaded P.O. list (works even before the new Apps Script version is deployed)
+  if(ST&&ST.pos)ST.pos.filter(p=>p.status==='for approval'&&!A.rcv.some(x=>x.id===p.id)).forEach(p=>A.rcv=A.rcv.concat([{id:p.id,no:p.no,supplier:p.supplier||'',by:p.recv?p.recv.by:'',at:p.recv?p.recv.at:0,diff:!!(p.recv&&p.recv.diff)}]));
+  const _=0,ret=retList('for approval'),onl=db.orders.filter(o=>o.online&&o.online.status==='pending');
   return [
    {k:'rcv',ic:'📥',t:'Receiving',L:A.rcv.map(p=>({t:esc(p.no||'P.O.')+' · '+esc(p.supplier),s:(p.by?'by '+esc(p.by)+' · ':'')+(p.at?time12(new Date(p.at)):''),pill:p.diff?'Short / over':'Check',go:'v:po'}))},
    {k:'short',ic:'⚖️',t:'Short items',L:sh.map(({o,i,q})=>({t:esc(i.product)+' · '+esc(o.customer),s:day(o.delivery),pill:'Short '+fmt(q)+' '+esc(i.unit),go:'o:'+o.id}))},
@@ -2014,7 +2017,8 @@ function aprGroups(){const A=APR||{rcv:[],ot:[],z:[],claims:[],ws:[]},sh=aprShor
 function aprCount(){return aprGroups().reduce((a,g)=>a+g.L.length,0)}
 function aprBadge(){const b=$('#apn');if(!b||!me||me.role!=='manager')return;const n=aprCount();b.textContent=n?String(n):'';$('#apb').classList.toggle('has',n>0)}
 async function aprLoad(force){if(!me||me.role!=='manager'||aprBusy)return;if(!force&&APR&&Date.now()-APR.at<60000)return aprBadge();aprBusy=true;
-  try{APR=await api('api_approvals',session.token);APR.at=Date.now()}catch(e){}aprBusy=false;aprBadge();if($('#stm.on #apr-list'))aprOpen()}
+  try{APR=await api('api_approvals',session.token);APR.at=Date.now()}catch(e){APR={rcv:[],ot:[],z:[],claims:[],ws:[],at:Date.now(),err:errMsg(e)}}
+  try{if(!ST||Date.now()-(ST.rt||ST.at||0)>60000)await loadStock()}catch(e){}aprBusy=false;aprBadge();if($('#stm.on #apr-list'))aprOpen()}
 function aprOpen(){const box=stBox(),G=aprGroups(),n=G.reduce((a,g)=>a+g.L.length,0);
   $('#stb').innerHTML=`<h2>🔔 Pending approval</h2><div class="unit">${n?n+' waiting for you':'Nothing waiting — all clear ✓'} · <a href="#" id="apr-re">↻ refresh</a></div><div id="apr-list">${G.map(g=>`<div class="apr-g"><div class="apr-h">${g.ic} ${g.t} <b>${g.L.length}</b></div>${g.L.map(x=>`<button class="apr-i" data-aprgo="${x.go}"><span><b>${x.t}</b>${x.s?`<small>${x.s}</small>`:''}</span><em>${x.pill}</em><i>›</i></button>`).join('')}</div>`).join('')}</div>
    <div class="row-end"><button class="btn" id="apr-x">Close</button></div>`;
