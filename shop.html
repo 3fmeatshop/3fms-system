@@ -600,7 +600,7 @@ function rLogin(){
       ${codeRow('r')}
       <label class="f">Delivery address</label><textarea class="in" id="r-addr" rows="2"></textarea>
       <label class="f">Barangay (Santa Ana, Cagayan)</label><select class="in" id="r-area"><option value="">— choose your barangay —</option>${areas.map(a=>`<option>${esc(a.area)}</option>`).join('')}</select>
-      <label style="display:flex;gap:10px;align-items:flex-start;margin-top:12px;font-size:14px"><input type="checkbox" id="r-ws" style="width:auto;margin-top:4px"> I buy <b>wholesale</b> (store / restaurant / reseller). The shop will review — retail prices apply until approved.</label>
+      <label style="display:flex;gap:10px;align-items:flex-start;margin-top:12px;font-size:14px;line-height:1.4"><input type="checkbox" id="r-ws" style="width:20px;height:20px;flex:none;margin-top:1px"><span style="flex:1">I buy <b>wholesale</b> (store / restaurant / reseller). The shop will review — retail prices apply until approved.</span></label>
       <button class="btn wide" id="r-go" style="margin-top:14px">Create account</button>`}
     <div class="err" id="lerr"></div></div>`;
   if($('#l-go')){const go=async()=>{const e=$('#lerr');e.textContent='';try{const r=await api('shop_login',KEY,$('#l-id').value,$('#l-pin').value);setSess(r)}catch(er){e.textContent=errMsg(er)}};
