@@ -501,6 +501,16 @@ header h1 .tt small{display:block;font-size:11px;color:var(--sky2);letter-spacin
 .ctm-top{font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px;align-items:center}.ctm-top span{background:#fff;border:1px solid var(--line);border-radius:99px;padding:3px 10px}.ctm-top b{color:var(--rose)}
 .rfx thead{display:table-header-group!important}.rfx tr{display:table-row!important}.rfx td,.rfx th{display:table-cell!important;padding:6px 4px!important}.rfx input{width:72px!important}
 .ctdd{display:inline-grid;place-items:center;width:20px;height:20px;margin-left:5px;vertical-align:1px;cursor:pointer;border-radius:6px;background:#fff;border:1px solid var(--line);padding:0;color:var(--muted);font-size:11px;line-height:1}.ctdd:hover{border-color:#F5C518;color:var(--ink)}.ctdd.on{background:#FFF6D1;border-color:#F5C518;color:var(--ink);transform:rotate(180deg)}.ctlist{display:block;max-width:420px;margin-left:auto;margin-top:3px;line-height:1.5}.ctlist[hidden]{display:none}
+/* 📒 stock card */
+.sc-sum{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:10px 0}.sc-sum>div{border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:#fff}.sc-sum span{display:block;font-size:12px;color:var(--muted)}.sc-sum b{font-size:17px}.sc-sum .in b{color:var(--green)}.sc-sum .out b{color:var(--rose)}
+.sc-g{display:grid;grid-template-columns:1fr 1fr;gap:10px}.sc-g h4{margin:4px 0}.sc-r{display:flex;justify-content:space-between;gap:8px;padding:4px 0;border-bottom:1px dashed var(--line);font-size:14px}
+.sctb tr.sc-adj td{background:#FFF6D1}.sctb tr.sc-flag td{background:#FDECEC}.sc-fl{color:#B3191B;font-weight:700;font-size:12.5px;margin-top:3px}.sc-flag-sum{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#FDECEC;border:1px solid #F6B3B0;color:#8E1B22;border-radius:10px;padding:8px 12px;margin-top:10px}.sc-ok{background:#e1f2e7;color:#1c7a44;border-radius:10px;padding:8px 12px;margin-top:10px;font-weight:700}.sc-lnk{color:inherit;text-decoration:none;background:none;border:0;padding:0;font:inherit;cursor:pointer;text-align:left}.sc-lnk:hover b{text-decoration:underline}
+@media(max-width:600px){.sc-sum{grid-template-columns:1fr 1fr}.sc-g{grid-template-columns:1fr}}
+/* 📊 product movement */
+.mvtb td.r>small.unit{display:inline}.mvtb td small{display:block;font-size:11.5px;color:var(--muted);font-weight:500}.mvtb .mv-in{color:var(--green);font-weight:800}.mvtb .mv-out{color:var(--rose);font-weight:800}.mvtb tr.mv-adj td{background:#FFF6D1}
+@media(max-width:700px){.mvtb,.mvtb tbody{display:block;width:100%}.mvtb thead{display:none}
+ .mvtb tr{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px 10px;padding:10px 8px;border-bottom:1px solid var(--line)}.mvtb tr td{display:block;border:0!important;padding:0!important;text-align:left!important}
+ .mvtb tr td:first-child{grid-column:1/-1}.mvtb tr td[data-l]::before{content:attr(data-l);display:block;font-size:11px;font-weight:700;color:var(--muted)}.mvtb tr.mv-adj{background:#FFF6D1;border-radius:10px}.mvtb tr.mv-adj td{background:none}}
 /* phone print preview */
 #pvw{display:none;position:fixed;inset:0;z-index:9999;background:#F4F4F4;flex-direction:column}
 #pvw.on{display:flex}
@@ -1227,7 +1237,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 10 · 10:20 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 10 · 11:00 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -2037,7 +2047,7 @@ setInterval(()=>{if(me&&me.role==='manager'&&!document.hidden)aprLoad()},60000);
 function deptDefs(c){return {
   ops:{ic:'🔪',t:'Operations',d:'Orders · stock · deliveries',c:'#B91C1C',n:c.onP+c.prep+c.disp+c.poA,tabs:[
     {v:'ohome',t:'🏠 Today'},{act:'neworder',t:'📋 Customer Orders'},{v:'online',t:'🛒 Online',n:c.onP},{v:'po',t:'📝 P.O.',n:c.poA},{v:'recv',t:'📥 Receiving'},{v:'prep',t:'⚖️ Preparation',n:c.prep},{v:'disp',t:'✅ Dispatch',n:c.disp},
-    {v:'inv',t:'📦 Inventory',n:c.out?c.out+' out':0,g:[['inv','📦 Stock'],['count','🧮 Stock count'],['prod','🏭 Production']]},{v:'way',t:'🛵 Deliveries',n:c.way,g:[['way','🛵 Out for delivery',c.way],['delivered','✅ '+c.delLbl,c.delOK],['undel','↩ Undelivered / ⛔ Closed',c.und]]},
+    {v:'inv',t:'📦 Inventory',n:c.out?c.out+' out':0,g:[['inv','📦 Stock'],['mvt','📊 Product movement'],['count','🧮 Stock count'],['prod','🏭 Production']]},{v:'way',t:'🛵 Deliveries',n:c.way,g:[['way','🛵 Out for delivery',c.way],['delivered','✅ '+c.delLbl,c.delOK],['undel','↩ Undelivered / ⛔ Closed',c.und]]},
     {v:'mgr',t:'📊 Reports',g:[['mgr','📊 Operations dashboard'],['month','📦 Monthly report']]},{v:'act',t:'📜 Activity history'}]},
   pos:{ic:'🧾',t:'POS',d:'Cashier · sales · drawer',c:'#BE185D',n:0,tabs:[{v:'pos',t:'🧾 Cashier (POS)'}]},
   hr:{ic:'🧑‍💼',t:'HR',d:'Schedule · OT · payroll',c:'#0F766E',n:c.otP,tabs:[{v:'hr',sub:'sched',t:'📅 Schedule'},{v:'hr',sub:'ot',t:'⏱ OT requests',n:c.otP},{v:'hr',sub:'pay',t:'💵 Payroll & attendance'},{v:'hr',sub:'set',t:'⚙ Shifts & rules'},{v:'kpi',t:'🎯 Staff KPI'},{act:'users',t:'🔑 Users & PINs'}]},
@@ -3112,7 +3122,7 @@ $('#save').onclick=()=>{const res=preview();if(!cust)return alert('Pick a custom
    INVENTORY · P.O. · RECEIVING · PRODUCTION · POS
    One stock count for the shop (Products tab › Available qty).
    ================================================================ */
-var STOCKV=['inv','count','po','recv','prod','pos','srep','crep','memb','owner','hr','att','act','kpi'];
+var STOCKV=['inv','mvt','count','po','recv','prod','pos','srep','crep','memb','owner','hr','att','act','kpi'];
 var STKEY='dp_stock_'+MODE, POSQ='dp_posq';
 let posMem=null, posMemUse=0, posCharges=[], posNote='';
 const chgTotal=()=>r2(posCharges.reduce((a,c)=>a+(+c.amt||0),0));
@@ -3144,7 +3154,7 @@ async function renderStock(v,force){
   if(view!==v||!me)return;drawStock()}
 function drawStock(){const v=view;if(!me||!session||!STOCKV.includes(v))return;                 // logged out while something was loading
   const a=document.activeElement,keep=a&&a.closest&&a.closest('#list')&&a.dataset&&a.dataset.k?{k:a.dataset.k,s:a.selectionStart}:null;
-  $('#list').innerHTML=`<div class="rep stk" data-v="${v}">${(ST.offline?'<div class="stoff">📴 Offline — showing the last saved data.</div>':ST.stale?'<div class="stupd">↻ Updating…</div>':'')+{inv:invHTML,count:countHTML,po:poHTML,recv:recvHTML,prod:prodHTML,pos:posHTML,srep:srepHTML,crep:crepHTML,memb:membHTML,owner:ownerHTML,hr:hrHTML,att:attHTML,act:actHTML,kpi:kpiHTML}[v]()}</div>`;
+  $('#list').innerHTML=`<div class="rep stk" data-v="${v}">${(ST.offline?'<div class="stoff">📴 Offline — showing the last saved data.</div>':ST.stale?'<div class="stupd">↻ Updating…</div>':'')+{inv:invHTML,mvt:mvtHTML,count:countHTML,po:poHTML,recv:recvHTML,prod:prodHTML,pos:posHTML,srep:srepHTML,crep:crepHTML,memb:membHTML,owner:ownerHTML,hr:hrHTML,att:attHTML,act:actHTML,kpi:kpiHTML}[v]()}</div>`;
   $('#list').onclick=stockClick;$('#list').oninput=stockInput;$('#list').onchange=e=>{const kp=e.target.closest&&e.target.closest('[data-kpprof]');if(kp&&view==='kpi'){api('api_kpiProfile',session.token,kp.dataset.kpprof,kp.value).then(r=>{if(!KPF||r.ym===KPF)KP=r;else KP=null;toast('Scorecard changed');drawStock()}).catch(er=>alert(errMsg(er)));return}stockChange(e)};
   $('#list').onkeydown=e=>{if(view!=='pos'||e.key!=='Enter')return;const t=e.target;
     if(t.id==='posq'){e.preventDefault();const f=posSug()[0];if(f)addToCart(f.code);return}
@@ -3946,7 +3956,7 @@ function ctMoneyHTML(m,label){return `<div class="ctmoney"><div class="ctm-h">�
   ${m.top.length?`<div class="ctm-top">Biggest losses: ${m.top.map(x=>`<span>${esc(x.l.name)} <b>${x.d>0?'+':''}${qf(x.d)} ${esc(String(x.l.unit).toLowerCase())} · −${peso(-x.v)}</b></span>`).join('')}</div>`:''}</div>`}
 function ctVarRows(L,mode){const M=me.role==='manager',show=L.filter(l=>l.diff),rows=(mode==='all'?L:show);
   return `<div class="sc"><table class="stbl ctv"><thead><tr><th>Product</th><th class="r">System</th><th class="r">Counted</th><th class="r">Difference</th>${M?'<th class="r">Value</th>':''}<th>Reason</th></tr></thead><tbody>
-  ${rows.map(l=>`<tr class="${l.big?'ctbig':''}"><td><b>${esc(l.name)}</b><br><small class="unit">${esc(l.cat)}</small></td><td class="r">${qf(l.sys)} ${esc(l.unit)}</td><td class="r"><b>${qf(l.cnt)}</b></td>
+  ${rows.map(l=>`<tr class="${l.big?'ctbig':''}"><td>${M?`<button type="button" class="sc-lnk" data-pcard="${esc(l.code)}" title="Stock card — every in and out"><b>${esc(l.name)}</b> 📒</button>`:`<b>${esc(l.name)}</b>`}<br><small class="unit">${esc(l.cat)}</small></td><td class="r">${qf(l.sys)} ${esc(l.unit)}</td><td class="r"><b>${qf(l.cnt)}</b></td>
     <td class="r">${l.diff?`<b style="color:${l.diff<0?'var(--rose)':'var(--green)'}">${l.diff>0?'+':''}${qf(l.diff)}</b>`:'✓'}${l.big?'<br><span class="sb sb-red">BIG</span>':''}</td>${M?(()=>{const v=l.val!=null?l.val:(l.cost&&l.diff?r2(l.diff*l.cost):0);return `<td class="r" style="color:${v<0?'var(--rose)':'var(--green)'}"><b>${v?(v<0?'−':'+')+peso(Math.abs(v)):''}</b>${v&&l.cost?`<br><small class="unit">@ ${peso(l.cost)}/${esc(String(l.unit).toLowerCase())}</small>`:''}</td>`})():''}
     <td>${mode==='edit'&&l.diff?`<input class="edit-in" data-cw="${esc(l.code)}" value="${esc(CTrev.why[l.code]??l.why??'')}" placeholder="${l.big?'Required — e.g. spoiled, trimming, wrong entry':'optional'}">`:esc(l.why||'')}</td></tr>`).join('')||`<tr><td colspan="${M?6:5}" class="empty">✓ No variances — every count matches the system.</td></tr>`}</tbody></table></div>`}
 function countHTML(){if(!CT&&!CTerr){ctLoad();return '<div class="empty">Loading…</div>'}if(CTerr)return `<div class="empty">⚠ ${esc(CTerr)}<br><br><button class="btn" data-ctre>↻ Try again</button></div>`;
@@ -4024,7 +4034,7 @@ function invHTML0(){
     ${mgr&&ST.unmatched&&ST.unmatched.length?`<div class="snote">🔎 These order names did not match a product, so dispatch could not take them out of stock: <b>${ST.unmatched.map(esc).join(', ')}</b>. Edit the product and add the name under <b>Other names</b>.</div>`:''}
     <div class="sfilt"><input class="edit-in" data-k="invq" placeholder="🔍 Search product or code" value="${esc(invQ)}"><div class="chips2"><button class="${invCat?'':'on'}" data-icat="">All</button>${cats.map(c=>`<button class="${invCat===c?'on':''}" data-icat="${esc(c)}">${esc(c)}</button>`).join('')}</div></div>
     <div class="panel"><div class="sc"><table class="stbl"><thead><tr><th>Product</th><th>Category</th><th class="r">Stock</th><th>Unit</th><th class="r">Reorder at</th><th class="r">Retail</th>${mgr?'<th class="r">Cost</th><th></th>':''}</tr></thead><tbody>
-    ${invRows(list,mgr,q,p=>`<tr class="${p.avail<=0?'rout':isLow(p)?'rlow':''}${p.group?' igsub':''}"><td><b>${esc(p.name)}</b><br><small class="unit">${esc(p.code)}${p.on?' · 🛒 online':''}</small></td><td>${esc(p.cat)}</td><td class="r"><b class="stq">${qf(p.avail)}</b>${p.avail<=0?'<br>'+badge('OUT','red'):isLow(p)?'<br>'+badge('LOW','amber'):''}</td><td>${esc(p.unit)}</td><td class="r">${p.reorder?qf(p.reorder):'—'}</td><td class="r">${peso(p.retail)}</td>${mgr?`<td class="r">${p.cost?peso(p.cost):'—'}</td><td><button class="btn sm" data-pedit="${esc(p.code)}">Edit / Count</button></td>`:''}</tr>`)||`<tr><td colspan="8" class="empty">No product found.</td></tr>`}</tbody></table></div></div>
+    ${invRows(list,mgr,q,p=>`<tr class="${p.avail<=0?'rout':isLow(p)?'rlow':''}${p.group?' igsub':''}"><td><b>${esc(p.name)}</b><br><small class="unit">${esc(p.code)}${p.on?' · 🛒 online':''}</small></td><td>${esc(p.cat)}</td><td class="r"><b class="stq">${qf(p.avail)}</b>${p.avail<=0?'<br>'+badge('OUT','red'):isLow(p)?'<br>'+badge('LOW','amber'):''}</td><td>${esc(p.unit)}</td><td class="r">${p.reorder?qf(p.reorder):'—'}</td><td class="r">${peso(p.retail)}</td>${mgr?`<td class="r">${p.cost?peso(p.cost):'—'}</td><td><button class="btn sm" data-pedit="${esc(p.code)}">Edit / Count</button>${mgr?`<button class="btn sm" data-pcard="${esc(p.code)}" title="Stock card — every in and out">📒</button>`:''}</td>`:''}</tr>`)||`<tr><td colspan="8" class="empty">No product found.</td></tr>`}</tbody></table></div></div>
     ${ST.moves?`<details class="panel"><summary><b>🧾 Recent stock movements</b> <span class="unit">(last ${ST.moves.length})</span></summary><div class="sc"><table class="stbl"><thead><tr><th>When</th><th>Type</th><th>Product</th><th class="r">Qty</th><th class="r">Stock after</th><th>Reference</th><th>By</th></tr></thead><tbody>
       ${ST.moves.slice(0,120).map(m=>`<tr><td>${stamp(m.at)}</td><td>${esc(m.type)}</td><td>${esc(m.name)}</td><td class="r"><b style="color:${m.q<0?'var(--rose)':'var(--green)'}">${m.q>0?'+':''}${qf(m.q)}</b> ${esc(m.unit)}</td><td class="r">${qf(m.after)}</td><td class="unit">${esc(m.ref)}${m.note?' — '+esc(m.note):''}</td><td>${esc(m.by)}</td></tr>`).join('')||'<tr><td colspan="7" class="empty">No movements yet.</td></tr>'}</tbody></table></div></details>`:''}`}
 function stBox(){let box=$('#stm');if(!box){box=document.createElement('div');box.className='modal';box.id='stm';box.innerHTML='<div class="sheet" id="stb"></div>';document.body.appendChild(box);
@@ -4122,6 +4132,54 @@ function recvFixDialog(id){const po=(ST.pos||[]).find(p=>p.id===id);if(!po||!po.
     const b=$('#rf-ok');b.disabled=true;b.textContent='Saving…';
     try{ST=await api('api_recvFix',session.token,id,ch.map(({ix,qty,rcpt,ordered,drop})=>({ix,qty,rcpt,ordered,drop})),why);ST.offline=false;ST.rt=Date.now();stCache();box.classList.remove('on');toast('✅ Receiving corrected — stock adjusted',true);drawStock()}
     catch(e){alert(errMsg(e));b.disabled=false;b.textContent='✓ Save correction'}}}
+/* 📒 STOCK CARD — all IN / OUT of one product with a running balance (manager) */
+async function stockCard(code,from,to){const box=stBox();$('#stb').innerHTML='<h2>📒 Stock card</h2><div class="empty">Loading…</div>';box.classList.add('on');
+  let X;try{X=await api('api_stockCard',session.token,code,from||'',to||'')}catch(e){$('#stb').innerHTML=`<h2>📒 Stock card</h2><div class="snote">⚠ ${esc(errMsg(e))}</div><div class="row-end"><button class="btn" data-x>Close</button></div>`;return}
+  const u=esc(String(X.unit||'').toLowerCase()),IN=X.byType.filter(t=>t.inQ),OUT=X.byType.filter(t=>t.outQ),tin=r2(IN.reduce((a,t)=>a+t.inQ,0)),tout=r2(OUT.reduce((a,t)=>a+t.outQ,0));
+  const ic=t=>/count/i.test(t)?'🧮':/receiv/i.test(t)?'📥':/pos|sale/i.test(t)?'🧾':/dispatch/i.test(t)?'🚚':/made/i.test(t)?'🏭':/used/i.test(t)?'⚙️':/spoil|waste/i.test(t)?'🗑':/return|void|undone/i.test(t)?'↩':/import|starting/i.test(t)?'📦':/correction/i.test(t)?'✏':'•';
+  const grp=(L,k)=>L.map(t=>`<div class="sc-r"><span>${ic(t.type)} ${esc(t.type)} <small class="unit">×${t.n}</small></span><b>${k==='in'?'+':'−'}${qf(k==='in'?t.inQ:t.outQ)} ${u}</b></div>`).join('')||'<div class="unit">none</div>';
+  $('#stb').innerHTML=`<h2>📒 Stock card · ${esc(X.name)}</h2><div class="unit">${esc(X.code)} · now <b>${qf(X.now)} ${u}</b>${X.cost?' · cost '+peso(X.cost)+'/'+u:''}${X.lastCount?' · last stock count '+day(X.lastCount):''}</div>
+   <div class="fgrid" style="margin-top:8px"><label>From <input class="edit-in" type="date" id="sk-f" value="${esc(X.from)}"></label><label>To <input class="edit-in" type="date" id="sk-t" value="${esc(X.to)}"></label></div>
+   <div class="sc-sum"><div><span>Opening</span><b>${qf(X.open)} ${u}</b></div><div class="in"><span>In</span><b>+${qf(tin)}</b></div><div class="out"><span>Out</span><b>−${qf(tout)}</b></div><div><span>Closing</span><b>${qf(X.close)} ${u}</b></div></div>
+   <div class="sc-g"><div><h4>➕ In</h4>${grp(IN,'in')}</div><div><h4>➖ Out</h4>${grp(OUT,'out')}</div></div>
+   ${X.flagged?`<div class="sc-flag-sum">🚩 <b>${X.flagged} line${X.flagged>1?'s':''} to check</b> — highlighted in red below. <label class="chk2" style="margin-left:auto"><input type="checkbox" id="sk-only"> Show 🚩 only</label></div>`:`<div class="sc-ok">✓ No suspicious line found in these dates.</div>`}
+   <h4 style="margin:12px 0 4px">All movements <small class="unit">(newest first · ${X.rows.length})</small></h4>
+   <div class="sc" style="max-height:42vh;overflow:auto;border:1px solid var(--line);border-radius:10px"><table class="stbl sctb"><thead><tr><th>Date</th><th>Type</th><th class="r">In / Out</th><th class="r">Balance</th><th>Reference · by</th></tr></thead><tbody>
+   ${X.rows.map(m=>`<tr class="${m.flags?'sc-flag':/count|correction/i.test(m.type)?'sc-adj':''}"><td>${stamp(m.t)}</td><td>${ic(m.type)} ${esc(m.type)}</td><td class="r"><b style="color:${m.q<0?'var(--rose)':'var(--green)'}">${m.q>0?'+':''}${qf(m.q)}</b></td><td class="r">${qf(m.bal)}</td><td><small>${esc(m.ref)}${m.by?' · '+esc(m.by):''}${m.note?'<br><span class="unit">'+esc(m.note)+'</span>':''}</small>${m.flags?m.flags.map(f=>`<div class="sc-fl">🚩 ${esc(f)}</div>`).join(''):''}</td></tr>`).join('')||'<tr><td colspan="5" class="empty">No movement in these dates.</td></tr>'}
+   </tbody></table></div>
+   <div class="unit" style="margin-top:6px">🧮 Stock count / ✏ correction lines are the <b>adjustments</b> (the discrepancy itself). Look at what happened <b>between</b> two counts: receiving vs sales vs dispatch.</div>
+   <div class="row-end"><button class="btn" data-x>Close</button></div>`;
+  const re=()=>stockCard(code,$('#sk-f').value,$('#sk-t').value);$('#sk-f').onchange=re;$('#sk-t').onchange=re;
+  if($('#sk-only'))$('#sk-only').onchange=e=>document.querySelectorAll('.sctb tbody tr').forEach(tr=>tr.style.display=e.target.checked&&!tr.classList.contains('sc-flag')?'none':'')}
+/* 📊 PRODUCT MOVEMENT — simple: Start + In − Out ± Count = End, per product */
+let MV=null,MVerr='',MVload=false,MVF={pre:'cnt',from:'',to:'',q:'',cat:'',only:true};
+function mvLoad(){if(MVload)return;MVload=true;MVerr='';const k=MVF.from+'|'+MVF.to;
+  api('api_moveSummary',session.token,MVF.from,MVF.to).then(r=>{MV=r;MV.key=k;if(!MVF.from){MVF.from=r.from;MVF.to=r.to;MV.key=MVF.from+'|'+MVF.to}}).catch(e=>{MVerr=errMsg(e)}).finally(()=>{MVload=false;if(view==='mvt')drawStock()})}
+function mvtHTML(){const key=MVF.from+'|'+MVF.to;if((!MV||MV.key!==key)&&!MVerr)mvLoad();
+  const P=[['cnt','Since last stock count'],['today','Today'],['yday','Yesterday'],['week','This week'],['month','This month'],['last','Last month']];
+  const head=`<div class="shead"><div><h2>📊 Product movement</h2><div class="unit">How much came <b>in</b> and went <b>out</b> of each product. <b>Start + In − Out ± Count = End.</b> Tap a product for every movement.</div></div>
+    <div class="sbtns"><button class="btn sm" data-mvre>↻ Refresh</button></div></div>
+    <div class="sfilt"><div class="chips2">${P.map(([k,t])=>`<button class="${MVF.pre===k?'on':''}" data-mvp="${k}">${t}</button>`).join('')}</div>
+    <div class="srrow"><label>From <input type="date" class="edit-in" data-mvf="from" value="${MVF.from}"></label><label>To <input type="date" class="edit-in" data-mvf="to" value="${MVF.to}"></label>
+      <label>Category <select class="edit-in" data-mvf="cat"><option value="">All</option>${MV?[...new Set(MV.rows.map(r=>r.cat))].sort().map(c=>`<option${MVF.cat===c?' selected':''}>${esc(c)}</option>`).join(''):''}</select></label>
+      <label>Find <input class="edit-in" data-mvf="q" value="${esc(MVF.q)}" placeholder="🔎 product"></label></div>
+    <label class="chk2" style="margin-top:6px"><input type="checkbox" data-mvf="only"${MVF.only?' checked':''}> Only products that moved</label></div>`;
+  if(MVerr)return head+`<div class="empty">⚠ ${esc(MVerr)}<br><br><button class="btn" data-mvre>↻ Try again</button></div>`;
+  if(!MV||MV.key!==key)return head+'<div class="empty">Loading…</div>';
+  const q=MVF.q.toLowerCase(),R=MV.rows.filter(r=>(!MVF.only||r.n)&&(!MVF.cat||r.cat===MVF.cat)&&(!q||(r.name+' '+r.code).toLowerCase().includes(q))).sort((a,b)=>Math.abs(b.adj)-Math.abs(a.adj)||a.name.localeCompare(b.name));
+  const u=r=>esc(String(r.unit||'').toLowerCase()),z=v=>Math.abs(v)<0.0005;
+  const det=(r,k)=>{const L=k==='in'?[['📥 received',r.recv],['🏭 made',r.made],['↩ returned',r.back],['📦 starting stock',r.init||0],['other',r.other]]:[['🧾 sold',r.sold],['🚚 dispatched',r.disp],['⚙️ production',r.used],['🗑 spoiled',r.waste],['other',r.outO]];return L.filter(x=>!z(x[1])).map(x=>`${x[0]} ${qf(x[1])}`).join(' · ')};
+  const big=R.filter(r=>!z(r.adj)).length;
+  return head+`<div class="unit" style="margin:6px 0">${day(MV.from)} – ${day(MV.to)} · ${R.length} product${R.length===1?'':'s'}${big?` · <b style="color:var(--rose)">${big} with a count adjustment</b> (listed first)`:''}</div>
+   <div class="panel"><div class="sc"><table class="stbl mvtb"><thead><tr><th>Product</th><th class="r">Start</th><th class="r">+ In</th><th class="r">− Out</th><th class="r">± Count</th><th class="r">= End</th></tr></thead><tbody>
+   ${R.map(r=>`<tr class="${z(r.adj)?'':'mv-adj'}"><td><button type="button" class="sc-lnk" data-pcard="${esc(r.code)}"><b>${esc(r.name)}</b></button><br><small class="unit">${esc(r.cat)}</small></td>
+     <td class="r" data-l="Start">${qf(r.start)} <small class="unit">${u(r)}</small></td>
+     <td class="r mv-in" data-l="+ In">${z(r.inQ)?'—':'+'+qf(r.inQ)}${z(r.inQ)?'':`<small>${det(r,'in')}</small>`}</td>
+     <td class="r mv-out" data-l="− Out">${z(r.out)?'—':'−'+qf(r.out)}${z(r.out)?'':`<small>${det(r,'out')}</small>`}</td>
+     <td class="r" data-l="± Count">${z(r.adj)?'<span class="unit">✓</span>':`<b style="color:${r.adj<0?'var(--rose)':'var(--green)'}">${r.adj>0?'+':''}${qf(r.adj)}</b>`}</td>
+     <td class="r" data-l="= End"><b>${qf(r.end)}</b> <small class="unit">${u(r)}</small></td></tr>`).join('')||'<tr><td colspan="6" class="empty">No movement in these dates.</td></tr>'}
+   </tbody></table></div></div>
+   <div class="unit">± Count = what the stock count added or removed (the discrepancy). If it is big, tap the product: compare what was <b>received</b> with what was <b>sold / dispatched</b>.</div>`}
 async function recostDialog(){const box=stBox();let R=null,q='',only=true,NEW={};
   const load=async(f,t)=>{$('#stb').innerHTML='<h2>🔧 Correct cost of past sales</h2><div class="empty">Loading the sales…</div>';box.classList.add('on');
     try{R=await api('api_recostScan',session.token,f||'',t||'')}catch(e){$('#stb').innerHTML=`<h2>🔧 Correct cost of past sales</h2><div class="snote">⚠ ${esc(errMsg(e))}</div><div class="row-end"><button class="btn" data-x>Close</button></div>`;return}draw()};
@@ -5098,6 +5156,7 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const igr=e.target
     if('ctclose' in d){CTview=null;drawStock();return}
     if(d.ctprint){const X=d.ctprint==='view'?CTview:CT&&CT.open;if(X)ctPrint(X);return}
     if(d.ctpr){await busy(async()=>{const X=await api('api_countGet',session.token,d.ctpr);ctPrint(X)});return}}
+  if(view==='mvt'){if(d.mvp){if(d.mvp==='cnt'){MVF.from='';MVF.to='';MV=null}else{const [f,t]=srPreset(d.mvp);MVF.from=f;MVF.to=t}MVF.pre=d.mvp;drawStock();return}if('mvre' in d){MV=null;MVerr='';drawStock();return}}
   if(view==='crep'){if(d.crp){const [f,t]=srPreset(d.crp);CRF.from=f;CRF.to=t;CRF.pre=d.crp;drawStock();return}if('crre' in d){CR=null;CRerr='';drawStock();return}
     if(d.crcu!==undefined){CRF.cust=d.crcu;drawStock();window.scrollTo({top:0,behavior:'smooth'});return}if('crcsv' in d){crCsv();return}if('crprint' in d){crPrint();return}}
   if(view==='srep'){
@@ -5158,6 +5217,7 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const igr=e.target
   if('pimp' in d){importDialog();return}
   if('precost' in d){recostDialog();return}
   if(d.recvfix){recvFixDialog(d.recvfix);return}
+  if(d.pcard){stockCard(d.pcard);return}
   if(d.pedit){productDialog(d.pedit);return}
   // P.O.
   if('posug' in d){PSon=true;PS=null;PSerr='';drawStock();return}
@@ -5313,6 +5373,7 @@ function stockChange(e){if(!STOCKV.includes(view))return;const t=e.target,d=t.da
   if(d.lgf){LG[d.lgf]=t.value;if(d.lgf==='from'||d.lgf==='to')LG.pre='';drawStock();return}
   if('lggrp' in d){LG.grp=t.checked;drawStock();return}
   if(d.rvf){RVF[d.rvf]=t.value;if(d.rvf==='from'||d.rvf==='to')RVF.pre='';drawStock();return}
+  if(d.mvf){if(d.mvf==='only')MVF.only=t.checked;else MVF[d.mvf]=t.value;if(d.mvf==='from'||d.mvf==='to'){MVF.pre=''}drawStock();if(d.mvf==='q'){const i=document.querySelector('[data-mvf="q"]');if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length)}}return}
   if(d.crf){CRF[d.crf]=t.value;if(d.crf==='from'||d.crf==='to')CRF.pre='';drawStock();return}
   if(d.srf){SRF[d.srf]=t.value;if(d.srf==='from'||d.srf==='to')SRF.pre='';drawStock();return}
   if(d.acd){if(t.value){ACF[d.acd]=t.value;ACF.pre='';ACF.n=300;ACerr=''}drawStock();return}
