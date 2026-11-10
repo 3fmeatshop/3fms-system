@@ -496,6 +496,9 @@ header h1 .tt small{display:block;font-size:11px;color:var(--sky2);letter-spacin
 .apr-i{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:6px;cursor:pointer;font:inherit;color:var(--ink)}
 .apr-i:hover{border-color:#F5C518;background:#FFFBEA}.apr-i span{flex:1;min-width:0;display:flex;flex-direction:column}.apr-i small{color:var(--muted);font-size:12.5px}
 .apr-i em{font-style:normal;font-weight:800;font-size:12.5px;background:#FFF6D1;color:#7A4E00;padding:4px 10px;border-radius:99px;white-space:nowrap}.apr-i i{color:#9AA8B3;font-style:normal}
+.ctmoney{border:1px solid #F3DDB0;background:#FFFBEA;border-radius:12px;padding:10px 12px;margin:10px 0}
+.ctm-h{font-weight:800;font-size:14px;margin-bottom:4px}.ctm-k{margin:4px 0!important}
+.ctm-top{font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px;align-items:center}.ctm-top span{background:#fff;border:1px solid var(--line);border-radius:99px;padding:3px 10px}.ctm-top b{color:var(--rose)}
 /* phone print preview */
 #pvw{display:none;position:fixed;inset:0;z-index:9999;background:#F4F4F4;flex-direction:column}
 #pvw.on{display:flex}
@@ -1221,7 +1224,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 10 · 12:20 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 10 · 05:05 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -3915,6 +3918,11 @@ const CNTF={none:'No schedule',daily:'Every day',weekly:'Every week',monthly:'Ev
 const cntSched=H=>H.freq==='weekly'?'Every '+DOWN[H.dow]:H.freq==='monthly'?(H.dom==='last'?'Last day of every month':'Every month on day '+H.dom):CNTF[H.freq];
 function ctSave(lines,submit){return api('api_countSave',session.token,CT.open.id,lines,submit)}
 function ctQueue(){clearTimeout(CTsaveT);CTsaveT=setTimeout(()=>{if(!CT||!CT.open||CT.open.status!=='counting')return;const L=CT.open.lines.map(l=>({code:l.code,ent:CTL[l.code]||[]}));ctSave(L,false).then(r=>{const s=$('#ct-saved');if(s)s.textContent='✓ Saved '+new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})}).catch(e=>{const s=$('#ct-saved');if(s)s.textContent='⚠ Not saved — '+errMsg(e)})},1200)}
+/* MANAGER: live loss / gain while counting (₱ = (counted − system) × cost, only products already counted) */
+function ctMoney(L,getCnt){let loss=0,gain=0,n=0;const R=[];L.forEach(l=>{const c=getCnt(l);if(c==null||l.sys==null||!(l.cost>0))return;const d=r2(c-(parseFloat(l.sys)||0));if(Math.abs(d)<0.0005)return;const v=r2(d*l.cost);n++;if(v<0)loss+=-v;else gain+=v;R.push({l,d,v})});
+  R.sort((a,b)=>a.v-b.v);return {loss:r2(loss),gain:r2(gain),net:r2(gain-loss),n,top:R.filter(x=>x.v<0).slice(0,3)}}
+function ctMoneyHTML(m,label){return `<div class="ctmoney"><div class="ctm-h">💰 ${label}</div><div class="kpis ctm-k"><div><b style="color:var(--rose)">−${peso(m.loss)}</b><span>loss</span></div><div><b style="color:var(--green)">+${peso(m.gain)}</b><span>gain</span></div><div><b style="color:${m.net<0?'var(--rose)':'var(--green)'}">${m.net<0?'−':'+'}${peso(Math.abs(m.net))}</b><span>net</span></div><div><b>${m.n}</b><span>with variance</span></div></div>
+  ${m.top.length?`<div class="ctm-top">Biggest losses: ${m.top.map(x=>`<span>${esc(x.l.name)} <b>${x.d>0?'+':''}${qf(x.d)} ${esc(String(x.l.unit).toLowerCase())} · −${peso(-x.v)}</b></span>`).join('')}</div>`:''}</div>`}
 function ctVarRows(L,mode){const M=me.role==='manager',show=L.filter(l=>l.diff),rows=(mode==='all'?L:show);
   return `<div class="sc"><table class="stbl ctv"><thead><tr><th>Product</th><th class="r">System</th><th class="r">Counted</th><th class="r">Difference</th>${M?'<th class="r">Value</th>':''}<th>Reason</th></tr></thead><tbody>
   ${rows.map(l=>`<tr class="${l.big?'ctbig':''}"><td><b>${esc(l.name)}</b><br><small class="unit">${esc(l.cat)}</small></td><td class="r">${qf(l.sys)} ${esc(l.unit)}</td><td class="r"><b>${qf(l.cnt)}</b>${l.ent&&l.ent.length>1?`<br><small class="unit">${l.ent.map((v,i)=>(i?(v<0?' − ':' + '):(v<0?'−':''))+qf(Math.abs(v))).join('')}</small>`:''}</td>
@@ -3940,6 +3948,7 @@ function countHTML(){if(!CT&&!CTerr){ctLoad();return '<div class="empty">Loading
   // review before submit
   if(CTrev&&CTrev.id===X.id)return head+`<div class="panel"><div class="poh"><h3 style="margin:0">Variances · ${esc(X.no)}</h3></div>
     <div class="unit">System qty when the count started vs what you counted. <b>Big</b> losses or gains need a reason.</div>
+    ${M?ctMoneyHTML(ctMoney(CTrev.lines,l=>l.cnt===''||l.cnt==null?null:parseFloat(l.cnt)),'Total loss / gain'):''}
     ${ctVarRows(CTrev.lines,'edit')}
     <div class="row-end"><button class="btn" data-ctedit>← Back to counting</button><button class="go" data-ctsubmit>Submit for approval</button></div></div>`;
   // counting
@@ -3949,6 +3958,7 @@ function countHTML(){if(!CT&&!CTerr){ctLoad();return '<div class="empty">Loading
   return head+`<div class="panel ctp"><div class="poh"><h3 style="margin:0">${esc(X.no)} · counting</h3><span class="unit">&nbsp;started ${stamp(X.at)} by ${esc(X.by)}</span><span style="flex:1"></span><span class="unit" id="ct-saved"></span></div>
     ${X.back?`<div class="snote" style="background:#fee2e2">↩ <b>Sent back by ${esc(X.back.by)}:</b> ${esc(X.back.note)}</div>`:''}
     <div class="ctprog"><i style="width:${Math.round(n/L.length*100)}%"></i></div><div class="unit" id="ct-n"><b>${n}</b> of ${L.length} products counted</div>
+    ${M?ctMoneyHTML(ctMoney(L,l=>{const E=CTL[l.code]||[];return E.length?r2(E.reduce((a,v)=>a+v,0)):null}),'Live loss / gain so far <span class="unit">(counted products only · manager only)</span>'):''}
     <div class="cttabs">
       <div class="ctseg">${[['todo','⏳ To count',L.length-n],['done','✓ Counted',n],['all','All',L.length]].map(([k,t,c])=>`<button class="${CTst===k?'on':''}" data-ctst="${k}">${t}<b>${c}</b></button>`).join('')}</div>
       <div class="ctcats"><button class="${CTcat?'':'on'}" data-ctcat="">All items</button>${cats.map(c=>`<button class="${CTcat===c?'on':''}" data-ctcat="${esc(c)}">${esc(c)} <small>${cc(c)}</small></button>`).join('')}</div>
