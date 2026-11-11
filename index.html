@@ -1237,7 +1237,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 11 · 12:45 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 11 · 12:55 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -3765,7 +3765,7 @@ let PY=null,PYload=false,PYerr='',PYfrom='',PYto='',PYov={},PYsub='run',PYbusy=0
 function pyRecalc(){const n=++PYbusy;const tag=()=>{const e=$('#py-busy');if(e)e.style.display=PYbusy===n?'':'none'};setTimeout(tag);
   api('api_payroll',session.token,PYfrom,PYto,PYov).then(r=>{if(n!==PYbusy)return;const ae=document.activeElement,key=ae&&ae.dataset?Object.keys(ae.dataset)[0]:'',kv=key?ae.dataset[key]:'';PY=r;PYbusy=0;drawStock();
     if(key){const e=document.querySelector(`[data-${key.replace(/[A-Z]/g,m=>'-'+m.toLowerCase())}="${kv}"]`);if(e&&e.focus)e.focus()}}).catch(e=>{PYbusy=0;tag();toast(errMsg(e),true)})}
-function pyLoad(){if(PYload)return;PYload=true;PYerr='';api('api_payroll',session.token,PYfrom,PYto,PYov).then(r=>{PY=r;PYfrom=r.from;PYto=r.to}).catch(e=>PYerr=errMsg(e)).finally(()=>{PYload=false;if(view==='owner'||view==='hr')drawStock()})}
+function pyLoad(){if(PYload)return;PYload=true;PYerr='';api('api_payroll',session.token,PYfrom,PYto,PYov).then(r=>{PY=r;PYfrom=r.from;PYto=r.to;if(r.ovs)PYov=r.ovs}).catch(e=>PYerr=errMsg(e)).finally(()=>{PYload=false;if(view==='owner'||view==='hr')drawStock()})}
 function pyPeriods(){if(PY&&PY.periods)return PY.periods;const t=new Date(),out=[];for(let i=0;i<6;i++){const y=t.getFullYear(),m=t.getMonth()-Math.floor(i/2),h=(t.getDate()<=15?0:1)-(i%2);const mm=new Date(y,m+(h<0?-1:0),1),Y=mm.getFullYear(),M=mm.getMonth(),half=(h+2)%2;
   out.push(half===0?[iso(new Date(Y,M,1)),iso(new Date(Y,M,15))]:[iso(new Date(Y,M,16)),iso(new Date(Y,M+1,0))])}return [...new Map(out.map(p=>[p.join(),p])).values()]}
 function owPayroll(){if(!PY&&!PYerr){pyLoad();return '<div class="empty">Loading payroll…</div>'}if(PYerr)return `<div class="empty">⚠ ${esc(PYerr)}</div>`;
