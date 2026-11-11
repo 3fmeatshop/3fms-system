@@ -1237,7 +1237,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 10 · 11:00 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 11 · 10:30 AM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -3784,7 +3784,7 @@ function pyRun(){const L=PY.lines,tot=k=>L.reduce((a,l)=>a+(l[k]||0),0);
     ${PY.released?'':`<div class="row-end"><label>Pay from <select class="edit-in" id="py-acc" style="width:auto">${noDrawer(PY.accounts).map(a=>`<option value="${a.id}">${esc(a.name)}</option>`).join('')}</select></label><button class="go" data-pyrel>✓ Release pay ${peso(tot('net'))}</button></div>`}
     <details class="panel"><summary><b>🎁 13th month pay (accrued this year)</b></summary>${Object.keys(PY.thirteenth).length?PY.staff.filter(s=>PY.thirteenth[s.id]).map(s=>`<div class="posx-row"><span>${esc(s.name)}</span><b>${peso(PY.thirteenth[s.id])}</b></div>`).join(''):'<div class="unit">Grows with each released payroll (basic pay ÷ 12).</div>'}</details>`}
 function pyAtt(){const S=PY.staff.filter(s=>s.set&&s.active),A=PY.attendance;
-  return `<div class="row-end" style="justify-content:flex-start"><button class="go sm" data-pyattadd>+ Add / correct time</button></div>
+  return `<div class="row-end" style="justify-content:flex-start"><button class="go sm" data-pyattadd>+ Add / correct time</button><button class="btn sm" data-pyattimp>📥 Import old log</button></div>
     <div class="sc"><table class="stbl"><thead><tr><th>Date</th><th>Staff</th><th>In</th><th>Break</th><th>Out</th><th>Note</th><th></th></tr></thead><tbody>
     ${A.slice().sort((a,b)=>a.d<b.d?1:-1).map(a=>{let ph={};try{ph=JSON.parse(a.photos||'{}')}catch(e){}const P=Object.entries(ph).filter(([,v])=>v);return `<tr class="${/⚠/.test(a.note)?'rout':''}"><td>${day(a.d)}</td><td><b>${esc(a.name)}</b></td><td>${a.tin?time12h(a.tin):'—'}</td><td>${a.bout?time12h(a.bout)+(a.bin?'–'+time12h(a.bin):''):'—'}${a.bout2?'<br>'+time12h(a.bout2)+(a.bin2?'–'+time12h(a.bin2):''):''}</td><td>${a.tout?time12h(a.tout):'<b style="color:var(--rose)">none</b>'}</td><td class="unit">${/⚠/.test(a.note)?'<b style="color:var(--rose)">'+esc(a.note)+'</b>':esc(a.note)}${a.sum?'<br><small>'+esc(a.sum)+'</small>':''}</td><td>${P.map(([k,v])=>`<button class="btn sm" data-attph="${esc(v)}" title="${k}">📷 ${({in:'in',bout:'break',bin:'back',out:'out'})[k]||k}</button>`).join(' ')} <button class="btn sm" data-pyattedit="${a.id}">Edit</button></td></tr>`}).join('')||'<tr><td colspan="7" class="empty">No time records in this period.</td></tr>'}</tbody></table></div>
     ${S.length?'':'<div class="snote">Set up staff rates first in 👥 Staff & rates.</div>'}`}
@@ -3827,6 +3827,31 @@ function pyDialog(kind,id){const box=stBox(),acc=PY.accounts,staff=PY.staff.filt
       save('att',{id,uid:v('pa-u'),d:v('pa-d'),tin:v('pa-in'),bout:v('pa-bo'),bin:v('pa-bi'),bout2:v('pa-bo2'),bin2:v('pa-bi2'),tout:v('pa-out'),note:v('pa-n')})}
     else if(kind==='adv')save('advance',{uid:v('pv-u'),d:v('pv-d'),amt:v('pv-a'),from:v('pv-f'),note:v('pv-n')});
     else save('holiday',{d:v('ph-d'),type:v('ph-t'),name:v('ph-n')})}}
+// 📥 import an old biometric log (e.g. "10/25/2026 4:50:15 3F0008 Duty IN") into the time records
+function attParse(txt){const re=/(\d{1,2})\/(\d{1,2})\/(\d{4})[\sT,]+(\d{1,2}):(\d{2})(?::\d{2})?\s*([AaPp][Mm])?[\s,|;]+([A-Za-z0-9_-]+)[\s,|;]+(Duty|Lunch\s*break|Break|Time|Check)[\s-]*(IN|OUT)\b/gi;const P=[];let m;
+  while((m=re.exec(txt))){let h=+m[4];const ap=(m[6]||'').toUpperCase();if(ap==='PM'&&h<12)h+=12;if(ap==='AM'&&h===12)h=0;
+    const d=`${m[3]}-${String(m[1]).padStart(2,'0')}-${String(m[2]).padStart(2,'0')}`,t=String(h).padStart(2,'0')+':'+m[5],brk=!/duty|time|check/i.test(m[8]),io=m[9].toUpperCase();
+    P.push({bid:m[7],d,t,k:brk?(io==='OUT'?'bo':'bi'):(io==='IN'?'in':'out')})}
+  return P}
+function attGroup(P,map){const G={};P.slice().sort((a,b)=>(a.d+a.t)<(b.d+b.t)?-1:1).forEach(p=>{const uid=map[p.bid];if(!uid)return;const g=G[uid+'|'+p.d]=G[uid+'|'+p.d]||{uid,d:p.d,n:[]};
+    if(p.k==='in'){if(!g.tin)g.tin=p.t}else if(p.k==='out')g.tout=p.t;
+    else if(p.k==='bo'){if(!g.bout)g.bout=p.t;else if(!g.bout2)g.bout2=p.t;else g.n.push('3rd break')}
+    else{if(g.bout&&!g.bin)g.bin=p.t;else if(g.bout2&&!g.bin2)g.bin2=p.t;else if(!g.bout)g.n.push('break in without break out')}});
+  return Object.values(G).sort((a,b)=>a.d<b.d?-1:a.d>b.d?1:0)}
+function attImport(){const box=stBox();let P=[],map={};try{map=JSON.parse(localStorage.getItem('attImpMap')||'{}')}catch(e){}
+  const staff=(PY.staff||[]).filter(s=>s.active);
+  const draw=()=>{const ids=[...new Set(P.map(p=>p.bid))],cnt=id=>P.filter(p=>p.bid===id).length,G=attGroup(P,map),has=(uid,d)=>(PY.attendance||[]).some(a=>a.uid===uid&&a.d===d);
+    $('#ai-out').innerHTML=!P.length?'':`<h4 style="margin:10px 0 4px">1. Who is each ID?</h4><table class="sctb"><tbody>${ids.map(id=>`<tr><td><b>${esc(id)}</b> <small class="unit">${cnt(id)} punch${cnt(id)>1?'es':''}${cnt(id)<3?' — typo?':''}</small></td><td><select class="edit-in" data-aimap="${esc(id)}"><option value="">— skip —</option>${staff.map(s=>`<option value="${s.id}"${map[id]===s.id?' selected':''}>${esc(s.name)}</option>`).join('')}</select></td></tr>`).join('')}</tbody></table>
+     <h4 style="margin:12px 0 4px">2. Check the days <small class="unit">(${G.length})</small></h4><div style="overflow:auto"><table class="sctb"><thead><tr><th>Date</th><th>Staff</th><th>In</th><th>Break</th><th>Out</th><th></th></tr></thead><tbody>${G.map(g=>{const nm=(staff.find(s=>s.id===g.uid)||{}).name||g.uid,miss=[!g.tin&&'no time in',!g.tout&&'no time out'].filter(Boolean).concat(g.n);
+       return `<tr class="${miss.length?'sc-flag':''}"><td>${day(g.d)}</td><td>${esc(nm)}</td><td>${g.tin?time12h(g.tin):'—'}</td><td><small>${g.bout?time12h(g.bout)+'–'+(g.bin?time12h(g.bin):'?'):'—'}${g.bout2?'<br>'+time12h(g.bout2)+'–'+(g.bin2?time12h(g.bin2):'?'):''}</small></td><td>${g.tout?time12h(g.tout):'—'}</td><td><small>${has(g.uid,g.d)?'<span class="unit">already has a record — fills blanks only</span>':''}${miss.length?'<div class="sc-fl">⚠ '+esc(miss.join(', '))+'</div>':''}</small></td></tr>`}).join('')}</tbody></table></div>
+     <div class="row-end"><button class="btn" data-x>Cancel</button><button class="go" id="ai-go"${G.length?'':' disabled'}>Import ${G.length} day${G.length===1?'':'s'}</button></div>`;
+    document.querySelectorAll('[data-aimap]').forEach(sel=>sel.onchange=()=>{map[sel.dataset.aimap]=sel.value;try{localStorage.setItem('attImpMap',JSON.stringify(map))}catch(e){}draw()});
+    if($('#ai-go'))$('#ai-go').onclick=async()=>{const recs=attGroup(P,map).map(g=>({uid:g.uid,d:g.d,tin:g.tin||'',bout:g.bout||'',bin:g.bin||'',bout2:g.bout2||'',bin2:g.bin2||'',tout:g.tout||''}));
+      $('#ai-go').disabled=true;try{PY=await api('api_attImport',session.token,recs,PYfrom,PYto,PYov);const r=PY.imported||{};box.classList.remove('on');toast(`Imported: ${r.added||0} new day(s), ${r.filled||0} filled in, ${r.skipped||0} unchanged`);drawStock()}catch(e){$('#ai-go').disabled=false;alert(errMsg(e))}}};
+  $('#stb').innerHTML=`<h2>📥 Import old attendance log</h2><p class="unit" style="margin:0 0 6px">Paste the biometric / old time-clock log (Date-time · ID · Duty IN / Lunchbreak OUT / Lunchbreak IN / Duty OUT). Days already in the system keep their times — only empty times are filled.</p>
+   <textarea class="edit-in" id="ai-t" rows="6" style="width:100%;font-family:monospace;font-size:12.5px" placeholder="10/25/2026 4:50:15  3F0008  Duty IN"></textarea><div class="row-end" style="justify-content:flex-start"><button class="go sm" id="ai-read">Read the log</button><span class="unit" id="ai-n"></span></div><div id="ai-out"></div>`;
+  box.classList.add('on');
+  $('#ai-read').onclick=()=>{P=attParse($('#ai-t').value);$('#ai-n').textContent=P.length?P.length+' punches found':'No punches found — check the format';draw()}}
 function payslipHTML(l,from,to){const R=(t,v,neg)=>`<tr><td>${t}</td><td style="text-align:right">${neg?'−':''}${peso(v)}</td></tr>`;
   return `<div style="font-family:monospace;max-width:340px;margin:auto"><h3 style="text-align:center;margin:0">3F MEATSHOP</h3><p style="text-align:center;margin:2px 0"><b>PAYSLIP</b><br>${day(from)} – ${day(to)}</p><hr><p><b>${esc(l.name)}</b><br>${l.type==='daily'?peso(l.rate)+' / day':peso(l.rate)+' / month'} · ${l.days} day(s) worked${l.absent?' · '+l.absent+' absent':''}</p>
   <table style="width:100%">${R('Basic pay',l.basic)}${l.holPay?R('Holiday pay',l.holPay):''}${l.restPay?R('Rest day pay',l.restPay):''}${l.otPay?R('Overtime ('+Math.round(l.otMin/6)/10+' h)',l.otPay):''}${l.adj>0?R('Additions',l.adj):''}${l.lateDed?R('Late / undertime / over break ('+(l.lateMin+l.utMin+(l.obMin||0))+' min)',l.lateDed,1):''}
@@ -5187,6 +5212,7 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const igr=e.target
     if(d.pysub){PYsub=d.pysub;drawStock();return}
     if(d.pystaff){pyDialog('staff',d.pystaff);return}
     if('pyattadd' in d){pyDialog('att','');return}
+    if('pyattimp' in d){attImport();return}
     if(d.attph){const ph=await getPhoto(d.attph);if(ph){const box=stBox();$('#stb').innerHTML=`<h2>📷 Time clock selfie</h2><img src="${ph}" style="max-width:100%;border-radius:10px"><div class="row-end"><button class="go" data-x>Close</button></div>`;box.classList.add('on')}else toast('Photo not available');return}
     if(d.pyattedit){pyDialog('att',d.pyattedit);return}
     if('pyadvadd' in d){pyDialog('adv','');return}
