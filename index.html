@@ -1242,7 +1242,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 11 · 5:40 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 11 · 7:20 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -3457,7 +3457,7 @@ function ownerHTML(){
     ${me.role==='manager'?'':`<div class="chips2 owtabs">${tabs.map(([k,t])=>`<button class="${OWtab===k?'on':''}" data-owtab="${k}">${t}</button>`).join('')}</div>`}`;
   if(OWerr)return head+`<div class="empty">⚠ ${esc(OWerr)}<br><br><button class="btn" data-owre>↻ Try again</button></div>`;
   if(!OW)return head+'<div class="empty">Loading…</div>';
-  return head+({dash:owDash,acc:owAccounts,hist:owHist,exp:owExpenses,col:()=>{const p=(OW.zs||[]).some(q=>q.os.st==='pending');return p?owShort()+owCollect():owCollect()+owShort()},pay:owPayables,loan:()=>{PAYsec='loan';OWtab='pay';return owPayables()},avg:owAvg,fa:owAssets,rep:owReports}[OWtab])()}
+  return head+({dash:owDash,acc:owAccounts,hist:owHist,exp:owExpenses,col:()=>{const p=(OW.zs||[]).some(q=>q.os.st==='pending');return (p?owShort()+owCollect():owCollect()+owShort())+owLoans('lend')},pay:owPayables,loan:()=>{PAYsec='loan';OWtab='pay';return owPayables()},avg:owAvg,fa:owAssets,rep:owReports}[OWtab])()}
 function owDash(){const zp=(OW.zs||[]).filter(q=>q.os.st==='pending');return (zp.length?`<button class="snote" style="cursor:pointer;width:100%;text-align:left;font:inherit;color:inherit" data-owtab="col">⚠ <b>${zp.length}</b> cash short / over from the Z reading to decide (${zp.map(q=>(q.amt<0?'short ':'over ')+peso(Math.abs(q.amt))).join(', ')}) — tap to open <b>📥 Collect & pay</b>.</button>`:'')+owDash0()}
 function owDash0(){const O=OW,P=O.pl,B=O.bs,arOver=O.ar.filter(a=>a.days>30),apDue=O.ap.filter(a=>a.due&&a.due<=iso(new Date(Date.now()+7*864e5)));
   const k=(t,v,s,c)=>`<div class="owk ${c||''}"><span>${t}</span><b>${v}</b>${s?`<small>${s}</small>`:''}</div>`;
@@ -3958,7 +3958,7 @@ function owAvg(){const k=OWym||(OW&&OW.ym)||'';if((!PA||PAkey!==k)&&!PAload&&!PA
     <div class="panel"><h3>🕘 Per hour of the day — average, ${ymLbl(A.ym)}</h3>${owBars(A.hours.map(h=>({...h,lbl:hl(h.h)})),[['gp','#16A34A','Gross profit'],['np','#F59E0B','Net profit (after the hour\'s share of expenses)']])}
       ${best&&best.gp?`<div class="unit">Most profitable hour: <b>${hl(best.h)}m</b> (${peso(best.np)} on average) · least: <b>${hl(worst.h)}m</b> (${peso(worst.np)})</div>`:''}
       <details><summary class="unit">Numbers</summary><div class="sc"><table class="stbl"><thead><tr><th>Hour</th><th class="r">Avg sales</th><th class="r">Avg gross profit</th><th class="r">Expenses (share)</th><th class="r">Avg net profit</th></tr></thead><tbody>${A.hours.map(h=>`<tr${h.open?'':' style="opacity:.6"'}><td>${hl(h.h)}m–${hl((h.h+1)%24)}m${h.open?'':' <small>(closed)</small>'}</td><td class="r">${peso(h.sales)}</td><td class="r">${peso(h.gp)}</td><td class="r">−${peso(h.exp)}</td><td class="r"><b style="color:${col(h.np)}">${peso(h.np)}</b></td></tr>`).join('')}</tbody></table></div></details></div>`}
-function owLoans(){const O=OW,L=O.loans||[];
+function owLoans(only){const O=OW,L=O.loans||[];
   const card=o=>{const B=o.kind==='borrow',pc=o.amt?Math.min(100,Math.round(o.paid/o.amt*100)):0;return `<div class="pocard"><div class="poh"><b>${esc(o.name)}</b><span style="flex:1"></span>${o.balance<=0?badge('PAID','green'):o.late?badge('OVERDUE','red'):''} <b style="font-size:17px">${peso(o.balance)}</b></div>
     <div class="unit">${srDay(o.d)}${o.due?' · due '+srDay(o.due):''}${o.monthly?' · '+peso(o.monthly)+'/month':''} · amount ${peso(o.amt)} · ${B?'paid':'collected'} ${peso(o.paid)}${o.interest?' · interest '+peso(o.interest):''}${o.existing?' · <i>existing balance</i>':' · '+(B?'into ':'from ')+esc(owAcc(o.acc))}${o.note?'<br>📝 '+esc(o.note):''}</div>
     <div class="lnbar"><i style="width:${pc}%"></i></div>
@@ -3969,7 +3969,8 @@ function owLoans(){const O=OW,L=O.loans||[];
       <div class="kpis" style="margin:10px 0"><div><b>${peso(tot)}</b><span>balance · ${open.length} open</span></div>${late.length?`<div class="bad"><b>${late.length}</b><span>overdue</span></div>`:''}</div>
       ${open.map(card).join('')||'<div class="empty">None.</div>'}
       ${A.length>open.length?`<details><summary class="unit">Fully paid (${A.length-open.length})</summary>${A.filter(o=>o.balance<=0).map(card).join('')}</details>`:''}</div>`};
-  return `<div class="owrow">${sec('borrow','📤 Loans — money I owe','Bank / personal loans. Payments lower the balance; interest goes to expenses.')}${sec('lend','📥 Cash lent — owed to me','Cash other people borrowed from you. (Staff advances deducted from salary: use 👥 Payroll › Cash advance.)')}</div>`}
+  const b=sec('borrow','📤 Loans — money I owe','Bank / personal loans. Payments lower the balance; interest goes to expenses.'),l=sec('lend','🤝 Cash lent — owed to me','Cash other people borrowed from you. Tap 💰 Collect when they pay. (Staff cash advances: HR › 💸 Cash advances.)');
+  return only==='borrow'?b:only==='lend'?l:`<div class="owrow">${b}${l}</div>`}
 function loanForm(kind,id){const O=OW,o=id?O.loans.find(x=>x.id===id):null,B=(o?o.kind:kind)==='borrow',box=stBox(),acc=O.accounts;
   const accSel=v=>`<select class="edit-in" id="ln-acc"><option value="">— choose —</option>${(B?acc:noDrawer(acc)).map(a=>`<option value="${a.id}"${a.id===v?' selected':''}>${ACCI[a.type]||''} ${esc(a.name)}</option>`).join('')}</select>`;
   const ex=o?o.existing:true;
@@ -4044,7 +4045,7 @@ function owPayables(){const O=OW,bills=(O.ap||[]).filter(a=>a.kind==='exp'),bt=b
   const card=(k,ic,t,v,sub)=>`<button class="pay-card${PAYsec===k?' on':''}" data-paysec="${k}"><span>${ic} ${t}</span><b>${peso(v)}</b><small>${sub}</small></button>`;
   return `<div class="pay-cards">${card('sup','🏭','Suppliers',supT,SL&&SL.overdue?`<span style="color:#FFD5D5">${peso(SL.overdue)} overdue</span>`:'unpaid deliveries')}${card('bill','🧾','Unpaid bills',bt,bills.length+' bill(s)')}${card('loan','🤝','Loans',lt,'balance borrowed')}</div>
    <div class="pay-total">Total payables <b>${peso(supT+bt+lt)}</b></div>
-   ${PAYsec==='sup'?paySuppliers():PAYsec==='bill'?payBills(bills):owLoans()}`}
+   ${PAYsec==='sup'?paySuppliers():PAYsec==='bill'?payBills(bills):owLoans('borrow')}`}
 function payBills(B){return `<div class="panel"><h3>🧾 Unpaid bills <small class="unit">(charged expenses)</small></h3>${B.map(a=>{const late=a.due&&a.due<today();return `<div class="posx-row"><span><b>${esc(a.supplier)}</b> <small class="unit">due ${a.due?day(a.due):'—'}${late?' · <b style="color:var(--rose)">overdue</b>':''}</small></span><b>${a.payBy==='cashier'?badge('cashier to pay','violet')+' ':''}${peso(a.amount)} <button class="go sm" data-owpay="${a.kind}:${a.id}">Pay</button></b></div>`}).join('')||'<div class="unit">No unpaid bills. 👍</div>'}
   <div class="unit" style="margin-top:6px">Add a bill in 🧾 Expenses with "Charge (pay later)".</div></div>`}
 function paySuppliers(){if(!SL&&!SLerr){slLoad();return '<div class="empty">Loading suppliers…</div>'}if(SLerr)return `<div class="empty">⚠ ${esc(SLerr)} <button class="btn sm" data-slre>↻ Try again</button></div>`;
