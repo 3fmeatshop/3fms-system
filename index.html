@@ -504,7 +504,7 @@ header h1 .tt small{display:block;font-size:11px;color:var(--sky2);letter-spacin
 /* 📒 stock card */
 .sc-sum{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:10px 0}.sc-sum>div{border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:#fff}.sc-sum span{display:block;font-size:12px;color:var(--muted)}.sc-sum b{font-size:17px}.sc-sum .in b{color:var(--green)}.sc-sum .out b{color:var(--rose)}
 .sc-g{display:grid;grid-template-columns:1fr 1fr;gap:10px}.sc-g h4{margin:4px 0}.sc-r{display:flex;justify-content:space-between;gap:8px;padding:4px 0;border-bottom:1px dashed var(--line);font-size:14px}
-.half-tag{display:inline-block;background:#FFE08A;color:#7A4B00;font-weight:800;font-size:11.5px;border-radius:6px;padding:1px 6px;white-space:nowrap}.stbl .atb{background:#FFF8E6;text-align:center;white-space:nowrap}.stbl th.atb{background:#FCEBC2}.sctb tr.sc-adj td{background:#FFF6D1}.sctb tr.sc-flag td{background:#FDECEC}.sc-fl{color:#B3191B;font-weight:700;font-size:12.5px;margin-top:3px}.sc-flag-sum{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#FDECEC;border:1px solid #F6B3B0;color:#8E1B22;border-radius:10px;padding:8px 12px;margin-top:10px}.sc-ok{background:#e1f2e7;color:#1c7a44;border-radius:10px;padding:8px 12px;margin-top:10px;font-weight:700}.sc-lnk{color:inherit;text-decoration:none;background:none;border:0;padding:0;font:inherit;cursor:pointer;text-align:left}.sc-lnk:hover b{text-decoration:underline}
+.py-busy{position:sticky;top:76px;z-index:5;background:#FFF3D6;color:#7A4B00;font-weight:700;border-radius:10px;padding:6px 12px;margin:0 0 8px;display:inline-block}.half-tag{display:inline-block;background:#FFE08A;color:#7A4B00;font-weight:800;font-size:11.5px;border-radius:6px;padding:1px 6px;white-space:nowrap}.stbl .atb{background:#FFF8E6;text-align:center;white-space:nowrap}.stbl th.atb{background:#FCEBC2}.sctb tr.sc-adj td{background:#FFF6D1}.sctb tr.sc-flag td{background:#FDECEC}.sc-fl{color:#B3191B;font-weight:700;font-size:12.5px;margin-top:3px}.sc-flag-sum{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#FDECEC;border:1px solid #F6B3B0;color:#8E1B22;border-radius:10px;padding:8px 12px;margin-top:10px}.sc-ok{background:#e1f2e7;color:#1c7a44;border-radius:10px;padding:8px 12px;margin-top:10px;font-weight:700}.sc-lnk{color:inherit;text-decoration:none;background:none;border:0;padding:0;font:inherit;cursor:pointer;text-align:left}.sc-lnk:hover b{text-decoration:underline}
 @media(max-width:600px){.sc-sum{grid-template-columns:1fr 1fr}.sc-g{grid-template-columns:1fr}}
 /* 📊 product movement */
 .mvtb td.r>small.unit{display:inline}.mvtb td small{display:block;font-size:11.5px;color:var(--muted);font-weight:500}.mvtb .mv-in{color:var(--green);font-weight:800}.mvtb .mv-out{color:var(--rose);font-weight:800}.mvtb tr.mv-adj td{background:#FFF6D1}
@@ -1237,7 +1237,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 11 · 12:20 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 11 · 12:35 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -3760,7 +3760,11 @@ function hrSet(){const H=HR.set;return `<div class="panel"><h3>🕘 Shifts</h3><
   <div class="panel"><h3>📋 House rules <small>(one per line — shown to staff)</small></h3><textarea class="edit-in" id="hs-rules" rows="6" style="width:100%">${esc(H.rules.join('\n'))}</textarea></div>
   <div class="row-end"><button class="go" data-hssave>💾 Save settings</button></div>`}
 /* ---------- OWNER › PAYROLL ---------- */
-let PY=null,PYload=false,PYerr='',PYfrom='',PYto='',PYov={},PYsub='run';
+let PY=null,PYload=false,PYerr='',PYfrom='',PYto='',PYov={},PYsub='run',PYbusy=0;
+// typing in Allowance / Adj / Cash adv / ticking OT, KPI, contributions: keep the table on screen and only refresh the numbers
+function pyRecalc(){const n=++PYbusy;const tag=()=>{const e=$('#py-busy');if(e)e.style.display=PYbusy===n?'':'none'};setTimeout(tag);
+  api('api_payroll',session.token,PYfrom,PYto,PYov).then(r=>{if(n!==PYbusy)return;const ae=document.activeElement,key=ae&&ae.dataset?Object.keys(ae.dataset)[0]:'',kv=key?ae.dataset[key]:'';PY=r;PYbusy=0;drawStock();
+    if(key){const e=document.querySelector(`[data-${key.replace(/[A-Z]/g,m=>'-'+m.toLowerCase())}="${kv}"]`);if(e&&e.focus)e.focus()}}).catch(e=>{PYbusy=0;tag();toast(errMsg(e),true)})}
 function pyLoad(){if(PYload)return;PYload=true;PYerr='';api('api_payroll',session.token,PYfrom,PYto,PYov).then(r=>{PY=r;PYfrom=r.from;PYto=r.to}).catch(e=>PYerr=errMsg(e)).finally(()=>{PYload=false;if(view==='owner'||view==='hr')drawStock()})}
 function pyPeriods(){if(PY&&PY.periods)return PY.periods;const t=new Date(),out=[];for(let i=0;i<6;i++){const y=t.getFullYear(),m=t.getMonth()-Math.floor(i/2),h=(t.getDate()<=15?0:1)-(i%2);const mm=new Date(y,m+(h<0?-1:0),1),Y=mm.getFullYear(),M=mm.getMonth(),half=(h+2)%2;
   out.push(half===0?[iso(new Date(Y,M,1)),iso(new Date(Y,M,15))]:[iso(new Date(Y,M,16)),iso(new Date(Y,M+1,0))])}return [...new Map(out.map(p=>[p.join(),p])).values()]}
@@ -3768,9 +3772,9 @@ function owPayroll(){if(!PY&&!PYerr){pyLoad();return '<div class="empty">Loading
   const subs=[['run','💵 Payroll'],['att','🕘 Attendance'],['staff','👥 Staff & rates'],['adv','💸 Cash advances'],['hol','📅 Holidays'],['rem','🏛 Contributions']];
   return `<div class="poh" style="flex-wrap:wrap;gap:8px"><select class="edit-in" data-pyper style="width:auto">${pyPeriods().map(([f,t])=>`<option value="${f}|${t}"${f===PY.from?' selected':''}>${day(f)} – ${day(t)}</option>`).join('')}</select>
     <div class="chips2">${subs.map(([k,t])=>`<button class="${PYsub===k?'on':''}" data-pysub="${k}">${t}</button>`).join('')}</div></div>`+({run:pyRun,att:pyAtt,staff:pyStaff,adv:pyAdv,hol:pyHol,rem:pyRem}[PYsub])()}
-function pyRun(){const L=PY.lines,tot=k=>L.reduce((a,l)=>a+(l[k]||0),0);
+function pyRun(){const L=PY.lines,tot=k=>L.reduce((a,l)=>a+(l[k]||0),0);setTimeout(()=>{const e=$('#py-busy');if(e)e.style.display=PYbusy?'':'none'});
   if(!L.length)return '<div class="snote">No staff with a rate yet — go to <b>👥 Staff & rates</b> and set each person\'s daily or monthly rate and schedule.</div>';
-  return `${PY.released?`<div class="snote">✅ This period is already <b>released</b>.</div>`:''}<div class="sc"><table class="stbl pyt"><thead><tr><th>Staff</th><th class="r">Days</th><th class="r">Basic</th><th class="r">Holiday / rest day</th><th class="r">OT</th><th class="r">Allowance</th><th class="r">KPI incentive</th><th class="r">Late / UT</th><th class="r">Adj. (+/−)</th><th class="r">Gross</th><th class="r">SSS · PH · HDMF</th><th class="r">Cash adv.</th><th class="r">NET PAY</th><th></th></tr></thead><tbody>
+  return `<div id="py-busy" class="py-busy" style="display:none">⏳ Updating totals…</div>${PY.released?`<div class="snote">✅ This period is already <b>released</b>.</div>`:''}<div class="sc"><table class="stbl pyt"><thead><tr><th>Staff</th><th class="r">Days</th><th class="r">Basic</th><th class="r">Holiday / rest day</th><th class="r">OT</th><th class="r">Allowance</th><th class="r">KPI incentive</th><th class="r">Late / UT</th><th class="r">Adj. (+/−)</th><th class="r">Gross</th><th class="r">SSS · PH · HDMF</th><th class="r">Cash adv.</th><th class="r">NET PAY</th><th></th></tr></thead><tbody>
     ${L.map(l=>`<tr><td><b>${esc(l.name)}</b>${l.owner?' <small class="unit">owner</small>':''}<br><small class="unit">${l.type==='daily'?peso(l.rate)+'/day':peso(l.rate)+'/month'}${l.absent?' · '+l.absent+' absent':''}${l.half?' · '+l.half+' half day':''}${l.noOut?` · <b style="color:var(--rose)">${l.noOut} no time-out</b>`:''}${l.cut?` · <b style="color:var(--amber)">${esc(l.cut)}</b>`:''}</small></td>
       <td class="r">${l.days}</td><td class="r">${peso(l.basic)}</td><td class="r">${peso(l.holPay+l.restPay)}</td>
       <td class="r">${l.otMin?`<label class="chk2"><input type="checkbox" data-pyot="${l.id}"${l.otOk?' checked':''}> ${Math.round(l.otMin/6)/10}h</label>${peso(l.otPay)}`:'—'}</td>
@@ -5409,7 +5413,7 @@ function stockChange(e){if(!STOCKV.includes(view))return;const t=e.target,d=t.da
   if(d.hrfill!==undefined){const id=d.hrfill;if(t.value){Object.keys(HRgrid[id]).forEach(k=>{if(!HRgrid[id][k])HRgrid[id][k]=t.value})}drawStock();return}
   if(d.pyper!==undefined){[PYfrom,PYto]=t.value.split('|');PY=null;PYov={};drawStock();return}
   if(d.pyot!==undefined||d.pyc!==undefined||d.pyadj!==undefined||d.pyadv!==undefined||d.pyallow!==undefined||d.pykpi!==undefined){const id=d.pyot||d.pyc||d.pyadj||d.pyadv||d.pyallow||d.pykpi,o=PYov[id]=PYov[id]||{};
-    if(d.pyot!==undefined)o.otOk=t.checked;if(d.pykpi!==undefined)o.kpiOk=t.checked;if(d.pyallow!==undefined)o.allow=t.value;if(d.pyc!==undefined)o.contrib=t.checked;if(d.pyadj!==undefined)o.adj=t.value;if(d.pyadv!==undefined)o.adv=t.value;PY=null;setTimeout(drawStock);return}
+    if(d.pyot!==undefined)o.otOk=t.checked;if(d.pykpi!==undefined)o.kpiOk=t.checked;if(d.pyallow!==undefined)o.allow=t.value;if(d.pyc!==undefined)o.contrib=t.checked;if(d.pyadj!==undefined)o.adj=t.value;if(d.pyadv!==undefined)o.adv=t.value;pyRecalc();return}
   if(d.zturn!==undefined){api('api_zTurnSet',session.token,t.value==='none'?'':t.value,OW.ym).then(r=>{OW=r;OWat=Date.now();toast('Saved');drawStock()}).catch(e=>alert(errMsg(e)));return}
   if(d.pomax!==undefined){api('api_payoutSet',session.token,t.value,OW.ym).then(r=>{OW=r;toast('Payout limit saved');drawStock()}).catch(e=>alert(errMsg(e)));return}
   if(d.ztol!==undefined){api('api_zTol',session.token,t.value,OW.ym).then(r=>{OW=r;drawStock()}).catch(e=>alert(errMsg(e)));return}
