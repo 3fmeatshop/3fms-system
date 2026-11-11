@@ -504,7 +504,12 @@ header h1 .tt small{display:block;font-size:11px;color:var(--sky2);letter-spacin
 /* 📒 stock card */
 .sc-sum{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:10px 0}.sc-sum>div{border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:#fff}.sc-sum span{display:block;font-size:12px;color:var(--muted)}.sc-sum b{font-size:17px}.sc-sum .in b{color:var(--green)}.sc-sum .out b{color:var(--rose)}
 .sc-g{display:grid;grid-template-columns:1fr 1fr;gap:10px}.sc-g h4{margin:4px 0}.sc-r{display:flex;justify-content:space-between;gap:8px;padding:4px 0;border-bottom:1px dashed var(--line);font-size:14px}
-.py-busy{position:sticky;top:76px;z-index:5;background:#FFF3D6;color:#7A4B00;font-weight:700;border-radius:10px;padding:6px 12px;margin:0 0 8px;display:inline-block}.half-tag{display:inline-block;background:#FFE08A;color:#7A4B00;font-weight:800;font-size:11.5px;border-radius:6px;padding:1px 6px;white-space:nowrap}.stbl .atb{background:#FFF8E6;text-align:center;white-space:nowrap}.stbl th.atb{background:#FCEBC2}.sctb tr.sc-adj td{background:#FFF6D1}.sctb tr.sc-flag td{background:#FDECEC}.sc-fl{color:#B3191B;font-weight:700;font-size:12.5px;margin-top:3px}.sc-flag-sum{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#FDECEC;border:1px solid #F6B3B0;color:#8E1B22;border-radius:10px;padding:8px 12px;margin-top:10px}.sc-ok{background:#e1f2e7;color:#1c7a44;border-radius:10px;padding:8px 12px;margin-top:10px;font-weight:700}.sc-lnk{color:inherit;text-decoration:none;background:none;border:0;padding:0;font:inherit;cursor:pointer;text-align:left}.sc-lnk:hover b{text-decoration:underline}
+.py-busy{position:sticky;top:76px;z-index:5;background:#FFF3D6;color:#7A4B00;font-weight:700;border-radius:10px;padding:6px 12px;margin:0 0 8px;display:inline-block}.pay-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:6px 0}.pay-card{all:unset;cursor:pointer;display:flex;flex-direction:column;gap:2px;padding:12px 14px;border-radius:14px;color:#fff;background:linear-gradient(135deg,#7A1218,#B3191B);box-shadow:0 2px 8px rgba(0,0,0,.12);opacity:.72}.pay-card:nth-child(2){background:linear-gradient(135deg,#8A5A00,#C98A00)}.pay-card:nth-child(3){background:linear-gradient(135deg,#3E2A6E,#6B4BB0)}.pay-card.on{opacity:1;outline:3px solid #F5C518;outline-offset:1px}.pay-card span{font-weight:700;font-size:14px}.pay-card b{font-size:21px}.pay-card small{font-size:12px;opacity:.9}
+.pay-total{text-align:right;margin:4px 2px 10px;font-size:15px}.pay-total b{font-size:18px;color:var(--rose)}
+.sl-mob{display:none}.sl-btn{all:unset;cursor:pointer;display:block;width:100%}.sl-row{cursor:pointer}.sl-row:hover td,.sl-row.on td{background:#FFF6DD}.sl-det>td{background:#FFFBF0}.sl-cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}.sl-cols h4{margin:4px 0 6px}
+.sl-po{border:1px solid #eadfcf;border-radius:10px;padding:8px 10px;margin-bottom:8px;background:#fff}.sl-po.late{border-color:#F6B3B0;background:#FFF5F5}.sl-poh{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.sl-pays{margin-top:4px;font-size:12.5px;color:#4b4b4b;border-top:1px dashed #e4d8c4;padding-top:4px}
+@media(max-width:700px){.sl-tb tr>th:nth-child(2),.sl-tb tr>th:nth-child(3),.sl-tb tr:not(.sl-det)>td:nth-child(2),.sl-tb tr:not(.sl-det)>td:nth-child(3){display:none}.sl-mob{display:block!important}.sl-tb{min-width:0!important;width:100%!important}.sl-tb td,.sl-tb th{white-space:normal!important}.sl-tb tr:not(.sl-det)>td:last-child{white-space:nowrap!important;width:1%}.sl-det>td{padding:8px 4px}.pay-cards{grid-template-columns:1fr}.pay-card{flex-direction:row;align-items:baseline;flex-wrap:wrap;gap:8px}.pay-card small{flex-basis:100%}.sl-cols{grid-template-columns:1fr}}
+.half-tag{display:inline-block;background:#FFE08A;color:#7A4B00;font-weight:800;font-size:11.5px;border-radius:6px;padding:1px 6px;white-space:nowrap}.stbl .atb{background:#FFF8E6;text-align:center;white-space:nowrap}.stbl th.atb{background:#FCEBC2}.sctb tr.sc-adj td{background:#FFF6D1}.sctb tr.sc-flag td{background:#FDECEC}.sc-fl{color:#B3191B;font-weight:700;font-size:12.5px;margin-top:3px}.sc-flag-sum{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#FDECEC;border:1px solid #F6B3B0;color:#8E1B22;border-radius:10px;padding:8px 12px;margin-top:10px}.sc-ok{background:#e1f2e7;color:#1c7a44;border-radius:10px;padding:8px 12px;margin-top:10px;font-weight:700}.sc-lnk{color:inherit;text-decoration:none;background:none;border:0;padding:0;font:inherit;cursor:pointer;text-align:left}.sc-lnk:hover b{text-decoration:underline}
 @media(max-width:600px){.sc-sum{grid-template-columns:1fr 1fr}.sc-g{grid-template-columns:1fr}}
 /* 📊 product movement */
 .mvtb td.r>small.unit{display:inline}.mvtb td small{display:block;font-size:11.5px;color:var(--muted);font-weight:500}.mvtb .mv-in{color:var(--green);font-weight:800}.mvtb .mv-out{color:var(--rose);font-weight:800}.mvtb tr.mv-adj td{background:#FFF6D1}
@@ -1237,7 +1242,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 11 · 12:55 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 11 · 3:30 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -2051,8 +2056,8 @@ function deptDefs(c){return {
     {v:'mgr',t:'📊 Reports',g:[['mgr','📊 Operations dashboard'],['month','📦 Monthly report']]},{v:'act',t:'📜 Activity history'}]},
   pos:{ic:'🧾',t:'POS',d:'Cashier · sales · drawer',c:'#BE185D',n:0,tabs:[{v:'pos',t:'🧾 Cashier (POS)'}]},
   hr:{ic:'🧑‍💼',t:'HR',d:'Schedule · OT · payroll',c:'#0F766E',n:c.otP,tabs:[{v:'hr',sub:'sched',t:'📅 Schedule'},{v:'hr',sub:'ot',t:'⏱ OT requests',n:c.otP},{v:'hr',sub:'pay',t:'💵 Payroll & attendance'},{v:'hr',sub:'set',t:'⚙ Shifts & rules'},{v:'kpi',t:'🎯 Staff KPI'},{act:'users',t:'🔑 Users & PINs'}]},
-  fin:{ic:'💰',t:'Accounting & Finance',d:'Money · expenses · P&L',c:'#B45309',n:c.zP,tabs:[{v:'owner',sub:'dash',t:'📊 Dashboard'},{v:'owner',sub:'acc',t:'💰 Accounts'},{v:'owner',sub:'hist',t:'📜 Money history'},{v:'owner',sub:'exp',t:'🧾 Expenses'},{v:'owner',sub:'col',t:'📥 Collect & pay',n:c.zP},
-    {v:'owner',sub:'loan',t:'🤝 Loans'},{v:'owner',sub:'avg',t:'⏱ Profit averages'},{v:'owner',sub:'fa',t:'🏢 Fixed assets'},{v:'owner',sub:'rep',t:'📑 P&L · Balance sheet'}]},
+  fin:{ic:'💰',t:'Accounting & Finance',d:'Money · expenses · P&L',c:'#B45309',n:c.zP,tabs:[{v:'owner',sub:'dash',t:'📊 Dashboard'},{v:'owner',sub:'acc',t:'💰 Accounts'},{v:'owner',sub:'hist',t:'📜 Money history'},{v:'owner',sub:'exp',t:'🧾 Expenses'},{v:'owner',sub:'col',t:'📥 Collectibles',n:c.zP},{v:'owner',sub:'pay',t:'📤 Payables'},
+    {v:'owner',sub:'avg',t:'⏱ Profit averages'},{v:'owner',sub:'fa',t:'🏢 Fixed assets'},{v:'owner',sub:'rep',t:'📑 P&L · Balance sheet'}]},
   sales:{ic:'📈',t:'Sales & Marketing',d:'Sales · customers · loyalty',c:'#7C3AED',n:0,tabs:[{v:'memb',t:'💳 Membership'},{v:'srep',t:'📈 Sales & profit'},{v:'crep',t:'👥 Customer sales'},{v:'points',t:'⭐ Points (old)'},{act:'bulk',t:'🏢 Bulk buyer accounts'},{act:'cdisc',t:'🏷 Customer discounts'}]}}}
 function deptGo(v,sub){if(!me)return;if(v==='owner'&&sub)OWtab=sub;if(v==='hr'&&sub)HRsub=sub;view=v;openId=null;editId=null;dateF=null;
   DLAST[deptOf(v)]={v,sub:sub||''};try{localStorage.setItem('fms_dlast',JSON.stringify(DLAST))}catch(e){}render();if(STOCKV.includes(v)&&ST)drawStock()}
@@ -3446,12 +3451,12 @@ function owBars(rows,keys){const mx=Math.max(1,...rows.flatMap(r=>keys.map(([k])
     <div class="owleg">${keys.map(([k,c,t])=>`<span><i style="background:${c}"></i>${t}</span>`).join('')}</div>`}
 function ownerHTML(){
   if(!OW&&!OWerr)owLoad();else if(OW&&!OWload&&Date.now()-OWat>30000&&!document.querySelector('.modal.on'))owLoad();      // keep the numbers fresh
-  const tabs=[['dash','📊 Dashboard'],['acc','💰 Accounts'],['hist','📜 Money history'],['exp','🧾 Expenses'],['col','📥 Collect & pay'],['loan','🤝 Loans'],['avg','⏱ Profit averages'],['fa','🏢 Fixed assets'],['rep','📑 P&L · Balance sheet']];
+  const tabs=[['dash','📊 Dashboard'],['acc','💰 Accounts'],['hist','📜 Money history'],['exp','🧾 Expenses'],['col','📥 Collectibles'],['pay','📤 Payables'],['avg','⏱ Profit averages'],['fa','🏢 Fixed assets'],['rep','📑 P&L · Balance sheet']];
   const head=`<div class="shead"><div><h2>${me.role==='manager'?'💰 Accounting & Finance':"👑 Owner's Dashboard"}</h2></div><div class="sbtns"><input type="month" class="edit-in" data-owym value="${esc(OWym||(OW&&OW.ym)||today().slice(0,7))}" style="width:auto"><button class="btn sm" data-owre>↻ Refresh</button></div></div>
     ${me.role==='manager'?'':`<div class="chips2 owtabs">${tabs.map(([k,t])=>`<button class="${OWtab===k?'on':''}" data-owtab="${k}">${t}</button>`).join('')}</div>`}`;
   if(OWerr)return head+`<div class="empty">⚠ ${esc(OWerr)}<br><br><button class="btn" data-owre>↻ Try again</button></div>`;
   if(!OW)return head+'<div class="empty">Loading…</div>';
-  return head+({dash:owDash,acc:owAccounts,hist:owHist,exp:owExpenses,col:()=>{const p=(OW.zs||[]).some(q=>q.os.st==='pending');return p?owShort()+owCollect():owCollect()+owShort()},loan:owLoans,avg:owAvg,fa:owAssets,rep:owReports}[OWtab])()}
+  return head+({dash:owDash,acc:owAccounts,hist:owHist,exp:owExpenses,col:()=>{const p=(OW.zs||[]).some(q=>q.os.st==='pending');return p?owShort()+owCollect():owCollect()+owShort()},pay:owPayables,loan:()=>{PAYsec='loan';OWtab='pay';return owPayables()},avg:owAvg,fa:owAssets,rep:owReports}[OWtab])()}
 function owDash(){const zp=(OW.zs||[]).filter(q=>q.os.st==='pending');return (zp.length?`<button class="snote" style="cursor:pointer;width:100%;text-align:left;font:inherit;color:inherit" data-owtab="col">⚠ <b>${zp.length}</b> cash short / over from the Z reading to decide (${zp.map(q=>(q.amt<0?'short ':'over ')+peso(Math.abs(q.amt))).join(', ')}) — tap to open <b>📥 Collect & pay</b>.</button>`:'')+owDash0()}
 function owDash0(){const O=OW,P=O.pl,B=O.bs,arOver=O.ar.filter(a=>a.days>30),apDue=O.ap.filter(a=>a.due&&a.due<=iso(new Date(Date.now()+7*864e5)));
   const k=(t,v,s,c)=>`<div class="owk ${c||''}"><span>${t}</span><b>${v}</b>${s?`<small>${s}</small>`:''}</div>`;
@@ -3977,6 +3982,33 @@ function custDiscDialog(){const box=stBox();let L=(OW.custDisc||[]).map(x=>({...
     S.querySelectorAll('[data-cdx]').forEach(b=>b.onclick=()=>{L.splice(+b.dataset.cdx,1);draw()});$('#cd-add').onclick=()=>{L.push({name:'',pct:''});draw()};
     $('#cd-ok').onclick=async()=>{try{OW=await api('api_custDiscSave',session.token,L,OW.ym);box.classList.remove('on');toast('Saved');drawStock()}catch(e){alert(errMsg(e))}}};
   draw();box.classList.add('on')}
+/* ---------- 📤 PAYABLES: 🏭 Suppliers · 🧾 Unpaid bills · 🤝 Loans ---------- */
+let PAYsec='sup',SL=null,SLload=false,SLerr='',SLq='',SLopen=new Set(),SLall=false;
+function slLoad(){if(SLload)return;SLload=true;SLerr='';api('api_supplierLedger',session.token).then(r=>SL=r).catch(e=>SLerr=errMsg(e)).finally(()=>{SLload=false;if(view==='owner'&&OWtab==='pay')drawStock()})}
+function owPayables(){const O=OW,bills=(O.ap||[]).filter(a=>a.kind==='exp'),bt=bills.reduce((s,a)=>s+a.amount,0),lt=(O.loans||[]).filter(o=>o.kind==='borrow').reduce((s,o)=>s+Math.max(0,o.balance),0);
+  const supT=SL?SL.total:(O.ap||[]).filter(a=>a.kind==='po').reduce((s,a)=>s+a.amount,0);
+  const card=(k,ic,t,v,sub)=>`<button class="pay-card${PAYsec===k?' on':''}" data-paysec="${k}"><span>${ic} ${t}</span><b>${peso(v)}</b><small>${sub}</small></button>`;
+  return `<div class="pay-cards">${card('sup','🏭','Suppliers',supT,SL&&SL.overdue?`<span style="color:#FFD5D5">${peso(SL.overdue)} overdue</span>`:'unpaid deliveries')}${card('bill','🧾','Unpaid bills',bt,bills.length+' bill(s)')}${card('loan','🤝','Loans',lt,'balance borrowed')}</div>
+   <div class="pay-total">Total payables <b>${peso(supT+bt+lt)}</b></div>
+   ${PAYsec==='sup'?paySuppliers():PAYsec==='bill'?payBills(bills):owLoans()}`}
+function payBills(B){return `<div class="panel"><h3>🧾 Unpaid bills <small class="unit">(charged expenses)</small></h3>${B.map(a=>{const late=a.due&&a.due<today();return `<div class="posx-row"><span><b>${esc(a.supplier)}</b> <small class="unit">due ${a.due?day(a.due):'—'}${late?' · <b style="color:var(--rose)">overdue</b>':''}</small></span><b>${a.payBy==='cashier'?badge('cashier to pay','violet')+' ':''}${peso(a.amount)} <button class="go sm" data-owpay="${a.kind}:${a.id}">Pay</button></b></div>`}).join('')||'<div class="unit">No unpaid bills. 👍</div>'}
+  <div class="unit" style="margin-top:6px">Add a bill in 🧾 Expenses with "Charge (pay later)".</div></div>`}
+function paySuppliers(){if(!SL&&!SLerr){slLoad();return '<div class="empty">Loading suppliers…</div>'}if(SLerr)return `<div class="empty">⚠ ${esc(SLerr)} <button class="btn sm" data-slre>↻ Try again</button></div>`;
+  const q=SLq.trim().toLowerCase(),L=SL.suppliers.filter(s=>(!q||s.name.toLowerCase().includes(q))&&(SLall||s.unpaid>0||q)),hid=SL.suppliers.length-SL.suppliers.filter(s=>s.unpaid>0).length;
+  const dt=t=>t?day(iso(new Date(t))):'—';
+  const po=(r,open)=>`<div class="sl-po${r.late?' late':''}"><div class="sl-poh"><b>${esc(r.no)}</b> <small class="unit">${r.recv?'received '+dt(r.recv):'ordered '+dt(r.made)}${r.notYet?' · <b>not received yet</b>':''}</small><span style="flex:1"></span>${open?`<b>${peso(r.bal)}</b>`:badge('PAID','green')+` <b>${peso(r.amount)}</b>`}</div>
+     <div class="unit">${esc(r.items)}${open?` · amount ${peso(r.amount)}${r.paid?' · paid '+peso(r.paid):''} · due ${r.due?day(r.due):'on delivery'}${r.late?' · <b style="color:var(--rose)">OVERDUE</b>':''}`:''}</div>
+     ${r.pays.length?`<div class="sl-pays">${r.pays.map(p=>`<div>💸 ${dt(p.at)} · <b>${peso(p.amt)}</b> · ${esc(p.acc)}${p.ref?' · ref '+esc(p.ref):''}${p.by?' · '+esc(p.by):''}</div>`).join('')}</div>`:''}
+     ${open&&(OW.ap||[]).some(a=>a.kind==='po'&&a.id===r.id)?`<div class="row-end" style="margin:4px 0 0"><button class="go sm" data-owpay="po:${r.id}">Pay ${peso(r.bal)}</button></div>`:''}</div>`;
+  return `<div class="panel"><div class="poh"><h3 style="margin:0">🏭 Suppliers</h3><span style="flex:1"></span><button class="btn sm" data-slre>↻</button></div>
+   <div class="row-end" style="justify-content:flex-start;gap:10px;flex-wrap:wrap;margin:8px 0"><input class="edit-in" id="sl-q" data-slq placeholder="🔍 Find supplier" value="${esc(SLq)}" style="max-width:240px"><label class="chk2"><input type="checkbox" id="sl-all" data-slall${SLall?' checked':''}> Show fully-paid suppliers too${hid?' ('+hid+')':''}</label></div>
+   <div class="sc"><table class="stbl sl-tb"><thead><tr><th>Supplier</th><th class="r">Unpaid P.O.s</th><th class="r">Overdue</th><th class="r">Unpaid total</th></tr></thead><tbody>
+   ${L.map(s=>{const on=SLopen.has(s.name);return `<tr class="sl-row${on?' on':''}"><td><button class="sl-btn" data-slopen="${esc(s.name)}"><b>${on?'▾':'▸'} ${esc(s.name)}</b><br><small class="unit">${s.n} P.O.(s) · last ${dt(s.last)} · <u>${on?'hide':'view'}</u></small>${s.overdue?`<small class="sl-mob" style="color:var(--rose);font-weight:700">overdue ${peso(s.overdue)}</small>`:''}</button></td><td class="r">${s.open.filter(r=>!r.notYet).length||'—'}</td><td class="r">${s.overdue?`<b style="color:var(--rose)">${peso(s.overdue)}</b>`:'—'}</td><td class="r"><b style="font-size:16px${s.unpaid?'':';color:#1c7a44'}">${s.unpaid?peso(s.unpaid):'✓ paid'}</b></td></tr>
+     ${on?`<tr class="sl-det"><td colspan="4"><div class="sl-cols"><div><h4>🔴 Unpaid <small class="unit">(${s.open.length})</small></h4>${s.open.map(r=>po(r,1)).join('')||'<div class="unit">Nothing unpaid. 👍</div>'}</div>
+       <div><h4>✅ Paid history <small class="unit">(${s.done.length})</small></h4>${s.done.map(r=>po(r,0)).join('')||'<div class="unit">No paid P.O. yet.</div>'}</div></div>
+       <div class="unit" style="margin-top:6px">Bought (received) ${peso(s.bought)} · paid so far ${peso(s.paid)}</div></td></tr>`:''}`}).join('')||'<tr><td colspan="4" class="empty">No supplier owed. 👍</td></tr>'}
+   ${L.length?`<tr class="srtot"><td><b>GRAND TOTAL</b>${SL.overdue?`<small class="sl-mob" style="color:var(--rose)">overdue ${peso(SL.overdue)}</small>`:''}</td><td></td><td class="r">${SL.overdue?peso(SL.overdue):'—'}</td><td class="r"><b style="font-size:17px">${peso(L.reduce((a,s)=>a+s.unpaid,0))}</b></td></tr>`:''}</tbody></table></div>
+   <div class="unit" style="margin-top:6px">Tap a supplier to see the unpaid P.O.s and the paid history. Paid from the drawer? The cashier does it in POS › Cash out.</div></div>`}
 function owCollect(){const O=OW,cust={},B=[['Not yet due',a=>a.over===0],['1–30 days late',a=>a.over>0&&a.over<=30],['31–60 days late',a=>a.over>30&&a.over<=60],['Over 60 days',a=>a.over>60]];
   O.ar.forEach(a=>{const c=cust[a.customer]=cust[a.customer]||{name:a.customer,b:[0,0,0,0],t:0};B.forEach(([,f],i)=>{if(f(a))c.b[i]+=a.balance});c.t+=a.balance});
   const C=Object.values(cust).sort((a,b)=>b.t-a.t),tb=B.map((_,i)=>C.reduce((s,c)=>s+c.b[i],0));
@@ -3988,8 +4020,7 @@ function owCollect(){const O=OW,cust={},B=[['Not yet due',a=>a.over===0],['1–3
     <div class="unit">Payments are recorded by the cashier in POS › 💳 Unpaid.</div>
     <div class="snote" style="margin-top:10px">🏷 <b>Customer discounts</b> — taken off the amount to collect on <b>Charge</b> sales. Not shown on the receipt.
       ${(O.custDisc||[]).map(x=>`<span class="sb sb-violet" style="margin-left:6px">${esc(x.name)} ${x.pct}%</span>`).join('')||' <i>none</i>'} <button class="btn sm" data-cdisc style="margin-left:6px">✏ Edit</button></div></div>
-    <div class="panel"><h3>📤 Payables — unpaid suppliers & bills</h3>${O.ap.map(a=>{const late=a.due&&a.due<today();return `<div class="posx-row"><span><b>${esc(a.supplier)}</b> · ${esc(a.no)} <small class="unit">${(TERMS[a.terms]||'').replace(/^\S+ /,'')}${a.received?'':' · not received yet'} · due ${a.due?day(a.due):'on delivery'}${late?' · <b style="color:var(--rose)">overdue</b>':''}</small></span><b>${a.payBy==='cashier'?badge('cashier to pay','violet')+' ':''}${peso(a.amount)} <button class="go sm" data-owpay="${a.kind}:${a.id}">Pay</button></b></div>`}).join('')||'<div class="unit">Nothing unpaid.</div>'}
-    <div class="unit">Supplier P.O.s and charged bills. Paid from the drawer? The cashier does it in POS › Cash out.</div></div>`}
+`}
 /* ---------- 🧮 STOCK COUNT (inventory reconciliation) ---------- */
 let CT=null,CTload=false,CTerr='',CTL={},CTq='',CTcat='',CTst='todo',CTkeep=new Set(),CTopen=new Set(),CTrev=null,CTsaveT=null,CTview=null;
 function ctLoad(){if(CTload)return;CTload=true;CTerr='';api('api_counts',session.token).then(r=>{CT=r;if(r.open&&r.open.status==='counting'){r.open.lines.forEach(l=>{if(CTL[l.code]===undefined&&l.cnt!==''&&l.cnt!=null)CTL[l.code]=l.ent&&l.ent.length?l.ent.slice():[+l.cnt]})}}).catch(e=>CTerr=errMsg(e)).finally(()=>{CTload=false;if(view==='count')drawStock()})}
@@ -5247,12 +5278,15 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const igr=e.target
       await busy(async()=>{PY=await api('api_payRelease',session.token,PY.from,PY.to,PYov,acc);PYov={};OW=null;toast('✅ Payroll released');drawStock()});return}
     if(d.pyrem){const r=PY.runs.find(x=>x.id===d.pyrem),acc=prompt('Remitted SSS / PhilHealth / Pag-IBIG '+peso(r.contrib)+'.\nPaid from which account? Type the number:\n'+noDrawer(PY.accounts).map((a,i)=>(i+1)+'. '+a.name).join('\n'),'1');if(acc==null)return;const A=noDrawer(PY.accounts)[(+acc||1)-1];
       await busy(async()=>{PY=await api('api_payRemit',session.token,r.id,A?A.id:'');OW=null;toast('🏛 Marked remitted');drawStock()});return}
+    if(d.paysec){PAYsec=d.paysec;drawStock();return}
+    if('slre' in d){SL=null;SLerr='';drawStock();return}
+    if(d.slopen!==undefined){SLopen.has(d.slopen)?SLopen.delete(d.slopen):SLopen.add(d.slopen);drawStock();return}
     if(d.owpay){const[k,i]=d.owpay.split(':'),a=OW.ap.find(x=>x.id===i&&x.kind===k);if(!a)return;
       supPayDialog({title:'Pay '+a.supplier,sub:a.no+(a.pig?` · pig ${peso(a.pig)} + expenses ${peso(a.exp)}`:''),bal:a.amount,accounts:OW.accounts,part:k!=='exp',method:a.terms==='transfer'?'transfer':'cash',payBy:a.payBy,onAssign:async w=>{await api('api_payAssign',session.token,k,a.id,w);OW=null;drawStock()},
-        onPay:async(amt,acc,ref,dd)=>{if(k==='exp')OW=await api('api_expPay',session.token,a.id,acc,dd,OW.ym);else{await api('api_payPO',session.token,a.id,ref,acc,amt,dd);OW=null}drawStock()}});return}
+        onPay:async(amt,acc,ref,dd)=>{if(k==='exp')OW=await api('api_expPay',session.token,a.id,acc,dd,OW.ym);else{await api('api_payPO',session.token,a.id,ref,acc,amt,dd);OW=null}SL=null;drawStock()}});return}
     if(d.owexpay){const e=OW.expenses.find(x=>x.id===d.owexpay);supPayDialog({title:'Pay bill · '+e.cat,sub:esc(e.desc||''),bal:e.amt,accounts:OW.accounts,part:false,payBy:e.from==='ask:cashier'?'cashier':'mgr',onAssign:async w=>{await api('api_payAssign',session.token,'exp',e.id,w);OW=null;drawStock()},onPay:async(amt,acc,ref,dd)=>{OW=await api('api_expPay',session.token,e.id,acc,dd,OW.ym);drawStock()}});return}
     if('owcl' in d){deptGo('undel');return}
-    if('owre' in d){OW=null;OWerr='';PA=null;PAerr='';LGD=null;drawStock();return}
+    if('owre' in d){OW=null;OWerr='';PA=null;PAerr='';LGD=null;SL=null;drawStock();return}
     if(d.owhist!==undefined){LG.acc=d.owhist;LGD=null;if(me.role==='manager')return deptGo('owner','hist');OWtab='hist';drawStock();return}
     if(d.lga!==undefined){LG.acc=d.lga;drawStock();return}if(d.lgp){const [f,t]=srPreset(d.lgp);LG.from=f;LG.to=t;LG.pre=d.lgp;drawStock();return}
     if('lgre' in d){LGD=null;LGerr='';drawStock();return}if('lgcsv' in d){lgCsv();return}if('lgprint' in d){lgPrint();return}
@@ -5412,6 +5446,7 @@ function stockChange(e){if(!STOCKV.includes(view))return;const t=e.target,d=t.da
   if(d.hrper!==undefined){[HRfrom,HRto]=t.value.split('|');HR=null;HRgrid=null;drawStock();return}
   if(d.hrc!==undefined){const[id,dd]=d.hrc.split('|');HRgrid[id][dd]=t.value;t.parentElement.className=t.value==='OFF'?'off':'';hrOffCount(id);return}
   if(d.hrfill!==undefined){const id=d.hrfill;if(t.value){Object.keys(HRgrid[id]).forEach(k=>{if(!HRgrid[id][k])HRgrid[id][k]=t.value})}drawStock();return}
+  if(d.slq!==undefined){SLq=t.value;drawStock();return}if(d.slall!==undefined){SLall=t.checked;drawStock();return}
   if(d.pyper!==undefined){[PYfrom,PYto]=t.value.split('|');PY=null;PYov={};drawStock();return}
   if(d.pyot!==undefined||d.pyc!==undefined||d.pyadj!==undefined||d.pyadv!==undefined||d.pyallow!==undefined||d.pykpi!==undefined){const id=d.pyot||d.pyc||d.pyadj||d.pyadv||d.pyallow||d.pykpi,o=PYov[id]=PYov[id]||{};
     if(d.pyot!==undefined)o.otOk=t.checked;if(d.pykpi!==undefined)o.kpiOk=t.checked;if(d.pyallow!==undefined)o.allow=t.value;if(d.pyc!==undefined)o.contrib=t.checked;if(d.pyadj!==undefined)o.adj=t.value;if(d.pyadv!==undefined)o.adv=t.value;pyRecalc();return}
