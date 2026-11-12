@@ -365,6 +365,14 @@ body:not(.bulk) nav.bar button[data-v="orders"],nav.bar button[data-v="acct"]{di
 .bn-s.leave .bn-a{animation:none}
 .add{white-space:nowrap;padding:0 10px}
 @media (prefers-reduced-motion:reduce){.bn-s.on,.bn-s.leave{animation:none}.bn-s.leave{visibility:hidden}}
+
+/* product photos */
+.prod.hasph{overflow:hidden}.pimg{position:relative;margin:-14px -14px 4px;aspect-ratio:4/3;overflow:hidden;background:var(--soft)}
+.pimg img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+.prod:not(.out):hover .pimg img{transform:scale(1.08)}
+.pso{position:absolute;left:10px;top:10px;background:var(--ink);color:#fff;font:700 12px system-ui;padding:4px 9px;border-radius:999px}
+.prod.hasph .em{display:none}
+@media (max-width:760px){.pimg{margin:-10px -10px 4px}}
 </style>
 </head>
 <body>
@@ -494,7 +502,8 @@ function rShop(){
 }
 function prodCard(p){
   const inC=cart[p.code]||0,out=p.avail<1,low=!out&&p.avail<=(p.unit==='Kg'?5:5);
-  return `<div class="prod${out?' out':''}" data-p="${esc(p.code)}"><div class="top"><span class="em">${emo(p.cat)}</span><div style="min-width:0"><b>${esc(p.name)}</b><span class="cat">${esc(p.cat)} · per ${p.unit==='Kg'?'kg':p.unit.toLowerCase()}${p.unit!=='Kg'&&p.kg?' ('+fmt(p.kg)+' kg)':''}</span></div></div>
+  const ph=p.photo&&window.SB_URL?window.SB_URL.replace(/\/$/,'')+'/storage/v1/object/public/products/'+p.photo:'';
+  return `<div class="prod${out?' out':''}${ph?' hasph':''}" data-p="${esc(p.code)}">${ph?`<div class="pimg"><img src="${esc(ph)}" alt="${esc(p.name)}" loading="lazy" decoding="async" onerror="this.closest('.prod').classList.remove('hasph');this.parentNode.remove()">${out?'<span class="pso">Sold out</span>':''}</div>`:''}<div class="top"><span class="em">${emo(p.cat)}</span><div style="min-width:0"><b>${esc(p.name)}</b><span class="cat">${esc(p.cat)} · per ${p.unit==='Kg'?'kg':p.unit.toLowerCase()}${p.unit!=='Kg'&&p.kg?' ('+fmt(p.kg)+' kg)':''}</span></div></div>
     <div class="price">${peso(priceOf(p))}<small> / ${p.unit==='Kg'?'kg':p.unit.toLowerCase()}</small></div>
     ${!me&&p.wholesale&&p.wholesale!==p.retail?`<div class="price2">Wholesale ${peso(p.wholesale)}</div>`:''}
     <span class="avail${out?' none':low?' low':''}">${out?'Sold out':'Available: '+fmt(Math.floor(p.avail))+' '+(p.unit==='Kg'?'kg':p.unit.toLowerCase())}</span>
@@ -944,7 +953,7 @@ document.addEventListener('click',async e=>{
     if(view==='cart'){setQty(c,v);rCart();cartBar();nav();return}
     v=Math.max(0,Math.min(Math.floor(p.avail),Math.round(v)));if(inp)inp.value=v||'';if(cart[c]){setQty(c,v);rShop();nav();cartBar()}return}
   if(d.add){const c=d.add,p=prod(c),inp=document.querySelector(`[data-qty="${CSS.escape(c)}"]`);let v=+(inp&&inp.value)||0;if(!v)v=stepOf(p)===0.5?1:1;
-    const from=(b.closest('.prod')||b).querySelector('.em');const fr=from?from.getBoundingClientRect():b.getBoundingClientRect();
+    const from=(b.closest('.prod')||b).querySelector('.pimg img')||(b.closest('.prod')||b).querySelector('.em');const fr=from?from.getBoundingClientRect():b.getBoundingClientRect();
     setQty(c,v);rShop();nav();cartBar();flyToCart(fr,emo(p.cat),c);toast('Added '+fmt(cart[c]||0)+' '+(p.unit==='Kg'?'kg':p.unit.toLowerCase())+' '+p.name);return}
   if(d.rm){delete cart[d.rm];saveCart();rCart();nav();return}
   if(d.pay){pay=d.pay;rCart();return}
