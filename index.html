@@ -205,6 +205,9 @@ a.btn{display:inline-block;text-decoration:none}
 .au-alt{text-align:center;font-size:14px;color:var(--muted);margin:16px 0 0}
 .au-alt a{font-weight:700;color:var(--red)}
 .au-note{font-size:12.5px;color:var(--muted);margin:18px 0 0;padding-top:12px;border-top:1px dashed var(--line);text-align:center}
+
+.au-or{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12.5px;text-transform:uppercase;letter-spacing:1px;margin:16px 0 12px}.au-or:before,.au-or:after{content:"";flex:1;border-top:1px solid var(--line)}
+.au-g{display:flex;justify-content:center;min-height:44px}
 @media (max-width:760px){.au{grid-template-columns:1fr;min-height:0;border-radius:16px}.au-art{height:118px;background:linear-gradient(115deg,var(--red),var(--red3))}.au-sl svg{display:none}.au-dots i{background:rgba(255,255,255,.35)}.au-dots i.on{background:var(--gold)}.au-tag{font-size:22px;left:18px;bottom:16px}.au-tag small{font-size:11px}.au-form{padding:18px 18px 22px}.au-form h1{font-size:28px;margin-top:8px}}
 </style>
 </head>
@@ -588,14 +591,14 @@ function emailCheck(e){return /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(e)?'':'Type a
 // 🔒 Privacy Notice (Data Privacy Act of 2012 — RA 10173)
 function privacyNotice(){const s=(info&&info.set)||{},ov=document.createElement('div');ov.className='tsov';
   ov.innerHTML=`<div class="tsbox" style="max-width:560px;text-align:left;max-height:86vh;overflow:auto"><h2 style="margin:0 0 6px">🔒 Privacy Notice</h2><div class="muted" style="font-size:13px;margin-bottom:8px">3F Meatshop · Santa Ana, Cagayan · follows the Data Privacy Act of 2012 (RA 10173)</div>
-   <p><b>What we collect:</b> your name, username, mobile no., email, delivery address and barangay; your orders, payments and photos of payment receipts; delivery photos taken by our rider.</p>
+   <p><b>What we collect:</b> your name, username, mobile no., email, delivery address and barangay; your orders, payments and photos of payment receipts; delivery photos taken by our rider. With <b>Continue with Google</b>, Google shares only your name and email with us.</p>
    <p><b>Why:</b> to create your account, take and confirm your orders, prepare and deliver them, collect payment, send you login codes, answer your questions and keep the sales records the law requires. We do <b>not</b> sell your data or send you ads without asking.</p>
    <p><b>Who can see it:</b> only 3F Meatshop staff who handle your order (sales, preparation, rider, manager). It is stored with our service providers: Supabase (database, Singapore), Google (records and emails) and Cloudflare (website protection) — they only keep it for us.</p>
    <p><b>How long:</b> while your account is active. Sales and receipt records are kept as long as the tax law (BIR) requires, then deleted.</p>
    <p><b>How we protect it:</b> passwords are stored only as a one-way <b>hash</b> (bcrypt) — nobody, not even the shop, can see your password, access is limited to staff accounts, and the connection is encrypted (https).</p>
    <p><b>Your rights:</b> you may ask to see, correct or delete your data, or withdraw your consent (we then close your account, except records the law says we must keep). You may also complain to the National Privacy Commission (privacy.gov.ph).</p>
    <p><b>Contact:</b> 3F Meatshop${s.phone?' · 📞 '+esc(s.phone):''} — or message us on our Facebook page.</p>
-   <button class="btn wide" type="button" id="pv-x">Close</button></div>`;
+   <p style="font-size:13px"><a href="privacy.html" target="_blank">Open the full Privacy Notice page</a></p><button class="btn wide" type="button" id="pv-x">Close</button></div>`;
   document.body.appendChild(ov);ov.querySelector('#pv-x').onclick=()=>ov.remove();ov.onclick=e=>{if(e.target===ov)ov.remove()}}
 document.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('[data-priv]');if(a){e.preventDefault();privacyNotice()}});
 // 🤖 Cloudflare Turnstile "I am human" check (on when TS_SITE is set in config.js) — stops bots from making fake accounts / using up the emails
@@ -651,6 +654,17 @@ function authShell(title,sub,inner){clearInterval(auT);
   setTimeout(()=>{const b=$('#au-back');if(b)b.onclick=()=>{clearInterval(auT);view='shop';render()};
     auT=setInterval(()=>{const sl=document.querySelectorAll('.au-sl'),d=document.querySelectorAll('.au-dots i');if(!sl.length){clearInterval(auT);return}auI=(auI+1)%sl.length;sl.forEach((e,i)=>e.classList.toggle('on',i===auI));d.forEach((e,i)=>e.classList.toggle('on',i===auI))},5000)},0);
   return h}
+// ---- Sign in with Google (Google Identity Services) ----
+const GID=window.GOOGLE_ID||'698841362369-605d16hh08me352uolgp8ih665t25b8n.apps.googleusercontent.com';
+let gReg=null,gLoad=null;
+function gLib(){return gLoad||(gLoad=new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';s.async=true;s.onload=res;s.onerror=()=>{gLoad=null;rej()};document.head.appendChild(s)}))}
+async function gButton(id,text){const el=$('#'+id);if(!el||!GID||!/^https:/.test(location.protocol))return;
+  try{await gLib();google.accounts.id.initialize({client_id:GID,callback:gDone,ux_mode:'popup',cancel_on_tap_outside:true});
+    const w=Math.min(400,Math.max(220,el.clientWidth||320));google.accounts.id.renderButton(el,{theme:'outline',size:'large',shape:'pill',text,width:w,logo_alignment:'center'});
+    const o=$('#gor');if(o)o.hidden=false}catch(e){}}
+async function gDone(resp){const e=$('#lerr');if(e)e.textContent='';
+  try{const r=await api('shop_google',KEY,resp.credential);if(r&&r.token){setSess(r);toast('Welcome, '+r.me.name+'!');return}
+    gReg={cred:resp.credential,email:r.email,name:r.name};lmode='greg';rLogin();scrollTo(0,0)}catch(er){if(e)e.textContent=errMsg(er);else toast(errMsg(er))}}
 let lmode='login';
 function rLogin(){
   const areas=info?info.areas:[];
@@ -659,9 +673,20 @@ function rLogin(){
       <label class="f">Password</label>${pwIn('l-pin','current-password','Enter your password')}
       <button class="btn wide" id="l-go" style="margin-top:16px">Sign in</button>
       <div class="err" id="lerr" hidden></div>
+      <div id="gor" hidden><div class="au-or"><span>or</span></div><div id="gbtn" class="au-g"></div></div>
       <p class="au-alt">Don't have an account? <a href="#" data-lm="reg">Create free account</a></p>
       <p class="au-alt" style="margin-top:8px"><a href="#" id="l-forgot" style="font-weight:600">Forgot your password?</a></p>
-      <p class="au-note">Bulk buyers (e.g. KUI): use the username and password from 3F Meatshop. Old customers: your 4-digit PIN still works the first time.</p>`):authShell('Create account','Free for retail and wholesale buyers.',`
+      <p class="au-note">Bulk buyers (e.g. KUI): use the username and password from 3F Meatshop. Old customers: your 4-digit PIN still works the first time.</p>`):lmode==='greg'&&gReg?authShell('Almost done','Signed in with Google as <b>'+esc(gReg.email)+'</b>. Add where we deliver.',`
+      <label class="f">Name / store name</label><input class="in" id="g-name" value="${esc(gReg.name||'')}">
+      <label class="f">Mobile no.</label><input class="in" id="g-mob" inputmode="tel" placeholder="09XXXXXXXXX">
+      <label class="f">Delivery address</label><textarea class="in" id="g-addr" rows="2"></textarea>
+      <label class="f">Barangay (Santa Ana, Cagayan)</label><select class="in" id="g-area"><option value="">— choose your barangay —</option>${areas.map(a=>`<option>${esc(a.area)}</option>`).join('')}</select>
+      <label style="display:flex;gap:10px;align-items:flex-start;margin-top:12px;font-size:14px;line-height:1.4"><input type="checkbox" id="g-ws" style="width:20px;height:20px;flex:none;margin-top:1px"><span style="flex:1">I buy <b>wholesale</b> (store / restaurant / reseller). The shop will review — retail prices apply until approved.</span></label>
+      <label style="display:flex;gap:10px;align-items:flex-start;margin-top:12px;font-size:14px;line-height:1.4"><input type="checkbox" id="g-ok" style="width:20px;height:20px;flex:none;margin-top:1px"><span style="flex:1">I have read the <a href="#" id="r-priv"><b>Privacy Notice</b></a> and agree that 3F Meatshop uses my details to take, deliver and follow up my orders.</span></label>
+      <button class="btn wide" id="g-go" style="margin-top:16px">Create account</button>
+      <div class="err" id="lerr" hidden></div>
+      <p class="au-note">Next time just tap “Continue with Google”. Want a password too? Use “Forgot your password?” with this email.</p>
+      <p class="au-alt"><a href="#" data-lm="login">← Back to sign in</a></p>`):authShell('Create account','Free for retail and wholesale buyers.',`<div id="gor" hidden><div id="gbtn" class="au-g"></div><div class="au-or"><span>or sign up with email</span></div></div>
       <label class="f">Name / store name</label><input class="in" id="r-name">
       <div class="two"><div><label class="f">Username <small class="muted">(unique)</small></label><input class="in" id="r-user" autocomplete="username" autocapitalize="off" spellcheck="false" placeholder="e.g. juan.delacruz"></div><div><label class="f">Mobile no.</label><input class="in" id="r-mob" inputmode="tel" placeholder="09XXXXXXXXX"></div></div>
       <div class="two"><div><label class="f">Password</label>${pwIn('r-pin','new-password')}</div><div><label class="f">Type it again</label>${pwIn('r-pin2','new-password')}</div></div>
@@ -675,6 +700,10 @@ function rLogin(){
       <div class="err" id="lerr" hidden></div>
       <p class="au-alt">Already have an account? <a href="#" data-lm="login">Sign in</a></p>`);
   new MutationObserver((m,o)=>{const e=$('#lerr');if(!e){o.disconnect();return}e.hidden=!e.textContent}).observe($('#lerr'),{childList:true,characterData:true,subtree:true});
+  if(lmode==='login')gButton('gbtn','continue_with');else if(lmode==='reg')gButton('gbtn','signup_with');
+  if($('#g-go'))$('#g-go').onclick=async()=>{const e=$('#lerr');e.textContent='';if(!$('#g-ok').checked){e.textContent='Please read and tick the Privacy Notice box';return}
+    $('#g-go').disabled=true;try{const r=await api('shop_gregister',KEY,{gcred:gReg.cred,name:$('#g-name').value,mobile:$('#g-mob').value,address:$('#g-addr').value,area:$('#g-area').value,wholesale:$('#g-ws').checked,consent:true});gReg=null;setSess(r);toast('Welcome, '+r.me.name+'!')}
+    catch(er){e.textContent=/expired/.test(errMsg(er))?'Google sign-in expired — tap Back and Continue with Google again':errMsg(er);$('#g-go').disabled=false}};
   if($('#l-go')){const go=async()=>{const e=$('#lerr');e.textContent='';try{const r=await api('shop_login',KEY,$('#l-id').value,$('#l-pin').value);setSess(r)}catch(er){e.textContent=errMsg(er)}};
     $('#l-go').onclick=go;$('#l-pin').onkeydown=k=>{if(k.key==='Enter')go()}}
   if($('#r-send'))$('#r-send').onclick=()=>sendCode($('#r-send'),$('#r-email').value.trim(),'reg',$('#lerr'));
