@@ -1242,7 +1242,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 12 · 9:00 AM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 12 · 1:40 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -2283,7 +2283,7 @@ const tries=ol=>(ol.calls||[]).length;
 function onlineGroups(list){
   const td=iso(new Date());
   const pend=list.filter(o=>o.online.status==='pending').sort((a,b)=>(a.online.placedAt||0)-(b.online.placedAt||0));
-  const todo=pend.filter(o=>!placedToday(o));
+  const todo=pend;   // all waiting orders can be confirmed now (placed today → delivered tomorrow)
   return {todo,
     cod:todo.filter(o=>o.online.pay==='cod'&&!tries(o.online)),
     pay:todo.filter(o=>o.online.pay!=='cod'),
@@ -2305,13 +2305,13 @@ async function sbDialog(){const box=stBox();$('#stb').innerHTML='<h2>🌐 Online
 function onlineHTML(list){
   const admin=can('admin')?'<div class="onadmin"><button class="btn sm" id="feesbtn">🚚 Delivery fees</button><button class="btn sm" id="bulkbtn2">🏢 Bulk buyer accounts</button><button class="btn sm" id="sbbtn">🌐 Online shop sync</button></div>':'';
   const G=onlineGroups(list),tmr=(()=>{const d=new Date();d.setDate(d.getDate()+1);return iso(d)})();
-  const F=[['todo','⏳','To confirm',G.todo.length,'hot'],['cod','📞','COD · call',G.cod.length,''],['pay','🏦','Check payment',G.pay.length,''],['noans','📵','No answer',G.noans.length,'warn'],['tmr','🕑','Placed today',G.tmr.length,'mute'],['done','✅','Confirmed today',G.done.length,'ok'],['all','📋','All',null,'mute']];
+  const F=[['todo','⏳','To confirm',G.todo.length,'hot'],['cod','📞','COD · call',G.cod.length,''],['pay','🏦','Check payment',G.pay.length,''],['noans','📵','No answer',G.noans.length,'warn'],['tmr','🕑','Placed today · deliver tmrw',G.tmr.length,'mute'],['done','✅','Confirmed today',G.done.length,'ok'],['all','📋','All',null,'mute']];
   if(!F.some(f=>f[0]===onF))onF='todo';
   const q=onQ.trim().toLowerCase();
   let rows=G[onF].filter(o=>!q||[o.customer,o.online.no,o.online.phone,o.online.area,o.online.address].join(' ').toLowerCase().includes(q));
   [...onSel].forEach(id=>{if(!G.todo.some(o=>o.id===id))onSel.delete(id)});
   const selectable=rows.filter(o=>o.online.status==='pending'&&!placedToday(o));
-  const hint={todo:'Oldest first. Call / text, then tap ✓ Confirm. Queue number = order you confirm (first come, first served).',cod:'Cash on delivery — call or text the customer, then ✓ Confirm. Nobody answered? Tap 📵 No answer and try again later.',pay:'Bank / GCash — check the reference no. in your account. Received → ✓ Confirm.',noans:'Customers you could not reach. Try again; after several tries you may cancel the order.',tmr:`Placed today — confirm these tomorrow (${day(tmr)}). They are delivered on the day you confirm.`,done:'Confirmed today — already in today’s ⚖️ To Prepare list, in queue order.',all:'Latest 80 online orders.'}[onF];
+  const hint={todo:'Oldest first. Call / text, then tap ✓ Confirm. Placed today → prepared & delivered tomorrow; placed earlier → today. Queue number = order you confirm (first come, first served).',cod:'Cash on delivery — call or text the customer, then ✓ Confirm. Nobody answered? Tap 📵 No answer and try again later.',pay:'Bank / GCash — check the reference no. in your account. Received → ✓ Confirm.',noans:'Customers you could not reach. Try again; after several tries you may cancel the order.',tmr:`Placed today — confirm these tomorrow (${day(tmr)}). They are delivered on the day you confirm.`,done:'Confirmed today — already in today’s ⚖️ To Prepare list, in queue order.',all:'Latest 80 online orders.'}[onF];
   return `${admin}<div class="onkpi">${F.map(([k,ic,l,n,c])=>`<button class="kp ${c}${onF===k?' on':''}" data-onf="${k}"><i>${ic}</i><b>${n==null?'':n}</b><span>${l}</span></button>`).join('')}</div>
   <div class="ontools"><input id="onq" type="search" placeholder="🔍 Search name, phone, order no., barangay" value="${esc(onQ)}" autocomplete="off">
     ${selectable.length?`<label class="selall"><input type="checkbox" id="onall" ${selectable.every(o=>onSel.has(o.id))?'checked':''}> Select all (${selectable.length})</label>`:''}</div>
@@ -2325,8 +2325,8 @@ function wireOnline(onl){
   const al=$('#onall');if(al)al.onchange=()=>{document.querySelectorAll('[data-onsel]').forEach(c=>al.checked?onSel.add(c.dataset.onsel):onSel.delete(c.dataset.onsel));render()};
 }
 function onRow(o){
-  const ol=o.online,pend=ol.status==='pending',early=pend&&placedToday(o),open=onOpen.has(o.id),n=tries(ol),tel=telOf(ol.phone);
-  const st=pend?(early?'<span class="pill" style="background:var(--grbg);color:var(--gray)">🕑 Confirm tomorrow</span>':n?`<span class="pill p-appr">📵 ${n} tr${n>1?'ies':'y'}</span>`:`<span class="pill p-appr">${ol.pay==='cod'?'📞 To call':'🏦 Check payment'}</span>`)
+  const ol=o.online,pend=ol.status==='pending',early=false,today0=pend&&placedToday(o),open=onOpen.has(o.id),n=tries(ol),tel=telOf(ol.phone);
+  const st=pend?(today0&&!n?'<span class="pill" style="background:#E8F0FE;color:#1A56B0">📅 Placed today · deliver tomorrow</span>':n?`<span class="pill p-appr">📵 ${n} tr${n>1?'ies':'y'}</span>`:`<span class="pill p-appr">${ol.pay==='cod'?'📞 To call':'🏦 Check payment'}</span>`)
     :ol.status==='confirmed'?`<span class="pill p-ready">✓ Queue #${ol.queue||'–'}</span>`:'<span class="pill" style="background:#eee;color:#666">Cancelled</span>';
   const ago=ol.placedAt?Math.floor((Date.now()-ol.placedAt)/36e5):0;
   return `<div class="onrow${open?' open':''}${onSel.has(o.id)?' sel':''}">
