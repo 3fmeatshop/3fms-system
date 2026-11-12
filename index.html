@@ -184,6 +184,28 @@ a.btn{display:inline-block;text-decoration:none}
 .mc-mid{display:flex;align-items:flex-end;justify-content:space-between;gap:10px}.mc-name{font-size:17px;font-weight:800}.mc-no{font-family:ui-monospace,monospace;font-size:16px;letter-spacing:.08em;margin:2px 0}.mc-mid small{opacity:.85;font-size:11px}.mc-qr{background:#fff;border-radius:8px;padding:3px;line-height:0}
 .mcard{text-align:left}.mbar{height:10px;border-radius:99px;background:#eee;overflow:hidden}.mbar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--red2))}
 .tsov{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:9999;padding:16px}.tsbox{background:#fff;border-radius:16px;padding:18px;text-align:center;max-width:340px;width:100%}
+
+/* ---- sign-in screen (split: artwork | form) ---- */
+.au{display:grid;grid-template-columns:1.15fr 1fr;max-width:1060px;margin:0 auto 16px;background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 6px 24px rgba(110,20,20,.10);min-height:560px}
+.au-art{position:relative;background:#FFF8E6;overflow:hidden}
+.au-sl{position:absolute;inset:0;opacity:0;transition:opacity .8s ease}
+.au-sl.on{opacity:1}
+.au-sl svg{position:absolute;inset:0;width:100%;height:100%}
+.au-tag{position:absolute;left:22px;bottom:22px;right:22px;color:#fff;font-weight:900;font-size:30px;line-height:1.02;letter-spacing:.3px;text-transform:uppercase;text-shadow:0 2px 0 rgba(0,0,0,.18)}
+.au-tag small{display:block;font-size:13px;font-weight:700;letter-spacing:1.5px;color:var(--gold);margin-bottom:6px;text-shadow:none}
+.au-dots{position:absolute;right:18px;top:16px;display:flex;gap:6px}
+.au-dots i{width:8px;height:8px;border-radius:9px;background:rgba(142,27,34,.25)}.au-dots i.on{background:var(--red);width:20px}
+.au-form{padding:26px 34px 30px;display:flex;flex-direction:column}
+.au-back{background:none;border:0;padding:0;color:var(--muted);font-size:14px;align-self:flex-start}
+.au-form h1{margin:18px 0 4px;text-align:center;font-size:34px;font-weight:900;letter-spacing:-.5px;color:var(--ink)}
+.au-sub{text-align:center;color:var(--muted);font-size:14.5px;margin:0 0 18px}
+.au-form .in{border-radius:12px;padding:12px 14px;border-color:#DCCDCB}
+.au-form .in:focus{outline:2px solid var(--gold);border-color:var(--red)}
+.au-form .btn.wide{border-radius:12px;font-size:17px}
+.au-alt{text-align:center;font-size:14px;color:var(--muted);margin:16px 0 0}
+.au-alt a{font-weight:700;color:var(--red)}
+.au-note{font-size:12.5px;color:var(--muted);margin:18px 0 0;padding-top:12px;border-top:1px dashed var(--line);text-align:center}
+@media (max-width:760px){.au{grid-template-columns:1fr;min-height:0;border-radius:16px}.au-art{height:118px;background:linear-gradient(115deg,var(--red),var(--red3))}.au-sl svg{display:none}.au-dots i{background:rgba(255,255,255,.35)}.au-dots i.on{background:var(--gold)}.au-tag{font-size:22px;left:18px;bottom:16px}.au-tag small{font-size:11px}.au-form{padding:18px 18px 22px}.au-form h1{font-size:28px;margin-top:8px}}
 </style>
 </head>
 <body>
@@ -607,18 +629,39 @@ function wirePin(done){const b=$('#p-go');if(!b)return;if($('#p-send'))$('#p-sen
 function rFirstPin(){$('#view').innerHTML=`<div class="card gold" style="max-width:520px;margin:0 auto"><h2>🔒 Secure your account</h2><p class="lead">Welcome, <b>${esc(me.name)}</b>! Please ${[me.needEmail?'add your <b>email</b>':'',me.needUser?'choose a <b>username</b>':'','set a <b>strong password</b>'].filter(Boolean).join(', ')}. You can then log in with your username, mobile no. or email.</p>${pinForm(true)}
   ${me.needUser?'':`<p class="muted" style="font-size:13px">Your username stays <b>${esc(me.login)}</b>.</p>`}</div>`;
   wirePin(()=>{toast('Saved — welcome!');render();loadOrders()})}
+// original 3F artwork for the sign-in screen (no outside images)
+const AU_SLIDES=[
+ {bg:'#FFF3D0',tag:'Sariwang karne,<br>hatid sa bahay mo',sm:'3F Meatshop · Santa Ana',svg:`<svg viewBox="0 0 600 560" preserveAspectRatio="xMidYMax slice"><rect width="600" height="560" fill="#FFF3D0"/><circle cx="470" cy="120" r="70" fill="#F5C518"/><path d="M0 380 Q150 320 300 370 T600 350 V560 H0Z" fill="#7FB241"/><path d="M0 420 Q200 380 380 420 T600 410 V560 H0Z" fill="#5E9A2E"/><rect x="0" y="455" width="600" height="105" fill="#8E1B22"/>
+ <g transform="translate(70 205)"><rect x="0" y="40" width="300" height="150" rx="14" fill="#B3191B"/><rect x="0" y="40" width="300" height="26" rx="10" fill="#8E1B22"/><path d="M300 80 h90 l60 60 v50 h-150Z" fill="#D61F14"/><path d="M318 92 h64 l44 46 h-108Z" fill="#CFE8F5"/><text x="150" y="140" font-family="Arial Black,Arial" font-weight="900" font-size="54" fill="#F5C518" text-anchor="middle">3F</text><text x="150" y="170" font-family="Arial" font-weight="700" font-size="17" fill="#fff" text-anchor="middle" letter-spacing="2">MEATSHOP</text><circle cx="80" cy="195" r="30" fill="#2A1614"/><circle cx="80" cy="195" r="12" fill="#ddd"/><circle cx="370" cy="195" r="30" fill="#2A1614"/><circle cx="370" cy="195" r="12" fill="#ddd"/></g>
+ <g fill="#fff" opacity=".9"><ellipse cx="120" cy="110" rx="46" ry="18"/><ellipse cx="160" cy="98" rx="34" ry="18"/><ellipse cx="300" cy="70" rx="40" ry="14"/></g></svg>`},
+ {bg:'#FDEDEC',tag:'Order ngayon,<br>deliver bukas',sm:'Fresh · Frozen · Fine cuts',svg:`<svg viewBox="0 0 600 560" preserveAspectRatio="xMidYMax slice"><rect width="600" height="560" fill="#FDEDEC"/><circle cx="300" cy="250" r="190" fill="#F6B3B0"/><rect x="0" y="455" width="600" height="105" fill="#8E1B22"/>
+ <ellipse cx="300" cy="380" rx="230" ry="40" fill="#E5D9D7"/><ellipse cx="300" cy="370" rx="220" ry="36" fill="#fff"/>
+ <g transform="translate(150 230)"><path d="M10 60 C0 10 70 -10 120 20 C170 50 160 120 100 130 C40 140 20 110 10 60Z" fill="#C8323A"/><path d="M30 60 C30 30 80 20 110 40 C140 60 130 105 95 110" fill="none" stroke="#F7D6D3" stroke-width="10" stroke-linecap="round"/><circle cx="70" cy="70" r="12" fill="#FFF6F2"/></g>
+ <g transform="translate(300 215)"><path d="M10 40 h130 a20 20 0 0 1 0 40 h-130 a20 20 0 0 1 0 -40Z" fill="#E0594F"/><path d="M10 40 h130 a20 20 0 0 1 0 14 h-150 a20 20 0 0 1 20 -14Z" fill="#FFF6F2"/><path d="M0 95 h130 a20 20 0 0 1 0 40 h-130 a20 20 0 0 1 0 -40Z" fill="#D23F3A"/><path d="M0 95 h130 a20 20 0 0 1 0 14 h-150 a20 20 0 0 1 20 -14Z" fill="#FFF6F2"/></g>
+ <g transform="translate(250 150)"><ellipse cx="50" cy="40" rx="48" ry="36" fill="#E9A15A"/><rect x="85" y="30" width="60" height="14" rx="7" fill="#F4E3C3"/><circle cx="148" cy="30" r="10" fill="#F4E3C3"/><circle cx="148" cy="46" r="10" fill="#F4E3C3"/></g>
+ <g fill="#5E9A2E"><path d="M120 330 q20 -40 50 -10 q-30 0 -50 10Z"/><path d="M460 330 q-20 -40 -50 -10 q30 0 50 10Z"/></g></svg>`},
+ {bg:'#E7F1DD',tag:'Libreng delivery<br>sa malalaking order',sm:'Within Santa Ana, Cagayan',svg:`<svg viewBox="0 0 600 560" preserveAspectRatio="xMidYMax slice"><rect width="600" height="560" fill="#E7F1DD"/><circle cx="110" cy="110" r="60" fill="#F5C518"/><path d="M0 360 Q170 300 330 350 T600 330 V560 H0Z" fill="#9CC75F"/><rect x="0" y="455" width="600" height="105" fill="#8E1B22"/><path d="M0 455 h600" stroke="#F5C518" stroke-width="6" stroke-dasharray="40 30"/>
+ <g transform="translate(160 205)"><circle cx="40" cy="170" r="38" fill="#2A1614"/><circle cx="40" cy="170" r="14" fill="#ccc"/><circle cx="250" cy="170" r="38" fill="#2A1614"/><circle cx="250" cy="170" r="14" fill="#ccc"/><path d="M40 170 L110 110 H200 L250 170" fill="none" stroke="#B3191B" stroke-width="16" stroke-linejoin="round"/><path d="M95 120 h120 l20 30 h-150Z" fill="#D61F14"/><rect x="0" y="40" width="110" height="80" rx="10" fill="#fff" stroke="#8E1B22" stroke-width="6"/><text x="55" y="92" font-family="Arial Black,Arial" font-weight="900" font-size="30" fill="#B3191B" text-anchor="middle">3F</text>
+ <path d="M150 110 l30 -60" stroke="#2A1614" stroke-width="14" stroke-linecap="round"/><circle cx="185" cy="30" r="26" fill="#B3191B"/><rect x="170" y="20" width="34" height="12" rx="6" fill="#CFE8F5"/><path d="M180 60 l40 30" stroke="#2A1614" stroke-width="10" stroke-linecap="round"/></g>
+ <g fill="#5E9A2E"><circle cx="520" cy="300" r="40"/><rect x="514" y="320" width="12" height="60" fill="#6B4A2B"/></g></svg>`}];
+let auT=0,auI=0;
+function authShell(title,sub,inner){clearInterval(auT);
+  const h=`<div class="au"><div class="au-art" aria-hidden="true">${AU_SLIDES.map((x,i)=>`<div class="au-sl${i===auI?' on':''}">${x.svg}<div class="au-tag"><small>${x.sm}</small>${x.tag}</div></div>`).join('')}<div class="au-dots">${AU_SLIDES.map((x,i)=>`<i class="${i===auI?'on':''}"></i>`).join('')}</div></div>
+   <div class="au-form"><button type="button" class="au-back" id="au-back">← Back</button><h1>${title}</h1><p class="au-sub">${sub}</p>${inner}</div></div>`;
+  setTimeout(()=>{const b=$('#au-back');if(b)b.onclick=()=>{clearInterval(auT);view='shop';render()};
+    auT=setInterval(()=>{const sl=document.querySelectorAll('.au-sl'),d=document.querySelectorAll('.au-dots i');if(!sl.length){clearInterval(auT);return}auI=(auI+1)%sl.length;sl.forEach((e,i)=>e.classList.toggle('on',i===auI));d.forEach((e,i)=>e.classList.toggle('on',i===auI))},5000)},0);
+  return h}
 let lmode='login';
 function rLogin(){
   const areas=info?info.areas:[];
-  $('#view').innerHTML=`<div class="card gold" style="max-width:520px;margin:0 auto 16px">
-    <div class="chips" style="margin-bottom:12px"><button data-lm="login" class="${lmode==='login'?'on':''}">Log in</button><button data-lm="reg" class="${lmode==='reg'?'on':''}">Sign up (new customer)</button></div>
-    ${lmode==='login'?`<h2>Log in</h2><p class="lead">Use your mobile no., email or username, and your password.</p>
-      <label class="f">Mobile no. / Email / Username</label><input class="in" id="l-id" autocomplete="username" autocapitalize="off" spellcheck="false" placeholder="09XXXXXXXXX, email or username">
-      <label class="f">Password</label>${pwIn('l-pin','current-password','Password (old customers: your 4-digit PIN)')}
-      <button class="btn wide" id="l-go" style="margin-top:14px">Log in</button>
-      <p style="text-align:right;margin:8px 0 0"><a href="#" id="l-forgot" style="font-size:14px">Forgot password?</a></p>
-      <p class="muted" style="font-size:13px">Bulk buyers (e.g. KUI): use the username and password given by 3F Meatshop — you will choose your own password after logging in. Forgot it? Call the shop.</p>`:
-     `<h2>Sign up</h2><p class="lead">For retail and wholesale buyers.</p>
+  $('#view').innerHTML=lmode==='login'?authShell('Sign In','See all your orders — and reorder faster.',`
+      <label class="f">Mobile number, email or username</label><input class="in" id="l-id" autocomplete="username" autocapitalize="off" spellcheck="false" placeholder="09XXXXXXXXX or you@email.com">
+      <label class="f">Password</label>${pwIn('l-pin','current-password','Enter your password')}
+      <button class="btn wide" id="l-go" style="margin-top:16px">Sign in</button>
+      <div class="err" id="lerr" hidden></div>
+      <p class="au-alt">Don't have an account? <a href="#" data-lm="reg">Create free account</a></p>
+      <p class="au-alt" style="margin-top:8px"><a href="#" id="l-forgot" style="font-weight:600">Forgot your password?</a></p>
+      <p class="au-note">Bulk buyers (e.g. KUI): use the username and password from 3F Meatshop. Old customers: your 4-digit PIN still works the first time.</p>`):authShell('Create account','Free for retail and wholesale buyers.',`
       <label class="f">Name / store name</label><input class="in" id="r-name">
       <div class="two"><div><label class="f">Username <small class="muted">(unique)</small></label><input class="in" id="r-user" autocomplete="username" autocapitalize="off" spellcheck="false" placeholder="e.g. juan.delacruz"></div><div><label class="f">Mobile no.</label><input class="in" id="r-mob" inputmode="tel" placeholder="09XXXXXXXXX"></div></div>
       <div class="two"><div><label class="f">Password</label>${pwIn('r-pin','new-password')}</div><div><label class="f">Type it again</label>${pwIn('r-pin2','new-password')}</div></div>
@@ -628,8 +671,10 @@ function rLogin(){
       <label class="f">Barangay (Santa Ana, Cagayan)</label><select class="in" id="r-area"><option value="">— choose your barangay —</option>${areas.map(a=>`<option>${esc(a.area)}</option>`).join('')}</select>
       <label style="display:flex;gap:10px;align-items:flex-start;margin-top:12px;font-size:14px;line-height:1.4"><input type="checkbox" id="r-ws" style="width:20px;height:20px;flex:none;margin-top:1px"><span style="flex:1">I buy <b>wholesale</b> (store / restaurant / reseller). The shop will review — retail prices apply until approved.</span></label>
       <label style="display:flex;gap:10px;align-items:flex-start;margin-top:12px;font-size:14px;line-height:1.4"><input type="checkbox" id="r-ok" style="width:20px;height:20px;flex:none;margin-top:1px"><span style="flex:1">I have read the <a href="#" id="r-priv"><b>Privacy Notice</b></a> and agree that 3F Meatshop uses my details to take, deliver and follow up my orders.</span></label>
-      <button class="btn wide" id="r-go" style="margin-top:14px">Create account</button>`}
-    <div class="err" id="lerr"></div></div>`;
+      <button class="btn wide" id="r-go" style="margin-top:16px">Create account</button>
+      <div class="err" id="lerr" hidden></div>
+      <p class="au-alt">Already have an account? <a href="#" data-lm="login">Sign in</a></p>`);
+  new MutationObserver((m,o)=>{const e=$('#lerr');if(!e){o.disconnect();return}e.hidden=!e.textContent}).observe($('#lerr'),{childList:true,characterData:true,subtree:true});
   if($('#l-go')){const go=async()=>{const e=$('#lerr');e.textContent='';try{const r=await api('shop_login',KEY,$('#l-id').value,$('#l-pin').value);setSess(r)}catch(er){e.textContent=errMsg(er)}};
     $('#l-go').onclick=go;$('#l-pin').onkeydown=k=>{if(k.key==='Enter')go()}}
   if($('#r-send'))$('#r-send').onclick=()=>sendCode($('#r-send'),$('#r-email').value.trim(),'reg',$('#lerr'));
@@ -641,10 +686,10 @@ function rLogin(){
     const m=userCheck(u)||pwCheck(pw,u)||(pw!==$('#r-pin2').value?'The passwords do not match':'')||emailCheck(em)||(/^\d{6}$/.test(cd)?'':'Tap “Send code”, then type the 6-digit code from your email');if(m){e.textContent=m;return}
     try{const r=await api('shop_register',KEY,{name:$('#r-name').value,username:u,mobile:$('#r-mob').value,password:pw,email:em,code:cd,address:$('#r-addr').value,area:$('#r-area').value,wholesale:$('#r-ws').checked,consent:true});setSess(r);toast('Welcome, '+r.me.name+'!')}catch(er){e.textContent=errMsg(er)}};
 }
-function rForgot(){$('#view').innerHTML=`<div class="card gold" style="max-width:520px;margin:0 auto"><h2>🔑 Forgot password</h2><p class="lead">Type the email on your account. We send a 6-digit code — then choose a new password.</p>
+function rForgot(){$('#view').innerHTML=authShell('Forgot password','Type the email on your account. We send a 6-digit code — then choose a new password.',`
     ${codeRow('f')}<div class="two"><div><label class="f">New password</label>${pwIn('f-new','new-password')}</div><div><label class="f">Type it again</label>${pwIn('f-new2','new-password')}</div></div>${pwMeter('f-new')}
-    <button class="btn wide" id="f-go" style="margin-top:14px">Save new password & log in</button><p style="margin:10px 0 0"><a href="#" id="f-back">← Back to log in</a></p>
-    <p class="muted" style="font-size:13px">No email on your account yet? Call the shop to reset it.</p><div class="err" id="ferr"></div></div>`;
+    <button class="btn wide" id="f-go" style="margin-top:16px">Save new password & sign in</button><p class="au-alt"><a href="#" id="f-back">← Back to sign in</a></p>
+    <p class="au-note">No email on your account yet? Call the shop to reset it.</p><div class="err" id="ferr"></div>`);
   $('#f-back').onclick=e=>{e.preventDefault();lmode='login';rLogin()};
   $('#f-send').onclick=()=>sendCode($('#f-send'),$('#f-email').value.trim(),'reset',$('#ferr'));
   $('#f-go').onclick=async()=>{const e=$('#ferr');e.textContent='';const em=$('#f-email').value.trim(),cd=$('#f-code').value.trim(),n=$('#f-new').value;
@@ -667,6 +712,7 @@ function openM(h){$('#mb').innerHTML=h;$('#m').classList.add('on')}
 $('#m').addEventListener('click',e=>{if(e.target.id==='m'||e.target.closest('[data-close]'))$('#m').classList.remove('on')});
 document.addEventListener('click',async e=>{
   const im=e.target.closest('img[data-ph]');if(im&&im.src){openM(`<div class="viewer"><img src="${im.src}"><p class="muted">${esc(im.alt)}</p><button class="btn sec" data-close>Close</button></div>`);return}
+  const lm=e.target.closest('a[data-lm]');if(lm){e.preventDefault();lmode=lm.dataset.lm;rLogin();scrollTo(0,0);return}
   const b=e.target.closest('button');if(!b)return;const d=b.dataset;
   if(d.v){if(d.v!=='orders')newsShown=null;view=d.v;if(view==='orders'&&me){orders=orders||null;loadOrders()}render();scrollTo(0,0);return}
   if(d.cat!==undefined){cat=d.cat;rShop();return}
