@@ -373,6 +373,11 @@ body:not(.bulk) nav.bar button[data-v="orders"],nav.bar button[data-v="acct"]{di
 .pso{position:absolute;left:10px;top:10px;background:var(--ink);color:#fff;font:700 12px system-ui;padding:4px 9px;border-radius:999px}
 .prod.hasph .em{display:none}
 @media (max-width:760px){.pimg{margin:-10px -10px 4px}}
+
+.gia{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;background:var(--goldl);border:1px solid #F1D58A;border-radius:12px;padding:12px;font-size:13.5px;width:100%}
+.gia b{font-size:14.5px}.gia .btn{min-width:200px}
+.gbtn{display:inline-flex;align-items:center;justify-content:center;gap:10px;width:100%;max-width:400px;height:46px;border:1px solid #DADCE0;border-radius:999px;background:#fff;color:#3C4043;font:600 15px/1 system-ui,"Segoe UI",Roboto,Arial,sans-serif;transition:background .2s,box-shadow .2s,transform .12s}
+.gbtn:hover{background:#F8FAFF;box-shadow:0 2px 8px rgba(60,64,67,.15)}.gbtn:active{transform:scale(.98)}
 </style>
 </head>
 <body>
@@ -860,10 +865,31 @@ function authShell(title,sub,inner){clearInterval(auT);
 const GID=window.GOOGLE_ID||'698841362369-605d16hh08me352uolgp8ih665t25b8n.apps.googleusercontent.com';
 let gReg=null,gLoad=null;
 function gLib(){return gLoad||(gLoad=new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';s.async=true;s.onload=res;s.onerror=()=>{gLoad=null;rej()};document.head.appendChild(s)}))}
-async function gButton(id,text){const el=$('#'+id);if(!el||!GID||!/^https:/.test(location.protocol))return;
-  try{await gLib();google.accounts.id.initialize({client_id:GID,callback:gDone,ux_mode:'popup',cancel_on_tap_outside:true});
-    const w=Math.min(400,Math.max(220,el.clientWidth||320));google.accounts.id.renderButton(el,{theme:'outline',size:'large',shape:'pill',text,width:w,logo_alignment:'center'});
-    const o=$('#gor');if(o)o.hidden=false}catch(e){}}
+// Facebook / Messenger / Instagram / TikTok in-app browsers: Google blocks sign-in there (blank page) → offer to open the real browser
+const INAPP=/FBAN|FBAV|FB_IAB|FBIOS|Messenger|Instagram|Line\/|TikTok|musical_ly|; wv\)/i.test(navigator.userAgent);
+const IS_AND=/Android/i.test(navigator.userAgent);
+function gInApp(el){const o=$('#gor');if(o)o.hidden=false;const u=location.href.replace(/#.*$/,'');
+  el.innerHTML=`<div class="gia"><b>Sign in with Google</b><span>Google doesn't work inside Messenger / Facebook. Open this page in ${IS_AND?'Chrome':'Safari'} first:</span>
+    ${IS_AND?`<a class="btn gold sm" href="intent://${location.host}${location.pathname}${location.search}#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${encodeURIComponent(u)};end">Open in Chrome</a>`:`<span class="muted">Tap <b>•••</b> (top right) → <b>Open in external browser</b>.</span>`}
+    <button type="button" class="btn sec sm" id="gcopy">📋 Copy link</button></div>`;
+  $('#gcopy').onclick=async()=>{try{await navigator.clipboard.writeText(u);toast('Link copied — paste it in Chrome or Safari')}catch(e){prompt('Copy this link:',u)}}}
+// Google sign-in, full page (no pop-up — pop-ups get stuck on phones): go to Google → come back with #id_token
+const G_LOGO='<svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.9 6.1C12.5 13.6 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.1 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.4c-.5 2.9-2.2 5.3-4.6 6.9l7.4 5.7c4.3-4 6.9-9.9 6.9-17.1z"/><path fill="#FBBC05" d="M10.6 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.1C1 16.6 0 20.2 0 24s1 7.4 2.7 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.4-5.7c-2.1 1.4-4.8 2.3-8.5 2.3-6.2 0-11.5-4.1-13.4-9.7l-7.9 6.1C6.6 42.6 14.6 48 24 48z"/></svg>';
+const gUri=()=>location.origin+location.pathname.replace(/index\.html$/,'');   // must match the address saved in Google Cloud (https://www.3fmeatshop.com/)
+function gStart(){const rnd=()=>Array.from(crypto.getRandomValues(new Uint8Array(16)),b=>b.toString(16).padStart(2,'0')).join(''),st=rnd(),nonce=rnd();
+  try{sessionStorage.setItem('g3f',JSON.stringify({st,nonce,q:location.search}))}catch(e){}
+  location.href='https://accounts.google.com/o/oauth2/v2/auth?'+new URLSearchParams({client_id:GID,redirect_uri:gUri(),response_type:'id_token',scope:'openid email profile',state:st,nonce,prompt:'select_account'})}
+async function gButton(id,text){const el=$('#'+id);if(!el||!GID||!/^https:/.test(location.protocol))return;if(INAPP){gInApp(el);return}
+  el.innerHTML=`<button type="button" class="gbtn" id="gstart">${G_LOGO}<span>${text==='signup_with'?'Sign up with Google':'Continue with Google'}</span></button>`;
+  $('#gstart').onclick=gStart;const o=$('#gor');if(o)o.hidden=false}
+// back from Google: the sign-in is in the address (#id_token=…) — check it is ours, clean the address, log in
+function gReturn(){const h=new URLSearchParams(location.hash.slice(1));if(!h.has('id_token')&&!h.has('error'))return;
+  let g={};try{g=JSON.parse(sessionStorage.getItem('g3f')||'{}');sessionStorage.removeItem('g3f')}catch(e){}
+  history.replaceState(null,'',location.pathname+location.search);
+  if(h.get('error')){if(h.get('error')!=='access_denied')toast('Google sign-in did not finish — please try again');return}
+  const t=h.get('id_token');let pl={};try{pl=JSON.parse(decodeURIComponent(escape(atob(t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')))))}catch(e){}
+  if(!g.st||h.get('state')!==g.st||pl.nonce!==g.nonce){toast('Google sign-in expired — please try again');return}
+  view='login';lmode='login';render();gDone({credential:t})}
 async function gDone(resp){const e=$('#lerr');if(e)e.textContent='';
   try{const r=await api('shop_google',KEY,resp.credential);if(r&&r.token){setSess(r);toast('Welcome, '+r.me.name+'!');return}
     gReg={cred:resp.credential,email:r.email,name:r.name};lmode='greg';rLogin();scrollTo(0,0)}catch(er){if(e)e.textContent=errMsg(er);else toast(errMsg(er))}}
@@ -968,7 +994,7 @@ document.addEventListener('change',e=>{const c=e.target.dataset&&e.target.datase
 $('#acct').onclick=()=>{view=me?'acct':'login';render()};
 $('#cbgo').onclick=()=>{view='cart';render();scrollTo(0,0)};
 function setLogos(){const l=window.LOGO_ICON,f=window.LOGO_FULL;if(l)$('#logo').style.backgroundImage=`url(${l})`;const b=$('#biglogo');if(b&&f)b.style.backgroundImage=`url(${f})`}
-setLogos();render();loadInfo();if(token)loadOrders();
+setLogos();render();loadInfo();if(token)loadOrders();gReturn();
 </script>
 </body>
 </html>
