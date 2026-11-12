@@ -1243,7 +1243,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 13 · 7:50 AM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 13 · 8:00 AM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -5157,7 +5157,7 @@ function receiptHTML(s,copy,reprint){const I=(ST&&ST.rcpt)||{name:'3F MEATSHOP',
   <img class="rl" src="${LOGO_3F}" alt="3F"><div class="rc b rbig">${esc(I.name)}</div>${I.line2?`<div class="rc">${esc(I.line2)}</div>`:''}${I.owner?`<div class="rc">${esc(I.owner)} - Prop.</div>`:''}
   ${I.address?`<div class="rc">${esc(I.address)}</div>`:''}${I.phone?`<div class="rc">Tel/Cel: ${esc(I.phone)}</div>`:''}${I.tin?`<div class="rc">TIN: ${esc(I.tin)}</div>`:''}
   ${dash}<div class="rc b">${ret?'RETURN RECEIPT':chg?'CHARGE INVOICE':'SALES RECEIPT'}</div>${reprint?'<div class="rc b">** REPRINT **</div>':''}${dash}
-  ${row('Receipt No.:',esc(s.no||'(not yet sent)'))}${s.dr?row('DR No.:',esc(s.dr)):''}${s.sale?row('For receipt:',esc(s.sale)):''}${row('Date:',ds)}${row('Time:',ts)}${row('Cashier:',esc(s.cashier||me.name))}${row('Customer:',esc(s.customer||s.custName||'Walk-in'))}
+  ${row('Receipt No.:',esc(s.no||'OFFLINE — no. to follow'))}${s.dr?row('DR No.:',esc(s.dr)):''}${s.sale?row('For receipt:',esc(s.sale)):''}${row('Date:',ds)}${row('Time:',ts)}${row('Cashier:',esc(s.cashier||me.name))}${row('Customer:',esc(s.customer||s.custName||'Walk-in'))}
   ${dash}<div class="rr h"><span>ITEM</span><span>AMOUNT</span></div>${dash}
   ${(s.items||[]).map(i=>`<div class="ri">${esc(i.name)}</div><div class="rr"><span>&nbsp;&nbsp;${qf(i.qty)} ${esc(String(i.unit||'').toLowerCase())} x ${P(i.price)}</span><span>${P(i.qty*i.price)}</span></div>`).join('')}
   ${dash}${row(n+' item(s)','')}${row('SUBTOTAL',P(sub))}
@@ -5341,12 +5341,16 @@ function completeSale(ok){const total=cartTotal();if(!ok)return tenderDialog();
   s.items.forEach(i=>{const p=pBy(i.code);if(p)p.avail=r2(p.avail-i.qty)});stCache();
   if(ord)ST.toCash=ST.toCash.filter(x=>x.id!==ord.id);
   resetSale();drawStock();
-  showReceipt(s);if(posPrint)setTimeout(()=>printReceipt(s),250);posPrint=false;posFlush()}
-let posPrint=false;
-function showReceipt(s){const box=stBox();$('#stb').innerHTML=`<h2>✅ Sale done — ${peso(s.total)}</h2>${s.cash&&s.cash>s.total?`<div class="snote" style="font-size:20px">Change: <b>${peso(s.cash-s.total)}</b></div>`:''}${receiptHTML(s)}
+  showReceipt(s);const pp=posPrint;posPrint=false;if(pp)toast('🖨 Getting the receipt no. then printing…');
+  waitNo(s,pp?10000:30000).then(()=>{if(pp)printReceipt(s)})}
+let posPrint=false,posNos={},rcShown='';
+/* wait until the server gives this sale its receipt no. (offline → stop waiting after ms and print anyway) */
+async function waitNo(s,ms){const t0=Date.now();let last=0;while(!posNos[s.cid]&&Date.now()-t0<ms){if(!posSending&&Date.now()-last>3000){last=Date.now();posFlush()}await new Promise(r=>setTimeout(r,400))}
+  if(posNos[s.cid]){s.no=posNos[s.cid];if(rcShown===s.cid&&stBox().classList.contains('on'))showReceipt(s)}}
+function showReceipt(s){const box=stBox();rcShown=s.cid;$('#stb').innerHTML=`<h2>✅ Sale done — ${peso(s.total)}</h2>${s.cash&&s.cash>s.total?`<div class="snote" style="font-size:20px">Change: <b>${peso(s.cash-s.total)}</b></div>`:''}${receiptHTML(s)}
   <div class="row-end"><button class="btn" id="rc-pr">🖨 Print receipt</button><button class="go" data-x>Next customer</button></div>`;box.classList.add('on');$('#rc-pr').onclick=()=>printReceipt(s)}
 async function posFlush(){const Q=posQueue();if(!Q.length||posSending||!session)return;posSending=true;
-  try{const r=await Promise.race([api('api_posSync',session.token,Q),new Promise((_,rej)=>setTimeout(()=>rej(new Error('TIMEOUT')),30000))]);const ok=new Set(r.done.map(d=>d.cid));setPosQueue(posQueue().filter(s=>!ok.has(s.cid)));
+  try{const r=await Promise.race([api('api_posSync',session.token,Q),new Promise((_,rej)=>setTimeout(()=>rej(new Error('TIMEOUT')),30000))]);const ok=new Set(r.done.map(d=>d.cid));r.done.forEach(d=>{if(d.no)posNos[d.cid]=d.no});setPosQueue(posQueue().filter(s=>!ok.has(s.cid)));
     try{ST=await api('api_stock',session.token);ST.offline=false;stCache()}catch(e){}
     posSending=false;if(view==='pos')drawStock();return true}
   catch(e){posSending=false;if(/AUTH/.test(errMsg(e)))handleErr(e);return false}}
