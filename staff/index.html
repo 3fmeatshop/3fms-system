@@ -1242,7 +1242,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 12 · 8:20 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 12 · 10:45 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -1995,7 +1995,7 @@ function myAccount(){const box=stBox();$('#stb').innerHTML=`<h2>${ROLES[me.role]
 // real network problems vs. errors from the Apps Script server (old Code.gs, not deployed, a sheet problem…)
 function isNet(m){return /NOSERVER|NetworkError|HTTP 0|Failed to fetch|network|connection|timed? ?out|offline/i.test(m)}
 function serverErr(m){return '⚠ Server error: <b>'+esc(String(m).replace(/^(Script)?Error:\s*/,''))+'</b><br><small>The internet is OK. Check that <b>Code.gs</b> is the newest one and a <b>New version</b> was deployed. If it stays, send a screenshot.</small>'}
-function logout(msg){document.body.classList.remove('sidenav');if(session)api('api_logout',session.token).catch(()=>{});
+function logout(msg){document.body.classList.remove('sidenav');SBP=null;if(session)api('api_logout',session.token).catch(()=>{});
   session=null;me=null;MA=null;MSL=null;localStorage.removeItem(SESS);clearTimeout(pollTimer);clearTimeout(flushTimer);
   db={orders:[]};base={};ver=0;proc=null;summary=null;hist={};
   try{OW=null;OWerr='';LGD=null;RV=null;RVrep=false;MB=null;PY=null;HR=null;CR=null;SR=null;PA=null}catch(e){}          // no money data left for the next person on this device
@@ -3200,6 +3200,16 @@ const uSel=(sel,cls,data,filter)=>`<select class="edit-in ${cls}" ${data}><optio
 function posQueue(){try{return JSON.parse(localStorage.getItem('dp_posq')||'[]')}catch(e){return[]}}
 const setPosQueue=q=>{try{localStorage.setItem(POSQ,J(q))}catch(e){}};
 function stCache(){try{if(ST&&me)ST.uid=me.id;localStorage.setItem(STKEY,J(ST))}catch(e){}}
+// ⚡ PHASE 2a: live stock straight from Supabase (fast); the full Apps Script load still runs behind it and fills in the rest
+let SBP=null,sbpWait=null;
+async function sbPass(){if(!window.SB_URL||!window.SB_KEY||!session)return null;if(SBP&&SBP.uid===(me&&me.id)&&SBP.exp>Date.now())return SBP;
+  if(!sbpWait)sbpWait=api('api_sbPass',session.token).then(r=>{SBP=r?Object.assign(r,{uid:me&&me.id}):null;return SBP}).catch(()=>null).finally(()=>{sbpWait=null});return sbpWait}
+async function sbCall(fn,...a){const p=await sbPass();if(!p)throw new Error('off');
+  const r=await fetch(window.SB_URL.replace(/\/$/,'')+'/rest/v1/rpc/'+fn,{method:'POST',headers:Object.assign({'Content-Type':'application/json',apikey:window.SB_KEY},/^eyJ/.test(window.SB_KEY)?{Authorization:'Bearer '+window.SB_KEY}:{}),body:JSON.stringify({a:[p.pass,...a]})});
+  const x=await r.json();if(!r.ok){if(/AUTH/.test(x&&x.message||''))SBP=null;throw new Error(x&&x.message||'Supabase error')}return x}
+async function sbStockFast(){if(!me||me.role==='rider')return false;try{const t0=Date.now(),r=await sbCall('st_stock');if(!ST||!r||!r.products)return false;
+  const by={};r.products.forEach(p=>by[p.code]=p);ST.products=ST.products.map(p=>by[p.code]?Object.assign({},p,by[p.code]):p);
+  r.products.forEach(p=>{if(!ST.products.some(x=>x.code===p.code))ST.products.push(p)});ST.live=Date.now()-t0;return true}catch(e){return false}}
 async function loadStock(force){
   if(!force&&ST&&!ST.offline&&!ST.stale&&Date.now()-(ST.rt||ST.at)<45000)return ST;
   try{ST=await api('api_stock',session.token);ST.offline=false;ST.stale=false;ST.rt=Date.now();stCache()}
@@ -3212,6 +3222,7 @@ async function renderStock(v,force){
   if(!ST&&me){try{const c=JSON.parse(localStorage.getItem(STKEY)||'null');if(c&&c.products&&c.uid===me.id){ST=c;ST.stale=true;ST.offline=false}}catch(e){}}
   if(ST&&!force&&!ST.offline&&(ST.stale||Date.now()-(ST.rt||ST.at)>=45000)){
     ST.stale=true;if(view===v&&me)drawStock();
+    sbStockFast().then(ok=>{if(ok&&view===v&&me&&stIdle())drawStock()});
     if(!stBg){stBg=true;loadStock(true).then(()=>{if(view===v&&me&&stIdle())drawStock()}).catch(e=>{if(/AUTH/.test(errMsg(e)))handleErr(e);else if(ST){ST.stale=false;if(view===v&&me&&stIdle())drawStock()}}).finally(()=>{stBg=false})}
     return}
   if(!ST)$('#list').innerHTML=`<div class="rep" data-v="${v}"><div class="empty">Loading…</div></div>`;
