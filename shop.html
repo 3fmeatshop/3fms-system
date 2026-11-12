@@ -382,6 +382,7 @@ function stOf(o){
   if(o.dispatched)return{k:'way',t:'🚚 Out for delivery',n:4};
   if(ol&&ol.status==='pending')return{k:'pend',t:(ol.calls&&ol.calls.length)?'📞 We tried to call you':ol.pay==='cod'?'⏳ Waiting for confirmation':'⏳ Checking payment',n:1};
   if(o.prepDone&&o.checked)return{k:'ready',t:'✅ Packed & ready',n:3};
+  if(ol&&ol.status==='confirmed'&&ol.released===false&&!o.prepStarted)return{k:'conf',t:'✅ Confirmed',n:2};
   if(ol&&ol.status==='confirmed')return{k:'prep',t:'🔪 Preparing',n:3};
   if(o.prepStarted)return{k:'prep',t:'🔪 Preparing',n:3};
   return{k:'conf',t:ol?'Confirmed':'Order received',n:ol?2:1};
@@ -420,7 +421,7 @@ function orderCard(o){
   return `<div class="order${isOpen?' open':''}" id="o-${o.id}"><button class="head" data-open="${o.id}">
      <div class="cal ${s.k==='done'?'done':s.k==='x'?'x':''}"><small>${MON[d.getMonth()].toUpperCase()}</small><b>${d.getDate()}</b><span>${DOW[d.getDay()]}</span></div>
      <div class="who"><b>${ol?'Order '+esc(ol.no):'Delivery '+longDay(o.delivery)}${o.kind==='add'?' <span class="badge">Additional</span>':o.balance?' <span class="badge">Balance</span>':o.carry?' <span class="badge">Carry-over</span>':''}</b>
-       <span>${ol?(ol.status==='pending'?'Delivery: on the day we confirm (next day)':'Delivery '+longDay(o.delivery)+(ol.queue&&!o.dispatched&&ol.status!=='cancelled'?' · queue #'+ol.queue:''))+' · '+o.items.length+' item(s) · '+sum:o.items.length+' item(s)'+(o.use?' · use '+esc(o.use):'')}</span></div>
+       <span>${ol?(ol.status==='pending'?'Delivery: on the day we confirm (next day)':'Delivery '+longDay(o.delivery))+' · '+o.items.length+' item(s) · '+sum:o.items.length+' item(s)'+(o.use?' · use '+esc(o.use):'')}</span></div>
      <span class="pill p-${s.k}">${s.t}</span></button>
    <div class="body">${s.n>0?`<div class="steps">${steps}</div>`:''}
      <table class="it"><thead><tr><th>Product</th><th class="r">Ordered</th><th class="r">Prepared</th>${ol?'<th class="r">Price</th>':''}</tr></thead><tbody>${it}</tbody></table>

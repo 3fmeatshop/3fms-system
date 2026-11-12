@@ -509,7 +509,7 @@ header h1 .tt small{display:block;font-size:11px;color:var(--sky2);letter-spacin
 .sl-mob{display:none}.sl-btn{all:unset;cursor:pointer;display:block;width:100%}.sl-row{cursor:pointer}.sl-row:hover td,.sl-row.on td{background:#FFF6DD}.sl-det>td{background:#FFFBF0}.sl-cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}.sl-cols h4{margin:4px 0 6px}
 .sl-po{border:1px solid #eadfcf;border-radius:10px;padding:8px 10px;margin-bottom:8px;background:#fff}.sl-po.late{border-color:#F6B3B0;background:#FFF5F5}.sl-poh{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.sl-pays{margin-top:4px;font-size:12.5px;color:#4b4b4b;border-top:1px dashed #e4d8c4;padding-top:4px}
 @media(max-width:700px){.sl-tb tr>th:nth-child(2),.sl-tb tr>th:nth-child(3),.sl-tb tr:not(.sl-det)>td:nth-child(2),.sl-tb tr:not(.sl-det)>td:nth-child(3){display:none}.sl-mob{display:block!important}.sl-tb{min-width:0!important;width:100%!important}.sl-tb td,.sl-tb th{white-space:normal!important}.sl-tb tr:not(.sl-det)>td:last-child{white-space:nowrap!important;width:1%}.sl-det>td{padding:8px 4px}.pay-cards{grid-template-columns:1fr}.pay-card{flex-direction:row;align-items:baseline;flex-wrap:wrap;gap:8px}.pay-card small{flex-basis:100%}.sl-cols{grid-template-columns:1fr}}
-.ca-req{border:1px solid #F3D19C;background:#FFF8E8;border-radius:12px;padding:10px 12px;margin-bottom:8px}.ca-warn{color:#8E1B22;font-weight:700;font-size:12.5px;margin-top:3px}.half-tag{display:inline-block;background:#FFE08A;color:#7A4B00;font-weight:800;font-size:11.5px;border-radius:6px;padding:1px 6px;white-space:nowrap}.stbl .atb{background:#FFF8E6;text-align:center;white-space:nowrap}.stbl th.atb{background:#FCEBC2}.sctb tr.sc-adj td{background:#FFF6D1}.sctb tr.sc-flag td{background:#FDECEC}.sc-fl{color:#B3191B;font-weight:700;font-size:12.5px;margin-top:3px}.sc-flag-sum{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#FDECEC;border:1px solid #F6B3B0;color:#8E1B22;border-radius:10px;padding:8px 12px;margin-top:10px}.sc-ok{background:#e1f2e7;color:#1c7a44;border-radius:10px;padding:8px 12px;margin-top:10px;font-weight:700}.sc-lnk{color:inherit;text-decoration:none;background:none;border:0;padding:0;font:inherit;cursor:pointer;text-align:left}.sc-lnk:hover b{text-decoration:underline}
+.ca-req{border:1px solid #F3D19C;background:#FFF8E8;border-radius:12px;padding:10px 12px;margin-bottom:8px}.ca-warn{color:#8E1B22;font-weight:700;font-size:12.5px;margin-top:3px}.oq-row{display:flex;align-items:center;gap:8px;border:1px solid #eadfcf;border-radius:12px;padding:8px 10px;margin-bottom:6px;background:#FFFBF0}.oq-row.rel{background:#EEF7F1;border-color:#BFE3CC}.oq-n{font-size:18px;color:#8E1B22;min-width:40px}.half-tag{display:inline-block;background:#FFE08A;color:#7A4B00;font-weight:800;font-size:11.5px;border-radius:6px;padding:1px 6px;white-space:nowrap}.stbl .atb{background:#FFF8E6;text-align:center;white-space:nowrap}.stbl th.atb{background:#FCEBC2}.sctb tr.sc-adj td{background:#FFF6D1}.sctb tr.sc-flag td{background:#FDECEC}.sc-fl{color:#B3191B;font-weight:700;font-size:12.5px;margin-top:3px}.sc-flag-sum{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#FDECEC;border:1px solid #F6B3B0;color:#8E1B22;border-radius:10px;padding:8px 12px;margin-top:10px}.sc-ok{background:#e1f2e7;color:#1c7a44;border-radius:10px;padding:8px 12px;margin-top:10px;font-weight:700}.sc-lnk{color:inherit;text-decoration:none;background:none;border:0;padding:0;font:inherit;cursor:pointer;text-align:left}.sc-lnk:hover b{text-decoration:underline}
 @media(max-width:600px){.sc-sum{grid-template-columns:1fr 1fr}.sc-g{grid-template-columns:1fr}}
 /* 📊 product movement */
 .mvtb td.r>small.unit{display:inline}.mvtb td small{display:block;font-size:11.5px;color:var(--muted);font-weight:500}.mvtb .mv-in{color:var(--green);font-weight:800}.mvtb .mv-out{color:var(--rose);font-weight:800}.mvtb tr.mv-adj td{background:#FFF6D1}
@@ -1242,7 +1242,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 12 · 1:40 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 12 · 2:10 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -2302,15 +2302,30 @@ async function sbDialog(){const box=stBox();$('#stb').innerHTML='<h2>🌐 Online
      <div class="row-end"><button class="btn" data-x>Close</button>${S.on?'<button class="go" id="sb-now">↻ Sync now</button>':''}</div>`;
     if($('#sb-now'))$('#sb-now').onclick=async()=>{$('#sb-now').disabled=true;try{show(await api('api_sbSyncNow',session.token))}catch(e){alert(errMsg(e));$('#sb-now').disabled=false}}};
   try{show(await api('api_sbStatus',session.token))}catch(e){$('#stb').innerHTML='<h2>🌐 Online shop sync</h2><div class="unit">⚠ '+esc(errMsg(e))+'</div><div class="row-end"><button class="btn" data-x>Close</button></div>'}}
+// 🔢 Online queue: the manager arranges the order for a delivery day, then taps Proceed (customer then sees "Preparing")
+let onQD='',onQL=null;
+function onQueueHTML(list){const td=iso(new Date()),tm=(()=>{const d=new Date();d.setDate(d.getDate()+1);return iso(d)})();
+  if(!onQD){onQD=list.some(o=>o.online.status==='confirmed'&&o.online.released===false&&o.delivery===td)?td:tm}
+  const L0=list.filter(o=>o.online.status==='confirmed'&&o.delivery===onQD&&!o.dispatched).sort((a,b)=>(a.online.queue||999)-(b.online.queue||999));
+  if(!onQL||onQL.d!==onQD||onQL.ids.length!==L0.length||!L0.every(o=>onQL.ids.includes(o.id)))onQL={d:onQD,ids:L0.map(o=>o.id)};
+  const L=onQL.ids.map(id=>L0.find(o=>o.id===id)).filter(Boolean),waiting=L.filter(o=>o.online.released===false).length,mgr=!!(me&&me.role==='manager');
+  const dayBtn=(d,t)=>`<button class="btn sm" data-onqd="${d}" style="${onQD===d?'background:#8E1B22;color:#fff;border-color:#8E1B22':''}">${onQD===d?'● ':''}${t} · ${day(d)}</button>`;
+  return `<div class="panel"><div class="poh"><h3 style="margin:0">🔢 Online queue</h3><span style="flex:1"></span>${dayBtn(td,'Today')}${dayBtn(tm,'Tomorrow')}</div>
+   <div class="unit" style="margin:6px 0 10px">Arrange who is prepared first (▲ ▼), then tap <b>Proceed</b>. Until then the customer sees <b>Confirmed</b>; after Proceed they see <b>🔪 Preparing</b>.</div>
+   ${L.length?L.map((o,i)=>{const ol=o.online,rel=ol.released!==false;return `<div class="oq-row${rel?' rel':''}"><b class="oq-n">#${i+1}</b><div style="flex:1;min-width:0"><b>${esc(o.customer)}</b> <small class="unit">${esc(ol.no||'')} · ${esc(ol.area||'')} · ${(o.items||[]).length} item(s) · ${peso(ol.total!=null?ol.total:ol.subtotal)}${ol.pay==='cod'?' · COD':''}</small><br><small class="unit">${rel?'▶ Sent to preparation'+(ol.releasedBy?' by '+esc(ol.releasedBy):''):'⏳ Waiting for Proceed'}</small></div>
+     ${mgr?`<button class="btn sm" data-onqup="${i}" ${i?'':'disabled'}>▲</button><button class="btn sm" data-onqdn="${i}" ${i<L.length-1?'':'disabled'}>▼</button>`:''}</div>`}).join('')
+     :'<div class="empty">No confirmed online order for this day yet.</div>'}
+   ${L.length&&mgr?`<div class="row-end" style="margin-top:10px"><button class="btn" data-onqsave>💾 Save order only</button><button class="go" data-onqgo>✅ Proceed — send ${waiting||L.length} to preparation</button></div>`:L.length?'<div class="unit">Only the Manager can set the queue.</div>':''}</div>`}
 function onlineHTML(list){
   const admin=can('admin')?'<div class="onadmin"><button class="btn sm" id="feesbtn">🚚 Delivery fees</button><button class="btn sm" id="bulkbtn2">🏢 Bulk buyer accounts</button><button class="btn sm" id="sbbtn">🌐 Online shop sync</button></div>':'';
   const G=onlineGroups(list),tmr=(()=>{const d=new Date();d.setDate(d.getDate()+1);return iso(d)})();
-  const F=[['todo','⏳','To confirm',G.todo.length,'hot'],['cod','📞','COD · call',G.cod.length,''],['pay','🏦','Check payment',G.pay.length,''],['noans','📵','No answer',G.noans.length,'warn'],['tmr','🕑','Placed today · deliver tmrw',G.tmr.length,'mute'],['done','✅','Confirmed today',G.done.length,'ok'],['all','📋','All',null,'mute']];
+  const F=[['todo','⏳','To confirm',G.todo.length,'hot'],['cod','📞','COD · call',G.cod.length,''],['pay','🏦','Check payment',G.pay.length,''],['noans','📵','No answer',G.noans.length,'warn'],['tmr','🕑','Placed today · deliver tmrw',G.tmr.length,'mute'],['queue','🔢','Queue · set & proceed',list.filter(o=>o.online.status==='confirmed'&&o.online.released===false&&!o.dispatched).length,list.some(o=>o.online.status==='confirmed'&&o.online.released===false&&!o.dispatched)?'hot':'mute'],['done','✅','Confirmed today',G.done.length,'ok'],['all','📋','All',null,'mute']];
   if(!F.some(f=>f[0]===onF))onF='todo';
+  if(onF==='queue')return `${admin}<div class="onkpi">${F.map(([k,ic,l,n,c])=>`<button class="kp ${c}${onF===k?' on':''}" data-onf="${k}"><i>${ic}</i><b>${n==null?'':n}</b><span>${l}</span></button>`).join('')}</div>${onQueueHTML(list)}`;
   const q=onQ.trim().toLowerCase();
   let rows=G[onF].filter(o=>!q||[o.customer,o.online.no,o.online.phone,o.online.area,o.online.address].join(' ').toLowerCase().includes(q));
   [...onSel].forEach(id=>{if(!G.todo.some(o=>o.id===id))onSel.delete(id)});
-  const selectable=rows.filter(o=>o.online.status==='pending'&&!placedToday(o));
+  const selectable=rows.filter(o=>o.online.status==='pending');
   const hint={todo:'Oldest first. Call / text, then tap ✓ Confirm. Placed today → prepared & delivered tomorrow; placed earlier → today. Queue number = order you confirm (first come, first served).',cod:'Cash on delivery — call or text the customer, then ✓ Confirm. Nobody answered? Tap 📵 No answer and try again later.',pay:'Bank / GCash — check the reference no. in your account. Received → ✓ Confirm.',noans:'Customers you could not reach. Try again; after several tries you may cancel the order.',tmr:`Placed today — confirm these tomorrow (${day(tmr)}). They are delivered on the day you confirm.`,done:'Confirmed today — already in today’s ⚖️ To Prepare list, in queue order.',all:'Latest 80 online orders.'}[onF];
   return `${admin}<div class="onkpi">${F.map(([k,ic,l,n,c])=>`<button class="kp ${c}${onF===k?' on':''}" data-onf="${k}"><i>${ic}</i><b>${n==null?'':n}</b><span>${l}</span></button>`).join('')}</div>
   <div class="ontools"><input id="onq" type="search" placeholder="🔍 Search name, phone, order no., barangay" value="${esc(onQ)}" autocomplete="off">
@@ -2327,7 +2342,7 @@ function wireOnline(onl){
 function onRow(o){
   const ol=o.online,pend=ol.status==='pending',early=false,today0=pend&&placedToday(o),open=onOpen.has(o.id),n=tries(ol),tel=telOf(ol.phone);
   const st=pend?(today0&&!n?'<span class="pill" style="background:#E8F0FE;color:#1A56B0">📅 Placed today · deliver tomorrow</span>':n?`<span class="pill p-appr">📵 ${n} tr${n>1?'ies':'y'}</span>`:`<span class="pill p-appr">${ol.pay==='cod'?'📞 To call':'🏦 Check payment'}</span>`)
-    :ol.status==='confirmed'?`<span class="pill p-ready">✓ Queue #${ol.queue||'–'}</span>`:'<span class="pill" style="background:#eee;color:#666">Cancelled</span>';
+    :ol.status==='confirmed'?(ol.released===false&&!o.dispatched?`<span class="pill" style="background:#FFF3D6;color:#8A5A00">✓ Queue #${ol.queue||'–'} · waiting for Proceed</span>`:`<span class="pill p-ready">✓ Queue #${ol.queue||'–'}</span>`):'<span class="pill" style="background:#eee;color:#666">Cancelled</span>';
   const ago=ol.placedAt?Math.floor((Date.now()-ol.placedAt)/36e5):0;
   return `<div class="onrow${open?' open':''}${onSel.has(o.id)?' sel':''}">
    <div class="onmain">
@@ -3033,6 +3048,10 @@ document.addEventListener('click',async e=>{
   if(d.pts){const o=find(d.pts);if(o)pointsDialog(o);else{await poll();const o2=find(d.pts);if(o2)pointsDialog(o2);else toast('Order not loaded')}return}
   if(d.appr){openApproval(find(d.appr));return}
   if(d.onf){onF=d.onf;onSel.clear();render();return}
+  if(d.onqd){onQD=d.onqd;onQL=null;render();return}
+  if(d.onqup!==undefined||d.onqdn!==undefined){const i=+(d.onqup!==undefined?d.onqup:d.onqdn),j=d.onqup!==undefined?i-1:i+1,a=onQL.ids;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];render();return}
+  if('onqsave' in d||'onqgo' in d){const go='onqgo' in d;if(go&&!confirm('Send this queue to preparation? Customers will see "Preparing".'))return;b.disabled=true;
+    try{await saveThenAsync();await api('api_onlineQueue',session.token,onQL.d,onQL.ids,go);toast(go?'✅ Sent to preparation — customers now see Preparing':'💾 Queue order saved');onQL=null;poll()}catch(e){alert(errMsg(e));b.disabled=false}return}
   if(d.ontog){onOpen.has(d.ontog)?onOpen.delete(d.ontog):onOpen.add(d.ontog);render();fillPhotos();return}
   if(d.onclr){onSel.clear();render();return}
   if(d.onna){b.disabled=true;try{await api('api_onlineAction',session.token,d.onna,'noanswer');toast('📵 Noted — try again later (in "No answer")');await poll()}catch(e){alert(errMsg(e));b.disabled=false}return}
@@ -3042,7 +3061,7 @@ document.addEventListener('click',async e=>{
     toast('✓ '+ok+' order(s) confirmed — in today\'s To Prepare');if(bad.length)alert('Not confirmed:\n'+bad.join('\n'));await poll();return}
   if(d.onconfirm||d.oncancel){const id=d.onconfirm||d.oncancel,o=find(id);let why='';
     if(d.oncancel){if(!confirm('Cancel online order '+(o.online.no||'')+' of '+o.customer+'?\nThe items go back to the shop stock.'))return;why=prompt('Reason (shown to the customer):','Could not reach the customer')||'Cancelled by the shop'}
-    b.disabled=true;try{await saveThenAsync();await api('api_onlineAction',session.token,id,d.onconfirm?'confirm':'cancel',why);onSel.delete(id);toast(d.onconfirm?'✓ Confirmed — in today\'s To Prepare':'Order cancelled');poll()}catch(e){alert(errMsg(e));b.disabled=false}return}
+    b.disabled=true;try{await saveThenAsync();await api('api_onlineAction',session.token,id,d.onconfirm?'confirm':'cancel',why);onSel.delete(id);toast(d.onconfirm?'✓ Confirmed — set the queue in 🔢 Queue, then Proceed':'Order cancelled');poll()}catch(e){alert(errMsg(e));b.disabled=false}return}
   if(d.invlink){linkDialog(d.invlink);return}
   if(d.reopen){const o=find(d.reopen);if(!o||!o.dr)return;const why=prompt('Reopen '+o.dr.no+' to change weights? The DR is cancelled and a new one is made after checking again. Reason:');if(why==null)return;
     saveThen(async()=>{const r=await retCall('api_reopenDR',o.id,why);if(r){toast('🔓 '+(r.drOld||[]).slice(-1)[0].no+' reopened — weigh, tally, then a new DR is made');render()}});return}
