@@ -1242,7 +1242,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 12 · 10:45 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 12 · 11:20 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -4170,7 +4170,7 @@ function countHTML(){if(!CT&&!CTerr){ctLoad();return '<div class="empty">Loading
     ${CT.dueOpen&&!X?`<div class="snote cntban due">⏰ <b>Stock count due</b> — scheduled ${day(CT.due)}. Start it below.</div>`:''}`;
   const hist=`<div class="panel"><h3>Past counts</h3><div class="sc"><table class="stbl"><thead><tr><th>Count</th><th>Date</th><th>By</th><th>Status</th>${M?'<th class="r">Loss</th><th class="r">Gain</th><th class="r">Net</th>':''}<th></th></tr></thead><tbody>
     ${CT.list.filter(x=>!X||x.id!==X.id).map(x=>`<tr><td><b>${esc(x.no)}</b></td><td>${stamp(x.at)}</td><td>${esc(x.by)}</td><td>${x.status==='approved'?badge('Approved'+(x.ok?' · '+x.ok.by:''),'green'):x.status==='cancelled'?badge('Cancelled','gray'):badge(x.status,'amber')}</td>${M?`<td class="r" style="color:var(--rose)">${x.loss?'−'+peso(x.loss):''}</td><td class="r" style="color:var(--green)">${x.gain?'+'+peso(x.gain):''}</td><td class="r"><b style="color:${(x.gain||0)-(x.loss||0)<0?'var(--rose)':'var(--green)'}">${x.loss||x.gain?((x.gain||0)-(x.loss||0)<0?'−':'+')+peso(Math.abs((x.gain||0)-(x.loss||0))):''}</b></td>`:''}<td>${x.status==='approved'?`<button class="btn sm" data-ctview="${x.id}">View</button> <button class="btn sm" data-ctpr="${x.id}" title="Print / Save as PDF">🖨</button>`:''}</td></tr>`).join('')||'<tr><td colspan="7" class="empty">No count yet.</td></tr>'}</tbody></table></div></div>`;
-  if(CTview)return head+`<div class="panel"><div class="poh"><h3 style="margin:0">${esc(CTview.no)} · ${stamp(CTview.at)}</h3><span style="flex:1"></span><button class="btn sm" data-ctprint="view">🖨 Print / PDF</button> <button class="btn sm" data-ctclose>Close</button></div>
+  if(CTview)return head+`<div class="panel"><div class="poh"><h3 style="margin:0">${esc(CTview.no)} · ${stamp(CTview.at)}</h3><span style="flex:1"></span>${M&&CTview.status==='approved'?'<button class="btn sm" data-ctfix>🔧 Check for double corrections</button> ':''}<button class="btn sm" data-ctprint="view">🖨 Print / PDF</button> <button class="btn sm" data-ctclose>Close</button></div>
     <div class="unit">Counted by ${esc(CTview.by)}${CTview.ok?' · approved by '+esc(CTview.ok.by)+' '+stamp(CTview.ok.at):''}</div>${M?`<div class="kpis" style="margin:8px 0"><div><b style="color:var(--rose)">−${peso(CTview.loss)}</b><span>loss</span></div><div><b style="color:var(--green)">+${peso(CTview.gain)}</b><span>gain</span></div><div><b style="color:${CTview.gain-CTview.loss<0?'var(--rose)':'var(--green)'}">${CTview.gain-CTview.loss<0?'−':'+'}${peso(Math.abs(CTview.gain-CTview.loss))}</b><span>net</span></div><div><b>${CTview.lines.filter(l=>l.diff).length}</b><span>with variance</span></div></div>`:''}${ctVarRows(CTview.lines,'')}</div>`+hist;
   if(!X)return head+`<div class="panel ctstart"><h3>Start a stock count</h3><p>Count every product on the shelves, chillers and freezers. You <b>won't see the system qty</b> while counting — type what you really count. Sales can continue.</p>
     <button class="go" data-ctstart>▶ Start stock count</button></div>`+hist;
@@ -4358,7 +4358,7 @@ async function stockCard(code,from,to){const box=stBox();$('#stb').innerHTML='<h
 /* 📊 PRODUCT MOVEMENT — simple: Start + In − Out ± Count = End, per product */
 let MV=null,MVerr='',MVload=false,MVF={pre:'cnt',from:'',to:'',q:'',cat:'',only:true};
 function mvLoad(){if(MVload)return;MVload=true;MVerr='';const k=MVF.from+'|'+MVF.to;
-  api('api_moveSummary',session.token,MVF.from,MVF.to).then(r=>{MV=r;MV.key=k;if(!MVF.from){MVF.from=r.from;MVF.to=r.to;MV.key=MVF.from+'|'+MVF.to}}).catch(e=>{MVerr=errMsg(e)}).finally(()=>{MVload=false;if(view==='mvt')drawStock()})}
+  sbCall('st_movesum',MVF.from,MVF.to).catch(()=>api('api_moveSummary',session.token,MVF.from,MVF.to)).then(r=>{MV=r;MV.key=k;if(!MVF.from){MVF.from=r.from;MVF.to=r.to;MV.key=MVF.from+'|'+MVF.to}}).catch(e=>{MVerr=errMsg(e)}).finally(()=>{MVload=false;if(view==='mvt')drawStock()})}
 function mvtHTML(){const key=MVF.from+'|'+MVF.to;if((!MV||MV.key!==key)&&!MVerr)mvLoad();
   const P=[['cnt','Since last stock count'],['today','Today'],['yday','Yesterday'],['week','This week'],['month','This month'],['last','Last month']];
   const head=`<div class="shead"><div><h2>📊 Product movement</h2><div class="unit">How much came <b>in</b> and went <b>out</b> of each product. <b>Start + In − Out ± Count = End.</b> Tap a product for every movement.</div></div>
@@ -5369,6 +5369,12 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const igr=e.target
     if('ctback' in d){const n=($('#ct-note')||{}).value||'';if(!n.trim())return alert('Type what needs to be recounted.');await busy(async()=>{CT=await api('api_countDecide',session.token,CT.open.id,false,n);toast('↩ Sent back for recount');drawStock()});return}
     if('ctcancel' in d){if(!confirm('Cancel this stock count? Nothing will be adjusted.'))return;await busy(async()=>{CT=await api('api_countCancel',session.token,CT.open.id);CTL={};CTrev=null;drawStock()});return}
     if(d.ctview){await busy(async()=>{CTview=await api('api_countGet',session.token,d.ctview);drawStock()});return}
+    if('ctfix' in d){let R;await busy(async()=>{R=await api('api_countFix',session.token,CTview.id,false)});if(!R)return;
+      if(!R.fixes.length){alert('✅ '+R.no+': no double corrections found.');return}
+      const L=R.fixes.map(f=>`• ${f.name}: a manual fix of ${f.manual>0?'+':''}${f.manual} ${f.unit} was made while ${R.no} was open → stock ${f.manual>0?'−':'+'}${Math.abs(f.manual)} ${f.unit}`).join('\n');
+      if(!confirm(R.no+' moved the stock of these products twice:\n\n'+L+'\n\nFix the stock now? Your P&L does not change (the count\'s loss / gain is already right).'))return;
+      await busy(async()=>{const r=await api('api_countFix',session.token,CTview.id,true);CTview=await api('api_countGet',session.token,CTview.id);CT=null;if(ST)ST.at=0;
+        toast('🔧 Stock fixed for '+r.fixes.length+' product(s) · P&L unchanged');drawStock()});return}
     if('ctclose' in d){CTview=null;drawStock();return}
     if(d.ctprint){const X=d.ctprint==='view'?CTview:CT&&CT.open;if(X)ctPrint(X);return}
     if(d.ctpr){await busy(async()=>{const X=await api('api_countGet',session.token,d.ctpr);ctPrint(X)});return}}
