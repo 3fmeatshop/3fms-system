@@ -210,7 +210,11 @@ const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','De
 const pISO=s=>{const[a,b,c]=String(s).split('-').map(Number);return new Date(a,b-1,c)};
 const longDay=s=>{const d=pISO(s);return DOWL[d.getDay()]+', '+MON[d.getMonth()]+' '+d.getDate()};
 const t12=ms=>{const d=new Date(ms);let h=d.getHours();const ap=h<12?'AM':'PM';h=h%12||12;return MON[d.getMonth()]+' '+d.getDate()+', '+h+':'+String(d.getMinutes()).padStart(2,'0')+' '+ap};
-const api=(fn,...a)=>new Promise((res,rej)=>{if(window.google&&google.script&&google.script.run){google.script.run.withSuccessHandler(res).withFailureHandler(rej)[fn](...a);return}
+const api=(fn,...a)=>new Promise((res,rej)=>{
+  // 3F ONLINE MEATSHOP on Supabase (fast). Set SB_URL + SB_KEY in config.js; blank = the old Google Apps Script server
+  if(window.SB_URL&&window.SB_KEY&&!/PASTE/.test(window.SB_URL)){fetch(window.SB_URL.replace(/\/$/,'')+'/rest/v1/rpc/'+fn.toLowerCase(),{method:'POST',headers:Object.assign({'Content-Type':'application/json',apikey:window.SB_KEY},/^eyJ/.test(window.SB_KEY)?{Authorization:'Bearer '+window.SB_KEY}:{}),body:JSON.stringify({a})})
+    .then(r=>r.json().then(x=>({ok:r.ok,x}))).then(({ok,x})=>{if(!ok)rej(new Error(x&&x.message||'Server error'));else if(x&&x.__err)rej(new Error(x.__err));else res(x)}).catch(()=>rej(new Error('No connection to the shop server')));return}
+  if(window.google&&google.script&&google.script.run){google.script.run.withSuccessHandler(res).withFailureHandler(rej)[fn](...a);return}
   if(!window.API_URL||/PASTE/.test(window.API_URL)){rej(new Error('No connection to the shop server'));return}
   fetch(window.API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({fn,args:a})})
     .then(r=>r.json()).then(x=>{if(x&&'err' in x)rej(new Error(x.err));else res(x?x.ok:null)}).catch(e=>rej(new Error('No connection to the shop server')))});

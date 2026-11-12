@@ -1242,7 +1242,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 11 · 7:20 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 12 · 9:00 AM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -2142,7 +2142,7 @@ function render(){
   if(view==='month'||view==='mgr'){if(!document.querySelector(`#list .rep[data-v="${view}"]`))renderReport();return}
   if(view==='ohome'){$('#list').innerHTML=opsHomeHTML(prepTodo,dispTodo,way);if(me.role==='ops'&&!ST)loadStock().then(()=>{if(view==='ohome')render()}).catch(()=>{});return}
   if(view==='undel'){$('#list').innerHTML=closedHTML()+undeliveredHTML(und);return}
-  if(view==='online'){const af=document.activeElement&&document.activeElement.id==='onq',cp=af?document.activeElement.selectionStart:0;$('#list').innerHTML=onlineHTML(onl);fillPhotos();wireOnline(onl);if(af){const x=$('#onq');x.focus();try{x.setSelectionRange(cp,cp)}catch(e){}}if($('#feesbtn'))$('#feesbtn').onclick=feesDialog;if($('#bulkbtn2'))$('#bulkbtn2').onclick=bulkDialog;return}
+  if(view==='online'){const af=document.activeElement&&document.activeElement.id==='onq',cp=af?document.activeElement.selectionStart:0;$('#list').innerHTML=onlineHTML(onl);fillPhotos();wireOnline(onl);if(af){const x=$('#onq');x.focus();try{x.setSelectionRange(cp,cp)}catch(e){}}if($('#feesbtn'))$('#feesbtn').onclick=feesDialog;if($('#bulkbtn2'))$('#bulkbtn2').onclick=bulkDialog;if($('#sbbtn'))$('#sbbtn').onclick=sbDialog;return}
   if(view==='way'){let banner2='';if(me.role!=='rider'&&me.role!=='prep'){const td=today(),tod=db.orders.filter(o=>live(o)&&!o.online&&o.delivery===td&&!o.balanceOf);
       if(tod.length){const n={std:0,ok:0,crit:0};tod.forEach(o=>{const r=rating(o);if(r)n[r]++});if(n.std+n.ok+n.crit)banner2=`<div class="daybar"><b>🕗 Today</b><span class="unit">dispatch before ${t24(settings.stdBefore)}</span><span style="flex:1"></span>${n.std?`<em class="dtag dt-std">✅ ${n.std} On time</em>`:''}${n.ok?`<em class="dtag dt-ok">🟡 ${n.ok} Late</em>`:''}${n.crit?`<em class="dtag dt-crit">🔴 ${n.crit} Very late</em>`:''}</div>`}}
     const af=document.activeElement&&document.activeElement.id==='wq',cp=af?document.activeElement.selectionStart:0;
@@ -2292,8 +2292,18 @@ function onlineGroups(list){
     done:list.filter(o=>o.online.status==='confirmed'&&o.online.verifiedAt&&iso(new Date(o.online.verifiedAt))===td).sort((a,b)=>(a.online.queue||0)-(b.online.queue||0)),
     all:list.slice().sort((a,b)=>(b.online.placedAt||0)-(a.online.placedAt||0)).slice(0,80)};
 }
+// 🌐 3F ONLINE MEATSHOP (Supabase) — sync status for the manager
+async function sbDialog(){const box=stBox();$('#stb').innerHTML='<h2>🌐 Online shop sync</h2><div class="unit">Loading…</div>';box.classList.add('on');
+  const show=S=>{const L=S.last||{},ago=L.at?Math.round((Date.now()-L.at)/1000):null;
+    $('#stb').innerHTML=`<h2>🌐 Online shop sync</h2>${!S.on?`<div class="snote">Not set up yet. The customer shop still runs on this system (slower). See the setup guide to move it to Supabase.</div>`:
+     `<div class="snote" style="${L.err?'background:#FDECEC;border-color:#F6B3B0;color:#8E1B22':''}">${L.err?'⚠ <b>Last sync failed:</b> '+esc(L.err):'✅ Connected to <b>'+esc(S.url.replace(/^https?:\/\//,''))+'</b>'}</div>
+     <div class="kpis" style="margin:10px 0"><div><b>${ago==null?'—':ago<90?ago+' s':Math.round(ago/60)+' min'}</b><span>since last sync</span></div><div><b>${L.orders||0}</b><span>orders taken</span></div><div><b>${L.customers||0}</b><span>customers updated</span></div><div><b>${L.emails||0}</b><span>emails sent</span></div></div>
+     <div class="unit">Runs by itself every minute: new online orders, sign-ups and payment photos come in; products, prices, stock, delivery fees and order tracking go out.</div>`}
+     <div class="row-end"><button class="btn" data-x>Close</button>${S.on?'<button class="go" id="sb-now">↻ Sync now</button>':''}</div>`;
+    if($('#sb-now'))$('#sb-now').onclick=async()=>{$('#sb-now').disabled=true;try{show(await api('api_sbSyncNow',session.token))}catch(e){alert(errMsg(e));$('#sb-now').disabled=false}}};
+  try{show(await api('api_sbStatus',session.token))}catch(e){$('#stb').innerHTML='<h2>🌐 Online shop sync</h2><div class="unit">⚠ '+esc(errMsg(e))+'</div><div class="row-end"><button class="btn" data-x>Close</button></div>'}}
 function onlineHTML(list){
-  const admin=can('admin')?'<div class="onadmin"><button class="btn sm" id="feesbtn">🚚 Delivery fees</button><button class="btn sm" id="bulkbtn2">🏢 Bulk buyer accounts</button></div>':'';
+  const admin=can('admin')?'<div class="onadmin"><button class="btn sm" id="feesbtn">🚚 Delivery fees</button><button class="btn sm" id="bulkbtn2">🏢 Bulk buyer accounts</button><button class="btn sm" id="sbbtn">🌐 Online shop sync</button></div>':'';
   const G=onlineGroups(list),tmr=(()=>{const d=new Date();d.setDate(d.getDate()+1);return iso(d)})();
   const F=[['todo','⏳','To confirm',G.todo.length,'hot'],['cod','📞','COD · call',G.cod.length,''],['pay','🏦','Check payment',G.pay.length,''],['noans','📵','No answer',G.noans.length,'warn'],['tmr','🕑','Placed today',G.tmr.length,'mute'],['done','✅','Confirmed today',G.done.length,'ok'],['all','📋','All',null,'mute']];
   if(!F.some(f=>f[0]===onF))onF='todo';
