@@ -475,6 +475,7 @@ header h1 .tt small{display:block;font-size:11px;color:var(--sky2);letter-spacin
 .bulkrow select.bs{width:auto!important;display:inline-block}
 @media print{
   body *{visibility:hidden}
+  body>*:not(#print){display:none!important}html,body{height:auto!important;min-height:0!important;overflow:visible!important}
   #print,#print *{visibility:visible}
   #print{display:block;position:absolute;inset:0;padding:10mm;color:#000;font-size:12px}
   #print td,#print th{border:1px solid #555;padding:5px;background:none;color:#000}
@@ -1243,7 +1244,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 13 · 8:00 AM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 13 · 8:25 AM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -1772,7 +1773,8 @@ async function showLogin(msg){
   catch(e){if(/BADLINK/.test(errMsg(e))){$('#lg').innerHTML='<h1>🔒 This link is not valid</h1><p>Please use the app link given by your manager.</p>';return}
     try{users=JSON.parse(localStorage.getItem('dp_users_'+MODE)||'[]')}catch(_){users=[]}
     if(!users.length){$('#lg').innerHTML='<h1>3FMS SYSTEM</h1><p>Can\'t reach the server. Check the internet connection, then reload.</p><div class="row-end" style="justify-content:flex-start"><button class="btn" onclick="location.reload()">Reload</button></div>';return}}
-  pickUser=null;renderLogin(msg)}
+  pickUser=null;{const qr=new URLSearchParams(location.search).get('role');if(qr&&/^(cashier|manager|ops|sales|prep|admin)$/.test(qr)){roleHint=qr;proc='any'}}   /* POS shortcut: …&role=cashier opens the Cashier login */
+  renderLogin(msg)}
 function renderLogin(msg){
   if(me){$('#login').classList.remove('on');return}
   $('#login').classList.add('on');
