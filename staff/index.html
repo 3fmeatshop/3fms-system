@@ -784,6 +784,19 @@ th.h-inv small{display:block;font-weight:600;color:var(--muted);text-transform:n
 .posx-sug{position:absolute;top:100%;left:0;right:180px;z-index:6;margin-top:4px;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 28px rgba(60,20,20,.18);overflow:hidden}
 .posx-sug button{display:grid;grid-template-columns:1fr auto auto;gap:14px;width:100%;border:0;border-bottom:1px solid var(--line);background:#fff;padding:11px 14px;text-align:left;align-items:baseline;cursor:pointer}
 .posx-sug button.first{background:var(--skyl)}.posx-sug button:hover{background:var(--skyl)}.posx-sug span{color:var(--navy);font-weight:800}.posx-sug small{color:var(--muted)}.posx-sug .pout{opacity:.55}
+/* POS full screen + records panel */
+body.posfs:has(#list .posx) header,body.posfs:has(#list .posx) .bar,body.posfs:has(#list .posx) #attbar,body.posfs:has(#list .posx) #links,body.posfs:has(#list .posx) .possw{display:none!important}
+body.posfs:has(#list .posx)>div.wrap{max-width:none!important;display:block!important;padding:10px 14px}
+body.posfs:has(#list .posx) .posx-main{grid-template-columns:minmax(0,1fr) 380px}
+body.posfs:has(#list .posx) .posx-left{min-height:calc(100vh - 92px)}
+body.posfs:has(#list .posx) .posx-right{max-height:calc(100vh - 92px);overflow:auto;align-content:start}
+body.posfs:has(#list .posx) .stupd,body.posfs:has(#list .posx) .stoff{position:fixed;bottom:8px;left:14px;z-index:5;margin:0}
+body.posfs:has(#list .posx) .posx-right{padding-bottom:74px}body.posfs:has(#list .posx) .posx-btns{position:fixed;right:14px;bottom:10px;width:380px;z-index:6;background:#fff;padding:8px;border-radius:14px;box-shadow:0 6px 24px rgba(0,0,0,.18);margin:0}
+.posx-tools button.hot{border-color:#B91C1C;color:#B91C1C;font-weight:800}
+.pospanel-bg{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:60}
+.pospanel{position:fixed;top:0;right:0;bottom:0;width:min(760px,96vw);background:var(--bg,#f6f1ef);z-index:61;overflow:auto;padding:14px;box-shadow:-10px 0 30px rgba(0,0,0,.25);animation:ppin .18s ease-out}
+.pospanel-h{display:flex;align-items:center;gap:8px;position:sticky;top:-14px;background:inherit;padding:6px 0 10px;z-index:1;font-size:17px}
+@keyframes ppin{from{transform:translateX(40px);opacity:0}to{transform:none;opacity:1}}
 .posx-main{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:12px;align-items:start}
 .posx-left{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;min-height:420px;display:flex;flex-direction:column}
 .posx-ord{padding:10px 14px;background:var(--goldl);border-bottom:1px solid var(--line);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
@@ -1245,7 +1258,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 13 · 10:10 AM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 13 · 10:20 AM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -4935,7 +4948,7 @@ function resetSale(){posMem=null;posMemUse=0;posCharges=[];posNote='';cart=[];po
 function posTools(){const n=posHolds().length;
   return `<div class="posx-tools"><button data-ptool="hold" ${cart.length?'':'disabled'}>⏸ Hold</button><button data-ptool="recall" ${n?'':'disabled'}>▶ Recall${n?` <i>${n}</i>`:''}</button>
     <button data-ptool="disc" ${cart.length?'':'disabled'}>🏷 Discount</button><button data-ptool="price" ${cart.length?'':'disabled'}>✏️ Change price</button><button data-ptool="void" ${cart.length?'':'disabled'}>✕ Void item</button>
-    <span class="sp"></span>${me.role==='manager'?'<button data-ptool="find">🔎 Find receipt</button>':''}<button data-ptool="rsetup" title="Receipt printer">🖨</button><button data-ptool="cash">💸 Cash in/out</button><button data-ptool="x">🧾 X reading</button><button data-ptool="z" class="zr">🔒 Z reading</button></div>
+    <span class="sp"></span>${(()=>{const nD=(ST.toCash||[]).filter(o=>o.id!==posOrder).length,nU=(ST.unpaid||[]).length,nR=(ST.toReturn||[]).length;return `<button data-ptool="recs" class="${nD||nR?'hot':''}">🧾 DR / Unpaid${nD?` <i>${nD}</i>`:''}${nU?` <small>· ${nU} unpaid</small>`:''}${nR?` <i>↩${nR}</i>`:''}</button>`})()}<button data-ptool="full" title="Full screen">${posFS?'⤡ Exit full':'⛶ Full screen'}</button>${me.role==='manager'?'<button data-ptool="find">🔎 Find receipt</button>':''}<button data-ptool="rsetup" title="Receipt printer">🖨</button><button data-ptool="cash">💸 Cash in/out</button><button data-ptool="x">🧾 X reading</button><button data-ptool="z" class="zr">🔒 Z reading</button></div>
     ${(()=>{const C=(ST.toPay||[]).filter(x=>x.payBy==='cashier');return C.length?`<div class="snote" style="margin:6px 0">💸 <b>Pay from the drawer</b> (the manager asked): ${C.map(x=>`<button class="btn sm" data-ptool="cash" data-cpo="${x.kind}:${x.id}" style="margin:2px">${esc(x.no)} · ${esc(x.name)} · ${peso(x.bal)}</button>`).join('')}</div>`:''})()}`}
 function denomHTML(){return `<div class="den"><table class="stbl"><thead><tr><th>Bills / coins</th><th style="width:110px">How many</th><th class="r">Amount</th></tr></thead><tbody>
   ${DEN.map(v=>`<tr><td><b>₱${v<1?'0.25':v.toLocaleString()}</b> <small class="unit">${v>=20&&v!==20?'bill':v===20?'bill / coin':'coin'}</small></td><td><input class="edit-in nq" type="number" min="0" step="1" inputmode="numeric" data-den="${v}" placeholder="0"></td><td class="r" data-dena="${v}">—</td></tr>`).join('')}
@@ -5054,6 +5067,8 @@ function cashMoveDialog(pre){const box=stBox(),cats=ST.cashOutCats||['Expense (i
       $('#cm-ok').disabled=true;try{ST=await api('api_posCashMove',session.token,kind,a,$('#cm-c').value,n,isPay()?$('#cm-po').value:'',$('#cm-pin').value);stCache();box.classList.remove('on');toast((kind==='out'?'➖ Cash out ':'➕ Cash in ')+peso(a)+' saved');drawStock()}catch(e){alert(errMsg(e));$('#cm-ok').disabled=false}}};
   draw();box.classList.add('on')}
 async function posTool(t,b){
+  if(t==='recs'){posPanel=!posPanel;drawStock();return}
+  if(t==='full'){posFull(!posFS);return}
   if(t==='find')return findReceipt();
   if(t==='hold')return holdSale();if(t==='recall')return recallDialog();if(t==='disc')return discDialog();if(t==='price')return priceDialog();
   if(t==='void')return voidItem(posSel>=0?posSel:cart.length-1);
@@ -5086,7 +5101,7 @@ function posHTML(){
         <div class="posx-tw"><table class="posx-tbl"><thead><tr><th class="r" style="width:120px">Qty</th><th>Product</th><th class="r">Price</th><th class="r">Total</th><th style="width:44px"></th></tr></thead><tbody>
         ${cart.map((l,k)=>`<tr class="${k===posSel?'sel':''}" data-psel="${k}"><td class="r"><input class="posx-q" type="number" step="${l.unit==='Kg'?'0.001':'1'}" inputmode="decimal" data-cq="${k}" data-k="cq${k}" value="${l.qty}"> <small>${esc(l.unit)}</small></td>
           <td><b>${esc(l.name)}</b><small class="pm-pr">${peso(l.price)} / ${esc(String(l.unit||'').toLowerCase())}${l.orig!=null?' (was '+peso(l.orig)+')':''}</small>${l.why?`<br><small class="unit">✏️ ${esc(l.why)}</small>`:''}</td><td class="r">${l.orig!=null?`<s class="unit">${peso(l.orig)}</s><br>`:''}${peso(l.price)}</td><td class="r" data-lt="${k}"><b>${peso((+l.qty||0)*l.price)}</b></td><td><button class="del" data-cdel="${k}" aria-label="Remove">✕</button></td></tr>`).join('')}
-        </tbody></table>${cart.length?'':'<div class="posx-empty">Type a product above, or bill a DR below.</div>'}</div>
+        </tbody></table>${cart.length?'':'<div class="posx-empty">Type a product above, or tap <b>🧾 DR / Unpaid</b> to bill a DR.</div>'}</div>
       </div>
       <div class="posx-right">
         <div class="posx-big" id="pbig">${fmt2(cartTotal())}</div>
@@ -5107,7 +5122,7 @@ function posHTML(){
           <div class="posx-btns"><button class="btn" data-pclear>Clear</button><button class="go td-btn" data-pdone ${cart.length?'':'disabled'}>💳 Tender ${cart.length?peso(cartTotal()):''}</button></div></div>
       </div>
     </div></div>
-    ${toCashHTML()}`}
+    ${posPanel?`<div class="pospanel-bg" data-ptool="recs"></div><div class="pospanel"><div class="pospanel-h"><b>🧾 DR to bill · 💳 Unpaid · ↩ Returns</b><span style="flex:1"></span><button class="btn sm" data-ptool="recs">✕ Close</button></div>${toCashHTML()}</div>`:''}`}
 const fmt2=n=>Number(n||0).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2});
 const stampShort=t=>{const d=new Date(t);return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')};
 function pselHTML(){const l=cart[posSel];if(!l)return '<h4 class="c">No item selected</h4><div class="posx-row"><span>Price:</span><b>0.00</b></div><div class="posx-row"><span>Quantity:</span><b>0.00</b></div><div class="posx-row"><span>Total:</span><b>0.00</b></div>';
@@ -5213,6 +5228,13 @@ window.print=function(){if(!isPhoneUI())return _realPrint();const P=$('#print');
     b.disabled=false;b.textContent='📤 Share'}};
 function printReceipt(s,reprint){const C=RCPT(),copies=[''];   /* one receipt only — the store copy is the record the Manager finds with 🔎 Find receipt */
   $('#print').className='rp'+(C.paper==='58'?' p58':'');$('#print').innerHTML=copies.map(c=>receiptHTML(s,c,reprint)).join('<div class="rcut">✂ - - - - - - - - - - - - - - - -</div>');window.print();setTimeout(()=>{$('#print').className=''},1500)}
+let posPanel=false,posFS=(()=>{try{return localStorage.getItem('fms_posfs')==='1'}catch(e){return false}})();
+document.body.classList.toggle('posfs',posFS);
+/* full-screen POS: hides the app header, tabs and links; the browser goes full screen too (Esc / button to leave) */
+function posFull(on){posFS=on;try{localStorage.setItem('fms_posfs',on?'1':'0')}catch(e){}document.body.classList.toggle('posfs',on);
+  try{if(on&&!document.fullscreenElement)document.documentElement.requestFullscreen().catch(()=>{});if(!on&&document.fullscreenElement)document.exitFullscreen().catch(()=>{})}catch(e){}
+  if(view==='pos')drawStock()}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&posPanel&&view==='pos'){posPanel=false;drawStock()}});
 function findReceipt(q){const box=stBox();
   $('#stb').innerHTML=`<h2>🔎 Find receipt</h2><div class="unit">Type the SI# on the receipt (e.g. <b>S000057</b> or just <b>57</b>).</div>
     <div style="display:flex;gap:8px;margin:8px 0"><input class="edit-in" id="fr-q" placeholder="SI#" value="${esc(q||'')}" style="flex:1;font-size:18px"><button class="go" id="fr-go">Search</button></div><div id="fr-out"></div>
@@ -5600,7 +5622,7 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const igr=e.target
   if(d.pret){const[oid,rid]=d.pret.split(':');await busy(async()=>{const r=await api('api_posReturn',session.token,oid,rid);await renderStock('pos',true);const box=stBox();
     $('#stb').innerHTML=`<h2>↩ Return receipt ${esc(r.no)}</h2>${r.refund?`<div class="snote" style="font-size:18px">Refund to customer: <b>${peso(r.refund)}</b></div>`:''}${r.fromBalance?`<div class="snote">Less from the unpaid balance: <b>${peso(r.fromBalance)}</b></div>`:''}${receiptHTML({...r,items:r.items,total:r.total,customer:r.customer})}
       <div class="row-end"><button class="btn" id="rc-pr">🖨 Print</button><button class="go" data-x>Done</button></div>`;box.classList.add('on');$('#rc-pr').onclick=()=>printReceipt(r)});return}
-  if(d.pload){const o=(ST.toCash||[]).find(x=>x.id===d.pload);if(!o)return;if(cart.length&&!confirm('Replace the current sale with this order?'))return;
+  if(d.pload){const o=(ST.toCash||[]).find(x=>x.id===d.pload);if(!o)return;posPanel=false;if(cart.length&&!confirm('Replace the current sale with this order?'))return;
     const bk=(ST.bulk||[]).find(b=>b.bulkName===String(o.customer).toUpperCase());posCust=bk?bk.id:'';posPrice=bk?'wholesale':'retail';posOrder=o.id;posDisc='';posDiscO=null;posVoids=[];posCash='';posRef='';
     const miss=[];cart=[];o.items.forEach(i=>{const p=pBy(i.code);if(!p){miss.push(i.product);return}cart.push({code:p.code,name:p.name,unit:p.unit,price:priceOf(p),qty:i.qty})});posSel=cart.length?0:-1;
     drawStock();const x=document.querySelector('.cartc');if(x&&window.innerWidth<760)x.scrollIntoView({behavior:'smooth'});
