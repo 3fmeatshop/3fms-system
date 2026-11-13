@@ -787,11 +787,18 @@ th.h-inv small{display:block;font-weight:600;color:var(--muted);text-transform:n
 /* POS full screen + records panel */
 body.posfs:has(#list .posx) header,body.posfs:has(#list .posx) .bar,body.posfs:has(#list .posx) #attbar,body.posfs:has(#list .posx) #links,body.posfs:has(#list .posx) .possw{display:none!important}
 body.posfs:has(#list .posx)>div.wrap{max-width:none!important;display:block!important;padding:10px 14px}
+body:has(#list .posx)>div.wrap,body:has(#list .posx) header .wrap{max-width:none!important}body:has(#list .posx)>div.wrap{padding:0 18px}body:has(#list .posx) .posx-main{grid-template-columns:minmax(0,1fr) 400px}body:has(#list .posx) .posx-left{min-height:calc(100vh - 260px)}
 body.posfs:has(#list .posx) .posx-main{grid-template-columns:minmax(0,1fr) 380px}
 body.posfs:has(#list .posx) .posx-left{min-height:calc(100vh - 92px)}
 body.posfs:has(#list .posx) .posx-right{max-height:calc(100vh - 92px);overflow:auto;align-content:start}
 body.posfs:has(#list .posx) .stupd,body.posfs:has(#list .posx) .stoff{position:fixed;bottom:8px;left:14px;z-index:5;margin:0}
 body.posfs:has(#list .posx) .posx-right{padding-bottom:74px}body.posfs:has(#list .posx) .posx-btns{position:fixed;right:14px;bottom:10px;width:380px;z-index:6;background:#fff;padding:8px;border-radius:14px;box-shadow:0 6px 24px rgba(0,0,0,.18);margin:0}
+.posx-brand{display:none}
+body.posfs:has(#list .posx) .posx-brand{display:flex;align-items:center;gap:16px;background:linear-gradient(90deg,#8E1B1B,#C81E1E);color:#fff;border-radius:16px;padding:10px 22px;margin-bottom:10px;border-bottom:4px solid #F5B301}
+.posx-brand img{height:58px;width:auto;background:#fff;border-radius:12px;padding:4px}
+.posx-brand .pb-n b{display:block;font-size:40px;font-weight:900;letter-spacing:2px;line-height:1}.posx-brand .pb-n small{display:block;font-size:15px;letter-spacing:3px;opacity:.9;margin-top:4px;text-transform:uppercase}
+.posx-brand .pb-who,.posx-brand .pb-clk{text-align:right;line-height:1.15}.posx-brand .pb-who b{font-size:17px}.posx-brand .pb-clk b{font-size:30px;font-weight:900}.posx-brand small{display:block;font-size:13px;opacity:.9}
+body.posfs:has(#list .posx) .posx-left{min-height:calc(100vh - 182px)}body.posfs:has(#list .posx) .posx-right{max-height:calc(100vh - 182px)}
 .posx-tools button.hot{border-color:#B91C1C;color:#B91C1C;font-weight:800}
 .pospanel-bg{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:60}
 .pospanel{position:fixed;top:0;right:0;bottom:0;width:min(760px,96vw);background:var(--bg,#f6f1ef);z-index:61;overflow:auto;padding:14px;box-shadow:-10px 0 30px rgba(0,0,0,.25);animation:ppin .18s ease-out}
@@ -1258,7 +1265,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 13 · 10:20 AM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 13 · 6:45 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -3598,7 +3605,7 @@ function owAccounts(){const O=OW;
 let LG={acc:'',from:ymdL(new Date()),to:ymdL(new Date()),pre:'today',q:'',kind:'',grp:true},LGD=null,LGload=false,LGerr='';
 const lgKey=()=>LG.acc+'|'+LG.from+'|'+LG.to;
 function lgLoad(){if(LGload)return;LGload=true;LGerr='';const k=lgKey();api('api_accLedger',session.token,LG.acc,LG.from,LG.to).then(r=>{LGD=r;LGD.key=k}).catch(e=>LGerr=errMsg(e)).finally(()=>{LGload=false;if(view==='owner'&&OWtab==='hist')drawStock()})}
-const LGK={sale:['🧾','Sales'],collection:['💳','Charge collected'],transfer:['⇄','Transfer'],cashin:['➕','Cash in'],expense:['💸','Expense'],purchase:['🚚','Supplier'],billpay:['📄','Bill paid'],cashshort:['⚖','Short / over'],
+const LGK={sale:['🧾','Sales'],collection:['💳','Charge collected'],transfer:['⇄','Transfer'],cashin:['➕','Cash in'],expense:['💸','Expense'],purchase:['🚚','Supplier'],billpay:['📄','Bill paid'],asset:['🏢','Asset bought'],assetsale:['🏢','Asset sold'],cashshort:['⚖','Short / over'],
   advance:['👤','Cash advance'],loan:['🏦','Loan received'],loanpay:['🏦','Loan payment'],lend:['🤝','Cash lent'],lendcol:['🤝','Collected'],capital:['👑',"Owner's capital"],drawings:['👑',"Owner's drawings"],income:['➕','Other income'],refund:['↩','Refund']};
 const LGF=[['','All types'],['sale','🧾 Sales'],['transfer','⇄ Transfers & drawer'],['cash','➕➖ Cash in / out'],['expense','💸 Expenses & bills'],['purchase','🚚 Supplier payments'],['collection','💳 Charge collected'],['loan','🏦 Loans & lending'],['owner','👑 Owner'],['other','Other']];
 const lgMatch=(r,k)=>!k||(k==='cash'?/cashin|cashshort|refund/.test(r.kind)||/^Cash (in|out)/.test(r.what):k==='expense'?/expense|billpay|advance/.test(r.kind):k==='loan'?/loan|lend/.test(r.kind):k==='owner'?/capital|drawings/.test(r.kind):k==='other'?/income/.test(r.kind):r.kind===k);
@@ -3665,7 +3672,7 @@ function owExpenses(){const O=OW,tot=O.expenses.reduce((a,e)=>a+e.amt,0);
 function owAssets(){const O=OW,t=O.assets.reduce((a,f)=>a+f.book,0);
   return `<div class="panel"><div class="poh"><h3 style="margin:0">🏢 Fixed assets</h3><span style="flex:1"></span><button class="go sm" data-owadd="asset">+ Asset</button></div>
     <table class="stbl"><thead><tr><th>Asset</th><th>Bought</th><th class="r">Cost</th><th class="r">Depreciation / month</th><th class="r">Book value now</th><th></th></tr></thead><tbody>
-    ${O.assets.map(f=>`<tr><td><b>${esc(f.name)}</b><br><small class="unit">${esc(f.cat)} · ${f.life} yr life${f.disposed?' · disposed '+day(f.disposed):''}</small></td><td>${f.d?day(f.d):'—'}</td><td class="r">${peso(f.cost)}</td><td class="r">${peso(f.perMonth)}</td><td class="r"><b>${peso(f.book)}</b></td><td><button class="btn sm" data-owedit="asset:${f.id}">Edit</button></td></tr>`).join('')||'<tr><td colspan="6" class="empty">No assets yet — add your car, building, freezers, laptops…</td></tr>'}
+    ${O.assets.map(f=>`<tr><td><b>${esc(f.name)}</b><br><small class="unit">${esc(f.cat)} · ${f.life} yr life · ${f.from==='owned'?'already owned':f.from==='credit'?'on credit':'paid from '+esc((O.accounts.find(a=>a.id===f.from)||{}).name||f.from)}${f.disposed?' · disposed '+day(f.disposed)+(f.sold?' · sold '+peso(f.sold):''):''}</small></td><td>${f.d?day(f.d):'—'}</td><td class="r">${peso(f.cost)}</td><td class="r">${peso(f.perMonth)}</td><td class="r"><b>${peso(f.book)}</b></td><td><button class="btn sm" data-owedit="asset:${f.id}">Edit</button></td></tr>`).join('')||'<tr><td colspan="6" class="empty">No assets yet — add your car, building, freezers, laptops…</td></tr>'}
     <tr class="srtot"><td colspan="4"><b>Total book value</b></td><td class="r"><b>${peso(t)}</b></td><td></td></tr></tbody></table>
     <div class="unit">Depreciation (straight line: cost − salvage ÷ useful life) is added to the monthly expenses automatically.</div></div>`}
 /* ---------- P&L you can open: every line shows what is behind it + where every ₱100 of sales goes ---------- */
@@ -3745,14 +3752,20 @@ function owForm(kind,id){const O=OW,box=stBox(),acc=O.accounts,accSel=(k,v,empty
     asset:`<label>Name<input class="edit-in" id="of-name" value="${esc(x.name||'')}" placeholder="e.g. Chest freezer 25 cu ft"></label><label>Category<select class="edit-in" id="of-cat">${O.cats.fa.map(c=>`<option${x.cat===c?' selected':''}>${esc(c)}</option>`).join('')}</select></label>
       <label>Date bought<input class="edit-in" type="date" id="of-d" value="${esc(x.d||today())}"></label><label>Cost (₱)<input class="edit-in nq" type="number" step="0.01" id="of-cost" value="${x.cost??''}"></label>
       <label>Useful life (years)<input class="edit-in nq" type="number" step="0.5" id="of-life" value="${x.life??5}"></label><label>Salvage value (₱)<input class="edit-in nq" type="number" step="0.01" id="of-salv" value="${x.salvage??0}"></label>
-      <label>Disposed / sold on<input class="edit-in" type="date" id="of-disp" value="${esc(x.disposed||'')}"></label><label>Note<input class="edit-in" id="of-note" value="${esc(x.note||'')}"></label>`}[kind];
+      <label class="full">Paid from<select class="edit-in" id="of-afrom">${id?'':'<option value="">— choose —</option>'}${acc.filter(a=>a.link!=='pos-cash'||a.id===x.from).map(a=>`<option value="${a.id}"${a.id===x.from?' selected':''}>${ACCI[a.type]||''} ${esc(a.name)} — money goes out on the date bought</option>`).join('')}<option value="credit"${x.from==='credit'?' selected':''}>📤 On credit — I owe the supplier (shows in Loans)</option><option value="owned"${id&&(x.from||'owned')==='owned'?' selected':''}>📦 Already owned before my start date — no money moves</option></select></label>
+      <label class="full" id="of-supw">Supplier (who you owe)<input class="edit-in" id="of-sup" placeholder="e.g. ABC Appliances"></label>
+      <label>Disposed / sold on<input class="edit-in" type="date" id="of-disp" value="${esc(x.disposed||'')}"></label><label>Note<input class="edit-in" id="of-note" value="${esc(x.note||'')}"></label>
+      <label id="of-soldw">Sold for (₱) <small class="unit">0 = thrown away</small><input class="edit-in nq" type="number" step="0.01" id="of-sold" value="${x.sold||''}"></label><label id="of-soldtw">Money went into${accSel('of-soldto',x.soldTo||'',1)}</label>
+      <div class="unit full">Paid from the cash drawer? The cashier records it in POS › Cash out — choose "Already owned" here so it isn't counted twice.</div>`}[kind];
   $('#stb').innerHTML=`<h2>${T}</h2><div class="fgrid">${F}</div><div class="row-end">${id?'<button class="btn" id="of-del" style="color:var(--rose)">Delete</button>':''}<button class="btn" data-x>Cancel</button><button class="go" id="of-ok">Save</button></div>`;box.classList.add('on');
   if(kind==='expense'){const ep=()=>{const m=$('#of-pay').value,paidCh=x.charge&&x.paidOn;$('#of-duew').hidden=m!=='charge';$('#of-byw').hidden=m!=='charge'||paidCh;$('#of-fromw').hidden=m==='charge'&&!paidCh;
       const L=acc.filter(a=>a.link!=='pos-cash'||a.id===x.from).filter(a=>m==='charge'?true:m==='cash'?a.type==='cash':a.type!=='cash');$('#of-from').innerHTML=L.map(a=>`<option value="${a.id}"${a.id===x.from?' selected':''}>${ACCI[a.type]||''} ${esc(a.name)}</option>`).join('')};
     $('#of-pay').onchange=ep;ep()}
+  if(kind==='asset'){const ap=()=>{$('#of-supw').hidden=$('#of-afrom').value!=='credit'||x.from==='credit';const dsp=!!$('#of-disp').value;$('#of-soldw').hidden=!dsp;$('#of-soldtw').hidden=!dsp||!(+$('#of-sold').value>0)};
+    ['of-afrom','of-disp','of-sold'].forEach(k=>{$('#'+k).onchange=ap;$('#'+k).oninput=ap});ap()}
   const v=i=>{const e=$('#'+i);return e?e.value:''};
   $('#of-ok').onclick=async()=>{const d={id,ym:OWym,account:{name:v('of-name'),type:v('of-type'),opening:v('of-open'),openDate:v('of-od'),link:v('of-link')},expense:{d:v('of-d'),cat:v('of-cat'),desc:v('of-desc'),amt:v('of-amt'),from:v('of-from'),pay:v('of-pay'),due:v('of-due'),payBy:v('of-by')},
-      move:{d:v('of-d'),type:v('of-mt'),from:v('of-from'),to:v('of-to'),amt:v('of-amt'),note:v('of-note')},asset:{name:v('of-name'),cat:v('of-cat'),d:v('of-d'),cost:v('of-cost'),life:v('of-life'),salvage:v('of-salv'),disposed:v('of-disp'),note:v('of-note')}}[kind];
+      move:{d:v('of-d'),type:v('of-mt'),from:v('of-from'),to:v('of-to'),amt:v('of-amt'),note:v('of-note')},asset:{name:v('of-name'),cat:v('of-cat'),d:v('of-d'),cost:v('of-cost'),life:v('of-life'),salvage:v('of-salv'),disposed:v('of-disp'),note:v('of-note'),from:v('of-afrom'),supplier:v('of-sup'),sold:v('of-sold'),soldTo:v('of-soldto')}}[kind];
     d.id=id;d.ym=OWym;$('#of-ok').disabled=true;try{OW=await api('api_ownerSave',session.token,kind,d,false);box.classList.remove('on');toast('Saved');drawStock()}catch(e){alert(errMsg(e));$('#of-ok').disabled=false}};
   if($('#of-del'))$('#of-del').onclick=async()=>{if(!confirm('Delete this?'))return;try{OW=await api('api_ownerSave',session.token,kind,{id,ym:OWym},true);box.classList.remove('on');drawStock()}catch(e){alert(errMsg(e))}}}
 /* ---------- ATTENDANCE (every staff) ---------- */
@@ -5090,7 +5103,9 @@ function posHTML(){
   const sug=posSug(),ord=posOrder&&(ST.toCash||[]).find(x=>x.id===posOrder);
   const log=[...Q.map(s=>({at:s.at,no:'not sent',total:s.total,q:1})),...(ST.sales||[])].sort((a,b)=>b.at-a.at);
   const last=(ST.sales||[]).slice().sort((a,b)=>b.at-a.at)[0];
-  return posSw('pos')+`<div class="posx">
+  const SN=(ST.rcpt&&ST.rcpt.name)||'3F MEATSHOP',TL=(ST.rcpt&&ST.rcpt.line2)||'Fresh · Frozen · Fine Cuts';
+  return posSw('pos')+`<div class="posx-brand"><img src="${LOGO_3F}" alt=""><div class="pb-n"><b>${esc(SN.toUpperCase())}</b><small>${esc(TL)}</small></div><span style="flex:1"></span>
+    <div class="pb-who">🧾 <b>${esc(me.name||'')}</b><small>Cashier</small></div><div class="pb-clk"><b class="pbclk">${new Date().toLocaleTimeString('en-PH',{hour:'numeric',minute:'2-digit'})}</b><small>${new Date().toLocaleDateString('en-PH',{weekday:'short',month:'short',day:'numeric',year:'numeric'})}</small></div></div><div class="posx">
     <div class="posx-top"><div class="posx-search"><span aria-hidden="true">🔎</span><input id="posq" data-k="posq" autocomplete="off" placeholder="Type product name or code — Enter adds it" value="${esc(posQ)}"></div>
       <select class="posx-price" id="pc-price" aria-label="Price list"><option value="retail"${posPrice==='retail'?' selected':''}>Retail</option><option value="wholesale"${posPrice==='wholesale'?' selected':''}>Wholesale</option></select>
       ${sug.length?`<div class="posx-sug">${sug.map((p,k)=>`<button data-padd2="${esc(p.code)}" class="${k?'':'first'}${p.avail<=0?' pout':''}"><b>${esc(p.name)}</b><span>${peso(priceOf(p))} / ${esc(p.unit)}</span><small>stock ${qf(p.avail)}</small></button>`).join('')}</div>`:posQ.trim()?'<div class="posx-sug"><div class="unit" style="padding:10px">No product found.</div></div>':''}</div>
@@ -5228,7 +5243,8 @@ window.print=function(){if(!isPhoneUI())return _realPrint();const P=$('#print');
     b.disabled=false;b.textContent='📤 Share'}};
 function printReceipt(s,reprint){const C=RCPT(),copies=[''];   /* one receipt only — the store copy is the record the Manager finds with 🔎 Find receipt */
   $('#print').className='rp'+(C.paper==='58'?' p58':'');$('#print').innerHTML=copies.map(c=>receiptHTML(s,c,reprint)).join('<div class="rcut">✂ - - - - - - - - - - - - - - - -</div>');window.print();setTimeout(()=>{$('#print').className=''},1500)}
-let posPanel=false,posFS=(()=>{try{return localStorage.getItem('fms_posfs')==='1'}catch(e){return false}})();
+setInterval(()=>{const e=document.querySelector('.pbclk');if(e)e.textContent=new Date().toLocaleTimeString('en-PH',{hour:'numeric',minute:'2-digit'})},15000);
+let posPanel=false,posFS=(()=>{try{return localStorage.getItem('fms_posfs')!=='0'}catch(e){return true}})();   /* full screen is the default; ⤡ Exit full remembers the choice */
 document.body.classList.toggle('posfs',posFS);
 /* full-screen POS: hides the app header, tabs and links; the browser goes full screen too (Esc / button to leave) */
 function posFull(on){posFS=on;try{localStorage.setItem('fms_posfs',on?'1':'0')}catch(e){}document.body.classList.toggle('posfs',on);
