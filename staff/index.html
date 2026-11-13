@@ -791,7 +791,7 @@ body:has(#list .posx)>div.wrap,body:has(#list .posx) header .wrap{max-width:none
 body.posfs:has(#list .posx) .posx-main{grid-template-columns:minmax(0,1fr) 380px}
 body.posfs:has(#list .posx) .posx-left{min-height:calc(100vh - 92px)}
 body.posfs:has(#list .posx) .posx-right{max-height:calc(100vh - 92px);overflow:auto;align-content:start}
-body.posfs:has(#list .posx) .stupd,body.posfs:has(#list .posx) .stoff{position:fixed;bottom:8px;left:14px;z-index:5;margin:0}
+body.posfs:has(#list .posx) .stupd,body.posfs:has(#list .posx) .stoff{position:fixed;top:auto;bottom:8px;left:14px;right:auto;height:auto;width:auto;float:none;z-index:5;margin:0}
 body.posfs:has(#list .posx) .posx-right{padding-bottom:74px}body.posfs:has(#list .posx) .posx-btns{position:fixed;right:14px;bottom:10px;width:380px;z-index:6;background:#fff;padding:8px;border-radius:14px;box-shadow:0 6px 24px rgba(0,0,0,.18);margin:0}
 .posx-brand{display:none}
 body.posfs:has(#list .posx) .posx-brand{display:flex;align-items:center;gap:16px;background:linear-gradient(90deg,#8E1B1B,#C81E1E);color:#fff;border-radius:16px;padding:10px 22px;margin-bottom:10px;border-bottom:4px solid #F5B301}
@@ -1265,7 +1265,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 13 · 9:30 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 13 · 9:50 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -1789,13 +1789,16 @@ function parse(text){
 let pickUser=null;
 async function showLogin(msg){
   $('#login').classList.add('on');
+  const bad=()=>{$('#lg').innerHTML='<h1>🔒 This link is not valid</h1><p>Please use the app link given by your manager.</p>'};
+  const role=()=>{pickUser=null;const qr=new URLSearchParams(location.search).get('role');if(qr&&/^(cashier|manager|ops|sales|prep|admin)$/.test(qr)){roleHint=qr;proc='any'}};   /* POS shortcut: …&role=cashier opens the Cashier login */
+  let cached=[];try{cached=JSON.parse(localStorage.getItem('dp_users_'+MODE)||'[]')}catch(_){}
+  const fetchU=api('api_users',KEY).then(u=>{users=u;try{localStorage.setItem('dp_users_'+MODE,J(u))}catch(e){}return true}).catch(e=>/BADLINK/.test(errMsg(e))?'bad':false);
+  if(cached.length){users=cached;role();renderLogin(msg);   /* instant: last saved staff list; Google refreshes it in the background */
+    fetchU.then(r=>{if(r==='bad'&&!me){try{localStorage.removeItem('dp_users_'+MODE)}catch(e){}bad()}});return}
   $('#lg').innerHTML='<h1>3FMS SYSTEM</h1><p>Connecting…</p>';
-  try{users=await api('api_users',KEY);try{localStorage.setItem('dp_users_'+MODE,J(users))}catch(e){}}
-  catch(e){if(/BADLINK/.test(errMsg(e))){$('#lg').innerHTML='<h1>🔒 This link is not valid</h1><p>Please use the app link given by your manager.</p>';return}
-    try{users=JSON.parse(localStorage.getItem('dp_users_'+MODE)||'[]')}catch(_){users=[]}
-    if(!users.length){$('#lg').innerHTML='<h1>3FMS SYSTEM</h1><p>Can\'t reach the server. Check the internet connection, then reload.</p><div class="row-end" style="justify-content:flex-start"><button class="btn" onclick="location.reload()">Reload</button></div>';return}}
-  pickUser=null;{const qr=new URLSearchParams(location.search).get('role');if(qr&&/^(cashier|manager|ops|sales|prep|admin)$/.test(qr)){roleHint=qr;proc='any'}}   /* POS shortcut: …&role=cashier opens the Cashier login */
-  renderLogin(msg)}
+  const r=await fetchU;if(r==='bad')return bad();
+  if(!r){$('#lg').innerHTML='<h1>3FMS SYSTEM</h1><p>Can\'t reach the server. Check the internet connection, then reload.</p><div class="row-end" style="justify-content:flex-start"><button class="btn" onclick="location.reload()">Reload</button></div>';return}
+  role();renderLogin(msg)}
 function renderLogin(msg){
   if(me){$('#login').classList.remove('on');return}
   $('#login').classList.add('on');
