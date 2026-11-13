@@ -1265,7 +1265,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 13 · 6:45 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 13 · 9:30 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -2084,12 +2084,17 @@ async function invMatchDialog(){const box=stBox();const draw=M=>{const ok=!M.nBa
     <div class="unit" style="margin-top:6px">${M.master==='sb'?'Supabase is the master: "Copy again" copies its stock into the Sheet.':'The Sheet is the master, so sales and stock are right. "Copy again" sends all products to Supabase again.'}</div>`}
     <div class="pinrow" style="margin-top:12px"><b>🔁 Stock master</b><div class="unit" style="margin-top:4px">${M.master==='sb'?`<b>Supabase</b> is the master${M.since?' since '+stamp(M.since)+(M.by?' ('+esc(M.by)+')':''):''}. Every stock change goes to Supabase first; the Sheet copies it.`:`<b>Google Sheet</b> is the master. Supabase is a live copy.`}</div>
       <div style="margin-top:8px">${M.master==='sb'?'<button class="btn sm" id="im-back">↩ Back to the Sheet as master</button>':(ok?'<button class="go sm" id="im-sb">🔁 Make Supabase the master</button>':'<span class="unit">Fix the differences first.</span>')}</div></div>
+    ${M.master==='sb'?`<div class="pinrow" style="margin-top:10px"><b>⚡ Fast POS</b><div class="unit" style="margin-top:4px">${M.posSb?'<b>ON</b> — the POS gets its SI# and takes the stock in Supabase in under a second. The Sheet records the full sale a few seconds later.':'OFF — the POS waits for Google (2–5 seconds) for the SI#.'}</div>
+      <div style="margin-top:8px">${M.posSb?'<button class="btn sm" id="im-poff">Turn Fast POS off</button>':'<button class="go sm" id="im-pon">⚡ Turn Fast POS on</button>'}</div></div>`:''}
     <div class="row-end"><button class="btn" id="im-now">↻ Check now</button>${ok?'':'<button class="go" id="im-fix">Copy again</button>'}<button class="btn" data-x>Close</button></div>`;
   const sw=async(to,b)=>{const h=M.cleanSince?(Date.now()-M.cleanSince)/3600e3:0;
     if(to==='sb'&&!confirm((h<12?'⚠ Only '+Math.round(h*10)/10+' hour(s) of 100% match so far — a full store day is recommended.\n\n':'')+'Make Supabase the stock master?\n\nEvery stock change will go to Supabase first and the Sheet will copy it. You can switch back any time here.'))return;
     if(to==='sheet'&&!confirm('Make the Google Sheet the master again? Supabase\'s current stock is copied into the Sheet first.'))return;
     b.disabled=true;try{const M2=await api('api_invMaster',session.token,to);if(APR)APR.inv=M2;draw(M2);invBanner();toast(to==='sb'?'🔁 Supabase is now the stock master':'↩ The Sheet is the stock master again')}catch(e){alert(errMsg(e));b.disabled=false}};
-  if($('#im-sb'))$('#im-sb').onclick=e=>sw('sb',e.target);if($('#im-back'))$('#im-back').onclick=e=>sw('sheet',e.target);
+  if($('#im-sb'))$('#im-sb').onclick=e=>sw('sb',e.target);
+  const pf=async(on,b)=>{if(!on&&!confirm('Turn Fast POS off? The POS will wait for Google for the SI# again.'))return;b.disabled=true;
+    try{const M2=await api('api_posFast',session.token,on);if(APR)APR.inv=M2;draw(M2);if(ST)ST.posSb=!!M2.posSb;toast(on?'⚡ Fast POS is ON — reopen the POS':'Fast POS is off')}catch(e){alert(errMsg(e));b.disabled=false}};
+  if($('#im-pon'))$('#im-pon').onclick=e=>pf(true,e.target);if($('#im-poff'))$('#im-poff').onclick=e=>pf(false,e.target);if($('#im-back'))$('#im-back').onclick=e=>sw('sheet',e.target);
   const go=async(re,b)=>{b.disabled=true;try{const M2=await api('api_invMatch',session.token,re);if(APR)APR.inv=M2;draw(M2);invBanner();toast(M2.nBad?'Still '+M2.nBad+' different':'✅ All '+M2.n+' products match')}catch(e){alert(errMsg(e));b.disabled=false}};
   $('#im-now').onclick=e=>go(false,e.target);if($('#im-fix'))$('#im-fix').onclick=e=>go(true,e.target)};
   draw((APR&&APR.inv)||{n:0,bad:[],nBad:0});box.classList.add('on')}
@@ -5407,13 +5412,16 @@ function completeSale(ok){const total=cartTotal();if(!ok)return tenderDialog();
     pay:{cash:'Cash',gcash:'GCash',maya:'Maya',bank:'Bank transfer',terms:'Charge'}[posPay],dr:ord?ord.dr:'',ref:posRef,cash:posPay==='cash'?+posCash||0:0,total,cashier:me.name,pts:cu?Math.floor(total/500):0,charges:posCharges.map(c=>({kind:c.kind,label:c.label,amt:c.amt})),note:posNote.trim()};
   setPosQueue(posQueue().concat([s]));
   s.items.forEach(i=>{const p=pBy(i.code);if(p)p.avail=r2(p.avail-i.qty)});stCache();
+  if(ST.posSb){s.sbT=Date.now();sbCall('st_pos_sale',Object.assign({},s,{noWait:undefined})).then(r=>{if(!r||!r.no)return;posNos[s.cid]=r.no;   /* ⚡ Fast POS: SI# + stock from Supabase */
+    setPosQueue(posQueue().map(x=>x.cid===s.cid?Object.assign({},x,{sbNo:r.no}):x));Object.keys(r.avail||{}).forEach(k=>{const p=pBy(k);if(p)p.avail=+r.avail[k]});stCache()}).catch(()=>{})}
   if(ord)ST.toCash=ST.toCash.filter(x=>x.id!==ord.id);
   resetSale();drawStock();
   s.noWait=1;showReceipt(s);const pp=posPrint;posPrint=false;if(pp)toast('🖨 Getting the receipt no. then printing…');
   waitNo(s,pp?10000:30000).then(()=>{if(pp)printReceipt(s)})}
 let posPrint=false,posNos={},rcShown='';
 /* wait until the server gives this sale its receipt no. (offline → stop waiting after ms and print anyway) */
-async function waitNo(s,ms){const t0=Date.now();s.noWait=1;let last=0;while(!posNos[s.cid]&&Date.now()-t0<ms){if(!posSending&&Date.now()-last>3000){last=Date.now();posFlush()}await new Promise(r=>setTimeout(r,400))}
+async function waitNo(s,ms){const t0=Date.now();s.noWait=1;let last=s.sbT?Date.now()-1000:0;   /* fast POS: give Supabase ~2 s before asking Google */
+ while(!posNos[s.cid]&&Date.now()-t0<ms){if(!posSending&&Date.now()-last>3000){last=Date.now();posFlush()}await new Promise(r=>setTimeout(r,400))}
   delete s.noWait;if(posNos[s.cid])s.no=posNos[s.cid];if(rcShown===s.cid&&stBox().classList.contains('on'))showReceipt(s)}
 function showReceipt(s){const box=stBox();rcShown=s.cid;$('#stb').innerHTML=`<h2>✅ Sale done — ${peso(s.total)}</h2>${s.cash&&s.cash>s.total?`<div class="snote" style="font-size:20px">Change: <b>${peso(s.cash-s.total)}</b></div>`:''}${receiptHTML(s)}
   <div class="row-end"><button class="btn" id="rc-pr">🖨 Print receipt</button><button class="go" data-x>Next customer</button></div>`;box.classList.add('on');$('#rc-pr').onclick=()=>printReceipt(s)}
