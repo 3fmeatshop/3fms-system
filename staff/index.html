@@ -1267,7 +1267,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 16 · 10:45 AM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 16 · 11:10 AM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -2048,7 +2048,7 @@ function start(fresh){
   if(me.role==='ops')setTimeout(()=>loadStock().then(()=>{if(!STOCKV.includes(view))render()}).catch(()=>{}),800);
   if(me.role==='manager'||me.role==='owner')setTimeout(()=>{if(me&&session&&!OW&&!OWload)owLoad()},2500);   // Accounting loads quietly after login → ready when opened
   if(fresh){db={orders:[]};base={};ver=0}
-  else{try{const c=JSON.parse(localStorage.getItem(CACHE)||'null');if(c&&c.u===me.id){db={orders:c.orders||[]};base=c.base||{};ver=0}}catch(e){}}
+  else{try{const h=JSON.parse(sessionStorage.getItem('fms_here')||'null');if(h&&h.u===me.id&&h.v){view=h.v;if(h.o)OWtab=h.o;if(h.h&&typeof HRsub!=='undefined')HRsub=h.h}}catch(e){}try{const c=JSON.parse(localStorage.getItem(CACHE)||'null');if(c&&c.u===me.id){db={orders:c.orders||[]};base=c.base||{};ver=0}}catch(e){}}
   renderLogin(); setSync('load'); render(); poll(); flush();
 }
 
@@ -2151,7 +2151,7 @@ function deptGo(v,sub){if(!me)return;if(v==='owner'&&sub)OWtab=sub;if(v==='hr'&&
   DLAST[deptOf(v)]={v,sub:sub||''};try{localStorage.setItem('fms_dlast',JSON.stringify(DLAST))}catch(e){}render();if(STOCKV.includes(v)&&ST)drawStock()}
 async function deptAct(a){if(!me)return;if(a==='neworder')return $('#newbtn').click();if(a==='users')return $('#l-users').click();if(a==='bulk')return bulkDialog();
   if(a==='cdisc'){if(!OW){toast('Loading…');try{OW=await api('api_owner',session.token,OWym||'')}catch(e){return alert(errMsg(e))}}return custDiscDialog()}}
-function render(){
+function render(){try{if(me)sessionStorage.setItem('fms_here',J({u:me.id,v:view,o:OWtab,h:typeof HRsub==='undefined'?'':HRsub}))}catch(e){}
   if(!me)return;
   if(me&&me.role==='manager')setTimeout(aprBadge,0);
   fixWtReq();   // older / carried-over lines ordered in pcs of a kg-stocked product → ask pcs + kg
@@ -3332,11 +3332,18 @@ try{if(localStorage.getItem('fms_sncol')!=='0')document.body.classList.add('snco
 const snIc=t=>{const m=String(t).match(/^(\p{Extended_Pictographic}️?|[↩⏱⇄✕])\s*/u);return m?[m[1],String(t).slice(m[0].length)]:['•',String(t)]};
 // node: {ic,t,n,c,attrs,on,kids:[...],key}
 function snNode(x,lvl){const open=x.kids&&x.kids.length&&(x.key in SNST?SNST[x.key]:!!(x.on||x.kidOn));
-  return `<div class="sn-row${x.on?' on':''}${x.g?' sn-main g-'+x.g:''}" style="${x.c?'--oc:'+x.c:''}"><button class="sn-item" ${x.attrs} title="${esc(x.t)}"><span class="sn-ic">${x.ic}</span><span class="sn-lbl">${esc(x.t)}</span>${x.n?`<span class="sn-n">${x.n}</span>`:''}</button>${x.kids&&x.kids.length?`<button class="sn-car" data-sntog="${esc(x.key)}" aria-label="Show / hide">${open?'▾':'▸'}</button>`:''}</div>
+  return `<div class="sn-row${x.on?' on':''}${x.g?' sn-main g-'+x.g:''}" style="${x.c?'--oc:'+x.c:''}"><button class="sn-item" ${x.attrs}${x.kids&&x.kids.length?` data-snk="${esc(x.key)}"`:''} title="${esc(x.t)}"><span class="sn-ic">${x.ic}</span><span class="sn-lbl">${esc(x.t)}</span>${x.n?`<span class="sn-n">${x.n}</span>`:''}</button>${x.kids&&x.kids.length?`<button class="sn-car" data-sntog="${esc(x.key)}" aria-label="Show / hide">${open?'▾':'▸'}</button>`:''}</div>
     ${x.kids&&x.kids.length?`<div class="sn-sub"${open?'':' hidden'}>${x.kids.map(k=>snNode(k,lvl+1)).join('')}</div>`:''}`}
 function snOpen(on){const b=document.body,was=b.classList.contains('snopen');if(on===was)return;b.classList.toggle('snopen',on);
   if(window.innerWidth>=900)return;
   try{if(on)history.pushState({sn:1},'');else if(history.state&&history.state.sn)history.back()}catch(e){}}
+/* a menu bar that has a list under it (▸): tapping the whole bar opens / closes the list — it does not jump to a page
+   (only on the collapsed desktop rail, where lists can't show, it still goes to the page) */
+function snToggle(row){const sub=row&&row.nextElementSibling,car=row&&row.querySelector('.sn-car');if(!sub||!sub.classList.contains('sn-sub'))return false;
+  sub.hidden=!sub.hidden;if(car)car.textContent=sub.hidden?'▸':'▾';const k=(row.querySelector('[data-snk]')||{}).dataset;if(k&&k.snk){SNST[k.snk]=!sub.hidden;try{localStorage.setItem('fms_snst',JSON.stringify(SNST))}catch(_){}}return true}
+document.addEventListener('click',e=>{const b=e.target.closest('.snav .sn-item[data-snk]');if(!b)return;
+  if(window.innerWidth>=900&&document.body.classList.contains('sncol'))return;
+  if(snToggle(b.closest('.sn-row'))){e.preventDefault();e.stopPropagation()}},true);
 window.addEventListener('popstate',()=>{if(document.body.classList.contains('snopen'))document.body.classList.remove('snopen')});   // phone Back = close the menu
 function snCur(nodes){let r=null;const w=xs=>xs.forEach(x=>{if(x.on)r=x;if(x.kids)w(x.kids)});w(nodes);return r}
 function snavHTML(nodes,title){const c=snCur(nodes);return `<button class="sn-mbar" data-snm aria-label="Open the menu"><span class="sn-mb">☰</span><span class="sn-ml">${c?c.ic+' '+esc(c.t):esc(title)}</span></button><div class="sn-back" data-snm></div><nav class="snav"><div class="sn-top"><button class="sn-burger" data-snb title="Collapse / expand the menu">☰</button><span class="sn-title">${esc(title)}</span></div>${nodes.map(x=>snNode(x,0)).join('')}</nav>`}
@@ -5867,11 +5874,7 @@ tick(); setInterval(tick,1000);
 if(MODE==='rider'&&$('#lsub'))$('#lsub').textContent='Rider · Deliveries';
 if(MODE==='rider'){$('#apptitle').innerHTML='<span class="b3 logo3f">3F</span><span class="tt">3FMS SYSTEM<small>Rider · Deliveries</small></span>';document.title='3FMS SYSTEM – Rider'}
 idbOpen().then(()=>{try{session=JSON.parse(localStorage.getItem(SESS)||'null')}catch(e){session=null}
-  if(MODE!=='rider'&&session&&session.token){
-    try{const c=JSON.parse(localStorage.getItem(CACHE)||'null');if(c&&c.u===session.user.id){me=session.user;db={orders:c.orders||[]};base=c.base||{}}}catch(e){}
-    const quiet=()=>{try{api('api_logout',session.token).catch(()=>{})}catch(e){}session=null;me=null;localStorage.removeItem(SESS);db={orders:[]};base={};showLogin()};
-    if(me&&dirtyOrders().length){$('#login').classList.add('on');$('#lg').innerHTML='<h1>3FMS SYSTEM</h1><p>Saving your last changes…</p>';flush().then(quiet,quiet)}else quiet();return}
-  if(session&&session.token)start(false);else showLogin()});
+  if(session&&session.token)start(false);else showLogin()});   // refresh = stay logged in, back on the same screen
 })();
 </script>
 </body>
