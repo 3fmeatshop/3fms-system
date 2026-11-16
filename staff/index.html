@@ -1049,7 +1049,7 @@ details.sec .tile .ic{width:36px;height:36px}details.sec .tile .due{display:none
  body.sncol .sn-top{justify-content:center}
 }
 /* PHONE: the same side menu as a slide-in drawer (☰ Menu) */
-.sn-mbar,.sn-back{display:none}
+.sn-mbar,.sn-back{display:none}.sn-sub[hidden]{display:none!important}
 @media(max-width:899px){
  body.sidenav #seg>.opstabs,body.sidenav #seg>.opsmore{display:none!important}
  body.sidenav #seg{display:block!important;background:transparent;border:0;box-shadow:none;padding:0;min-width:0}
@@ -1057,7 +1057,9 @@ details.sec .tile .ic{width:36px;height:36px}details.sec .tile .due{display:none
  .sn-mb{font-size:22px;line-height:1}.sn-ml{flex:1;min-width:0;text-align:left;font-weight:800;font-size:16px;color:#B3191B}.sn-mm{font-size:13px;color:var(--muted);font-weight:700}
  .sy-m{display:none}
  @media(max-width:899px){.sy-t{display:none}.sy-m{display:inline}}   /* phone: header shows only the green dot */
- body.sidenav.snopen .sn-back{display:block;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:40}
+ body.sidenav.snopen .sn-back{display:block;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:40;touch-action:none}
+ body.sidenav.snopen{overflow:hidden}body.sidenav.snopen .snav{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+ body.sidenav .snav .sn-item,body.sidenav .snav .sn-car,body.sidenav .sn-mbar{touch-action:manipulation;-webkit-tap-highlight-color:rgba(179,25,27,.12)}
  body.sidenav .snav{display:none}
  body.sidenav.snopen .snav{display:flex;flex-direction:column;gap:2px;position:fixed;z-index:41;top:0;bottom:0;left:0;width:min(86vw,320px);background:#fff;overflow:auto;padding:calc(10px + env(safe-area-inset-top,0px)) 10px 16px;box-shadow:4px 0 20px rgba(0,0,0,.2)}
  body.sidenav .snav .sn-top{display:flex;align-items:center;gap:8px;padding:2px 2px 8px;border-bottom:1px solid var(--line);margin-bottom:4px}
@@ -1265,7 +1267,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 13 · 10:00 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 16 · 10:45 AM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -3106,10 +3108,12 @@ $('#ph-ok').onclick=async()=>{if(!P||!P.data)return;const o=find(P.oid),pid='p'+
 function resetChecks(o,i){removeFollowUp(i);i.checked=null;i.short=null;o.approved=null}
 async function saveThenAsync(){if(dirtyOrders().length){clearTimeout(flushTimer);try{await flush()}catch(e){}}}
 document.addEventListener('click',async e=>{
-  if(e.target.closest('[data-snm]')){document.body.classList.toggle('snopen');return}
-  if(e.target.closest('.snav .sn-item'))document.body.classList.remove('snopen');      // phone: picking a screen closes the menu
-  if(e.target.closest('[data-snb]')){if(window.innerWidth<900){document.body.classList.remove('snopen');return}const c=document.body.classList.toggle('sncol');try{localStorage.setItem('fms_sncol',c?'1':'0')}catch(_){}return}
-  const tg=e.target.closest('[data-sntog]');if(tg){const k=tg.dataset.sntog;SNST[k]=tg.textContent.trim()!=='▾';try{localStorage.setItem('fms_snst',JSON.stringify(SNST))}catch(_){}render();return}
+  if(e.target.closest('[data-snm]')){snOpen(!document.body.classList.contains('snopen'));return}
+  if(e.target.closest('.snav .sn-item'))snOpen(false);      // phone: picking a screen closes the menu
+  if(e.target.closest('[data-snb]')){if(window.innerWidth<900){snOpen(false);return}const c=document.body.classList.toggle('sncol');try{localStorage.setItem('fms_sncol',c?'1':'0')}catch(_){}return}
+  const tg=e.target.closest('[data-sntog]');if(tg){const k=tg.dataset.sntog,sub=tg.closest('.sn-row').nextElementSibling;
+    if(sub&&sub.classList.contains('sn-sub')){sub.hidden=!sub.hidden;tg.textContent=sub.hidden?'▸':'▾';SNST[k]=!sub.hidden}else{SNST[k]=tg.textContent.trim()!=='▾';render()}
+    try{localStorage.setItem('fms_snst',JSON.stringify(SNST))}catch(_){}return}
   const im=e.target.closest('img[data-ph]');if(im){$('#v-img').src=im.src;$('#v-cap').textContent=im.dataset.cap;$('#viewer').classList.add('on');return}
   const og=e.target.closest('[data-ohgo]');if(og){view=og.dataset.ohgo;openId=null;editId=null;render();window.scrollTo(0,0);return}
   const j=e.target.closest('[data-jump]');if(j){const t=find(j.dataset.jump);if(t){view=stage(t);openId=t.id;editId=null;dateF=t.delivery;render();const el=document.getElementById('c-'+t.id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'})}return}
@@ -3329,7 +3333,11 @@ const snIc=t=>{const m=String(t).match(/^(\p{Extended_Pictographic}️?|[↩⏱�
 // node: {ic,t,n,c,attrs,on,kids:[...],key}
 function snNode(x,lvl){const open=x.kids&&x.kids.length&&(x.key in SNST?SNST[x.key]:!!(x.on||x.kidOn));
   return `<div class="sn-row${x.on?' on':''}${x.g?' sn-main g-'+x.g:''}" style="${x.c?'--oc:'+x.c:''}"><button class="sn-item" ${x.attrs} title="${esc(x.t)}"><span class="sn-ic">${x.ic}</span><span class="sn-lbl">${esc(x.t)}</span>${x.n?`<span class="sn-n">${x.n}</span>`:''}</button>${x.kids&&x.kids.length?`<button class="sn-car" data-sntog="${esc(x.key)}" aria-label="Show / hide">${open?'▾':'▸'}</button>`:''}</div>
-    ${open?`<div class="sn-sub">${x.kids.map(k=>snNode(k,lvl+1)).join('')}</div>`:''}`}
+    ${x.kids&&x.kids.length?`<div class="sn-sub"${open?'':' hidden'}>${x.kids.map(k=>snNode(k,lvl+1)).join('')}</div>`:''}`}
+function snOpen(on){const b=document.body,was=b.classList.contains('snopen');if(on===was)return;b.classList.toggle('snopen',on);
+  if(window.innerWidth>=900)return;
+  try{if(on)history.pushState({sn:1},'');else if(history.state&&history.state.sn)history.back()}catch(e){}}
+window.addEventListener('popstate',()=>{if(document.body.classList.contains('snopen'))document.body.classList.remove('snopen')});   // phone Back = close the menu
 function snCur(nodes){let r=null;const w=xs=>xs.forEach(x=>{if(x.on)r=x;if(x.kids)w(x.kids)});w(nodes);return r}
 function snavHTML(nodes,title){const c=snCur(nodes);return `<button class="sn-mbar" data-snm aria-label="Open the menu"><span class="sn-mb">☰</span><span class="sn-ml">${c?c.ic+' '+esc(c.t):esc(title)}</span></button><div class="sn-back" data-snm></div><nav class="snav"><div class="sn-top"><button class="sn-burger" data-snb title="Collapse / expand the menu">☰</button><span class="sn-title">${esc(title)}</span></div>${nodes.map(x=>snNode(x,0)).join('')}</nav>`}
 
