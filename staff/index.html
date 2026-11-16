@@ -1265,7 +1265,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 13 · 9:50 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 13 · 10:00 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -2025,6 +2025,7 @@ function serverErr(m){return '⚠ Server error: <b>'+esc(String(m).replace(/^(Sc
 function logout(msg){document.body.classList.remove('sidenav');SBP=null;if(session)api('api_logout',session.token).catch(()=>{});
   session=null;me=null;MA=null;MSL=null;localStorage.removeItem(SESS);clearTimeout(pollTimer);clearTimeout(flushTimer);
   db={orders:[]};base={};ver=0;proc=null;summary=null;hist={};
+  try{Object.keys(localStorage).filter(k=>/^fms_ow_/.test(k)).forEach(k=>localStorage.removeItem(k))}catch(e){}
   try{OW=null;OWerr='';LGD=null;RV=null;RVrep=false;MB=null;PY=null;HR=null;CR=null;SR=null;PA=null}catch(e){}          // no money data left for the next person on this device
   showLogin(msg)}
 async function saveThen(fn){ // send unsaved work first, then leave
@@ -2043,6 +2044,7 @@ function land(){ // open the screen of the process the person chose
 function start(fresh){
   session.user.role=normRole(session.user.role);me=session.user; view=me.role==='rider'?'way':me.role==='cashier'?'pos':me.role==='sales'?'online':(me.role==='ops'||me.role==='manager')?'ohome':'prep'; openId=null;roleHint=null;
   if(me.role==='ops')setTimeout(()=>loadStock().then(()=>{if(!STOCKV.includes(view))render()}).catch(()=>{}),800);
+  if(me.role==='manager'||me.role==='owner')setTimeout(()=>{if(me&&session&&!OW&&!OWload)owLoad()},2500);   // Accounting loads quietly after login → ready when opened
   if(fresh){db={orders:[]};base={};ver=0}
   else{try{const c=JSON.parse(localStorage.getItem(CACHE)||'null');if(c&&c.u===me.id){db={orders:c.orders||[]};base=c.base||{};ver=0}}catch(e){}}
   renderLogin(); setSync('load'); render(); poll(); flush();
@@ -3555,9 +3557,12 @@ function srCsv(){const L=SR.lines.filter(l=>(!SRF.ch||l.ch===SRF.ch)&&(!SRF.cust
   downloadCsv([['Date','Receipt','DR','Customer','Sale type','Code','Product','Qty','Unit','Price','Amount','Cost per unit','Cost','Profit','Cashier','Payment']]
     .concat(L.map(l=>[l.d,l.no,l.dr,l.customer,l.ch,l.code,l.name,l.qty,l.unit,l.price,l.amount,l.pend?'PENDING':l.cost,l.pend?'PENDING':l.costAmt,l.pend?'PENDING':r2(l.amount-l.costAmt),l.cashier,l.pay])),'3FMS-sales-'+SRF.from+'-to-'+SRF.to+'.csv')}
 /* ---------- OWNER'S DASHBOARD (manager) ---------- */
-let OW=null,OWload=false,OWerr='',OWym='',OWtab='dash';
+let OW=null,OWload=false,OWerr='',OWym='',OWtab='dash',OWold=false;
 let OWat=0;
-function owLoad(){if(OWload)return;OWload=true;OWerr='';api('api_owner',session.token,OWym).then(r=>{OW=r;OWym=r.ym;OWat=Date.now()}).catch(e=>OWerr=errMsg(e)).finally(()=>{OWload=false;if(view==='owner')drawStock()})}
+function owLoad(){if(OWload)return;OWload=true;OWerr='';api('api_owner',session.token,OWym).then(r=>{OW=r;OWym=r.ym;OWat=Date.now();OWold=false;try{localStorage.setItem('fms_ow_'+me.id,J({ym:r.ym,at:OWat,d:r}))}catch(e){}})
+  .catch(e=>{if(!OWold)OWerr=errMsg(e)}).finally(()=>{OWload=false;if(view==='owner')drawStock()})}
+/* instant Accounting: show the last loaded numbers on this device at once, refresh from Google in the background (removed at logout) */
+function owCached(){try{const c=JSON.parse(localStorage.getItem('fms_ow_'+me.id)||'null');if(c&&c.d&&(!OWym||OWym===c.ym)){OW=c.d;OWym=c.ym;OWat=0;OWold=c.at;return true}}catch(e){}return false}
 const owAcc=id=>(OW.accounts.find(a=>a.id===id)||{}).name||'—';
 const ACCI={cash:'💵',bank:'🏦',ewallet:'📱'};
 const ymLbl=k=>{const[y,m]=k.split('-');return SMON[+m-1]+' '+y};
@@ -3574,13 +3579,13 @@ function owBars(rows,keys){const mx=Math.max(1,...rows.flatMap(r=>keys.map(([k])
   return `<div class="owbars">${rows.map(r=>`<div class="owb"><div class="owb-c">${keys.map(([k,c])=>`<i style="height:${Math.round(Math.abs(r[k]||0)/mx*100)}%;background:${(r[k]||0)<0?'#DC2626':c}" title="${k} ${peso(r[k]||0)}"></i>`).join('')}</div><span>${r.lbl!=null?r.lbl:ymLbl(r.ym).slice(0,3)}</span></div>`).join('')}</div>
     <div class="owleg">${keys.map(([k,c,t])=>`<span><i style="background:${c}"></i>${t}</span>`).join('')}</div>`}
 function ownerHTML(){
-  if(!OW&&!OWerr)owLoad();else if(OW&&!OWload&&Date.now()-OWat>30000&&!document.querySelector('.modal.on'))owLoad();      // keep the numbers fresh
+  if(!OW&&!OWerr){owCached();owLoad()}else if(OW&&!OWload&&Date.now()-OWat>30000&&!document.querySelector('.modal.on'))owLoad();      // keep the numbers fresh
   const tabs=[['dash','📊 Dashboard'],['acc','💰 Accounts'],['hist','📜 Money history'],['exp','🧾 Expenses'],['col','📥 Collectibles'],['pay','📤 Payables'],['avg','⏱ Profit averages'],['fa','🏢 Fixed assets'],['rep','📑 P&L · Balance sheet']];
   const head=`<div class="shead"><div><h2>${me.role==='manager'?'💰 Accounting & Finance':"👑 Owner's Dashboard"}</h2></div><div class="sbtns"><input type="month" class="edit-in" data-owym value="${esc(OWym||(OW&&OW.ym)||today().slice(0,7))}" style="width:auto"><button class="btn sm" data-owre>↻ Refresh</button></div></div>
     ${me.role==='manager'?'':`<div class="chips2 owtabs">${tabs.map(([k,t])=>`<button class="${OWtab===k?'on':''}" data-owtab="${k}">${t}</button>`).join('')}</div>`}`;
   if(OWerr)return head+`<div class="empty">⚠ ${esc(OWerr)}<br><br><button class="btn" data-owre>↻ Try again</button></div>`;
   if(!OW)return head+'<div class="empty">Loading…</div>';
-  return head+({dash:owDash,acc:owAccounts,hist:owHist,exp:owExpenses,col:()=>{const p=(OW.zs||[]).some(q=>q.os.st==='pending');return (p?owShort()+owCollect():owCollect()+owShort())+owLoans('lend')},pay:owPayables,loan:()=>{PAYsec='loan';OWtab='pay';return owPayables()},avg:owAvg,fa:owAssets,rep:owReports}[OWtab])()}
+  return head+(OWold?`<div class="snote owold">↻ <b>Updating…</b> showing the numbers from ${stamp(OWold)} until the fresh ones arrive</div>`:'')+({dash:owDash,acc:owAccounts,hist:owHist,exp:owExpenses,col:()=>{const p=(OW.zs||[]).some(q=>q.os.st==='pending');return (p?owShort()+owCollect():owCollect()+owShort())+owLoans('lend')},pay:owPayables,loan:()=>{PAYsec='loan';OWtab='pay';return owPayables()},avg:owAvg,fa:owAssets,rep:owReports}[OWtab])()}
 function owDash(){const zp=(OW.zs||[]).filter(q=>q.os.st==='pending');return (zp.length?`<button class="snote" style="cursor:pointer;width:100%;text-align:left;font:inherit;color:inherit" data-owtab="col">⚠ <b>${zp.length}</b> cash short / over from the Z reading to decide (${zp.map(q=>(q.amt<0?'short ':'over ')+peso(Math.abs(q.amt))).join(', ')}) — tap to open <b>📥 Collect & pay</b>.</button>`:'')+owDash0()}
 function owDash0(){const O=OW,P=O.pl,B=O.bs,arOver=O.ar.filter(a=>a.days>30),apDue=O.ap.filter(a=>a.due&&a.due<=iso(new Date(Date.now()+7*864e5)));
   const k=(t,v,s,c)=>`<div class="owk ${c||''}"><span>${t}</span><b>${v}</b>${s?`<small>${s}</small>`:''}</div>`;
