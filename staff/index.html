@@ -1332,7 +1332,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 16 · 5:40 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 18 · 2:00 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -5317,9 +5317,11 @@ function toCashHTML(){const L=(ST.toCash||[]).filter(o=>o.id!==posOrder),U=ST.un
     ${U.length?`<details class="panel" open><summary><b>💳 Unpaid — charge (${U.length})</b> <span class="unit">total ${peso(U.reduce((a,x)=>a+x.balance,0))}</span></summary>${U.map(x=>`<div class="pocard"><div class="poh"><b>${esc(x.no)}</b>${x.dr?' · '+esc(x.dr):''} · <b>${esc(x.customer)}</b><span class="unit">· ${stamp(x.at)} · total ${peso(x.total)}</span><span style="flex:1"></span><b style="color:var(--rose)">${peso(x.balance)}</b> <button class="btn sm" data-ppay="${esc(x.no)}">Record payment</button></div></div>`).join('')}</details>`:''}`}
 function payDialog(no){const x=(ST.unpaid||[]).find(z=>z.no===no);if(!x)return;const box=stBox();
   $('#stb').innerHTML=`<h2>💳 Payment — ${esc(x.customer)}</h2><div class="unit">Receipt <b>${esc(x.no)}</b>${x.dr?' · '+esc(x.dr):''} · total ${peso(x.total)} · <b>balance ${peso(x.balance)}</b></div>
+    ${(x.payments||[]).filter(p=>!p.void).length?`<div class="unit" style="margin-top:4px">Paid so far: ${x.payments.filter(p=>!p.void).map(p=>peso(p.amount)+' '+esc(p.method||'')).join(' · ')}${me.role==='manager'?` · <a href="#" id="py-fix">wrong? void a payment</a>`:''}</div>`:''}
     <div class="fgrid"><label>Amount (₱)<input class="edit-in" id="py-a" type="number" step="0.01" value="${x.balance}"></label><label>Method<select class="edit-in" id="py-m"><option>Cash</option><option>GCash</option><option>Maya</option><option>Bank transfer</option><option>Check</option></select></label>
     <label class="full">Reference no. (bank / GCash / check)<input class="edit-in" id="py-r"></label></div>
     <div class="row-end"><button class="btn" data-x>Cancel</button><button class="go" id="py-ok">Save payment</button></div>`;box.classList.add('on');
+  if($('#py-fix'))$('#py-fix').onclick=e=>{e.preventDefault();box.classList.remove('on');findReceipt(x.no)};
   $('#py-ok').onclick=async()=>{$('#py-ok').disabled=true;try{ST=await api('api_posPay',session.token,no,$('#py-a').value,$('#py-m').value,$('#py-r').value);stCache();box.classList.remove('on');toast('💳 Payment saved');drawStock()}catch(e){alert(errMsg(e));$('#py-ok').disabled=false}}}
 const CHG_TYPES=['Giniling (grinding) charge','Slicing / cutting charge','Cubing charge','Packaging charge','Marinating charge','Other'];
 function chargeDialog(kind){const box=stBox(),D=kind==='delivery';
@@ -5423,7 +5425,11 @@ function findReceipt(q){const box=stBox();
   const go=async()=>{const v=$('#fr-q').value.trim();if(!v)return;const o=$('#fr-out');o.innerHTML='<div class="unit">Searching…</div>';
     try{const r=await api('api_saleFind',session.token,v);
       o.innerHTML=`${r.status==='void'?`<div class="snote" style="color:var(--rose)"><b>❌ VOIDED</b>${r.voidBy?' by '+esc(r.voidBy):''}${r.voidWhy?' — '+esc(r.voidWhy):''}</div>`:''}${r.balance>0?`<div class="snote">Unpaid balance: <b>${peso(r.balance)}</b></div>`:''}${receiptHTML(r)}
-        <div class="row-end"><button class="btn" id="fr-pr">🖨 Reprint</button></div>`;$('#fr-pr').onclick=()=>printReceipt(r,true)}
+        ${(r.payments||[]).length?`<h4 style="margin:12px 0 4px">💳 Payments recorded</h4>${r.payments.map(p=>`<div class="posx-row${p.void?' cm-void':''}"><span>${stamp(p.at)} · ${esc(p.method||'Cash')}${p.ref?' · ref '+esc(p.ref):''} <small class="unit">by ${esc(p.by||'')}${p.void?` · ❌ VOIDED by ${esc(p.void.by)} — ${esc(p.void.why)}`:''}</small></span><b>${peso(p.amount)}</b>${p.void?'':`<button class="btn sm" data-payvoid="${p.at}">❌ Void payment</button>`}</div>`).join('')}<div class="unit">Balance now: <b>${peso(r.balance||0)}</b></div>`:''}
+        <div class="row-end"><button class="btn" id="fr-pr">🖨 Reprint</button></div>`;$('#fr-pr').onclick=()=>printReceipt(r,true);
+      o.querySelectorAll('[data-payvoid]').forEach(b=>b.onclick=async e=>{e.stopPropagation();const p=r.payments.find(z=>String(z.at)===b.dataset.payvoid);
+        const why=prompt(`Void the ${peso(p.amount)} ${p.method||'Cash'} payment of ${r.customer||r.no}?\nThe receipt becomes unpaid again for this amount.\n\nWhy? (e.g. recorded by mistake — not paid)`);if(!why||!why.trim())return;
+        b.disabled=true;try{const R=await api('api_posPayVoid',session.token,r.no,p.at,why.trim());ST=Object.assign(ST||{},R);stCache();toast('❌ Payment voided — '+r.no+' is unpaid again');if(R.note)alert(R.note);findReceipt(r.no)}catch(e){alert(errMsg(e));b.disabled=false}})}
     catch(e){o.innerHTML=`<div class="snote">⚠ ${esc(errMsg(e))}</div>`}};
   $('#fr-go').onclick=go;$('#fr-q').onkeydown=e=>{if(e.key==='Enter')go()};$('#fr-q').focus();if(q)go()}
 function receiptSetup(){const C=RCPT(),box=stBox();$('#stb').innerHTML=`<h2>🖨 Receipt printer</h2><div class="fgrid"><label>Paper width<select class="edit-in" id="rs-p"><option value="80"${C.paper==='80'?' selected':''}>80 mm</option><option value="58"${C.paper==='58'?' selected':''}>58 mm</option></select></label>
