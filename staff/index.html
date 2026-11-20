@@ -1333,7 +1333,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 20 · 9:00 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 20 · 9:20 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -1500,11 +1500,12 @@ const DEVNAME=(()=>{const u=navigator.userAgent;return (/iPad|Tablet|SM-T|Tab/i.
 let CLK=(()=>{try{return JSON.parse(localStorage.getItem('fms_clk')||'null')||{off:0,at:0}}catch(e){return{off:0,at:0}}})();
 function clkLearn(srv,t0,t1){if(!(srv>0)||t1-t0>15000)return;const off=Math.round(srv-(t0+t1)/2);if(CLK.at&&Math.abs(off-CLK.off)<1500&&Date.now()-CLK.at<6e5)return;CLK={off,at:Date.now()};try{localStorage.setItem('fms_clk',JSON.stringify(CLK))}catch(e){}}
 const nowT=()=>Date.now()+(Math.abs(CLK.off)>4000?CLK.off:0);   // only correct a real difference (> 4 s)
-const api=(fn,...a)=>new Promise((res,rej)=>{const t0=Date.now();
+const api=(fn,...a)=>apiX(fn,a,false);
+const apiX=(fn,a,lite)=>new Promise((res,rej)=>{const t0=Date.now();
   if(window.google&&google.script&&google.script.run){google.script.run.withSuccessHandler(res).withFailureHandler(rej)[fn](...a);return}
   // GitHub Pages: call the Apps Script web app (URL in config.js)
   if(!window.API_URL||/PASTE/.test(window.API_URL)){rej(new Error('Setup needed: put your Apps Script /exec URL in config.js'));return}
-  fetch(window.API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({fn,args:a,dev:DEV,devName:DEVNAME})})
+  fetch(window.API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(lite?{fn,args:a,dev:DEV,devName:DEVNAME,lite:1}:{fn,args:a,dev:DEV,devName:DEVNAME})})
     .then(r=>r.json()).then(x=>{if(x&&x.now)clkLearn(x.now,t0,Date.now());if(x&&'err' in x)rej(new Error(x.err));else res(x?x.ok:null)})
     .catch(e=>rej(new Error('NetworkError: '+(e&&e.message||e))))});
 const errMsg=e=>String(e&&e.message||e||'');
@@ -3727,8 +3728,14 @@ function srCsv(){const L=SR.lines.filter(l=>(!SRF.ch||l.ch===SRF.ch)&&(!SRF.cust
 /* ---------- OWNER'S DASHBOARD (manager) ---------- */
 let OW=null,OWload=false,OWerr='',OWym='',OWtab='dash',OWold=false;
 let OWat=0;
-function owLoad(){if(OWload)return;OWload=true;OWerr='';api('api_owner',session.token,OWym).then(r=>{OW=r;OWym=r.ym;OWat=Date.now();OWold=false;try{localStorage.setItem('fms_ow_'+me.id,J({ym:r.ym,at:OWat,d:r}))}catch(e){}})
-  .catch(e=>{if(!OWold)OWerr=errMsg(e)}).finally(()=>{OWload=false;if(view==='owner')drawStock()})}
+/* ACCOUNTING (Stage A): the ready copy in Supabase shows at once (any device); Google still works it out fresh behind it.
+   Saves do not wait for the whole report (owSave) — the form closes as soon as it is saved, the totals refresh a moment later. */
+async function owSb(){const k=OWym||today().slice(0,7);try{const r=await sbCall('st_rep','owner:'+k);if(!r||!r.v||!OWload)return;
+  if(OW&&!OWold&&OW.ym===r.v.ym)return;if(OWold&&OW&&OW.ym===r.v.ym&&OWold>=r.at)return;
+  OW=r.v;OWym=r.v.ym;OWold=r.at;OWerr='';if(view==='owner'&&!document.querySelector('.modal.on'))drawStock()}catch(e){}}
+async function owSave(fn,...a){const r=await apiX(fn,a,true);if(r&&r.lite){OWold=OWold||Date.now();OWat=0;setTimeout(()=>{OWload=false;owLoad()},30);return OW}return r}
+function owLoad(){if(OWload)return;OWload=true;OWerr='';const q=owLoad.q=(owLoad.q||0)+1;if(me&&me.role==='manager'&&window.SB_URL)owSb();api('api_owner',session.token,OWym).then(r=>{if(q!==owLoad.q)return;OW=r;OWym=r.ym;OWat=Date.now();OWold=false;try{localStorage.setItem('fms_ow_'+me.id,J({ym:r.ym,at:OWat,d:r}))}catch(e){}})
+  .catch(e=>{if(q===owLoad.q&&!OWold)OWerr=errMsg(e)}).finally(()=>{if(q!==owLoad.q)return;OWload=false;if(view==='owner')drawStock()})}   // an older load finishing late never shows old numbers
 /* instant Accounting: show the last loaded numbers on this device at once, refresh from Google in the background (removed at logout) */
 function owCached(){try{const c=JSON.parse(localStorage.getItem('fms_ow_'+me.id)||'null');if(c&&c.d&&(!OWym||OWym===c.ym)){OW=c.d;OWym=c.ym;OWat=0;OWold=c.at;return true}}catch(e){}return false}
 const owAcc=id=>(OW.accounts.find(a=>a.id===id)||{}).name||'—';
@@ -3947,8 +3954,8 @@ function owForm(kind,id){const O=OW,box=stBox(),acc=O.accounts,accSel=(k,v,empty
   const v=i=>{const e=$('#'+i);return e?e.value:''};
   $('#of-ok').onclick=async()=>{const d={id,ym:OWym,account:{name:v('of-name'),type:v('of-type'),opening:v('of-open'),openDate:v('of-od'),link:v('of-link')},expense:{d:v('of-d'),cat:v('of-cat'),desc:v('of-desc'),amt:v('of-amt'),from:v('of-from'),pay:v('of-pay'),due:v('of-due'),payBy:v('of-by')},
       move:{d:v('of-d'),type:v('of-mt'),from:v('of-from'),to:v('of-to'),amt:v('of-amt'),note:v('of-note')},asset:{name:v('of-name'),cat:v('of-cat'),d:v('of-d'),cost:v('of-cost'),life:v('of-life'),salvage:v('of-salv'),disposed:v('of-disp'),note:v('of-note'),from:v('of-afrom'),supplier:v('of-sup'),sold:v('of-sold'),soldTo:v('of-soldto')}}[kind];
-    d.id=id;d.ym=OWym;$('#of-ok').disabled=true;try{OW=await api('api_ownerSave',session.token,kind,d,false);box.classList.remove('on');toast('Saved');drawStock()}catch(e){alert(errMsg(e));$('#of-ok').disabled=false}};
-  if($('#of-del'))$('#of-del').onclick=async()=>{if(!confirm('Delete this?'))return;try{OW=await api('api_ownerSave',session.token,kind,{id,ym:OWym},true);box.classList.remove('on');drawStock()}catch(e){alert(errMsg(e))}}}
+    d.id=id;d.ym=OWym;$('#of-ok').disabled=true;try{OW=await owSave('api_ownerSave',session.token,kind,d,false);box.classList.remove('on');toast('Saved');drawStock()}catch(e){alert(errMsg(e));$('#of-ok').disabled=false}};
+  if($('#of-del'))$('#of-del').onclick=async()=>{if(!confirm('Delete this?'))return;try{OW=await owSave('api_ownerSave',session.token,kind,{id,ym:OWym},true);box.classList.remove('on');drawStock()}catch(e){alert(errMsg(e))}}}
 /* ---------- ATTENDANCE (every staff) ---------- */
 let MA=null,MAload=false,MSL=null;
 function attLoad(){if(MAload||!session)return;MAload=true;Promise.all([api('api_myAtt',session.token),api('api_mySlips',session.token).catch(()=>[])]).then(([a,s])=>{MA=a;MSL=s}).catch(e=>{}).finally(()=>{MAload=false;renderAttBar();if(view==='att')drawStock()})}
@@ -4288,8 +4295,8 @@ function loanForm(kind,id){const O=OW,o=id?O.loans.find(x=>x.id===id):null,B=(o?
     <div class="row-end">${o?'<button class="btn" id="ln-del" style="margin-right:auto">🗑 Delete</button>':''}<button class="btn" data-x>Cancel</button><button class="go" id="ln-ok">Save</button></div>`;
   box.classList.add('on');
   $('#ln-ex').onchange=e=>{$('#ln-accw').hidden=e.target.value==='1'};
-  $('#ln-ok').onclick=async()=>{const b=$('#ln-ok');b.disabled=true;try{OW=await api('api_loanSave',session.token,{id:o?o.id:'',kind:B?'borrow':'lend',name:$('#ln-name').value,existing:$('#ln-ex').value==='1',amt:$('#ln-amt').value,d:$('#ln-d').value,due:$('#ln-due').value,monthly:$('#ln-mo').value,acc:$('#ln-acc').value,note:$('#ln-note').value,ym:OW.ym});box.classList.remove('on');toast('Saved');drawStock()}catch(er){b.disabled=false;alert(errMsg(er))}};
-  if(o)$('#ln-del').onclick=async()=>{if(!confirm('Delete '+o.name+'?'))return;try{OW=await api('api_loanSave',session.token,{id:o.id,ym:OW.ym},true);box.classList.remove('on');toast('Deleted');drawStock()}catch(er){alert(errMsg(er))}}}
+  $('#ln-ok').onclick=async()=>{const b=$('#ln-ok');b.disabled=true;try{OW=await owSave('api_loanSave',session.token,{id:o?o.id:'',kind:B?'borrow':'lend',name:$('#ln-name').value,existing:$('#ln-ex').value==='1',amt:$('#ln-amt').value,d:$('#ln-d').value,due:$('#ln-due').value,monthly:$('#ln-mo').value,acc:$('#ln-acc').value,note:$('#ln-note').value,ym:OW.ym});box.classList.remove('on');toast('Saved');drawStock()}catch(er){b.disabled=false;alert(errMsg(er))}};
+  if(o)$('#ln-del').onclick=async()=>{if(!confirm('Delete '+o.name+'?'))return;try{OW=await owSave('api_loanSave',session.token,{id:o.id,ym:OW.ym},true);box.classList.remove('on');toast('Deleted');drawStock()}catch(er){alert(errMsg(er))}}}
 function loanPay(id){const O=OW,o=O.loans.find(x=>x.id===id),B=o.kind==='borrow',box=stBox();
   $('#stb').innerHTML=`<h2>${B?'💸 Pay':'💰 Collect from'} ${esc(o.name)}</h2><div class="td-due"><span>Balance</span><b>${peso(o.balance)}</b></div>
     <div class="fgrid"><label>Principal ₱ <small>(lowers the balance)</small><input class="edit-in" id="lp-a" type="number" step="0.01" inputmode="decimal" value="${o.monthly&&o.monthly<=o.balance?o.monthly:''}"></label>
@@ -4300,7 +4307,7 @@ function loanPay(id){const O=OW,o=O.loans.find(x=>x.id===id),B=o.kind==='borrow'
     <div class="unit" id="lp-t"></div>
     <div class="row-end"><button class="btn" data-x>Cancel</button><button class="go" id="lp-ok">✓ Save</button></div>`;box.classList.add('on');
   const t=()=>{const a=+$('#lp-a').value||0,i=+$('#lp-i').value||0;$('#lp-t').innerHTML=a+i?`Total ${B?'paid':'received'}: <b>${peso(a+i)}</b> · new balance <b>${peso(Math.max(0,o.balance-a))}</b>`:''};$('#lp-a').oninput=t;$('#lp-i').oninput=t;t();
-  $('#lp-ok').onclick=async()=>{const b=$('#lp-ok');b.disabled=true;try{OW=await api('api_loanPay',session.token,o.id,{amt:$('#lp-a').value,int:$('#lp-i').value,d:$('#lp-d').value,acc:$('#lp-acc').value,note:$('#lp-n').value,ym:OW.ym});box.classList.remove('on');toast('✅ Saved');drawStock()}catch(er){b.disabled=false;alert(errMsg(er))}}}
+  $('#lp-ok').onclick=async()=>{const b=$('#lp-ok');b.disabled=true;try{OW=await owSave('api_loanPay',session.token,o.id,{amt:$('#lp-a').value,int:$('#lp-i').value,d:$('#lp-d').value,acc:$('#lp-acc').value,note:$('#lp-n').value,ym:OW.ym});box.classList.remove('on');toast('✅ Saved');drawStock()}catch(er){b.disabled=false;alert(errMsg(er))}}}
 const ZST={pending:'⏳ To decide',charge:'👤 Charged to cashier',absorb:'🏪 Business absorbed',income:'➕ Cash over (income)',found:'🔎 Mistake found — no loss'};
 function owShort(){const O=OW,Z=O.zs||[],pend=Z.filter(q=>q.os.st==='pending'),yr=today().slice(0,4),per={};
   Z.filter(q=>q.d.slice(0,4)===yr&&q.os.st!=='found').forEach(q=>{const k=q.closeBy||'—',c=per[k]=per[k]||{n:0,short:0,over:0,charged:0};c.n++;if(q.amt<0)c.short+=-q.amt;else c.over+=q.amt;if(q.os.st==='charge')c.charged+=-q.amt});
@@ -4328,7 +4335,7 @@ function zResolve(zno){const O=OW,q=O.zs.find(x=>x.z===zno),S=q.amt<0,box=stBox(
     <div class="row-end"><button class="btn" data-x>Cancel</button><button class="go" id="zr-save">Save</button></div>`;
     $('#stb').querySelectorAll('[data-zst]').forEach(b=>b.onclick=()=>{st=b.dataset.zst;draw()});
     $('#zr-save').onclick=async()=>{const sid=st==='charge'?$('#zr-s').value:'';if(st==='charge'&&!sid)return alert('Choose the staff to charge.');
-      try{OW=await api('api_zResolve',session.token,q.z,st,sid,$('#zr-note').value,OW.ym);box.classList.remove('on');toast('Saved');drawStock()}catch(e){alert(errMsg(e))}}};
+      try{OW=await owSave('api_zResolve',session.token,q.z,st,sid,$('#zr-note').value,OW.ym);box.classList.remove('on');toast('Saved');drawStock()}catch(e){alert(errMsg(e))}}};
   draw();box.classList.add('on')}
 function custDiscDialog(){const box=stBox();let L=(OW.custDisc||[]).map(x=>({...x}));if(!L.length)L.push({name:'',pct:''});
   const draw=()=>{$('#stb').innerHTML=`<h2>🏷 Customer discounts</h2><div class="unit">For <b>Charge</b> sales only. The receipt shows the full price; the receivable (amount to collect) is less by this %. Type the customer name exactly as on the order / account (e.g. KUI).</div>
@@ -4337,7 +4344,7 @@ function custDiscDialog(){const box=stBox();let L=(OW.custDisc||[]).map(x=>({...
     <div class="row-end"><button class="btn" data-x>Cancel</button><button class="go" id="cd-ok">Save</button></div>`;
     const S=$('#stb');S.querySelectorAll('[data-cdn]').forEach(e=>e.oninput=()=>{L[+e.dataset.cdn].name=e.value});S.querySelectorAll('[data-cdp]').forEach(e=>e.oninput=()=>{L[+e.dataset.cdp].pct=e.value});
     S.querySelectorAll('[data-cdx]').forEach(b=>b.onclick=()=>{L.splice(+b.dataset.cdx,1);draw()});$('#cd-add').onclick=()=>{L.push({name:'',pct:''});draw()};
-    $('#cd-ok').onclick=async()=>{try{OW=await api('api_custDiscSave',session.token,L,OW.ym);box.classList.remove('on');toast('Saved');drawStock()}catch(e){alert(errMsg(e))}}};
+    $('#cd-ok').onclick=async()=>{try{OW=await owSave('api_custDiscSave',session.token,L,OW.ym);box.classList.remove('on');toast('Saved');drawStock()}catch(e){alert(errMsg(e))}}};
   draw();box.classList.add('on')}
 /* ---------- 📤 PAYABLES: 🏭 Suppliers · 🧾 Unpaid bills · 🤝 Loans ---------- */
 let PAYsec='sup',SL=null,SLload=false,SLerr='',SLq='',SLopen=new Set(),SLall=false;
@@ -5712,7 +5719,7 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const igr=e.target
     if(d.lnadd){loanForm(d.lnadd,'');return}
     if(d.lnedit){loanForm('',d.lnedit);return}
     if(d.lnpay){loanPay(d.lnpay);return}
-    if(d.lnpdel){const[i,p]=d.lnpdel.split(':');if(!confirm('Delete this payment?'))return;try{OW=await api('api_loanPay',session.token,i,{ym:OW.ym},p);toast('Deleted');drawStock()}catch(er){alert(errMsg(er))}return}
+    if(d.lnpdel){const[i,p]=d.lnpdel.split(':');if(!confirm('Delete this payment?'))return;try{OW=await owSave('api_loanPay',session.token,i,{ym:OW.ym},p);toast('Deleted');drawStock()}catch(er){alert(errMsg(er))}return}
     if(d.pysub){PYsub=d.pysub;drawStock();return}
     if(d.pystaff){pyDialog('staff',d.pystaff);return}
     if('pyattadd' in d){pyDialog('att','');return}
@@ -5735,8 +5742,8 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const igr=e.target
     if(d.slopen!==undefined){SLopen.has(d.slopen)?SLopen.delete(d.slopen):SLopen.add(d.slopen);drawStock();return}
     if(d.owpay){const[k,i]=d.owpay.split(':'),a=OW.ap.find(x=>x.id===i&&x.kind===k);if(!a)return;
       supPayDialog({title:'Pay '+a.supplier,sub:a.no+(a.pig?` · pig ${peso(a.pig)} + expenses ${peso(a.exp)}`:''),bal:a.amount,accounts:OW.accounts,part:k!=='exp',method:a.terms==='transfer'?'transfer':'cash',payBy:a.payBy,onAssign:async w=>{await api('api_payAssign',session.token,k,a.id,w);OW=null;drawStock()},
-        onPay:async(amt,acc,ref,dd)=>{if(k==='exp')OW=await api('api_expPay',session.token,a.id,acc,dd,OW.ym);else{await api('api_payPO',session.token,a.id,ref,acc,amt,dd);OW=null}SL=null;drawStock()}});return}
-    if(d.owexpay){const e=OW.expenses.find(x=>x.id===d.owexpay);supPayDialog({title:'Pay bill · '+e.cat,sub:esc(e.desc||''),bal:e.amt,accounts:OW.accounts,part:false,payBy:e.from==='ask:cashier'?'cashier':'mgr',onAssign:async w=>{await api('api_payAssign',session.token,'exp',e.id,w);OW=null;drawStock()},onPay:async(amt,acc,ref,dd)=>{OW=await api('api_expPay',session.token,e.id,acc,dd,OW.ym);drawStock()}});return}
+        onPay:async(amt,acc,ref,dd)=>{if(k==='exp')OW=await owSave('api_expPay',session.token,a.id,acc,dd,OW.ym);else{await api('api_payPO',session.token,a.id,ref,acc,amt,dd);OW=null}SL=null;drawStock()}});return}
+    if(d.owexpay){const e=OW.expenses.find(x=>x.id===d.owexpay);supPayDialog({title:'Pay bill · '+e.cat,sub:esc(e.desc||''),bal:e.amt,accounts:OW.accounts,part:false,payBy:e.from==='ask:cashier'?'cashier':'mgr',onAssign:async w=>{await api('api_payAssign',session.token,'exp',e.id,w);OW=null;drawStock()},onPay:async(amt,acc,ref,dd)=>{OW=await owSave('api_expPay',session.token,e.id,acc,dd,OW.ym);drawStock()}});return}
     if('owcl' in d){deptGo('undel');return}
     if('owre' in d){OW=null;OWerr='';PA=null;PAerr='';LGD=null;SL=null;drawStock();return}
     if(d.owhist!==undefined){LG.acc=d.owhist;LGD=null;if(me.role==='manager')return deptGo('owner','hist');OWtab='hist';drawStock();return}
@@ -5744,7 +5751,7 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const igr=e.target
     if('lgre' in d){LGD=null;LGerr='';drawStock();return}if('lgcsv' in d){lgCsv();return}if('lgprint' in d){lgPrint();return}
     if(d.owadd){owForm(d.owadd,'');return}
     if(d.owedit){const[k,i]=d.owedit.split(':');owForm(k,i);return}
-    if(d.owdel){const[k,i]=d.owdel.split(':');if(!confirm('Delete this?'))return;await busy(async()=>{OW=await api('api_ownerSave',session.token,k,{id:i,ym:OWym},true);drawStock()});return}}
+    if(d.owdel){const[k,i]=d.owdel.split(':');if(!confirm('Delete this?'))return;await busy(async()=>{OW=await owSave('api_ownerSave',session.token,k,{id:i,ym:OWym},true);drawStock()});return}}
   if('sref' in d){await renderStock(view,true);return}
   if(d.sview){view=d.sview;render();return}
   if(d.icat!==undefined){invCat=d.icat;drawStock();return}
