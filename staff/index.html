@@ -1307,6 +1307,16 @@ select.chipsel:focus,.edit-in:focus{outline:2px solid #F5C518;outline-offset:0}
 body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item,.snav .sn-sub .sn-row.on>.sn-item{background:#FFF6D1!important;color:#8E1B22!important;box-shadow:inset 3px 0 0 #F5C518}
 body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-row.on>.sn-item .sn-lbl{color:#8E1B22!important;font-weight:800}
 .td-prt{display:flex;align-items:center;gap:10px;margin:12px 0 0;padding:10px 12px;border:1px solid #eadfcf;border-radius:12px;background:#fffaf2;font-weight:700;font-size:16px;cursor:pointer}.td-prt input{width:22px;height:22px}
+/* ✔ SUCCESSFUL — big green confirmation after every saved transaction (does not block taps; tap anywhere / 1.4 s to hide) */
+#okbig{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:200;pointer-events:none;opacity:0;transition:opacity .15s}
+#okbig.on{opacity:1}
+#okbig .okb-in{background:#fff;color:#15803D;border-radius:24px;padding:26px 38px 22px;text-align:center;box-shadow:0 18px 50px rgba(0,0,0,.3);max-width:min(520px,90vw);transform:scale(.9);transition:transform .15s}
+#okbig.on .okb-in{transform:scale(1)}
+#okbig .okb-ic svg{width:110px;height:110px;display:block;margin:0 auto}
+#okbig .okb-ic circle{fill:#16A34A}
+#okbig .okb-ic path{fill:none;stroke:#fff;stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+#okbig .okb-t{font-size:clamp(30px,6vw,44px);font-weight:900;letter-spacing:.05em;margin-top:12px;color:#15803D}
+#okbig .okb-m{font-size:15px;margin-top:4px;color:#475569}
 </style>
 </head>
 <body>
@@ -1333,7 +1343,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 20 · 9:20 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 20 · 10:10 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -1419,6 +1429,7 @@ DATE: USE-     Oct. 18-19
   <p class="unit">The <b>Report</b> tab in your Google Sheet is updated. Open it, then use File → Download → Microsoft Excel if you need an Excel file.</p>
   <div class="row-end"><button class="btn" data-x>Close</button><a class="big" id="rep-a" target="_blank" rel="noopener" style="text-decoration:none">Open report</a></div></div></div>
 <div class="toast" id="toast"><span id="tmsg"></span><button id="tundo">Undo</button></div>
+<div id="okbig" aria-live="polite"><div class="okb-in"><div class="okb-ic"><svg viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="24"/><path d="M14 27l8 8 16-17"/></svg></div><div class="okb-t">SUCCESSFUL</div><div class="okb-m" id="okbm"></div></div></div>
 <div id="print"></div>
 
 <script>
@@ -3046,7 +3057,13 @@ function dashHTML(orders){
      <div class="legend"><span><i style="background:var(--green)"></i>On time</span><span><i style="background:#e0a100"></i>Late</span><span><i style="background:var(--rose)"></i>Very late / days late</span></div></div></details>`;
 }
 /* ---------- toast ---------- */
-function toast(msg,withUndo){const t=$('#toast');$('#tmsg').textContent=msg;$('#tundo').style.display=withUndo?'':'none';t.classList.add('on');clearTimeout(t.h);t.h=setTimeout(()=>t.classList.remove('on'),5000)}
+// which messages mean "a transaction was saved" → the big green ✔ SUCCESSFUL
+const OKRX=/saved|dispatched|delivered|confirmed|sent to|^✅|^✓|received|approved|voided|undone|converted|deleted|\bpaid\b|released|recorded|sent to the manager|sent back|cancelled|marked|changed|started|corrected|remitted|carried over|cash (in|out)|drawer open|submitted|added|removed|restored|premium|redeem|checked/i,
+  NOTOKRX=/^(⚠|⏱ You|📵|Photo not|Type |This order changed|Updating|Welcome|🔒 Carry|⚖|🖨 Getting|🔁 Switched)|not saved|failed|error/i;
+function okBig(msg){const o=$('#okbig');if(!o||view==='pos')return;   // POS has its own receipt screen → no big confirmation there
+  $('#okbm').textContent=String(msg||'').replace(/\s*⚡$/,'');o.classList.add('on');clearTimeout(o.h);o.h=setTimeout(()=>o.classList.remove('on'),1400)}
+document.addEventListener('pointerdown',()=>{const o=document.getElementById('okbig');if(o&&o.classList.contains('on')){clearTimeout(o.h);o.classList.remove('on')}},true);
+function toast(msg,withUndo){if(OKRX.test(msg)&&!NOTOKRX.test(msg))okBig(msg);const t=$('#toast');$('#tmsg').textContent=msg;$('#tundo').style.display=withUndo?'':'none';t.classList.add('on');clearTimeout(t.h);t.h=setTimeout(()=>t.classList.remove('on'),5000)}
 $('#tundo').onclick=()=>{if(!undo)return;db=JSON.parse(undo);undo=null;save();render();$('#toast').classList.remove('on')};
 const undoOK=()=>me&&me.role!=='rider';
 document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m||e.target.closest('[data-x]'))m.classList.remove('on')}));
@@ -3373,6 +3390,7 @@ var STKEY='dp_stock_'+MODE, POSQ='dp_posq';
 let posMem=null, posMemUse=0, posCharges=[], posNote='';
 const chgTotal=()=>r2(posCharges.reduce((a,c)=>a+(+c.amt||0),0));
 let ST=null, cart=[], posCat='', posQ='', posPrice='retail', posCust='', posPay='cash', posDisc='', posCash='', posRef='';
+let recvUp=null;   // the receiving photo starts uploading the moment it is taken → Save does not wait for it
 let posOrder=null, invQ='', invCat='', poEdit=null, recvId=null, recvPhoto='', prodF=null, posSending=false;
 const pBy=c=>ST&&ST.products.find(p=>p.code===c);
 const isLow=p=>p.reorder>0?p.avail<=p.reorder:p.avail<=0;
@@ -3415,6 +3433,12 @@ async function loadStock(force){
 // SPEED: show the last data at once and refresh behind it (the screen updates a moment later); forced loads (after a save) still wait
 const stIdle=()=>!cart.length&&!poEdit&&!recvId&&!document.querySelector('.modal.on')&&!(document.activeElement&&document.activeElement.closest&&document.activeElement.closest('#list')&&/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName));
 let stBg=false;
+/* after a save (receiving, production…): show it at once — the P.O. from the answer replaces the old one, the stock comes from Supabase
+   in < 1 s — and the full refresh from Google runs behind (no second wait) */
+function stAfter(po){if(ST&&po&&ST.pos){po=JSON.parse(J(po));if(me.role!=='manager')(po.items||[]).forEach(i=>delete i.cost);const k=ST.pos.findIndex(p=>p.id===po.id);if(k>=0){if(ST.pos[k].payInfo&&!po.payInfo)po.payInfo=ST.pos[k].payInfo;ST.pos[k]=po}else ST.pos.unshift(po)}
+  if(ST){ST.stale=true;stCache()}drawStock();const v=view;
+  sbStockFast().then(ok=>{if(ok&&view===v&&me&&stIdle())drawStock()});
+  loadStock(true).then(()=>{if(view===v&&me&&stIdle())drawStock()}).catch(()=>{if(ST){ST.stale=false;if(view===v&&me&&stIdle())drawStock()}})}
 async function renderStock(v,force){
   if(!ST&&me){try{const c=JSON.parse(localStorage.getItem(STKEY)||'null');if(c&&c.products&&c.uid===me.id){ST=c;ST.stale=true;ST.offline=false}}catch(e){}}
   if(v==='pos'&&ST&&!force&&(!ST.sbPosT||Date.now()-ST.sbPosT>8000)){ST.sbPosT=Date.now();sbPosFast().then(ok=>{if(ok&&view===v&&me&&stIdle())drawStock()})}   // POS: newest copy from Supabase (< 1 s)
@@ -3733,7 +3757,14 @@ let OWat=0;
 async function owSb(){const k=OWym||today().slice(0,7);try{const r=await sbCall('st_rep','owner:'+k);if(!r||!r.v||!OWload)return;
   if(OW&&!OWold&&OW.ym===r.v.ym)return;if(OWold&&OW&&OW.ym===r.v.ym&&OWold>=r.at)return;
   OW=r.v;OWym=r.v.ym;OWold=r.at;OWerr='';if(view==='owner'&&!document.querySelector('.modal.on'))drawStock()}catch(e){}}
-async function owSave(fn,...a){const r=await apiX(fn,a,true);if(r&&r.lite){OWold=OWold||Date.now();OWat=0;setTimeout(()=>{OWload=false;owLoad()},30);return OW}return r}
+// the saved entry shows in the list at once (the totals follow when the fresh numbers arrive)
+function owPatch(kind,d,del){if(!OW||!d)return;const L={expense:'expenses',move:'moves',asset:'assets',account:'accounts'}[kind];if(!L||!Array.isArray(OW[L]))return;
+  const i=d.id?OW[L].findIndex(x=>x.id===d.id):-1;if(del){if(i>=0)OW[L].splice(i,1);return}
+  let e=null;
+  if(kind==='expense'){const ch=d.pay==='charge';e={d:d.d||today(),cat:d.cat||'',desc:d.desc||'',amt:+d.amt||0,from:ch?(d.payBy==='cashier'?'ask:cashier':''):(d.from||''),by:me.name,charge:ch?(d.due||d.d||today()):'',paidOn:''}}
+  else if(kind==='move')e={d:d.d||today(),type:d.type||'',from:d.from||'',to:d.to||'',amt:+d.amt||0,note:d.note||'',by:me.name};
+  if(!e)return;if(i>=0)OW[L][i]=Object.assign({},OW[L][i],e);else if(String(e.d).slice(0,7)===OW.ym)OW[L].unshift(Object.assign({id:'new'+Date.now()},e))}
+async function owSave(fn,...a){const r=await apiX(fn,a,true);if(r&&r.lite){if(fn==='api_ownerSave')owPatch(a[1],a[2],a[3]);OWold=OWold||Date.now();OWat=0;setTimeout(()=>{OWload=false;owLoad()},30);return OW}return r}
 function owLoad(){if(OWload)return;OWload=true;OWerr='';const q=owLoad.q=(owLoad.q||0)+1;if(me&&me.role==='manager'&&window.SB_URL)owSb();api('api_owner',session.token,OWym).then(r=>{if(q!==owLoad.q)return;OW=r;OWym=r.ym;OWat=Date.now();OWold=false;try{localStorage.setItem('fms_ow_'+me.id,J({ym:r.ym,at:OWat,d:r}))}catch(e){}})
   .catch(e=>{if(q===owLoad.q&&!OWold)OWerr=errMsg(e)}).finally(()=>{if(q!==owLoad.q)return;OWload=false;if(view==='owner')drawStock()})}   // an older load finishing late never shows old numbers
 /* instant Accounting: show the last loaded numbers on this device at once, refresh from Google in the background (removed at logout) */
@@ -3760,7 +3791,7 @@ function ownerHTML(){
     ${me.role==='manager'?'':`<div class="chips2 owtabs">${tabs.map(([k,t])=>`<button class="${OWtab===k?'on':''}" data-owtab="${k}">${t}</button>`).join('')}</div>`}`;
   if(OWerr)return head+`<div class="empty">⚠ ${esc(OWerr)}<br><br><button class="btn" data-owre>↻ Try again</button></div>`;
   if(!OW)return head+'<div class="empty">Loading…</div>';
-  return head+(OWold?`<div class="snote owold">↻ <b>Updating…</b> showing the numbers from ${stamp(OWold)} until the fresh ones arrive</div>`:'')+({dash:owDash,acc:owAccounts,hist:owHist,exp:owExpenses,col:()=>{const p=(OW.zs||[]).some(q=>q.os.st==='pending');return (p?owShort()+owCollect():owCollect()+owShort())+owLoans('lend')},pay:owPayables,loan:()=>{PAYsec='loan';OWtab='pay';return owPayables()},avg:owAvg,fa:owAssets,rep:owReports}[OWtab])()}
+  return head+(OWold?`<div class="unit owold" style="margin:-2px 0 8px;opacity:.75">↻ updating the totals… <small>(numbers from ${stamp(OWold)})</small></div>`:'')+({dash:owDash,acc:owAccounts,hist:owHist,exp:owExpenses,col:()=>{const p=(OW.zs||[]).some(q=>q.os.st==='pending');return (p?owShort()+owCollect():owCollect()+owShort())+owLoans('lend')},pay:owPayables,loan:()=>{PAYsec='loan';OWtab='pay';return owPayables()},avg:owAvg,fa:owAssets,rep:owReports}[OWtab])()}
 function owDash(){const zp=(OW.zs||[]).filter(q=>q.os.st==='pending');return (zp.length?`<button class="snote" style="cursor:pointer;width:100%;text-align:left;font:inherit;color:inherit" data-owtab="col">⚠ <b>${zp.length}</b> cash short / over from the Z reading to decide (${zp.map(q=>(q.amt<0?'short ':'over ')+peso(Math.abs(q.amt))).join(', ')}) — tap to open <b>📥 Collect & pay</b>.</button>`:'')+owDash0()}
 function owDash0(){const O=OW,P=O.pl,B=O.bs,arOver=O.ar.filter(a=>a.days>30),apDue=O.ap.filter(a=>a.due&&a.due<=iso(new Date(Date.now()+7*864e5)));
   const k=(t,v,s,c)=>`<div class="owk ${c||''}"><span>${t}</span><b>${v}</b>${s?`<small>${s}</small>`:''}</div>`;
@@ -5811,16 +5842,16 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const igr=e.target
     if((rcC.exp.others||[]).some(x=>+x.amt&&!String(x.desc).trim()))return alert('Other fees: type what each fee is for.');
     {const pc=((ST.pos||[]).find(p=>p.id===rcC.id)||{}).carcass,Y=ccSplit(pc,rcC);if(yRate(Y.lossPct).k==='bad'&&!String(rcC.lossWhy||'').trim()){alert('Lost weight is '+Y.lossPct+'% (standard 17%). Type the reason for the bad yield.');const w=$('#rc-why');if(w)w.focus();return}}
     {const S=ckRows(((ST.pos||[]).find(p=>p.id===rcC.id)||{}).carcass);if(Math.abs(S.diff)>1)return alert('The cost of the cuts ('+peso(S.tot)+') must equal the total cost ('+peso(S.total)+').\nAdjust the prices or tap ⚖ Balance the difference.');}
-    await busy(async()=>{let ph='';if(recvPhoto){ph='D'+await api('api_uploadPhoto',session.token,recvPhoto,'receiving-'+Date.now());await putPhoto(ph,recvPhoto)}
+    await busy(async()=>{let ph='';if(recvPhoto){ph=recvUp&&recvUp.x===recvPhoto?await recvUp.p:'';if(!ph)ph='D'+await api('api_uploadPhoto',session.token,recvPhoto,'receiving-'+Date.now());await putPhoto(ph,recvPhoto)}recvUp=null;
       const r=await api('api_receive',session.token,d.rcsave,{lw:rcC.lw,exp:rcC.exp,lossWhy:rcC.lossWhy||'',cuts:cuts.map(k=>({code:k.code,kg:k.kg,u:k.u||'Kg',costKg:(ckRows(((ST.pos||[]).find(p=>p.id===rcC.id)||{}).carcass).rows.find(r=>r.i===rcC.cuts.indexOf(k))||{}).ck}))},$('#rc-note').value,ph,rxOut());recvId=null;recvPhoto='';rcC=null;
-      toast(r.waiting?'⏳ Saved — liveweight / expenses differ from the P.O., the manager will approve':'✅ Received — cuts added to stock. 🏷 Label every cut before storing.');await renderStock('recv',true)});return}
+      toast(r.waiting?'⏳ Saved — liveweight / expenses differ from the P.O., the manager will approve':'✅ Received — cuts added to stock. 🏷 Label every cut before storing.');stAfter(r&&r.po)});return}
   if(d.rcsave){const po=(ST.pos||[]).find(p=>p.id===d.rcsave);if(!po)return;
     const lines=po.items.map((i,ix)=>{const v=rvF.L[rvK(po,i)]||{};return {ix,code:i.code,rcpt:rvF.nf?String(v.r??'').trim():String(i.qty),qty:String(v.q??'').trim(),pcs:i.ounit?String(v.p??'').trim():undefined,kg:pcU(i)?String(v.k??'').trim():undefined,pcn:!i.ounit&&!pcU(i)&&v.u==='pc'?String(v.p??'').trim():undefined,name:i.name,pc:!!i.ounit,pk:pcU(i)}});
     const miss=lines.find(l=>l.qty===''||(l.pc&&l.pcs==='')||l.rcpt===''||(l.pk&&+l.qty>0&&l.kg==='')||(l.pcn!==undefined&&+l.qty>0&&l.pcn===''));if(miss){alert(miss.rcpt===''?'Type the supplier receipt qty of '+miss.name+'.':'Type the actual '+(miss.pc||miss.pk?'pcs and kg':'qty')+' of '+miss.name+' (0 if nothing came).');return}
     if(rvF.nf&&!rvF.why.trim()){alert('P.O. not followed: type the reason.');const w=$('#rf-why');if(w)w.focus();return}
-    await busy(async()=>{let ph='';if(recvPhoto){ph='D'+await api('api_uploadPhoto',session.token,recvPhoto,'receiving-'+Date.now());await putPhoto(ph,recvPhoto)}
+    await busy(async()=>{let ph='';if(recvPhoto){ph=recvUp&&recvUp.x===recvPhoto?await recvUp.p:'';if(!ph)ph='D'+await api('api_uploadPhoto',session.token,recvPhoto,'receiving-'+Date.now());await putPhoto(ph,recvPhoto)}recvUp=null;
       const r=await api('api_receive',session.token,d.rcsave,lines.map(l=>({ix:l.ix,code:l.code,rcpt:l.rcpt,qty:l.qty,pcs:l.pcs,kg:l.kg,pcn:l.pcn})),$('#rc-note').value,ph,Object.assign(rxOut(),{notFollowed:rvF.nf,nfWhy:rvF.why,rcptNo:rvF.no}));recvId=null;recvPhoto='';rxS={};rvF={};
-      toast(r.waiting?'⏳ Saved — actual qty is different from the supplier receipt, the manager will approve':'✅ Received — stock updated. 🏷 Label every item (product · kg · date · GRN) before storing.');await renderStock('recv',true)});return}
+      toast(r.waiting?'⏳ Saved — actual qty is different from the supplier receipt, the manager will approve':'✅ Received — stock updated. 🏷 Label every item (product · kg · date · GRN) before storing.');stAfter(r&&r.po)});return}
   // production
   if(d.pradd){prodF[d.pradd].push(d.pradd==='made'?{code:'',qty:'',kg:''}:{code:'',qty:''});drawStock();return}
   if(d.prset){prodSetDialog(d.prset);return}
@@ -5833,7 +5864,7 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const igr=e.target
     if(!made.length)return alert('Add the finished product made and its qty.');
     const over=used.filter(l=>{const p=pBy(l.code);return p&&+l.qty>p.avail});
     if(over.length&&!confirm('Stock in the system is lower than what you used for: '+over.map(l=>pBy(l.code).name).join(', ')+'. Save anyway?'))return;
-    await busy(async()=>{const bt=await api('api_production',session.token,{kind:prodF.kind,used,made,note:prodF.note,extra:prodF.extra});prodF=null;toast((bt.kind==='conv'?'🔁 Conversion ':'🏭 Batch ')+bt.no+' saved — stock & cost updated');await renderStock('prod',true)});return}
+    await busy(async()=>{const bt=await api('api_production',session.token,{kind:prodF.kind,used,made,note:prodF.note,extra:prodF.extra});prodF=null;toast((bt.kind==='conv'?'🔁 Conversion ':'🏭 Batch ')+bt.no+' saved — stock & cost updated');stAfter()});return}
   // POS
   if(d.pcat!==undefined){posCat=d.pcat;drawStock();return}
   if(d.padd2){addToCart(d.padd2);return}
@@ -5930,7 +5961,7 @@ function stockChange(e){if(!STOCKV.includes(view))return;const t=e.target,d=t.da
   if(t.id==='pc-cust'){posCust=t.value;drawStock();return}
   if(t.id==='pc-pay'){posPay=t.value;drawStock();return}
   if(t.id==='pc-price'){posPrice=t.value;cart.forEach(l=>{const p=pBy(l.code);if(p)l.price=priceOf(p)});drawStock();return}
-  if(t.id==='rc-ph'&&t.files[0]){stampPhoto(t.files[0],['RECEIVED · '+((ST.pos||[]).find(p=>p.id===recvId)||{}).no,fullStamp(Date.now())+' · by '+me.name]).then(x=>{recvPhoto=x;const pv=$('#rc-prev');if(pv)pv.innerHTML=`<img src="${x}" style="max-width:160px;border-radius:8px;margin-top:6px">`}).catch(()=>toast('Could not read the photo'));return}
+  if(t.id==='rc-ph'&&t.files[0]){stampPhoto(t.files[0],['RECEIVED · '+((ST.pos||[]).find(p=>p.id===recvId)||{}).no,fullStamp(Date.now())+' · by '+me.name]).then(x=>{recvPhoto=x;recvUp={x,p:api('api_uploadPhoto',session.token,x,'receiving-'+Date.now()).then(id=>'D'+id).catch(()=>'')};const pv=$('#rc-prev');if(pv)pv.innerHTML=`<img src="${x}" style="max-width:160px;border-radius:8px;margin-top:6px">`}).catch(()=>toast('Could not read the photo'));return}
 }
 
 /* ---------- users (manager) ---------- */
