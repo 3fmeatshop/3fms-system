@@ -1333,7 +1333,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 20 · 8:15 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 20 · 8:25 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -2112,7 +2112,7 @@ function myPassword(){const box=stBox();$('#stb').innerHTML=`<h2>${ROLES[me.role
 // real network problems vs. errors from the Apps Script server (old Code.gs, not deployed, a sheet problem…)
 function isNet(m){return /NOSERVER|NetworkError|HTTP 0|Failed to fetch|network|connection|timed? ?out|offline/i.test(m)}
 function serverErr(m){return '⚠ Server error: <b>'+esc(String(m).replace(/^(Script)?Error:\s*/,''))+'</b><br><small>The internet is OK. Check that <b>Code.gs</b> is the newest one and a <b>New version</b> was deployed. If it stays, send a screenshot.</small>'}
-function logout(msg){fbClose();document.body.classList.remove('sidenav');SBP=null;if(session)api('api_logout',session.token).catch(()=>{});
+function logout(msg){fbClose();document.body.classList.remove('sidenav');sbpSet(null);if(session)api('api_logout',session.token).catch(()=>{});
   session=null;me=null;MA=null;MSL=null;localStorage.removeItem(SESS);clearTimeout(pollTimer);clearTimeout(flushTimer);
   db={orders:[]};base={};ver=0;proc=null;summary=null;hist={};
   try{Object.keys(localStorage).filter(k=>/^fms_ow_/.test(k)).forEach(k=>localStorage.removeItem(k))}catch(e){}
@@ -2135,6 +2135,7 @@ function start(fresh){
   session.user.role=normRole(session.user.role);me=session.user; view=me.role==='rider'?'way':me.role==='cashier'?'pos':me.role==='sales'?'online':(me.role==='ops'||me.role==='manager')?'ohome':'prep'; openId=null;roleHint=null;
   if(me.role==='ops')setTimeout(()=>loadStock().then(()=>{if(!STOCKV.includes(view))render()}).catch(()=>{}),800);
   if(me.role==='manager'||me.role==='owner')setTimeout(()=>{if(me&&session&&!OW&&!OWload)owLoad()},2500);   // Accounting loads quietly after login → ready when opened
+  if(me.role!=='rider')setTimeout(()=>{if(me&&session)sbPass()},300);   // get the Supabase pass now → the first save is instant
   if(fresh){db={orders:[]};base={};ver=0}
   else{try{const h=JSON.parse(sessionStorage.getItem('fms_here')||'null');if(h&&h.u===me.id&&h.v){view=h.v;if(h.o)OWtab=h.o;if(h.h&&typeof HRsub!=='undefined')HRsub=h.h}}catch(e){}try{const c=JSON.parse(localStorage.getItem(CACHE)||'null');if(c&&c.u===me.id){db={orders:c.orders||[]};base=c.base||{};ver=0}}catch(e){}}
   renderLogin(); setSync('load'); render(); poll(); flush();
@@ -3371,12 +3372,14 @@ function posQueue(){try{return JSON.parse(localStorage.getItem('dp_posq')||'[]')
 const setPosQueue=q=>{try{localStorage.setItem(POSQ,J(q))}catch(e){}};
 function stCache(){try{if(ST&&me)ST.uid=me.id;localStorage.setItem(STKEY,J(ST))}catch(e){}}
 // ⚡ PHASE 2a: live stock straight from Supabase (fast); the full Apps Script load still runs behind it and fills in the rest
-let SBP=null,sbpWait=null;
+/* the Supabase pass is kept for this tab (survives a refresh) → the first fast save after a refresh does not wait for Google */
+let SBP=(()=>{try{return JSON.parse(sessionStorage.getItem('dp_sbp')||'null')}catch(e){return null}})(),sbpWait=null;
+function sbpSet(v){SBP=v;try{v?sessionStorage.setItem('dp_sbp',JSON.stringify(v)):sessionStorage.removeItem('dp_sbp')}catch(e){}}
 async function sbPass(){if(!window.SB_URL||!window.SB_KEY||!session)return null;if(SBP&&SBP.uid===(me&&me.id)&&SBP.exp>Date.now())return SBP;
-  if(!sbpWait)sbpWait=api('api_sbPass',session.token).then(r=>{SBP=r?Object.assign(r,{uid:me&&me.id}):null;return SBP}).catch(()=>null).finally(()=>{sbpWait=null});return sbpWait}
+  if(!sbpWait)sbpWait=api('api_sbPass',session.token).then(r=>{sbpSet(r?Object.assign(r,{uid:me&&me.id}):null);return SBP}).catch(()=>null).finally(()=>{sbpWait=null});return sbpWait}
 async function sbCall(fn,...a){const p=await sbPass();if(!p)throw new Error('off');
   const r=await fetch(window.SB_URL.replace(/\/$/,'')+'/rest/v1/rpc/'+fn,{method:'POST',headers:Object.assign({'Content-Type':'application/json',apikey:window.SB_KEY},/^eyJ/.test(window.SB_KEY)?{Authorization:'Bearer '+window.SB_KEY}:{}),body:JSON.stringify({a:[p.pass,...a]})});
-  const x=await r.json();if(!r.ok){if(/AUTH/.test(x&&x.message||''))SBP=null;throw new Error(x&&x.message||'Supabase error')}return x}
+  const x=await r.json();if(!r.ok){if(/AUTH/.test(x&&x.message||''))sbpSet(null);throw new Error(x&&x.message||'Supabase error')}return x}
 /* POS (Stage B): payments, payment voids, cash in / out and undo save in Supabase first (< 1 s); the Sheet copies them in the background.
    Any problem (no signal to Supabase, needs a Manager PIN, pays a P.O. / bill) → the staff system does it instead, with the same op id (never twice). */
 const opId=()=>'op'+Date.now().toString(36)+Math.random().toString(36).slice(2,8);
