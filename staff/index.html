@@ -1332,7 +1332,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 18 · 2:00 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 20 · 9:30 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -2178,6 +2178,7 @@ async function invMatchDialog(){const box=stBox();const draw=M=>{const ok=!M.nBa
     <div class="unit" style="margin-top:6px">${M.master==='sb'?'Supabase is the master: "Copy again" copies its stock into the Sheet.':'The Sheet is the master, so sales and stock are right. "Copy again" sends all products to Supabase again.'}</div>`}
     <div class="pinrow" style="margin-top:12px"><b>🔁 Stock master</b><div class="unit" style="margin-top:4px">${M.master==='sb'?`<b>Supabase</b> is the master${M.since?' since '+stamp(M.since)+(M.by?' ('+esc(M.by)+')':''):''}. Every stock change goes to Supabase first; the Sheet copies it.`:`<b>Google Sheet</b> is the master. Supabase is a live copy.`}</div>
       <div style="margin-top:8px">${M.master==='sb'?'<button class="btn sm" id="im-back">↩ Back to the Sheet as master</button>':(ok?'<button class="go sm" id="im-sb">🔁 Make Supabase the master</button>':'<span class="unit">Fix the differences first.</span>')}</div></div>
+    ${M.pos?`<div class="pinrow" style="margin-top:10px"><b>🧾 POS records copy</b><div class="unit" style="margin-top:4px">${M.pos.ok?`✅ <b>100% match</b> — ${M.pos.sheet.n} receipts · ${peso(M.pos.sheet.total)} · unpaid ${peso(M.pos.sheet.bal)}${M.pos.cleanSince?' · clean since '+stamp(M.pos.cleanSince):''}`:`⚠ Not equal yet (Sheet ${M.pos.sheet.n} receipts / Supabase ${M.pos.sb.n}) — it re-sends everything by itself; check again in a few minutes.`} · checked ${stamp(M.pos.at)}</div></div>`:''}
     ${M.master==='sb'?`<div class="pinrow" style="margin-top:10px"><b>⚡ Fast POS</b><div class="unit" style="margin-top:4px">${M.posSb?'<b>ON</b> — the POS gets its SI# and takes the stock in Supabase in under a second. The Sheet records the full sale a few seconds later.':'OFF — the POS waits for Google (2–5 seconds) for the SI#.'}</div>
       <div style="margin-top:8px">${M.posSb?'<button class="btn sm" id="im-poff">Turn Fast POS off</button>':'<button class="go sm" id="im-pon">⚡ Turn Fast POS on</button>'}</div></div>`:''}
     <div class="row-end"><button class="btn" id="im-now">↻ Check now</button>${ok?'':'<button class="go" id="im-fix">Copy again</button>'}<button class="btn" data-x>Close</button></div>`;
@@ -3375,12 +3376,17 @@ async function sbPass(){if(!window.SB_URL||!window.SB_KEY||!session)return null;
 async function sbCall(fn,...a){const p=await sbPass();if(!p)throw new Error('off');
   const r=await fetch(window.SB_URL.replace(/\/$/,'')+'/rest/v1/rpc/'+fn,{method:'POST',headers:Object.assign({'Content-Type':'application/json',apikey:window.SB_KEY},/^eyJ/.test(window.SB_KEY)?{Authorization:'Bearer '+window.SB_KEY}:{}),body:JSON.stringify({a:[p.pass,...a]})});
   const x=await r.json();if(!r.ok){if(/AUTH/.test(x&&x.message||''))SBP=null;throw new Error(x&&x.message||'Supabase error')}return x}
+/* POS (Stage A): the POS screen comes from Supabase in < 1 s; Google still refreshes it a moment later */
+async function sbPosFast(){if(!me||!/^(manager|cashier)$/.test(me.role))return false;
+  try{const r=await sbCall('st_pos_state');if(!ST||!r||!r.snapAt||r.snapAt<(ST.gAt||0))return false;   /* never replace newer data from Google (gAt = when Google made it) */
+    ['shift','toCash','toReturn','toPay','payoutMax','rcpt','mem','bulk','cashOutCats','sales','unpaid'].forEach(k=>{if(r[k]!==undefined)ST[k]=r[k]});
+    ST.sbPosAt=r.snapAt;ST.stale=false;stCache();return true}catch(e){return false}}
 async function sbStockFast(){if(!me||me.role==='rider')return false;try{const t0=Date.now(),r=await sbCall('st_stock');if(!ST||!r||!r.products)return false;
   const by={};r.products.forEach(p=>by[p.code]=p);ST.products=ST.products.map(p=>by[p.code]?Object.assign({},p,by[p.code]):p);
   r.products.forEach(p=>{if(!ST.products.some(x=>x.code===p.code))ST.products.push(p)});ST.live=Date.now()-t0;return true}catch(e){return false}}
 async function loadStock(force){
   if(!force&&ST&&!ST.offline&&!ST.stale&&Date.now()-(ST.rt||ST.at)<45000)return ST;
-  try{ST=await api('api_stock',session.token);ST.offline=false;ST.stale=false;ST.rt=Date.now();stCache()}
+  try{ST=await api('api_stock',session.token);ST.gAt=ST.at;ST.offline=false;ST.stale=false;ST.rt=Date.now();stCache()}
   catch(e){if(/AUTH/.test(errMsg(e)))throw e;if(!ST){try{const c=JSON.parse(localStorage.getItem(STKEY)||'null');if(c&&(!c.uid||!me||c.uid===me.id))ST=c}catch(_){}}if(!ST)throw e;ST.offline=true;ST.stale=false}
   return ST}
 // SPEED: show the last data at once and refresh behind it (the screen updates a moment later); forced loads (after a save) still wait
@@ -3388,6 +3394,7 @@ const stIdle=()=>!cart.length&&!poEdit&&!recvId&&!document.querySelector('.modal
 let stBg=false;
 async function renderStock(v,force){
   if(!ST&&me){try{const c=JSON.parse(localStorage.getItem(STKEY)||'null');if(c&&c.products&&c.uid===me.id){ST=c;ST.stale=true;ST.offline=false}}catch(e){}}
+  if(v==='pos'&&ST&&!force&&(!ST.sbPosT||Date.now()-ST.sbPosT>8000)){ST.sbPosT=Date.now();sbPosFast().then(ok=>{if(ok&&view===v&&me&&stIdle())drawStock()})}   // POS: newest copy from Supabase (< 1 s)
   if(ST&&!force&&!ST.offline&&(ST.stale||Date.now()-(ST.rt||ST.at)>=45000)){
     ST.stale=true;if(view===v&&me)drawStock();
     sbStockFast().then(ok=>{if(ok&&view===v&&me&&stIdle())drawStock()});
@@ -5423,7 +5430,7 @@ function findReceipt(q){const box=stBox();
     <div style="display:flex;gap:8px;margin:8px 0"><input class="edit-in" id="fr-q" placeholder="SI#" value="${esc(q||'')}" style="flex:1;font-size:18px"><button class="go" id="fr-go">Search</button></div><div id="fr-out"></div>
     <div class="row-end"><button class="btn" data-x>Close</button></div>`;box.classList.add('on');
   const go=async()=>{const v=$('#fr-q').value.trim();if(!v)return;const o=$('#fr-out');o.innerHTML='<div class="unit">Searching…</div>';
-    try{const r=await api('api_saleFind',session.token,v);
+    try{let r=null;try{r=await sbCall('st_receipt',v)}catch(_){}if(!r||!r.no)r=await api('api_saleFind',session.token,v);
       o.innerHTML=`${r.status==='void'?`<div class="snote" style="color:var(--rose)"><b>❌ VOIDED</b>${r.voidBy?' by '+esc(r.voidBy):''}${r.voidWhy?' — '+esc(r.voidWhy):''}</div>`:''}${r.balance>0?`<div class="snote">Unpaid balance: <b>${peso(r.balance)}</b></div>`:''}${receiptHTML(r)}
         ${(r.payments||[]).length?`<h4 style="margin:12px 0 4px">💳 Payments recorded</h4>${r.payments.map(p=>`<div class="posx-row${p.void?' cm-void':''}"><span>${stamp(p.at)} · ${esc(p.method||'Cash')}${p.ref?' · ref '+esc(p.ref):''} <small class="unit">by ${esc(p.by||'')}${p.void?` · ❌ VOIDED by ${esc(p.void.by)} — ${esc(p.void.why)}`:''}</small></span><b>${peso(p.amount)}</b>${p.void?'':`<button class="btn sm" data-payvoid="${p.at}">❌ Void payment</button>`}</div>`).join('')}<div class="unit">Balance now: <b>${peso(r.balance||0)}</b></div>`:''}
         <div class="row-end"><button class="btn" id="fr-pr">🖨 Reprint</button></div>`;$('#fr-pr').onclick=()=>printReceipt(r,true);
