@@ -1317,6 +1317,27 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
 #okbig .okb-ic path{fill:none;stroke:#fff;stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
 #okbig .okb-t{font-size:clamp(30px,6vw,44px);font-weight:900;letter-spacing:.05em;margin-top:12px;color:#15803D}
 #okbig .okb-m{font-size:15px;margin-top:4px;color:#475569}
+/* 🎄 Christmas main screen */
+#lg.xmas{position:relative}
+#lg.xmas .xm-lights{display:flex;justify-content:space-between;gap:4px;margin:-6px 0 14px;padding:0 6px;height:26px;position:relative}
+#lg.xmas .xm-lights::before{content:"";position:absolute;left:0;right:0;top:4px;height:10px;border-bottom:2px solid #1F5130;border-radius:0 0 50% 50%/0 0 100% 100%}
+#lg.xmas .xm-lights i{position:relative;top:8px;width:10px;height:16px;border-radius:50% 50% 45% 45%;background:var(--bc);box-shadow:0 0 10px 2px var(--bc);animation:xmtw 1.75s ease-in-out infinite;animation-delay:var(--dl)}
+#lg.xmas .xm-lights i::before{content:"";position:absolute;top:-4px;left:2px;width:6px;height:5px;background:#3f3f46;border-radius:2px}
+@keyframes xmtw{0%,100%{opacity:1;filter:brightness(1.15)}50%{opacity:.35;filter:brightness(.7);box-shadow:none}}
+#lg.xmas .xm-snow{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden}
+#lg.xmas .xm-snow span{position:absolute;top:-24px;color:#fff;font-size:var(--ss);text-shadow:0 0 4px rgba(120,160,200,.9);animation:xmfall var(--sd) linear infinite;animation-delay:var(--sy);opacity:.9}
+@keyframes xmfall{0%{transform:translate(0,0) rotate(0)}50%{transform:translate(18px,50vh) rotate(180deg)}100%{transform:translate(-10px,105vh) rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){#lg.xmas .xm-snow{display:none}#lg.xmas .xm-lights i{animation:none}}
+@media (max-width:700px){#lg.xmas .xm-snow span:nth-child(2n){display:none}#lg.xmas .xm-snow span{opacity:.6}#lg.xmas .xm-lights i:nth-child(2n){display:none}}
+#lg.xmas .welcome h2{color:#B91C1C}
+#lg.xmas .xm-sub{color:#166534;font-weight:700;margin:-4px 0 8px}
+#lg.xmas .welcome{background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Ctext x='92' y='34' font-size='26'%3E%F0%9F%8E%84%3C/text%3E%3Ctext x='70' y='108' font-size='18' opacity='.5'%3E%E2%9D%84%3C/text%3E%3C/svg%3E") no-repeat right top}
+#lg.xmas .xm-cd{margin-top:12px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.14);border:1px dashed rgba(255,255,255,.45);font-size:16px}
+#lg.xmas .xm-cd b{color:#F5C518;font-size:20px}
+#lg.xmas .rtab{position:relative;overflow:visible}
+#lg.xmas .rtab::before{content:"";position:absolute;top:-16px;left:-8px;width:46px;height:34px;z-index:2;transform:rotate(-24deg);background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 46 34'%3E%3Cpath d='M6 26 C14 6 30 0 40 8 C34 10 32 16 34 22 Z' fill='%23DC2626'/%3E%3Crect x='2' y='23' width='36' height='9' rx='4.5' fill='%23fff'/%3E%3Ccircle cx='40' cy='9' r='5' fill='%23fff'/%3E%3C/svg%3E") no-repeat center/contain;filter:drop-shadow(0 2px 2px rgba(0,0,0,.25))}
+#lg.xmas .rt-h::after{content:" 🎅";}
+#lg.xmas .teamfoot{color:#166534;font-weight:700}
 </style>
 </head>
 <body>
@@ -1343,7 +1364,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 20 · 10:30 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 20 · 10:55 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -2023,7 +2044,7 @@ function roleTabs(n){const b=(v,t,cls='')=>v?`<span class="rt-b ${cls}">${v} ${t
   return `<div class="rtabs-wrap"><h2 class="rt-h">Who's working today? 👋</h2><p class="rt-sub">Tap your role, then log in with your own username and PIN.</p>
     <div class="rtabs">${TEAM.map(([k,c,t,d])=>`<button class="rtab" data-role="${k}" style="--rc:${c}">
       <span class="rt-ic">${ROLES[k].i}</span><span class="rt-t">${t}</span><span class="rt-d">${d}</span><span class="rt-c">${cnt[k]||''}</span><span class="rt-go">${k==='rider'&&MODE!=='rider'?'Use the Rider link':'Log in'} ›</span></button>`).join('')}</div>
-    <p class="teamfoot">Thank you for keeping 3F Meatshop fresh, fast and friendly. 💛</p></div>`}
+    <p class="teamfoot">${XMAS?'🎄 Merry Christmas and a Happy New Year, team! Salamat for keeping 3F Meatshop fresh, fast and friendly. 🎁':'Thank you for keeping 3F Meatshop fresh, fast and friendly. 💛'}</p></div>`}
 // home page: the team roles and what each one does — warm and simple
 const TEAM=[
   ['manager','#8E1B22','Manager','Keeps everything running smoothly — orders, approvals, P.O.s, prices and the team.','Everything'],
@@ -2035,18 +2056,26 @@ function teamHTML(){return `<div class="hcard team"><h2>Our team 🤝</h2><p cla
   <div class="tw"><table class="teamtbl"><thead><tr><th>Role</th><th>What you do</th><th>Your screens</th></tr></thead><tbody>
   ${TEAM.map(([k,c,t,d,sc])=>`<tr style="--rc:${c}"><td class="tr-role"><span class="rico">${ROLES[k].i}</span><b>${t}</b></td><td class="tr-desc">${d}</td><td class="tr-scr">${sc}</td></tr>`).join('')}
   </tbody></table></div><p class="teamfoot">Thank you for keeping 3F Meatshop fresh, fast and friendly. 💛</p></div>`}
+/* 🎄 CHRISTMAS on the main screen (by itself every Nov 1 – Jan 6): lights, snow, Santa hats, greeting, countdown */
+const XMAS=(()=>{const d=new Date(),m=d.getMonth()+1,dd=d.getDate();return m===11||m===12||(m===1&&dd<=6)})();
+function xmasBits(){const d=new Date(),y=d.getMonth()===0?d.getFullYear()-1:d.getFullYear(),xm=new Date(y,11,25),days=Math.ceil((xm-new Date(d.getFullYear(),d.getMonth(),d.getDate()))/864e5);
+  const cd=d.getMonth()===0||(d.getMonth()===11&&d.getDate()>=31)?'🎆 Manigong Bagong Taon!':days>1?`🎁 <b>${days}</b> days to Christmas`:days===1?'🎁 Christmas Eve tomorrow — Noche Buena!':days===0?'🎄 Merry Christmas!':'🎄 Merry Christmas!';
+  const C=['#E11D48','#F5C518','#16A34A','#2563EB','#F97316'],bulbs=Array.from({length:34},(_,i)=>`<i style="--bc:${C[i%5]};--dl:${(i%5)*.35}s"></i>`).join('');
+  const snow=Array.from({length:28},(_,i)=>`<span style="left:${(i*37)%100}%;--sd:${8+(i*7)%9}s;--sy:-${(i*13)%12}s;--ss:${10+(i*5)%12}px">❄</span>`).join('');
+  return {cd,lights:`<div class="xm-lights" aria-hidden="true">${bulbs}</div>`,snow:`<div class="xm-snow" aria-hidden="true">${snow}</div>`}}
 function procHome(msg){
   const n=summary||{},cl=(v,txt0,txt,cls='')=>v==null?'<span class="zero">…</span>':v?`<span class="${cls}">${v} ${txt}</span>`:`<span class="zero">${txt0}</span>`;
-  const hr=new Date().getHours(),greet=hr<12?'Good morning!':hr<18?'Good afternoon!':'Good evening!';
+  const hr=new Date().getHours(),greet0=hr<12?'Good morning!':hr<18?'Good afternoon!':'Good evening!',X=XMAS?xmasBits():null,greet=X?'Maligayang Pasko! 🎄':greet0;
   const due=new Date();const[ph,pm]=prepBy().split(':').map(Number);due.setHours(ph,pm,0,0);const left=Math.round((due-Date.now())/60000);
   const cut=left>0?`<span class="gpill">${left>=60?Math.floor(left/60)+'h '+(left%60)+'m':left+'m'} left</span>`:`<span class="gpill red">closed</span>`;
   const roleTxt=k=>PROCS[k].roles.map(r=>ROLES[r].t).join(' · ');
   const tile=(k,cls,counts,note)=>{const P=PROCS[k];return `<button class="tile ${cls}" data-proc="${k}"><span class="ic">${ICONS[k]}</span><b>${P.n?`<i>${P.n}.</i>`:''}${P.t}</b><span class="d">${P.s}</span><span class="lock">🔒 ${roleTxt(k)}</span>
     ${counts?`<span class="cnts">${counts}</span>`:''}${note?`<span class="due">⏱ ${note}</span>`:''}</button>`};
-  $('#lg').innerHTML=`<div class="hero">
-      <div class="welcome"><div class="b3 logo3f wlogo">3F</div><h2>${greet}</h2><p>${msg?'<b>'+esc(msg)+'</b><br>':''}Tap <b>your role</b> below and log in with your username and <b>PIN</b>. Orders are <b>prepared the day before</b> delivery — on delivery day the team only double-checks, dispatches and delivers.</p></div>
+  $('#lg').classList.toggle('xmas',!!X);
+  $('#lg').innerHTML=`${X?X.lights+X.snow:''}<div class="hero">
+      <div class="welcome"><div class="b3 logo3f wlogo">3F</div><h2>${greet}</h2>${X?`<div class="xm-sub">${greet0.replace('!','')} — Merry Christmas from all of us at 3F Meatshop 🎅</div>`:''}<p>${msg?'<b>'+esc(msg)+'</b><br>':''}Tap <b>your role</b> below and log in with your username and <b>PIN</b>. Orders are <b>prepared the day before</b> delivery — on delivery day the team only double-checks, dispatches and delivers.</p></div>
       <div class="bigclock"><div class="t" id="bigt">--:--</div><div class="d" id="bigd"></div>
-        <div class="co">Preparation standard time: <b>until ${t24(prepBy())} today</b> ${cut}<br>Dispatch target: <b>before ${t24(settings.stdBefore)}</b> on delivery day${n.late?`<br><span class="gpill red">⚠ ${n.late} late order(s)</span>`:''}${n.deliveredToday!=null?` &nbsp;✅ <b>${n.deliveredToday}</b> delivered today`:''}</div></div></div>
+        <div class="co">Preparation standard time: <b>until ${t24(prepBy())} today</b> ${cut}<br>Dispatch target: <b>before ${t24(settings.stdBefore)}</b> on delivery day${n.late?`<br><span class="gpill red">⚠ ${n.late} late order(s)</span>`:''}${n.deliveredToday!=null?` &nbsp;✅ <b>${n.deliveredToday}</b> delivered today`:''}</div>${X?`<div class="xm-cd">${X.cd}</div>`:''}</div></div>
     ${hattCard()}
     ${roleTabs(n)}
     <details class="hcard sec"${(()=>{try{return localStorage.getItem('dp_home_tasks')==='1'?' open':''}catch(e){return ''}})()}><summary><b>Go straight to a task</b><span>Daily process · Reports · Stock &amp; counter</span></summary>
@@ -3251,7 +3280,7 @@ document.addEventListener('click',async e=>{
   if(e.target.closest('.snav .sn-item'))snOpen(false);      // phone: picking a screen closes the menu
   if(e.target.closest('[data-snb]')){if(window.innerWidth<900){snOpen(false);return}const c=document.body.classList.toggle('sncol');try{localStorage.setItem('fms_sncol',c?'1':'0')}catch(_){}return}
   const tg=e.target.closest('[data-sntog]');if(tg){const k=tg.dataset.sntog,sub=tg.closest('.sn-row').nextElementSibling;
-    if(sub&&sub.classList.contains('sn-sub')){sub.hidden=!sub.hidden;tg.textContent=sub.hidden?'▸':'▾';SNST[k]=!sub.hidden}else{SNST[k]=tg.textContent.trim()!=='▾';render()}
+    if(sub&&sub.classList.contains('sn-sub')){sub.hidden=!sub.hidden;if(!sub.hidden)snCloseSibs(tg.closest('.sn-row'));tg.textContent=sub.hidden?'▸':'▾';SNST[k]=!sub.hidden}else{SNST[k]=tg.textContent.trim()!=='▾';render()}
     try{localStorage.setItem('fms_snst',JSON.stringify(SNST))}catch(_){}return}
   const im=e.target.closest('img[data-ph]');if(im){$('#v-img').src=im.src;$('#v-cap').textContent=im.dataset.cap;$('#viewer').classList.add('on');return}
   const og=e.target.closest('[data-ohgo]');if(og){view=og.dataset.ohgo;openId=null;editId=null;render();window.scrollTo(0,0);return}
@@ -3500,16 +3529,22 @@ let SNST={};try{SNST=JSON.parse(localStorage.getItem('fms_snst')||'{}')||{}}catc
 try{if(localStorage.getItem('fms_sncol')!=='0')document.body.classList.add('sncol')}catch(e){document.body.classList.add('sncol')}   // default: collapsed
 const snIc=t=>{const m=String(t).match(/^(\p{Extended_Pictographic}️?|[↩⏱⇄✕])\s*/u);return m?[m[1],String(t).slice(m[0].length)]:['•',String(t)]};
 // node: {ic,t,n,c,attrs,on,kids:[...],key}
-function snNode(x,lvl){const open=x.kids&&x.kids.length&&(x.key in SNST?SNST[x.key]:!!(x.on||x.kidOn));
+/* ACCORDION: only one list open at a time on each level — opening one closes the others (the one with the current page wins) */
+const snOpenOf=x=>!!(x.kids&&x.kids.length&&(x.key in SNST?SNST[x.key]:!!(x.on||x.kidOn)));
+function snList(list,lvl){const op=list.filter(snOpenOf),keep=op.length>1?(op.find(k=>k.on||k.kidOn)||op[op.length-1]):null;
+  return list.map(k=>snNode(k,lvl,keep&&k!==keep?false:undefined)).join('')}
+function snCloseSibs(row){const c=row&&row.parentElement;if(!c)return;[...c.children].forEach(r=>{if(r===row||!r.classList.contains('sn-row'))return;const sub=r.nextElementSibling;
+  if(sub&&sub.classList.contains('sn-sub')&&!sub.hidden){sub.hidden=true;const car=r.querySelector('.sn-car');if(car)car.textContent='▸';const k=(r.querySelector('[data-snk]')||{}).dataset;if(k&&k.snk)SNST[k.snk]=false}})}
+function snNode(x,lvl,force){const open=force===false?false:snOpenOf(x);
   return `<div class="sn-row${x.on?' on':''}${x.g?' sn-main g-'+x.g:''}" style="${x.c?'--oc:'+x.c:''}"><button class="sn-item" ${x.attrs}${x.kids&&x.kids.length?` data-snk="${esc(x.key)}"`:''} title="${esc(x.t)}"><span class="sn-ic">${x.ic}</span><span class="sn-lbl">${esc(x.t)}</span>${x.n?`<span class="sn-n">${x.n}</span>`:''}</button>${x.kids&&x.kids.length?`<button class="sn-car" data-sntog="${esc(x.key)}" aria-label="Show / hide">${open?'▾':'▸'}</button>`:''}</div>
-    ${x.kids&&x.kids.length?`<div class="sn-sub"${open?'':' hidden'}>${x.kids.map(k=>snNode(k,lvl+1)).join('')}</div>`:''}`}
+    ${x.kids&&x.kids.length?`<div class="sn-sub"${open?'':' hidden'}>${snList(x.kids,lvl+1)}</div>`:''}`}
 function snOpen(on){const b=document.body,was=b.classList.contains('snopen');if(on===was)return;b.classList.toggle('snopen',on);
   if(window.innerWidth>=900)return;
   try{if(on)history.pushState({sn:1},'');else if(history.state&&history.state.sn)history.back()}catch(e){}}
 /* a menu bar that has a list under it (▸): tapping the whole bar opens / closes the list — it does not jump to a page
    (only on the collapsed desktop rail, where lists can't show, it still goes to the page) */
 function snToggle(row){const sub=row&&row.nextElementSibling,car=row&&row.querySelector('.sn-car');if(!sub||!sub.classList.contains('sn-sub'))return false;
-  sub.hidden=!sub.hidden;if(car)car.textContent=sub.hidden?'▸':'▾';const k=(row.querySelector('[data-snk]')||{}).dataset;if(k&&k.snk){SNST[k.snk]=!sub.hidden;try{localStorage.setItem('fms_snst',JSON.stringify(SNST))}catch(_){}}return true}
+  sub.hidden=!sub.hidden;if(!sub.hidden)snCloseSibs(row);if(car)car.textContent=sub.hidden?'▸':'▾';const k=(row.querySelector('[data-snk]')||{}).dataset;if(k&&k.snk){SNST[k.snk]=!sub.hidden;try{localStorage.setItem('fms_snst',JSON.stringify(SNST))}catch(_){}}return true}
 document.addEventListener('click',e=>{const b=e.target.closest('.snav .sn-item[data-snk]');if(!b)return;
   if(window.innerWidth>=900&&document.body.classList.contains('sncol'))return;
   if(snToggle(b.closest('.sn-row'))){e.preventDefault();e.stopPropagation()}},true);
@@ -3530,7 +3565,7 @@ window.addEventListener('popstate',()=>{if(document.body.classList.contains('sno
       toast(p.name+': '+qf(p.avail)+' '+p.unit+' in stock');return}
     if(!e.target.closest('#hsrch'))out.classList.remove('on')})})();
 function snCur(nodes){let r=null;const w=xs=>xs.forEach(x=>{if(x.on)r=x;if(x.kids)w(x.kids)});w(nodes);return r}
-function snavHTML(nodes,title){const c=snCur(nodes);return `<button class="sn-mbar" data-snm aria-label="Open the menu"><span class="sn-mb">☰</span><span class="sn-ml">${c?c.ic+' '+esc(c.t):esc(title)}</span></button><div class="sn-back" data-snm></div><nav class="snav"><div class="sn-top"><button class="sn-burger" data-snb title="Collapse / expand the menu">☰</button><span class="sn-title">${esc(title)}</span></div>${nodes.map(x=>snNode(x,0)).join('')}</nav>`}
+function snavHTML(nodes,title){const c=snCur(nodes);return `<button class="sn-mbar" data-snm aria-label="Open the menu"><span class="sn-mb">☰</span><span class="sn-ml">${c?c.ic+' '+esc(c.t):esc(title)}</span></button><div class="sn-back" data-snm></div><nav class="snav"><div class="sn-top"><button class="sn-burger" data-snb title="Collapse / expand the menu">☰</button><span class="sn-title">${esc(title)}</span></div>${snList(nodes,0)}</nav>`}
 
 /* ---------- OPERATIONS HOME: what matters NOW (clean, one look) ---------- */
 function opsHomeHTML(prepTodo,dispTodo,way){
