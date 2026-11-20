@@ -865,6 +865,7 @@ body.posfs:has(#list .posx) .posx-brand{display:flex;align-items:center;gap:16px
 body.posfs:has(#list .posx) .posx-left{min-height:calc(100vh - 182px)}body.posfs:has(#list .posx) .posx-right{max-height:calc(100vh - 182px)}
 .posx-tools button.hot{border-color:#B91C1C;color:#B91C1C;font-weight:800}
 .pospanel-bg{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:60}
+body:has(.pospanel) .modal{z-index:70}   /* dialogs opened from the records panel (Record payment, Find receipt…) show above it */
 .pospanel{position:fixed;top:0;right:0;bottom:0;width:min(760px,96vw);background:var(--bg,#f6f1ef);z-index:61;overflow:auto;padding:14px;box-shadow:-10px 0 30px rgba(0,0,0,.25);animation:ppin .18s ease-out}
 .pospanel-h{display:flex;align-items:center;gap:8px;position:sticky;top:-14px;background:inherit;padding:6px 0 10px;z-index:1;font-size:17px}
 @keyframes ppin{from{transform:translateX(40px);opacity:0}to{transform:none;opacity:1}}
@@ -1332,7 +1333,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 20 · 9:30 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 20 · 8:15 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -2178,7 +2179,7 @@ async function invMatchDialog(){const box=stBox();const draw=M=>{const ok=!M.nBa
     <div class="unit" style="margin-top:6px">${M.master==='sb'?'Supabase is the master: "Copy again" copies its stock into the Sheet.':'The Sheet is the master, so sales and stock are right. "Copy again" sends all products to Supabase again.'}</div>`}
     <div class="pinrow" style="margin-top:12px"><b>🔁 Stock master</b><div class="unit" style="margin-top:4px">${M.master==='sb'?`<b>Supabase</b> is the master${M.since?' since '+stamp(M.since)+(M.by?' ('+esc(M.by)+')':''):''}. Every stock change goes to Supabase first; the Sheet copies it.`:`<b>Google Sheet</b> is the master. Supabase is a live copy.`}</div>
       <div style="margin-top:8px">${M.master==='sb'?'<button class="btn sm" id="im-back">↩ Back to the Sheet as master</button>':(ok?'<button class="go sm" id="im-sb">🔁 Make Supabase the master</button>':'<span class="unit">Fix the differences first.</span>')}</div></div>
-    ${M.pos?`<div class="pinrow" style="margin-top:10px"><b>🧾 POS records copy</b><div class="unit" style="margin-top:4px">${M.pos.ok?`✅ <b>100% match</b> — ${M.pos.sheet.n} receipts · ${peso(M.pos.sheet.total)} · unpaid ${peso(M.pos.sheet.bal)}${M.pos.cleanSince?' · clean since '+stamp(M.pos.cleanSince):''}`:`⚠ Not equal yet (Sheet ${M.pos.sheet.n} receipts / Supabase ${M.pos.sb.n}) — it re-sends everything by itself; check again in a few minutes.`} · checked ${stamp(M.pos.at)}</div></div>`:''}
+    ${M.pos?`<div class="pinrow" style="margin-top:10px"><b>🧾 POS records copy</b><div class="unit" style="margin-top:4px">${M.pos.ok?`✅ <b>100% match</b> — ${M.pos.sheet.n} receipts · ${peso(M.pos.sheet.total)} · unpaid ${peso(M.pos.sheet.bal)}${M.pos.cleanSince?' · clean since '+stamp(M.pos.cleanSince):''}`:`⚠ Not equal yet (Sheet ${M.pos.sheet.n} receipts / Supabase ${M.pos.sb.n}) — it re-sends everything by itself; check again in a few minutes.`} · checked ${stamp(M.pos.at)}</div>${M.posOps?`<div class="unit" style="margin-top:4px">⚡ Payments & cash in/out save in Supabase first, then copy to the Sheet${M.posOps.at?' · last copy '+stamp(M.posOps.at):''}.</div>${(M.posOps.errs||[]).map(e=>`<div class="snote" style="color:var(--rose);margin-top:4px">⚠ Not copied to the Sheet: ${esc({pay:'payment',payvoid:'payment void',cash:'cash '+((e.args||{}).kind||''),cashundo:'cash undo'}[e.kind]||e.kind)} ${e.args&&e.args.amount?peso(e.args.amount):''} ${e.args&&e.args.no?esc(e.args.no):''} by ${esc(e.by||'')} ${e.at?stamp(e.at):''} — ${esc(e.err)}. Enter it again if needed.</div>`).join('')}`:''}</div>`:''}
     ${M.master==='sb'?`<div class="pinrow" style="margin-top:10px"><b>⚡ Fast POS</b><div class="unit" style="margin-top:4px">${M.posSb?'<b>ON</b> — the POS gets its SI# and takes the stock in Supabase in under a second. The Sheet records the full sale a few seconds later.':'OFF — the POS waits for Google (2–5 seconds) for the SI#.'}</div>
       <div style="margin-top:8px">${M.posSb?'<button class="btn sm" id="im-poff">Turn Fast POS off</button>':'<button class="go sm" id="im-pon">⚡ Turn Fast POS on</button>'}</div></div>`:''}
     <div class="row-end"><button class="btn" id="im-now">↻ Check now</button>${ok?'':'<button class="go" id="im-fix">Copy again</button>'}<button class="btn" data-x>Close</button></div>`;
@@ -3376,6 +3377,12 @@ async function sbPass(){if(!window.SB_URL||!window.SB_KEY||!session)return null;
 async function sbCall(fn,...a){const p=await sbPass();if(!p)throw new Error('off');
   const r=await fetch(window.SB_URL.replace(/\/$/,'')+'/rest/v1/rpc/'+fn,{method:'POST',headers:Object.assign({'Content-Type':'application/json',apikey:window.SB_KEY},/^eyJ/.test(window.SB_KEY)?{Authorization:'Bearer '+window.SB_KEY}:{}),body:JSON.stringify({a:[p.pass,...a]})});
   const x=await r.json();if(!r.ok){if(/AUTH/.test(x&&x.message||''))SBP=null;throw new Error(x&&x.message||'Supabase error')}return x}
+/* POS (Stage B): payments, payment voids, cash in / out and undo save in Supabase first (< 1 s); the Sheet copies them in the background.
+   Any problem (no signal to Supabase, needs a Manager PIN, pays a P.O. / bill) → the staff system does it instead, with the same op id (never twice). */
+const opId=()=>'op'+Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+async function posOp(o){if(!window.SB_URL||!ST)return null;let r=null;try{r=await sbCall('st_pos_op',o)}catch(e){return null}if(!r||!r.snapAt)return null;
+  ['shift','toCash','toReturn','toPay','payoutMax','rcpt','mem','bulk','cashOutCats','sales','unpaid'].forEach(k=>{if(r[k]!==undefined)ST[k]=r[k]});
+  ST.sbPosAt=r.snapAt;ST.opsT=Date.now();stCache();api('api_posOps',session.token).catch(()=>{});return r}
 /* POS (Stage A): the POS screen comes from Supabase in < 1 s; Google still refreshes it a moment later */
 async function sbPosFast(){if(!me||!/^(manager|cashier)$/.test(me.role))return false;
   try{const r=await sbCall('st_pos_state');if(!ST||!r||!r.snapAt||r.snapAt<(ST.gAt||0))return false;   /* never replace newer data from Google (gAt = when Google made it) */
@@ -3386,7 +3393,9 @@ async function sbStockFast(){if(!me||me.role==='rider')return false;try{const t0
   r.products.forEach(p=>{if(!ST.products.some(x=>x.code===p.code))ST.products.push(p)});ST.live=Date.now()-t0;return true}catch(e){return false}}
 async function loadStock(force){
   if(!force&&ST&&!ST.offline&&!ST.stale&&Date.now()-(ST.rt||ST.at)<45000)return ST;
-  try{ST=await api('api_stock',session.token);ST.gAt=ST.at;ST.offline=false;ST.stale=false;ST.rt=Date.now();stCache()}
+  const t0=Date.now(),ops=ST&&ST.opsT&&t0-ST.opsT<600000?1:0;
+  try{const r=await api('api_stock',session.token,ops),late=ST&&ST.opsT>=t0;ST=r;ST.gAt=ST.at;ST.offline=false;ST.stale=false;ST.rt=Date.now();stCache();
+    if(late){ST.opsT=Date.now();sbPosFast().then(ok=>{if(ok&&view==='pos'&&stIdle())drawStock()})}}   // saved something while Google was loading → lay it on top again
   catch(e){if(/AUTH/.test(errMsg(e)))throw e;if(!ST){try{const c=JSON.parse(localStorage.getItem(STKEY)||'null');if(c&&(!c.uid||!me||c.uid===me.id))ST=c}catch(_){}}if(!ST)throw e;ST.offline=true;ST.stale=false}
   return ST}
 // SPEED: show the last data at once and refresh behind it (the screen updates a moment later); forced loads (after a save) still wait
@@ -5217,7 +5226,7 @@ function zReasonDialog(R){const box=stBox(),os=R.overShort;$('#stb').innerHTML=`
   <label class="td-l">Reason<textarea class="edit-in" id="zr-n" rows="3" placeholder="e.g. gave wrong change to a customer, GCash payment rung up as cash…"></textarea></label>
   <div class="row-end"><button class="go" id="zr-ok">Save reason</button></div>`;box.classList.add('on');setTimeout(()=>$('#zr-n').focus(),50);
   $('#zr-ok').onclick=async()=>{const n=$('#zr-n').value.trim();if(!n)return alert('Type the reason.');try{await api('api_zReason',session.token,R.z,n);R.note=n;box.classList.remove('on');toast('Saved — the manager will review it');showReading(R)}catch(e){alert(errMsg(e))}}}
-function cashMoveDialog(pre,redo){const box=stBox(),cats=ST.cashOutCats||['Expense (ice, fare, supplies…)','Purchase of stock (COGS)','Cash pickup / bank deposit','Other'],mv=(ST.shift&&ST.shift.moves)||[],TP=ST.toPay||[];let kind=redo?redo.kind:'out';
+function cashMoveDialog(pre,redo){const box=stBox(),cats=ST.cashOutCats||['Expense (ice, fare, supplies…)','Purchase of stock (COGS)','Cash pickup / bank deposit','Other'],mv=(ST.shift&&ST.shift.moves)||[],TP=ST.toPay||[];let kind=redo?redo.kind:'out';const oid=opId();
   const draw=()=>{$('#stb').innerHTML=`<h2>💸 Cash in / out of the drawer</h2>
     <div class="td-m" style="grid-template-columns:1fr 1fr"><button data-ck2="out" class="${kind==='out'?'on':''}"><span>➖</span>Cash out</button><button data-ck2="in" class="${kind==='in'?'on':''}"><span>➕</span>Cash in</button></div>
     <div class="fgrid"><label>Amount (₱)<input class="edit-in td-in" id="cm-a" type="number" step="0.01" inputmode="decimal"></label>
@@ -5239,7 +5248,8 @@ function cashMoveDialog(pre,redo){const box=stBox(),cats=ST.cashOutCats||['Expen
     $('#cm-a').oninput=pinChk;$('#cm-c').addEventListener('change',pinChk);pinChk();
     $('#cm-po').onchange=e=>{const o=e.target.selectedOptions[0];if(o&&o.dataset.bal)$('#cm-a').value=o.dataset.bal;pinChk()};
     $('#cm-ok').onclick=async()=>{const a=+$('#cm-a').value,n=$('#cm-n').value.trim()||(isPay()?'paid at the counter':'');if(!(a>0))return alert('Type the amount.');if(!n)return alert('Type what the cash is for.');if(isPay()&&!$('#cm-po').value)return alert('Choose the P.O. / bill to pay.');
-      $('#cm-ok').disabled=true;try{ST=await api('api_posCashMove',session.token,kind,a,$('#cm-c').value,n,isPay()?$('#cm-po').value:'',$('#cm-pin').value);stCache();box.classList.remove('on');toast((kind==='out'?'➖ Cash out ':'➕ Cash in ')+peso(a)+' saved');drawStock()}catch(e){alert(errMsg(e));$('#cm-ok').disabled=false}}};
+      $('#cm-ok').disabled=true;const C=$('#cm-c').value,L=isPay()?$('#cm-po').value:'',PN=$('#cm-pin').value;
+      try{if(L||PN||!await posOp({id:oid,kind:'cash',dir:kind,amount:a,cat:C,note:n})){ST=await api('api_posCashMove',session.token,kind,a,C,n,L,PN,oid);stCache()}box.classList.remove('on');toast((kind==='out'?'➖ Cash out ':'➕ Cash in ')+peso(a)+' saved');drawStock()}catch(e){alert(errMsg(e));$('#cm-ok').disabled=false}}};
   draw();box.classList.add('on')}
 function cashUndo(m){if(!m)return;const own=m.by===me.name&&Date.now()-m.at<=15*60000&&m.kind==='out',pin=me.role!=='manager'&&!own,box=stBox();
   $('#stb').innerHTML=`<h2>↩ Undo this ${m.kind==='in'?'cash in':'cash out'}?</h2>
@@ -5250,7 +5260,7 @@ function cashUndo(m){if(!m)return;const own=m.by===me.name&&Date.now()-m.at<=15*
     <div class="row-end"><button class="btn" id="cu-back">Back</button><button class="go" id="cu-ok">↩ Undo & redo</button></div>`;box.classList.add('on');$('#cu-w').focus();
   $('#cu-back').onclick=()=>cashMoveDialog();
   $('#cu-ok').onclick=async()=>{const w=$('#cu-w').value.trim();if(!w)return alert('Type why (e.g. wrong amount).');$('#cu-ok').disabled=true;
-    try{ST=await api('api_posCashUndo',session.token,m.at,w,pin?$('#cu-p').value:'');stCache();drawStock();toast('↩ Undone — enter it again correctly');cashMoveDialog('',m)}catch(e){alert(errMsg(e));$('#cu-ok').disabled=false}}}
+    try{const PN=pin?$('#cu-p').value:'';if(PN||!await posOp({id:opId(),kind:'cashundo',at:m.at,why:w})){ST=await api('api_posCashUndo',session.token,m.at,w,PN);stCache()}drawStock();toast('↩ Undone — enter it again correctly');cashMoveDialog('',m)}catch(e){alert(errMsg(e));$('#cu-ok').disabled=false}}}
 async function posTool(t,b){
   if(t==='recs'){posPanel=!posPanel;drawStock();return}
   if(t==='full'){posFull(!posFS);return}
@@ -5329,7 +5339,9 @@ function payDialog(no){const x=(ST.unpaid||[]).find(z=>z.no===no);if(!x)return;c
     <label class="full">Reference no. (bank / GCash / check)<input class="edit-in" id="py-r"></label></div>
     <div class="row-end"><button class="btn" data-x>Cancel</button><button class="go" id="py-ok">Save payment</button></div>`;box.classList.add('on');
   if($('#py-fix'))$('#py-fix').onclick=e=>{e.preventDefault();box.classList.remove('on');findReceipt(x.no)};
-  $('#py-ok').onclick=async()=>{$('#py-ok').disabled=true;try{ST=await api('api_posPay',session.token,no,$('#py-a').value,$('#py-m').value,$('#py-r').value);stCache();box.classList.remove('on');toast('💳 Payment saved');drawStock()}catch(e){alert(errMsg(e));$('#py-ok').disabled=false}}}
+  const oid=opId();
+  $('#py-ok').onclick=async()=>{$('#py-ok').disabled=true;const A=$('#py-a').value,M=$('#py-m').value,F=$('#py-r').value;
+    try{if(!await posOp({id:oid,kind:'pay',no,amount:A,method:M,ref:F})){ST=await api('api_posPay',session.token,no,A,M,F,oid);stCache()}box.classList.remove('on');toast('💳 Payment saved');drawStock()}catch(e){alert(errMsg(e));$('#py-ok').disabled=false}}}
 const CHG_TYPES=['Giniling (grinding) charge','Slicing / cutting charge','Cubing charge','Packaging charge','Marinating charge','Other'];
 function chargeDialog(kind){const box=stBox(),D=kind==='delivery';
   $('#stb').innerHTML=`<h2>${D?'🛵 Delivery charge':'➕ Other charge'}</h2><div class="unit">${D?'For phone / walk-in orders that we deliver.':'Added to this sale. No cost — counted as sales.'}</div>
@@ -5436,7 +5448,8 @@ function findReceipt(q){const box=stBox();
         <div class="row-end"><button class="btn" id="fr-pr">🖨 Reprint</button></div>`;$('#fr-pr').onclick=()=>printReceipt(r,true);
       o.querySelectorAll('[data-payvoid]').forEach(b=>b.onclick=async e=>{e.stopPropagation();const p=r.payments.find(z=>String(z.at)===b.dataset.payvoid);
         const why=prompt(`Void the ${peso(p.amount)} ${p.method||'Cash'} payment of ${r.customer||r.no}?\nThe receipt becomes unpaid again for this amount.\n\nWhy? (e.g. recorded by mistake — not paid)`);if(!why||!why.trim())return;
-        b.disabled=true;try{const R=await api('api_posPayVoid',session.token,r.no,p.at,why.trim());ST=Object.assign(ST||{},R);stCache();toast('❌ Payment voided — '+r.no+' is unpaid again');if(R.note)alert(R.note);findReceipt(r.no)}catch(e){alert(errMsg(e));b.disabled=false}})}
+        b.disabled=true;try{let note='';if(await posOp({id:opId(),kind:'payvoid',no:r.no,at:p.at,why:why.trim()})){if(/cash/i.test(p.method||'Cash')&&!(ST.shift&&p.at>=(ST.shift.openAt||0)))note='This cash payment was already counted in a closed Z reading. If that Z shows a short of ₱'+p.amount+', mark it "found / explained".'}
+          else{const R=await api('api_posPayVoid',session.token,r.no,p.at,why.trim());ST=Object.assign(ST||{},R);note=R.note||''}stCache();toast('❌ Payment voided — '+r.no+' is unpaid again');if(note)alert(note);findReceipt(r.no)}catch(e){alert(errMsg(e));b.disabled=false}})}
     catch(e){o.innerHTML=`<div class="snote">⚠ ${esc(errMsg(e))}</div>`}};
   $('#fr-go').onclick=go;$('#fr-q').onkeydown=e=>{if(e.key==='Enter')go()};$('#fr-q').focus();if(q)go()}
 function receiptSetup(){const C=RCPT(),box=stBox();$('#stb').innerHTML=`<h2>🖨 Receipt printer</h2><div class="fgrid"><label>Paper width<select class="edit-in" id="rs-p"><option value="80"${C.paper==='80'?' selected':''}>80 mm</option><option value="58"${C.paper==='58'?' selected':''}>58 mm</option></select></label>
