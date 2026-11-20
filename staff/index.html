@@ -1333,7 +1333,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 20 · 8:25 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 20 · 8:35 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -3383,7 +3383,8 @@ async function sbCall(fn,...a){const p=await sbPass();if(!p)throw new Error('off
 /* POS (Stage B): payments, payment voids, cash in / out and undo save in Supabase first (< 1 s); the Sheet copies them in the background.
    Any problem (no signal to Supabase, needs a Manager PIN, pays a P.O. / bill) → the staff system does it instead, with the same op id (never twice). */
 const opId=()=>'op'+Date.now().toString(36)+Math.random().toString(36).slice(2,8);
-async function posOp(o){if(!window.SB_URL||!ST)return null;let r=null;try{r=await sbCall('st_pos_op',o)}catch(e){return null}if(!r||!r.snapAt)return null;
+let posOpWhy='';
+async function posOp(o){posOpWhy='';if(!window.SB_URL||!ST){posOpWhy='no Supabase';return null}let r=null;try{r=await sbCall('st_pos_op',o)}catch(e){posOpWhy=errMsg(e);return null}if(!r||!r.snapAt){posOpWhy='no POS copy yet';return null}
   ['shift','toCash','toReturn','toPay','payoutMax','rcpt','mem','bulk','cashOutCats','sales','unpaid'].forEach(k=>{if(r[k]!==undefined)ST[k]=r[k]});
   ST.sbPosAt=r.snapAt;ST.opsT=Date.now();stCache();api('api_posOps',session.token).catch(()=>{});return r}
 /* POS (Stage A): the POS screen comes from Supabase in < 1 s; Google still refreshes it a moment later */
@@ -5236,7 +5237,7 @@ function cashMoveDialog(pre,redo){const box=stBox(),cats=ST.cashOutCats||['Expen
       <label>${kind==='out'?'Type':'Why'}<select class="edit-in" id="cm-c">${(kind==='out'?cats:['Add change fund','Other']).map(c=>`<option>${esc(c)}</option>`).join('')}</select></label>
       <label class="full" id="cm-pw" hidden>P.O. / bill to pay<select class="edit-in" id="cm-po"><option value="">— choose —</option>${TP.map(x=>`<option value="${x.kind}:${x.id}" data-bal="${x.bal}">${esc(x.no)} · ${esc(x.name)} · balance ${peso(x.bal)}${x.kind==='po'&&!x.received?' (not received yet)':''}</option>`).join('')}</select>
         ${TP.length?'':'<small class="unit">Nothing to pay — the manager sends bills here when the cashier should pay.</small>'}</label>
-      <label class="full" id="cm-pinw" hidden>🔐 Manager PIN <small class="unit">(over the ₱${fmt2(ST.payoutMax||0)} payout limit)</small><input class="edit-in" id="cm-pin" type="password" inputmode="numeric" autocomplete="off"></label>
+      <label class="full" id="cm-pinw" hidden>🔐 Manager PIN <small class="unit">(over the ₱${fmt2(ST.payoutMax||0)} payout limit)</small><input class="edit-in" id="cm-pin" type="password" inputmode="numeric" autocomplete="new-password" readonly onfocus="this.removeAttribute('readonly')"></label>
       <label class="full">What for / note<input class="edit-in" id="cm-n" placeholder="${kind==='out'?'e.g. ice 2 sacks, fare to supplier':'e.g. more coins for change'}"></label></div>
     <div class="unit">${kind==='out'?'Cash out lowers the expected cash in the Z reading. <b>Purchase of stock</b> = buying meat to sell (cost of goods); <b>Expense</b> = shop expenses.':'Cash in raises the expected cash in the Z reading.'}</div>
     ${redo?`<div class="snote" style="margin-top:8px">↩ Undone: ${peso(redo.amount)} · ${esc(redo.note)}. Correct it above and press <b>Save</b>.</div>`:''}
@@ -5251,19 +5252,19 @@ function cashMoveDialog(pre,redo){const box=stBox(),cats=ST.cashOutCats||['Expen
     $('#cm-a').oninput=pinChk;$('#cm-c').addEventListener('change',pinChk);pinChk();
     $('#cm-po').onchange=e=>{const o=e.target.selectedOptions[0];if(o&&o.dataset.bal)$('#cm-a').value=o.dataset.bal;pinChk()};
     $('#cm-ok').onclick=async()=>{const a=+$('#cm-a').value,n=$('#cm-n').value.trim()||(isPay()?'paid at the counter':'');if(!(a>0))return alert('Type the amount.');if(!n)return alert('Type what the cash is for.');if(isPay()&&!$('#cm-po').value)return alert('Choose the P.O. / bill to pay.');
-      $('#cm-ok').disabled=true;const C=$('#cm-c').value,L=isPay()?$('#cm-po').value:'',PN=$('#cm-pin').value;
-      try{if(L||PN||!await posOp({id:oid,kind:'cash',dir:kind,amount:a,cat:C,note:n})){ST=await api('api_posCashMove',session.token,kind,a,C,n,L,PN,oid);stCache()}box.classList.remove('on');toast((kind==='out'?'➖ Cash out ':'➕ Cash in ')+peso(a)+' saved');drawStock()}catch(e){alert(errMsg(e));$('#cm-ok').disabled=false}}};
+      $('#cm-ok').disabled=true;const C=$('#cm-c').value,L=isPay()?$('#cm-po').value:'',PN=$('#cm-pinw').hidden?'':$('#cm-pin').value;   // Chrome may auto-fill a saved PIN into the hidden box → ignore it
+      try{if(L||PN||!await posOp({id:oid,kind:'cash',dir:kind,amount:a,cat:C,note:n})){ST=await api('api_posCashMove',session.token,kind,a,C,n,L,PN,oid);stCache()}box.classList.remove('on');toast((kind==='out'?'➖ Cash out ':'➕ Cash in ')+peso(a)+' saved'+(L||PN?'':posOpWhy?' (slow way: '+posOpWhy+')':' ⚡'));drawStock()}catch(e){alert(errMsg(e));$('#cm-ok').disabled=false}}};
   draw();box.classList.add('on')}
 function cashUndo(m){if(!m)return;const own=m.by===me.name&&Date.now()-m.at<=15*60000&&m.kind==='out',pin=me.role!=='manager'&&!own,box=stBox();
   $('#stb').innerHTML=`<h2>↩ Undo this ${m.kind==='in'?'cash in':'cash out'}?</h2>
     <div class="posx-row"><span>${stampShort(m.at)} ${m.kind==='in'?'➕':'➖'} ${esc(m.note)} <small class="unit">${esc(m.cat)} · ${esc(m.by||'')}</small></span><b>${peso(m.amount)}</b></div>
     <div class="unit" style="margin:6px 0">It stays in the record as <b>undone</b> (who, when, why). Then the form opens again with the same details — correct them and press <b>Save</b>.${m.po||m.exp?' The P.O. / bill it paid becomes <b>unpaid</b> again.':''}</div>
     <div class="fgrid"><label class="full">Why? <input class="edit-in" id="cu-w" placeholder="e.g. wrong amount, wrong type"></label>
-      ${pin?`<label class="full">🔐 Manager PIN <small class="unit">${m.kind==='in'?'(undoing a cash in)':'(older than 15 minutes or entered by someone else)'}</small><input class="edit-in" id="cu-p" type="password" inputmode="numeric" autocomplete="off"></label>`:''}</div>
+      ${pin?`<label class="full">🔐 Manager PIN <small class="unit">${m.kind==='in'?'(undoing a cash in)':'(older than 15 minutes or entered by someone else)'}</small><input class="edit-in" id="cu-p" type="password" inputmode="numeric" autocomplete="new-password" readonly onfocus="this.removeAttribute('readonly')"></label>`:''}</div>
     <div class="row-end"><button class="btn" id="cu-back">Back</button><button class="go" id="cu-ok">↩ Undo & redo</button></div>`;box.classList.add('on');$('#cu-w').focus();
   $('#cu-back').onclick=()=>cashMoveDialog();
   $('#cu-ok').onclick=async()=>{const w=$('#cu-w').value.trim();if(!w)return alert('Type why (e.g. wrong amount).');$('#cu-ok').disabled=true;
-    try{const PN=pin?$('#cu-p').value:'';if(PN||!await posOp({id:opId(),kind:'cashundo',at:m.at,why:w})){ST=await api('api_posCashUndo',session.token,m.at,w,PN);stCache()}drawStock();toast('↩ Undone — enter it again correctly');cashMoveDialog('',m)}catch(e){alert(errMsg(e));$('#cu-ok').disabled=false}}}
+    try{const PN=pin?$('#cu-p').value:'';if(PN||!await posOp({id:opId(),kind:'cashundo',at:m.at,why:w})){ST=await api('api_posCashUndo',session.token,m.at,w,PN);stCache()}drawStock();toast('↩ Undone — enter it again correctly'+(PN?'':posOpWhy?' (slow way: '+posOpWhy+')':' ⚡'));cashMoveDialog('',m)}catch(e){alert(errMsg(e));$('#cu-ok').disabled=false}}}
 async function posTool(t,b){
   if(t==='recs'){posPanel=!posPanel;drawStock();return}
   if(t==='full'){posFull(!posFS);return}
@@ -5344,7 +5345,7 @@ function payDialog(no){const x=(ST.unpaid||[]).find(z=>z.no===no);if(!x)return;c
   if($('#py-fix'))$('#py-fix').onclick=e=>{e.preventDefault();box.classList.remove('on');findReceipt(x.no)};
   const oid=opId();
   $('#py-ok').onclick=async()=>{$('#py-ok').disabled=true;const A=$('#py-a').value,M=$('#py-m').value,F=$('#py-r').value;
-    try{if(!await posOp({id:oid,kind:'pay',no,amount:A,method:M,ref:F})){ST=await api('api_posPay',session.token,no,A,M,F,oid);stCache()}box.classList.remove('on');toast('💳 Payment saved');drawStock()}catch(e){alert(errMsg(e));$('#py-ok').disabled=false}}}
+    try{if(!await posOp({id:oid,kind:'pay',no,amount:A,method:M,ref:F})){ST=await api('api_posPay',session.token,no,A,M,F,oid);stCache()}box.classList.remove('on');toast('💳 Payment saved'+(posOpWhy?' (slow way: '+posOpWhy+')':' ⚡'));drawStock()}catch(e){alert(errMsg(e));$('#py-ok').disabled=false}}}
 const CHG_TYPES=['Giniling (grinding) charge','Slicing / cutting charge','Cubing charge','Packaging charge','Marinating charge','Other'];
 function chargeDialog(kind){const box=stBox(),D=kind==='delivery';
   $('#stb').innerHTML=`<h2>${D?'🛵 Delivery charge':'➕ Other charge'}</h2><div class="unit">${D?'For phone / walk-in orders that we deliver.':'Added to this sale. No cost — counted as sales.'}</div>
