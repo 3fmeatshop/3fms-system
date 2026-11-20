@@ -1333,7 +1333,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 20 · 8:35 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 20 · 9:00 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -1670,10 +1670,18 @@ function applyServer(list){
   const nb={};list.forEach(o=>nb[o.id]=J(o));
   db.orders=next; base=nb; cacheLocal();
 }
+/* ORDERS (Step 2 · Stage A): changes come from the Supabase copy in < 1 s, checked every 4 s; Google is asked every 4th time
+   (settings, stock, my account) or whenever Supabase cannot answer */
+async function pollSb(){if(!window.SB_URL||!me||me.role==='cashier')return false;
+  try{const r=await sbCall('st_orders',ver);if(!r||!r.ver)return false;
+    if(!r.same&&r.ver>ver&&!flushing&&!dirtyOrders().length){applyServer(r.orders);ver=r.ver;renderSafe()}
+    setSync('ok');return true}catch(e){return false}}
 async function poll(){
   clearTimeout(pollTimer);
   if(!session)return;
   if(flushing||dirtyOrders().length){pollTimer=setTimeout(poll,2000);return}
+  poll.k=(poll.k||0)+1;
+  if(poll.k%4!==1&&await pollSb()){uploadPending();if(session)pollTimer=setTimeout(poll,document.hidden?30000:4000);return}
   try{const r=await api('api_load',session.token,ver);
     if(r.settings)settings=r.settings;if(r.bulk)bulkNames=r.bulk;if(r.stock)setInv(r.stock);
     if(r.me)r.me.role=normRole(r.me.role);if(r.me&&me&&(r.me.role!==me.role||r.me.name!==me.name)){me=r.me;session.user=r.me;localStorage.setItem(SESS,J(session))}
@@ -1681,7 +1689,7 @@ async function poll(){
     setSync('ok'); uploadPending();
     if(!poll.n||++poll.n%8===0){poll.n=poll.n||1;api('api_users',KEY).then(u=>{users=u}).catch(()=>{})}
   }catch(e){handleErr(e)}
-  pollTimer=setTimeout(poll,document.hidden?30000:8000);
+  pollTimer=setTimeout(poll,document.hidden?30000:4000);
 }
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&session)poll()});
 // ⏱ staff must be clocked in to work in the system (Time in at the store first)
@@ -2135,7 +2143,7 @@ function start(fresh){
   session.user.role=normRole(session.user.role);me=session.user; view=me.role==='rider'?'way':me.role==='cashier'?'pos':me.role==='sales'?'online':(me.role==='ops'||me.role==='manager')?'ohome':'prep'; openId=null;roleHint=null;
   if(me.role==='ops')setTimeout(()=>loadStock().then(()=>{if(!STOCKV.includes(view))render()}).catch(()=>{}),800);
   if(me.role==='manager'||me.role==='owner')setTimeout(()=>{if(me&&session&&!OW&&!OWload)owLoad()},2500);   // Accounting loads quietly after login → ready when opened
-  if(me.role!=='rider')setTimeout(()=>{if(me&&session)sbPass()},300);   // get the Supabase pass now → the first save is instant
+  setTimeout(()=>{if(me&&session)sbPass()},300);   // get the Supabase pass now → the first save is instant
   if(fresh){db={orders:[]};base={};ver=0}
   else{try{const h=JSON.parse(sessionStorage.getItem('fms_here')||'null');if(h&&h.u===me.id&&h.v){view=h.v;if(h.o)OWtab=h.o;if(h.h&&typeof HRsub!=='undefined')HRsub=h.h}}catch(e){}try{const c=JSON.parse(localStorage.getItem(CACHE)||'null');if(c&&c.u===me.id){db={orders:c.orders||[]};base=c.base||{};ver=0}}catch(e){}}
   renderLogin(); setSync('load'); render(); poll(); flush();
@@ -2180,6 +2188,7 @@ async function invMatchDialog(){const box=stBox();const draw=M=>{const ok=!M.nBa
     <div class="unit" style="margin-top:6px">${M.master==='sb'?'Supabase is the master: "Copy again" copies its stock into the Sheet.':'The Sheet is the master, so sales and stock are right. "Copy again" sends all products to Supabase again.'}</div>`}
     <div class="pinrow" style="margin-top:12px"><b>🔁 Stock master</b><div class="unit" style="margin-top:4px">${M.master==='sb'?`<b>Supabase</b> is the master${M.since?' since '+stamp(M.since)+(M.by?' ('+esc(M.by)+')':''):''}. Every stock change goes to Supabase first; the Sheet copies it.`:`<b>Google Sheet</b> is the master. Supabase is a live copy.`}</div>
       <div style="margin-top:8px">${M.master==='sb'?'<button class="btn sm" id="im-back">↩ Back to the Sheet as master</button>':(ok?'<button class="go sm" id="im-sb">🔁 Make Supabase the master</button>':'<span class="unit">Fix the differences first.</span>')}</div></div>
+    ${M.ord?`<div class="pinrow" style="margin-top:10px"><b>📦 Orders copy</b><div class="unit" style="margin-top:4px">${M.ord.ok?`✅ <b>100% match</b> — ${M.ord.sheet} orders${M.ord.cleanSince?' · clean since '+stamp(M.ord.cleanSince):''}`:`⚠ Not equal yet (Sheet ${M.ord.sheet} / Supabase ${M.ord.sb}) — it fixes itself; check again in a few minutes.`} · checked ${stamp(M.ord.at)}</div></div>`:''}
     ${M.pos?`<div class="pinrow" style="margin-top:10px"><b>🧾 POS records copy</b><div class="unit" style="margin-top:4px">${M.pos.ok?`✅ <b>100% match</b> — ${M.pos.sheet.n} receipts · ${peso(M.pos.sheet.total)} · unpaid ${peso(M.pos.sheet.bal)}${M.pos.cleanSince?' · clean since '+stamp(M.pos.cleanSince):''}`:`⚠ Not equal yet (Sheet ${M.pos.sheet.n} receipts / Supabase ${M.pos.sb.n}) — it re-sends everything by itself; check again in a few minutes.`} · checked ${stamp(M.pos.at)}</div>${M.posOps?`<div class="unit" style="margin-top:4px">⚡ Payments & cash in/out save in Supabase first, then copy to the Sheet${M.posOps.at?' · last copy '+stamp(M.posOps.at):''}.</div>${(M.posOps.errs||[]).map(e=>`<div class="snote" style="color:var(--rose);margin-top:4px">⚠ Not copied to the Sheet: ${esc({pay:'payment',payvoid:'payment void',cash:'cash '+((e.args||{}).kind||''),cashundo:'cash undo'}[e.kind]||e.kind)} ${e.args&&e.args.amount?peso(e.args.amount):''} ${e.args&&e.args.no?esc(e.args.no):''} by ${esc(e.by||'')} ${e.at?stamp(e.at):''} — ${esc(e.err)}. Enter it again if needed.</div>`).join('')}`:''}</div>`:''}
     ${M.master==='sb'?`<div class="pinrow" style="margin-top:10px"><b>⚡ Fast POS</b><div class="unit" style="margin-top:4px">${M.posSb?'<b>ON</b> — the POS gets its SI# and takes the stock in Supabase in under a second. The Sheet records the full sale a few seconds later.':'OFF — the POS waits for Google (2–5 seconds) for the SI#.'}</div>
       <div style="margin-top:8px">${M.posSb?'<button class="btn sm" id="im-poff">Turn Fast POS off</button>':'<button class="go sm" id="im-pon">⚡ Turn Fast POS on</button>'}</div></div>`:''}
