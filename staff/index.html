@@ -1343,7 +1343,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 20 · 10:10 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 20 · 10:30 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -1961,7 +1961,7 @@ function hattDialog(){let box=$('#hatm');if(!box){box=document.createElement('di
     <button class="ha-next" id="ha-go">Next ›</button><div class="ha-foot"><span>Your User ID is on your staff card.</span><button class="btn sm" id="ha-snd">🔊 Test sound</button><button class="btn sm" data-x>Cancel</button></div>`;
     tick=setInterval(()=>{const c=$('#ha-clk');if(c)c.textContent=nowT()},10000);
     const go=async()=>{id=$('#ha-id').value.trim();if(!id)return step1('Type your User ID.');const g=$('#ha-go');g.disabled=true;g.textContent='Checking…';
-      try{A=await api('api_homeWho',KEY,id);step2()}catch(e){const m=errMsg(e);if(/not registered/i.test(m))say('ID number not registered.');step1(/not registered/i.test(m)?'ID number not registered.':m)}};
+      try{A=await homeWho(id);step2()}catch(e){const m=errMsg(e);if(/not registered/i.test(m))say('ID number not registered.');step1(/not registered/i.test(m)?'ID number not registered.':m)}};
     $('#ha-go').onclick=go;$('#ha-snd').onclick=()=>{say('Sound check. Successful.');setTimeout(()=>alert(sndInfo()),400)};$('#ha-id').onkeydown=e=>{if(e.key==='Enter')go()};setTimeout(()=>$('#ha-id').focus(),60)};
   // PIN pad — shown when they tap Time in / Break / Time out (or File OT). Wrong PIN: "Sorry, please try again!"
   const pinPad=(title,err)=>new Promise(res=>{let pin='';const draw=e=>{B.innerHTML=`<div class="ha-pin-h"><b>${esc(title)}</b><small>${esc(A.who.name)} · ${esc(A.who.id)}</small></div>
@@ -3401,6 +3401,12 @@ const setPosQueue=q=>{try{localStorage.setItem(POSQ,J(q))}catch(e){}};
 function stCache(){try{if(ST&&me)ST.uid=me.id;localStorage.setItem(STKEY,J(ST))}catch(e){}}
 // ⚡ PHASE 2a: live stock straight from Supabase (fast); the full Apps Script load still runs behind it and fills in the rest
 /* the Supabase pass is kept for this tab (survives a refresh) → the first fast save after a refresh does not wait for Google */
+/* Time in / out: today's card from Supabase (< 1 s); not there / not refreshed today → the staff system answers */
+async function sbAnon(fn,a){const r=await fetch(window.SB_URL.replace(/\/$/,'')+'/rest/v1/rpc/'+fn,{method:'POST',headers:Object.assign({'Content-Type':'application/json',apikey:window.SB_KEY},/^eyJ/.test(window.SB_KEY)?{Authorization:'Bearer '+window.SB_KEY}:{}),body:JSON.stringify({a})});
+  const x=await r.json();if(!r.ok)throw new Error(x&&x.message||'Supabase error');return x}
+async function homeWho(id){if(window.SB_URL&&window.SB_KEY){try{const c=await Promise.race([sbAnon('home_who',[KEY,id]),new Promise((_,j)=>setTimeout(()=>j(new Error('slow')),4000))]);if(c&&c.who)return c}
+    catch(e){}}                                    // not found here (e.g. new staff not copied yet) → the staff system decides
+  return api('api_homeWho',KEY,id)}
 let SBP=(()=>{try{return JSON.parse(sessionStorage.getItem('dp_sbp')||'null')}catch(e){return null}})(),sbpWait=null;
 function sbpSet(v){SBP=v;try{v?sessionStorage.setItem('dp_sbp',JSON.stringify(v)):sessionStorage.removeItem('dp_sbp')}catch(e){}}
 async function sbPass(){if(!window.SB_URL||!window.SB_KEY||!session)return null;if(SBP&&SBP.uid===(me&&me.id)&&SBP.exp>Date.now())return SBP;
@@ -4027,8 +4033,8 @@ function caReqDialog(){const box=stBox(),C=(MA&&MA.ca)||{bal:0,reqs:[]},pend=(C.
    <label class="full">Reason<input class="edit-in" id="ca-r" placeholder="e.g. hospital bill, tuition"></label></div><div class="row-end"><button class="btn" data-x>Cancel</button><button class="go" id="ca-ok">Send to manager</button></div>`}
    ${(C.reqs||[]).length?`<h3 style="margin:14px 0 4px">My requests</h3>${C.reqs.map(q=>`<div class="posx-row"><span>${stamp(q.filed)} · ${peso(q.amt)} <small class="unit">${esc(q.reason)}${q.note?' · 💬 '+esc(q.note):''}</small></span>${badge(q.st==='released'?'RELEASED':q.st==='rejected'?'REJECTED':q.st==='cancelled'?'CANCELLED':'WAITING',q.st==='released'?'green':q.st==='rejected'?'red':q.st==='cancelled'?'gray':'amber')}</div>`).join('')}`:''}
    ${pend?'<div class="row-end"><button class="go" data-x>Close</button></div>':''}`;box.classList.add('on');
-  if($('#ca-x'))$('#ca-x').onclick=async()=>{if(!confirm('Cancel this request?'))return;try{MA=await api('api_caCancel',session.token,pend.id);caReqDialog()}catch(e){alert(errMsg(e))}};
-  if($('#ca-ok'))$('#ca-ok').onclick=async()=>{const b=$('#ca-ok');b.disabled=true;try{MA=await api('api_caFile',session.token,{amt:$('#ca-a').value,plan:$('#ca-p').value,reason:$('#ca-r').value});toast('💸 Sent to the manager');caReqDialog();if(view==='att')drawStock()}catch(e){b.disabled=false;alert(errMsg(e))}}}
+  if($('#ca-x'))$('#ca-x').onclick=async()=>{if(!confirm('Cancel this request?'))return;try{const r=await apiX('api_caCancel',[session.token,pend.id],true);if(r&&r.lite){pend.st='cancelled';setTimeout(()=>{MAload=false;attLoad()},30)}else MA=r;caReqDialog()}catch(e){alert(errMsg(e))}};
+  if($('#ca-ok'))$('#ca-ok').onclick=async()=>{const b=$('#ca-ok');b.disabled=true;try{const x={amt:$('#ca-a').value,plan:$('#ca-p').value,reason:$('#ca-r').value},r=await apiX('api_caFile',[session.token,x],true);if(r&&r.lite){if(MA&&MA.ca){MA.ca.reqs=[{id:'new'+Date.now(),filed:Date.now(),uid:me.id,name:me.name,amt:+x.amt,reason:x.reason,plan:+x.plan||0,st:'pending'}].concat(MA.ca.reqs||[])}setTimeout(()=>{MAload=false;attLoad()},30)}else MA=r;toast('💸 Sent to the manager');caReqDialog();if(view==='att')drawStock()}catch(e){b.disabled=false;alert(errMsg(e))}}}
 function rulesDialog(){const box=stBox();$('#stb').innerHTML=`<h2>📋 House rules</h2><ol class="att-rules">${(MA&&MA.rules||[]).map(r=>`<li>${esc(r)}</li>`).join('')}</ol><div class="row-end"><button class="go" data-x>OK</button></div>`;box.classList.add('on')}
 function otDialog(){const box=stBox(),sh=MA&&MA.shift;$('#stb').innerHTML=`<h2>⏱ File overtime</h2><div class="unit">Overtime is paid only when the <b>manager approves</b> it. File it separately from your time in / out.</div>
   <div class="fgrid"><label>Date<input class="edit-in" type="date" id="ot-d" value="${today()}"></label><label>From<input class="edit-in" type="time" id="ot-f" value="${sh&&sh.tout||''}"></label><label>To<input class="edit-in" type="time" id="ot-t"></label>
@@ -4036,8 +4042,8 @@ function otDialog(){const box=stBox(),sh=MA&&MA.shift;$('#stb').innerHTML=`<h2>�
   <div class="unit" id="ot-m"></div><div class="row-end"><button class="btn" data-x>Cancel</button><button class="go" id="ot-ok">Send to manager</button></div>
   ${MA&&MA.ot&&MA.ot.length?`<h3 style="margin:14px 0 4px">My OT requests</h3>${MA.ot.slice(0,10).map(o=>`<div class="posx-row"><span>${day(o.d)} · ${time12h(o.from)}–${time12h(o.to)} <small class="unit">${esc(o.reason)}${o.note?' · 💬 '+esc(o.note):''}</small></span><span>${badge(o.st==='approved'?'Approved '+Math.round(o.min/6)/10+'h':o.st==='rejected'?'Rejected':'Pending',o.st==='approved'?'green':o.st==='rejected'?'red':'amber')}${o.st==='pending'?` <button class="del" data-otx="${o.id}" title="Cancel">✕</button>`:''}</span></div>`).join('')}`:''}`;box.classList.add('on');
   const upd=()=>{const f=$('#ot-f').value,t=$('#ot-t').value;if(f&&t){const[a,b]=f.split(':').map(Number),[c,d]=t.split(':').map(Number),m=c*60+d-a*60-b;$('#ot-m').textContent=m>0?'= '+Math.floor(m/60)+' h '+(m%60)+' min':''}};$('#ot-f').oninput=upd;$('#ot-t').oninput=upd;
-  $('#stb').querySelectorAll('[data-otx]').forEach(b=>b.onclick=async()=>{if(!confirm('Cancel this OT request?'))return;try{MA=await api('api_otCancel',session.token,b.dataset.otx);otDialog();renderAttBar()}catch(e){alert(errMsg(e))}});
-  $('#ot-ok').onclick=async()=>{const b=$('#ot-ok');b.disabled=true;try{MA=await api('api_otFile',session.token,{d:$('#ot-d').value,from:$('#ot-f').value,to:$('#ot-t').value,reason:$('#ot-r').value});toast('⏱ OT sent to the manager');otDialog();if(view==='att')drawStock()}catch(e){alert(errMsg(e));b.disabled=false}}}
+  $('#stb').querySelectorAll('[data-otx]').forEach(b=>b.onclick=async()=>{if(!confirm('Cancel this OT request?'))return;try{const r=await apiX('api_otCancel',[session.token,b.dataset.otx],true);if(r&&r.lite){if(MA)MA.ot=(MA.ot||[]).filter(o=>o.id!==b.dataset.otx);setTimeout(()=>{MAload=false;attLoad()},30)}else MA=r;otDialog();renderAttBar()}catch(e){alert(errMsg(e))}});
+  $('#ot-ok').onclick=async()=>{const b=$('#ot-ok');b.disabled=true;try{const x={d:$('#ot-d').value,from:$('#ot-f').value,to:$('#ot-t').value,reason:$('#ot-r').value},r=await apiX('api_otFile',[session.token,x],true);if(r&&r.lite){const mm=(h=>{const[a,b]=String(h).split(':').map(Number);return a*60+b});if(MA)MA.ot=[{id:'new'+Date.now(),filed:Date.now(),uid:me.id,name:me.name,d:x.d,from:x.from,to:x.to,min:mm(x.to)-mm(x.from),reason:x.reason,st:'pending'}].concat(MA.ot||[]);setTimeout(()=>{MAload=false;attLoad()},30)}else MA=r;toast('⏱ OT sent to the manager');otDialog();if(view==='att')drawStock()}catch(e){alert(errMsg(e));b.disabled=false}}}
 const time12h=h=>{if(!h)return '';const[H,M]=h.split(':').map(Number);return ((H+11)%12+1)+':'+String(M).padStart(2,'0')+(H<12?' AM':' PM')};
 /* ATTENDANCE SELFIE — live front camera only (no gallery), time + name stamped, face check like the Time Clock */
 const FA_URL='https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/dist/face-api.js',FA_MODEL='https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/model/';
@@ -4083,7 +4089,11 @@ async function punch(kind,b){const L={in:'TIME IN',bout:'BREAK',bin:'BACK FROM B
 const DOWS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 /* ---------- HR (manager): schedule · OT requests · payroll & attendance · shifts & rules ---------- */
 let HR=null,HRload=false,HRerr='',HRsub='sched',HRfrom='',HRto='',HRgrid=null;
-function hrLoad(){if(HRload)return;HRload=true;HRerr='';api('api_hr',session.token,HRfrom,HRto).then(r=>{HR=r;HRfrom=r.from;HRto=r.to;HRgrid=null}).catch(e=>HRerr=errMsg(e)).finally(()=>{HRload=false;if(view==='hr')drawStock()})}
+/* HR & Payroll (Stage A): the ready copy in Supabase shows at once; Google works it out fresh behind it */
+async function repSb(kind,from,to,cb){if(!window.SB_URL||!me||me.role!=='manager')return;try{const r=await sbCall('st_rep',kind+':'+(from?from+':'+to:'cur'));if(r&&r.v)cb(r.v,r.at)}catch(e){}}
+function hrLoad(){if(HRload)return;HRload=true;HRerr='';const q=hrLoad.q=(hrLoad.q||0)+1;
+  repSb('hr',HRfrom,HRto,v=>{if(!HRload||q!==hrLoad.q||(HR&&!HR.sbOld))return;HR=Object.assign(v,{sbOld:1});HRfrom=v.from;HRto=v.to;if(view==='hr'&&!document.querySelector('.modal.on'))drawStock()});
+  api('api_hr',session.token,HRfrom,HRto).then(r=>{if(q!==hrLoad.q)return;HR=r;HRfrom=r.from;HRto=r.to;HRgrid=null}).catch(e=>{if(q===hrLoad.q)HRerr=errMsg(e)}).finally(()=>{if(q!==hrLoad.q)return;HRload=false;if(view==='hr')drawStock()})}
 function hrOffCount(id){const D=hrDays();document.querySelectorAll(`[data-hroff^="${id}|"]`).forEach(td=>{const m=td.dataset.hroff.split('|')[1],n=Object.keys(HR.sched).filter(k=>k.startsWith(id+'|'+m)&&!D.includes(k.split('|')[1])&&HR.sched[k]==='OFF').length+D.filter(d=>d.startsWith(m)&&HRgrid[id][d]==='OFF').length;td.textContent=n+'/'+HR.set.offMax;td.style.color=n>HR.set.offMax?'var(--rose)':''})}
 function hrDays(){const out=[];for(let d=new Date(HR.from+'T00:00:00');iso(d)<=HR.to;d.setDate(d.getDate()+1))out.push(iso(d));return out}
 function hrHTML(){if(!HR&&!HRerr){hrLoad();return '<div class="empty">Loading HR…</div>'}if(HRerr)return `<div class="empty">⚠ ${esc(HRerr)}<br><br><button class="btn" data-hrre>↻ Try again</button></div>`;
@@ -4120,7 +4130,9 @@ let PY=null,PYload=false,PYerr='',PYfrom='',PYto='',PYov={},PYsub='run',PYbusy=0
 function pyRecalc(){const n=++PYbusy;const tag=()=>{const e=$('#py-busy');if(e)e.style.display=PYbusy===n?'':'none'};setTimeout(tag);
   api('api_payroll',session.token,PYfrom,PYto,PYov).then(r=>{if(n!==PYbusy)return;const ae=document.activeElement,key=ae&&ae.dataset?Object.keys(ae.dataset)[0]:'',kv=key?ae.dataset[key]:'';PY=r;PYbusy=0;drawStock();
     if(key){const e=document.querySelector(`[data-${key.replace(/[A-Z]/g,m=>'-'+m.toLowerCase())}="${kv}"]`);if(e&&e.focus)e.focus()}}).catch(e=>{PYbusy=0;tag();toast(errMsg(e),true)})}
-function pyLoad(){if(PYload)return;PYload=true;PYerr='';api('api_payroll',session.token,PYfrom,PYto,PYov).then(r=>{PY=r;PYfrom=r.from;PYto=r.to;if(r.ovs)PYov=r.ovs}).catch(e=>PYerr=errMsg(e)).finally(()=>{PYload=false;if(view==='owner'||view==='hr')drawStock()})}
+function pyLoad(){if(PYload)return;PYload=true;PYerr='';const q=pyLoad.q=(pyLoad.q||0)+1;
+  if(!PYov||!Object.keys(PYov).length)repSb('pay',PYfrom,PYto,v=>{if(!PYload||q!==pyLoad.q||(PY&&!PY.sbOld))return;PY=Object.assign(v,{sbOld:1});PYfrom=v.from;PYto=v.to;if((view==='owner'||view==='hr')&&!document.querySelector('.modal.on'))drawStock()});
+  api('api_payroll',session.token,PYfrom,PYto,PYov).then(r=>{if(q!==pyLoad.q)return;PY=r;PYfrom=r.from;PYto=r.to;if(r.ovs)PYov=r.ovs}).catch(e=>{if(q===pyLoad.q)PYerr=errMsg(e)}).finally(()=>{if(q!==pyLoad.q)return;PYload=false;if(view==='owner'||view==='hr')drawStock()})}
 function pyPeriods(){if(PY&&PY.periods)return PY.periods;const t=new Date(),out=[];for(let i=0;i<6;i++){const y=t.getFullYear(),m=t.getMonth()-Math.floor(i/2),h=(t.getDate()<=15?0:1)-(i%2);const mm=new Date(y,m+(h<0?-1:0),1),Y=mm.getFullYear(),M=mm.getMonth(),half=(h+2)%2;
   out.push(half===0?[iso(new Date(Y,M,1)),iso(new Date(Y,M,15))]:[iso(new Date(Y,M,16)),iso(new Date(Y,M+1,0))])}return [...new Map(out.map(p=>[p.join(),p])).values()]}
 function owPayroll(){if(!PY&&!PYerr){pyLoad();return '<div class="empty">Loading payroll…</div>'}if(PYerr)return `<div class="empty">⚠ ${esc(PYerr)}</div>`;
@@ -4199,7 +4211,7 @@ function caDecide(id,ok){if(!PY)return;const q=(PY.caReqs||[]).find(x=>x.id===id
    :`<h2>✕ Reject — ${esc(q.name)} · ${peso(q.amt)}</h2><label class="full">Reason (the staff will see it)<input class="edit-in" id="cd-n" placeholder="e.g. still has a balance"></label><div class="row-end"><button class="btn" data-x>Cancel</button><button class="go" id="cd-ok" style="background:var(--rose)">Reject</button></div>`;
   box.classList.add('on');
   $('#cd-ok').onclick=async()=>{const b=$('#cd-ok');b.disabled=true;try{const y=ok?{amt:$('#cd-a').value,from:$('#cd-f').value,plan:$('#cd-p').value,note:$('#cd-n').value}:{note:$('#cd-n').value};Object.assign(y,{pFrom:PYfrom,pTo:PYto,ovs:PYov});
-    PY=await api('api_caDecide',session.token,id,ok,y);box.classList.remove('on');LGD=null;OW=null;APR=null;aprLoad(true);toast(ok?'✓ Released — print the voucher':'Request rejected');drawStock();
+    {const r=await apiX('api_caDecide',[session.token,id,ok,y],true);if(r&&r.lite){PY=null;setTimeout(()=>{PYload=false;pyLoad()},30)}else PY=r}box.classList.remove('on');LGD=null;OW=null;APR=null;aprLoad(true);toast(ok?'✓ Released — print the voucher':'Request rejected');drawStock();
     if(ok){const a=PY.advances.find(x=>x.uid===q.uid);if(a)caVoucher(a.id)}}catch(e){b.disabled=false;alert(errMsg(e))}}}
 function caVoucher(id){const a=PY.advances.find(x=>x.id===id);if(!a)return;const accN=((PY.accounts||[]).find(x=>x.id===a.from)||{}).name||'—',ln=(PY.lines||[]).find(l=>l.id===a.uid),
   plan=a.plan?peso(a.plan)+' per payroll cut-off':'In full on the next payroll';
@@ -5738,7 +5750,9 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const igr=e.target
     if('hrre' in d){HR=null;HRerr='';PY=null;drawStock();return}
     if('hrsave' in d){await busy(async()=>{HR=await api('api_hrSched',session.token,HR.from,HR.to,HRgrid);HRgrid=null;toast('📅 Schedule saved');drawStock()});return}
     if(d.otok||d.otno){const id=d.otok||d.otno,ok=!!d.otok,mi=document.querySelector(`[data-otmin="${id}"]`),note=ok?'':prompt('Reason for rejecting (optional):')||'';if(note===null)return;
-      await busy(async()=>{HR=await api('api_otDecide',session.token,id,ok,note,mi?mi.value:'',HR.from,HR.to);PY=null;toast(ok?'✅ OT approved':'OT rejected');drawStock()});return}
+      await busy(async()=>{const r=await apiX('api_otDecide',[session.token,id,ok,note,mi?mi.value:'',HR.from,HR.to],true);PY=null;
+        if(r&&r.lite){const o=(HR.ot||[]).find(x=>x.id===id);if(o){o.st=ok?'approved':'rejected';o.by=me.name;o.at=Date.now();if(ok&&mi&&mi.value)o.min=+mi.value}setTimeout(()=>{HRload=false;hrLoad()},30)}else HR=r;
+        toast(ok?'✅ OT approved':'OT rejected');drawStock()});return}
     if('hsadd' in d){$('#hs-rows').insertAdjacentHTML('beforeend','<tr><td><input class="edit-in hs-c" style="width:60px" maxlength="3"></td><td><input class="edit-in hs-n"></td><td><input class="edit-in hs-i" type="time"></td><td><input class="edit-in hs-o" type="time"></td><td><button class="del" data-hsdel>✕</button></td></tr>');return}
     if('hsdel' in d){b.closest('tr').remove();return}
     if('hssave' in d){const sh=[...document.querySelectorAll('#hs-rows tr')].map(tr=>({code:tr.querySelector('.hs-c').value,name:tr.querySelector('.hs-n').value,tin:tr.querySelector('.hs-i').value,tout:tr.querySelector('.hs-o').value}));
