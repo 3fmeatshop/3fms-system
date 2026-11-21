@@ -1365,7 +1365,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 21 · 11:05 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 21 · 11:35 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -5342,7 +5342,7 @@ function zSummaryHTML(X){const pay=X.pay||{};
   return `<div class="zsum"><div class="zs-net"><span>Net sales</span><b>${peso(X.net)}</b><small>${X.receipts} receipt(s)</small></div>
     <div class="zs-grid">${PAYK.map(([k,i])=>`<div><span>${i} Total ${k}</span><b>${peso(pay[k]||0)}</b></div>`).join('')}
       <div><span>💸 Cash out</span><b>−${peso(X.cashOut||0)}</b></div><div><span>➕ Cash in</span><b>+${peso(X.cashIn||0)}</b></div></div>
-    <div class="zs-exp">Expected cash in drawer: <b>${peso(X.expected)}</b><br><small>opening ${peso(X.opening)} + cash sales ${peso(X.cashSales)} + charge paid in cash ${peso(X.cashColl)} + cash in ${peso(X.cashIn||0)} − cash out ${peso(X.cashOut||0)} − refunds ${peso(X.refunds)}</small></div></div>`}
+    <div class="zs-exp">Expected cash in drawer: <b>${peso(X.expected)}</b><br><small>opening ${peso(X.opening)} + cash sales ${peso(X.cashSales)} + charge paid in cash ${peso(X.cashColl)} + cash in ${peso(X.cashIn||0)} − cash out ${peso(X.cashOut||0)} − refunds ${peso(X.refunds)}${X.mgrColl?`<br>👔 collected by the manager (not in the drawer): ${peso(X.mgrColl)}`:''}</small></div></div>`}
 async function zDialog(){if(posQueue().length){await posFlush();if(posQueue().length)return alert('Some sales are not sent yet. Connect to the internet first, then do the Z reading.')}
   if(cart.length||posHolds().length)if(!confirm('There is a sale on screen or held. Close the day anyway?'))return;
   let X;try{X=await api('api_posX',session.token)}catch(e){return alert(errMsg(e))}
@@ -5470,16 +5470,20 @@ function toCashHTML(){const L=(ST.toCash||[]).filter(o=>o.id!==posOrder),U=ST.un
       ${L.map(o=>`<div class="pocard"><div class="poh"><b class="drno">${esc(o.dr)}</b> <b>${esc(o.customer)}</b> <span class="unit">· deliver ${day(o.delivery)}</span>${o.delivered?' '+badge('Delivered','green'):o.dispatched?' '+badge('On the way','violet'):' '+badge('Ready','amber')}${o.returnPending?' '+badge('↩ return waiting for approval','red'):''}<span style="flex:1"></span><button class="go sm" data-pload="${o.id}" ${o.returnPending?'disabled title="Wait for the manager to approve the return"':''}>Bill</button></div>
         <div class="unit">${o.items.map(i=>`${esc(i.product)} <b>${qf(i.qty)} ${esc(i.unit)}</b>`).join(' · ')}</div></div>`).join('')||'<div class="unit">No DR waiting. A DR appears here when Operations finishes checking an order.</div>'}</div>
     ${U.length?`<details class="panel" open><summary><b>💳 Unpaid — charge (${U.length})</b> <span class="unit">total ${peso(U.reduce((a,x)=>a+x.balance,0))}</span></summary>${U.map(x=>`<div class="pocard"><div class="poh"><b>${esc(x.no)}</b>${x.dr?' · '+esc(x.dr):''} · <b>${esc(x.customer)}</b><span class="unit">· ${stamp(x.at)} · total ${peso(x.total)}</span><span style="flex:1"></span><b style="color:var(--rose)">${peso(x.balance)}</b> <button class="btn sm" data-ppay="${esc(x.no)}">Record payment</button></div></div>`).join('')}</details>`:''}`}
+let MACC=null;async function moneyAccs(){if(!MACC)MACC=await api('api_moneyAccs',session.token);return MACC}
+const accOpts=(L,sel)=>L.filter(a=>a.link!=='pos-cash').map(a=>`<option value="${esc(a.id)}"${a.id===sel?' selected':''}>👔 Manager → ${esc(a.name)}</option>`).join('');
 function payDialog(no){const x=(ST.unpaid||[]).find(z=>z.no===no);if(!x)return;const box=stBox();
   $('#stb').innerHTML=`<h2>💳 Payment — ${esc(x.customer)}</h2><div class="unit">Receipt <b>${esc(x.no)}</b>${x.dr?' · '+esc(x.dr):''} · total ${peso(x.total)} · <b>balance ${peso(x.balance)}</b></div>
     ${(x.payments||[]).filter(p=>!p.void).length?`<div class="unit" style="margin-top:4px">Paid so far: ${x.payments.filter(p=>!p.void).map(p=>peso(p.amount)+' '+esc(p.method||'')).join(' · ')}${me.role==='manager'?` · <a href="#" id="py-fix">wrong? void a payment</a>`:''}</div>`:''}
     <div class="fgrid"><label>Amount (₱)<input class="edit-in" id="py-a" type="number" step="0.01" value="${x.balance}"></label><label>Method<select class="edit-in" id="py-m"><option>Cash</option><option>GCash</option><option>Maya</option><option>Bank transfer</option><option>Check</option></select></label>
-    <label class="full">Reference no. (bank / GCash / check)<input class="edit-in" id="py-r"></label></div>
+    <label class="full">Reference no. (bank / GCash / check)<input class="edit-in" id="py-r"></label>
+    ${me.role==='manager'?`<label class="full">Received by<select class="edit-in" id="py-rb"><option value="">🧾 Cashier drawer (counted in the Z reading)</option></select></label>`:''}</div>
     <div class="row-end"><button class="btn" data-x>Cancel</button><button class="go" id="py-ok">Save payment</button></div>`;box.classList.add('on');
+  if(me.role==='manager')moneyAccs().then(L=>{const s2=$('#py-rb');if(s2)s2.insertAdjacentHTML('beforeend',accOpts(L))}).catch(()=>{});
   if($('#py-fix'))$('#py-fix').onclick=e=>{e.preventDefault();box.classList.remove('on');findReceipt(x.no)};
   const oid=opId();
-  $('#py-ok').onclick=async()=>{$('#py-ok').disabled=true;const A=$('#py-a').value,M=$('#py-m').value,F=$('#py-r').value;
-    try{if(!await posOp({id:oid,kind:'pay',no,amount:A,method:M,ref:F})){ST=await api('api_posPay',session.token,no,A,M,F,oid);stCache()}box.classList.remove('on');toast('💳 Payment saved'+(posOpWhy?' (slow way: '+posOpWhy+')':' ⚡'));drawStock()}catch(e){alert(errMsg(e));$('#py-ok').disabled=false}}}
+  $('#py-ok').onclick=async()=>{$('#py-ok').disabled=true;const A=$('#py-a').value,M=$('#py-m').value,F=$('#py-r').value,RB=$('#py-rb')?$('#py-rb').value:'';
+    try{if(RB||!await posOp({id:oid,kind:'pay',no,amount:A,method:M,ref:F})){ST=await api('api_posPay',session.token,no,A,M,F,oid,RB);stCache()}box.classList.remove('on');toast('💳 Payment saved'+(posOpWhy?' (slow way: '+posOpWhy+')':' ⚡'));drawStock()}catch(e){alert(errMsg(e));$('#py-ok').disabled=false}}}
 const CHG_TYPES=['Giniling (grinding) charge','Slicing / cutting charge','Cubing charge','Packaging charge','Marinating charge','Other'];
 function chargeDialog(kind){const box=stBox(),D=kind==='delivery';
   $('#stb').innerHTML=`<h2>${D?'🛵 Delivery charge':'➕ Other charge'}</h2><div class="unit">${D?'For phone / walk-in orders that we deliver.':'Added to this sale. No cost — counted as sales.'}</div>
@@ -5582,8 +5586,13 @@ function findReceipt(q){const box=stBox();
   const go=async()=>{const v=$('#fr-q').value.trim();if(!v)return;const o=$('#fr-out');o.innerHTML='<div class="unit">Searching…</div>';
     try{let r=null;try{r=await sbCall('st_receipt',v)}catch(_){}if(!r||!r.no)r=await api('api_saleFind',session.token,v);
       o.innerHTML=`${r.status==='void'?`<div class="snote" style="color:var(--rose)"><b>❌ VOIDED</b>${r.voidBy?' by '+esc(r.voidBy):''}${r.voidWhy?' — '+esc(r.voidWhy):''}</div>`:''}${r.balance>0?`<div class="snote">Unpaid balance: <b>${peso(r.balance)}</b></div>`:''}${receiptHTML(r)}
-        ${(r.payments||[]).length?`<h4 style="margin:12px 0 4px">💳 Payments recorded</h4>${r.payments.map(p=>`<div class="posx-row${p.void?' cm-void':''}"><span>${stamp(p.at)} · ${esc(p.method||'Cash')}${p.ref?' · ref '+esc(p.ref):''} <small class="unit">by ${esc(p.by||'')}${p.void?` · ❌ VOIDED by ${esc(p.void.by)} — ${esc(p.void.why)}`:''}</small></span><b>${peso(p.amount)}</b>${p.void?'':`<button class="btn sm" data-payvoid="${p.at}">❌ Void payment</button>`}</div>`).join('')}<div class="unit">Balance now: <b>${peso(r.balance||0)}</b></div>`:''}
+        ${(r.payments||[]).length?`<h4 style="margin:12px 0 4px">💳 Payments recorded</h4>${r.payments.map(p=>`<div class="posx-row${p.void?' cm-void':''}"><span>${stamp(p.at)} · ${esc(p.method||'Cash')}${p.ref?' · ref '+esc(p.ref):''} <small class="unit">by ${esc(p.by||'')}${p.void?` · ❌ VOIDED by ${esc(p.void.by)} — ${esc(p.void.why)}`:''}${p.rcv?` · <b style="color:#075985">👔 received by the manager → ${esc(p.rcv.accName)}</b> (not in the drawer)`:''}</small></span><b>${peso(p.amount)}</b>${p.void?'':`<span class="payrb" data-payrbw="${p.at}"><button class="btn sm" data-payrb="${p.at}">${p.rcv?'↩ Cashier drawer':'👔 Manager received it'}</button></span><button class="btn sm" data-payvoid="${p.at}">❌ Void payment</button>`}</div>`).join('')}<div class="unit">Balance now: <b>${peso(r.balance||0)}</b></div>`:''}
         <div class="row-end"><button class="btn" id="fr-pr">🖨 Reprint</button></div>`;$('#fr-pr').onclick=()=>printReceipt(r,true);
+      o.querySelectorAll('[data-payrb]').forEach(b=>b.onclick=async e=>{e.stopPropagation();const p=r.payments.find(z=>String(z.at)===b.dataset.payrb);if(!p)return;
+        const go=async acc=>{try{const R2=await api('api_payRecvBy',session.token,r.no,p.at,acc);toast(acc?'👔 Marked: received by the manager — out of the Z reading':'↩ Back to the cashier drawer');ST&&(ST.stale=true);findReceipt(r.no)}catch(er){alert(errMsg(er))}};
+        if(p.rcv){if(confirm('Put this payment back in the cashier drawer (counted in the Z reading)?'))go('');return}
+        let L=[];try{L=await moneyAccs()}catch(er){return alert(errMsg(er))}const w=o.querySelector(`[data-payrbw="${p.at}"]`);
+        w.innerHTML=`<select class="edit-in" style="width:auto">${accOpts(L)}</select> <button class="go sm">OK</button>`;w.querySelector('button').onclick=ev=>{ev.stopPropagation();go(w.querySelector('select').value)};w.querySelector('select').onclick=ev=>ev.stopPropagation()});
       o.querySelectorAll('[data-payvoid]').forEach(b=>b.onclick=async e=>{e.stopPropagation();const p=r.payments.find(z=>String(z.at)===b.dataset.payvoid);
         const why=prompt(`Void the ${peso(p.amount)} ${p.method||'Cash'} payment of ${r.customer||r.no}?\nThe receipt becomes unpaid again for this amount.\n\nWhy? (e.g. recorded by mistake — not paid)`);if(!why||!why.trim())return;
         b.disabled=true;try{let note='';if(await posOp({id:opId(),kind:'payvoid',no:r.no,at:p.at,why:why.trim()})){if(/cash/i.test(p.method||'Cash')&&!(ST.shift&&p.at>=(ST.shift.openAt||0)))note='This cash payment was already counted in a closed Z reading. If that Z shows a short of ₱'+p.amount+', mark it "found / explained".'}
