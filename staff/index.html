@@ -1364,7 +1364,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 20 · 10:55 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 21 · 6:30 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -4780,11 +4780,18 @@ function importDialog(){const box=stBox(),hasSample=ST.products.some(p=>/^[PCS]0
         alert(`✅ Import done\n\n${r.added||0} new products added\n${r.updated||0} products updated\n${r.counted||0} stock counts changed`+(r.skipped&&r.skipped.length?`\n\nSkipped:\n${r.skipped.slice(0,10).join('\n')}`:''))}
       catch(x){alert(errMsg(x));b.disabled=false;b.textContent='⬆ Import'}}}
   draw();box.classList.add('on')}
+/* next product code: same letters as the other products in that category (or the most used letters), next number, same zero padding
+   e.g. PK007 → PK008 · C12 → C13 · 1045 → 1046 */
+function nextCode(cat){const all=(ST&&ST.products||[]).map(x=>({c:String(x.code||'').trim(),cat:x.cat||''})).filter(x=>x.c),rx=/^(.*?)(\d+)$/;
+  const best=list=>{const n={};list.forEach(x=>{const m=x.c.match(rx);if(m)n[m[1].toUpperCase()]=(n[m[1].toUpperCase()]||0)+1});const k=Object.keys(n).sort((a,b)=>n[b]-n[a]);return k.length?k[0]:null};
+  const c=String(cat||'').trim().toLowerCase();let pre=c?best(all.filter(x=>x.cat.toLowerCase()===c)):null;if(pre==null)pre=best(all);if(pre==null)return 'P001';
+  let mx=0,w=3,orig=pre;all.forEach(x=>{const m=x.c.match(rx);if(m&&m[1].toUpperCase()===pre){mx=Math.max(mx,+m[2]);w=Math.max(w,m[2].length);orig=m[1]}});
+  const used=new Set(all.map(x=>x.c.toLowerCase()));let n=mx+1,k;do{k=orig+String(n).padStart(w,'0');n++}while(used.has(k.toLowerCase()));return k}
 function productDialog(code){const p=code?pBy(code):{code:'',name:'',cat:'',unit:'Kg',retail:0,wholesale:0,cost:0,reorder:0,kg:0,alias:'',on:false,avail:0},isNew=!code,box=stBox();
   const cats=[...new Set(ST.products.map(x=>x.cat))];
   $('#stb').innerHTML=`<h2>${isNew?'+ Add product':'✎ '+esc(p.name)}</h2>
     <div class="fgrid">
-      <label>Code<input class="edit-in" id="pf-code" value="${esc(p.code)}" ${isNew?'':'readonly'} placeholder="e.g. P010"></label>
+      <label>Code${isNew?' <small>(next code — filled in for you)</small>':''}<input class="edit-in" id="pf-code" value="${esc(isNew?nextCode(''):p.code)}" ${isNew?'':'readonly'} placeholder="e.g. P010"></label>
       <label>Product name<input class="edit-in" id="pf-name" value="${esc(p.name)}"></label>
       <label>Category<input class="edit-in" id="pf-cat" list="pf-cats" value="${esc(p.cat)}" placeholder="Pork / Chicken / Processed"><datalist id="pf-cats">${cats.map(c=>`<option value="${esc(c)}">`).join('')}</datalist></label>
       <label>Unit<select class="edit-in" id="pf-unit">${['Kg','Pack','Pc'].map(u=>`<option${p.unit===u?' selected':''}>${u}</option>`).join('')}</select></label>
@@ -4807,8 +4814,10 @@ function productDialog(code){const p=code?pBy(code):{code:'',name:'',cat:'',unit
       <div class="fgrid"><label>Counted qty<input class="edit-in" id="pf-cnt" type="number" step="0.001"></label><label>Note<input class="edit-in" id="pf-cn" placeholder="e.g. monthly count, spoiled"></label></div>
       <div class="row-end"><button class="go" id="pf-adj">Save count</button></div></div>`}`;
   box.classList.add('on');
+  if(isNew){const ci=$('#pf-code');ci.oninput=()=>{ci.dataset.typed=ci.value.trim()?'1':''};   // typed by hand → keep it
+    $('#pf-cat').addEventListener('input',()=>{if(ci.dataset.typed!=='1')ci.value=nextCode($('#pf-cat').value)})}   // category picked → next code of that category
   $('#pf-save').onclick=async()=>{const b=$('#pf-save');b.disabled=true;
-    try{ST=await api('api_saveProduct',session.token,{isNew,code:$('#pf-code').value,name:$('#pf-name').value,cat:$('#pf-cat').value,unit:$('#pf-unit').value,retail:$('#pf-ret').value,wholesale:$('#pf-ws').value,
+    try{ST=await api('api_saveProduct',session.token,{isNew,auto:isNew&&$('#pf-code').dataset.typed!=='1',code:$('#pf-code').value,name:$('#pf-name').value,cat:$('#pf-cat').value,unit:$('#pf-unit').value,retail:$('#pf-ret').value,wholesale:$('#pf-ws').value,
       cost:$('#pf-cost').value,reorder:$('#pf-ro').value,kg:$('#pf-kg').value,group:$('#pf-grp').value,max:$('#pf-max').value,alias:$('#pf-al').value,on:$('#pf-on').checked,avail:isNew?$('#pf-av').value:0});stCache();box.classList.remove('on');toast('Product saved');drawStock()}
     catch(e){alert(errMsg(e))}b.disabled=false};
   if(!isNew){const done=r=>{ST=r;stCache();const np=ST.products.find(z=>z.code===p.code)||p;p.photo=np.photo;const ph=$('#pf-ph');if(ph){ph.style.backgroundImage=np.photo?`url('${np.photo}')`:'none';ph.textContent=np.photo?'':'No photo yet'}const ut=$('#pf-upt');if(ut)ut.textContent='📷 '+(np.photo?'Change photo':'Upload photo');drawStock()};
