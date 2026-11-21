@@ -939,6 +939,7 @@ body:has(.pospanel) .modal{z-index:70}   /* dialogs opened from the records pane
 .ha-big{font-size:22px;text-align:center;letter-spacing:2px;text-transform:uppercase}.ha-pin-h{text-align:center;margin-bottom:8px}.ha-pin-h b{display:block;font-size:20px}.ha-pin-h small{color:var(--muted)}
 .ap-sw{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}.ap-sw .ap-swp{flex:1 1 180px;min-width:0}.ap-sw .ap-swa{flex:1 1 100%}.ap-sw .ap-swq{width:90px}.ap-sw .ap-swu{width:auto}
 .igrp td{background:#f1f5f9;cursor:pointer;font-size:14px}.igrp.on td{background:#e2e8f0}.igc{display:inline-block;width:18px;color:var(--muted)}.igsub td:first-child{padding-left:26px}
+.prchk{display:flex;align-items:center;gap:6px;margin-top:6px;padding:5px 8px;border-radius:8px;background:#FEF3C7;color:#92400E;font-weight:800;font-size:12px;cursor:pointer}.prchk input{width:18px;height:18px}.prchk.on{background:#DCFCE7;color:#166534}.rcp{padding:12px 14px}.rcp-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.rcp-b{border:1.5px solid #E5C07B;background:#FFF8E6;color:#7C2D12;border-radius:999px;padding:8px 14px;font-weight:800;cursor:pointer;font-size:14px}.rcp-b small{font-weight:600;color:#92400E}.rcp-b.on{background:#7F1D1D;color:#fff;border-color:#7F1D1D}.rcp-b.on small{color:#FDE68A}
 .prkg{margin-top:4px}.prsetb{display:block;margin-top:4px;font-size:11px;padding:3px 8px}.prauto td{background:#f8fafc}.prauto small{display:block}
 .ychip{display:inline-block;border-radius:99px;padding:2px 9px;font-size:12px;font-weight:700;margin-left:4px}.ychip.ok{background:#dcfce7;color:#166534}.ychip.bad{background:#fee2e2;color:#991b1b}.ychip.lrn{background:#e0e7ff;color:#3730a3}.prsum2 div{margin-top:4px}
 .ptgt .ptrow{padding:8px 0;border-bottom:1px solid var(--line)}.ptgt .ptrow:last-child{border:0}.pt-h{display:flex;gap:8px;align-items:center;margin-bottom:4px}
@@ -1364,7 +1365,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 21 · 9:40 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 21 · 10:40 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -5145,7 +5146,7 @@ function recvHTML(){
     ${done.length?`<div class="panel"><h3>✅ Recently received</h3>${done.map(p=>`<div class="unit" style="padding:4px 0"><b>${esc(p.no)}</b> · ${esc(p.supplier)}${p.direct?` <span class="pill" style="background:#E0F2FE;color:#075985">🧾 Invoice ${esc(p.direct.inv)}</span>`:''} · ${stamp(p.recv.at)} by ${esc(p.recv.by)}</div>`).join('')}</div>`:''}`}
 
 /* ---------- PRODUCTION (operations) ---------- */
-function prodLines(kind,C){return prodF[kind].map((l,k)=>{const p=pBy(l.code),pk=kind==='made'&&p&&!/^kg$/i.test(p.unit);return `<tr${l.auto?' class="prauto"':''}><td>${uSel(l.code,'','data-prl="'+kind+':'+k+'"')}${l.auto?'<small class="unit">📦 auto · per '+esc(pBy(l.auto)?pBy(l.auto).name:'')+'</small>':''}${kind==='made'&&p&&me.role==='manager'&&prodF.kind!=='conv'?`<button type="button" class="btn sm prsetb" data-prset="${esc(p.code)}">⚙ Packaging & yield</button>`:''}</td><td><input class="edit-in nq" type="number" step="0.001" inputmode="decimal" data-prq="${kind}:${k}" data-k="prq${kind}${k}" value="${l.qty}" placeholder="Qty">${pk?`<input class="edit-in nq prkg" type="number" step="0.001" inputmode="decimal" data-prkg="${k}" value="${esc(l.kg||'')}" placeholder="kg weighed (all)">`:''}</td><td class="unit">${p?esc(p.unit)+'<br>stock '+qf(p.avail):''}${p&&kind==='used'&&+l.qty>p.avail?'<br><b style="color:var(--rose)">not enough</b>':''}${pk?`<br><span id="prpg${k}">${prPackTxt(l,p)}</span>`:''}</td>${kind==='made'&&me.role==='manager'?`<td class="r" id="prcu${k}">${C&&C.unit[k]!=null?peso(C.unit[k]):'—'}</td>`:''}<td><button class="del" data-prdel="${kind}:${k}">✕</button></td></tr>`}).join('')}
+function prodLines(kind,C){return prodF[kind].map((l,k)=>{const p=pBy(l.code),pk=kind==='made'&&p&&!/^kg$/i.test(p.unit);return `<tr${l.auto?' class="prauto"':''}><td>${uSel(l.code,'','data-prl="'+kind+':'+k+'"')}${l.auto?`<label class="prchk${l.ok?' on':''}"><input type="checkbox" data-prok="${k}"${l.ok?' checked':''}> ${l.ok?'✓ checked':'check the actual qty, then tick'}</label><small class="unit">📋 recipe · ${esc(pBy(l.auto)?pBy(l.auto).name:'')}</small>`:''}${kind==='made'&&p&&me.role==='manager'?`<button type="button" class="btn sm prsetb" data-prset="${esc((prodF.kind==='conv'?'cv:':'')+p.code)}">⚙ Recipe & yield</button>`:''}</td><td><input class="edit-in nq" type="number" step="0.001" inputmode="decimal" data-prq="${kind}:${k}" data-k="prq${kind}${k}" value="${l.qty}" placeholder="Qty">${pk?`<input class="edit-in nq prkg" type="number" step="0.001" inputmode="decimal" data-prkg="${k}" value="${esc(l.kg||'')}" placeholder="kg weighed (all)">`:''}</td><td class="unit">${p?esc(p.unit)+'<br>stock '+qf(p.avail):''}${p&&kind==='used'&&+l.qty>p.avail?'<br><b style="color:var(--rose)">not enough</b>':''}${pk?`<br><span id="prpg${k}">${prPackTxt(l,p)}</span>`:''}</td>${kind==='made'&&me.role==='manager'?`<td class="r" id="prcu${k}">${C&&C.unit[k]!=null?peso(C.unit[k]):'—'}</td>`:''}<td><button class="del" data-prdel="${kind}:${k}">✕</button></td></tr>`}).join('')}
 /* ---------- INVENTORY: product conversion (pigue + belly -> laman, whole chicken -> cuts, kilo -> packs). Cost = same as the source. ---------- */
 let convF=null;
 function convCostJS(){const ok=l=>l.code&&+l.qty>0,kgOf=(p,q)=>/^kg$/i.test(p.unit)?q:(+p.kg>0?q*+p.kg:0);let total=0,inKg=0,inQ=0,outKg=0,allKg=true;
@@ -5153,24 +5154,38 @@ function convCostJS(){const ok=l=>l.code&&+l.qty>0,kgOf=(p,q)=>/^kg$/i.test(p.un
   const T=convF.to.map(l=>ok(l)?{p:pBy(l.code),q:+l.qty}:null);T.forEach(x=>{if(x&&x.p){const k=kgOf(x.p,x.q);if(!k)allKg=false;outKg+=k}});
   const perKg=allKg&&outKg>0?total/outKg:inKg?total/inKg:0,perU=inQ?total/inQ:0;
   return {total,inKg,outKg,perKg,allKg,loss:allKg&&inKg>0&&outKg?Math.round((inKg-outKg)/inKg*1000)/10:null,unit:T.map(x=>x&&x.p?r2(allKg?(/^kg$/i.test(x.p.unit)?perKg:perKg*+x.p.kg):perU):null)}}
+// conversion recipe (key cv:CODE): recommended "from" lines follow the qty converted TO; each must be ticked ✓ after checking
+function cvAuto(){if(!convF)return;const S=ST.pset||{},want=[];
+  convF.to.forEach(m=>{const set=m.code&&S['cv:'+m.code];if(set&&set.pack)set.pack.forEach(x=>want.push({code:x.code,qty:+m.qty>0?String(r2(x.per*+m.qty)):'',auto:m.code}))});
+  convF.from=convF.from.filter(l=>!l.auto||want.some(w=>w.auto===l.auto&&w.code===l.code));
+  want.forEach(w=>{const ex=convF.from.find(l=>l.auto===w.auto&&l.code===w.code);if(ex){if(ex.qty!==w.qty&&!ex.man){ex.qty=w.qty;ex.ok=false}}else convF.from.push(w)});
+  const man=convF.from.filter(l=>!l.auto&&l.code),au=convF.from.filter(l=>l.auto);convF.from=(man.length||!au.length?(man.length?man:[{code:'',qty:''}]):[]).concat(au)}
 function convDialog(){if(!convF)convF={from:[{code:'',qty:''}],to:[{code:'',qty:''}],note:''};const box=stBox(),mgr=me.role==='manager';
-  const lines=(k,C)=>convF[k].map((l,i)=>{const p=pBy(l.code);return `<tr><td>${uSel(l.code,'','data-cvp="'+k+':'+i+'"')}</td><td><input class="edit-in nq" type="number" step="0.001" inputmode="decimal" data-cvq="${k}:${i}" value="${esc(l.qty)}" placeholder="Qty"></td>
+  const lines=(k,C)=>convF[k].map((l,i)=>{const p=pBy(l.code);return `<tr${l.auto?' class="prauto"':''}><td>${uSel(l.code,'','data-cvp="'+k+':'+i+'"')}${l.auto?`<label class="prchk${l.ok?' on':''}"><input type="checkbox" data-cvok="${i}"${l.ok?' checked':''}> ${l.ok?'✓ checked':'check the actual qty, then tick'}</label><small class="unit">📋 recipe · ${esc(pBy(l.auto)?pBy(l.auto).name:'')}</small>`:''}${k==='to'&&p&&mgr?`<button type="button" class="btn sm prsetb" data-cvset="${esc(p.code)}">⚙ Recipe</button>`:''}</td><td><input class="edit-in nq" type="number" step="0.001" inputmode="decimal" data-cvq="${k}:${i}" value="${esc(l.qty)}" placeholder="Qty"></td>
     <td class="unit">${p?esc(p.unit)+'<br>stock '+qf(p.avail):''}${p&&k==='from'&&+l.qty>p.avail?'<br><b style="color:var(--rose)">not enough</b>':''}</td>${mgr?`<td class="r" id="cvc-${k}${i}">${k==='from'?(p?peso(p.cost||0):'—'):(C.unit[i]!=null?peso(C.unit[i]):'—')}</td>`:''}<td><button class="del" data-cvdel="${k}:${i}">✕</button></td></tr>`}).join('');
   const sum=C=>`${C.loss!=null?`⚖ ${qf(C.inKg)} kg → ${qf(C.outKg)} kg · ${C.loss>0?'loss <b>'+C.loss+'%</b>':C.loss<0?'<b>more out than in</b> — check the qty':'no loss'}`:''}${mgr&&C.total?` · 💰 cost ${peso(C.total)}${C.allKg&&C.inKg?' = <b>'+peso(r2(C.perKg))+'/kg</b>':''}`:''}`;
   const tbl=(k,t,C)=>`<h3>${t}</h3><div class="sc"><table class="stbl lines pr"><thead><tr><th>Product</th><th style="width:100px">Qty</th><th>Unit</th>${mgr?'<th class="r">Cost / unit</th>':''}<th></th></tr></thead><tbody>${lines(k,C)}</tbody></table></div><button class="btn sm" data-cvadd="${k}">+ Add line</button>`;
+  const chips=()=>{const S=ST.pset||{},ks=Object.keys(S).filter(k=>/^cv:/.test(k)&&(S[k].pack||[]).length&&pBy(k.slice(3)));
+    return ks.length?`<div class="rcp" style="padding:8px 0 4px"><b>📋 One-click recipe</b> <span class="unit">tap → the standard "from" items fill in · then check & tick each one</span><div class="rcp-chips">${ks.map(k=>`<button type="button" class="rcp-b${convF.to.some(m=>m.code===k.slice(3))?' on':''}" data-cvrec="${esc(k.slice(3))}">${esc(pBy(k.slice(3)).name)}${S[k].batch?` <small>${qf(S[k].batch)} ${esc(String(pBy(k.slice(3)).unit).toLowerCase())}</small>`:''}</button>`).join('')}</div></div>`
+      :(mgr?'<div class="unit" style="margin:6px 0">💡 Save a recipe once: choose the product under "To" and tap <b>⚙ Recipe</b>. Next time it is one click.</div>':'')};
+  const cvSync=()=>{convF.from.forEach((l,i)=>{const e=document.querySelector(`[data-cvq="from:${i}"]`);if(l.auto&&e&&e!==document.activeElement)e.value=l.qty;const c=document.querySelector(`[data-cvok="${i}"]`);if(c){c.checked=!!l.ok;const lb=c.closest('.prchk');lb.classList.toggle('on',!!l.ok);lb.lastChild.textContent=l.ok?' ✓ checked':' check the actual qty, then tick'}})};
   const draw=()=>{const C=convCostJS();$('#stb').innerHTML=`<h2>🔁 Convert product</h2><div class="unit">e.g. <b>Pork Pigue + Pork Belly → Pork Laman</b>, whole chicken → cuts, kilo → packs. The new product gets the <b>same cost as the source</b>.</div>
-    ${tbl('from','⬅ From (taken out of stock)',C)}<div style="height:12px"></div>${tbl('to','➡ To (added to stock)',C)}
+    ${chips()}${tbl('from','⬅ From (taken out of stock)',C)}<div style="height:12px"></div>${tbl('to','➡ To (added to stock)',C)}
     <div class="snote" id="cv-sum"${sum(C)?'':' hidden'}>${sum(C)}</div>
     <label class="td-l">Note (optional)<input class="edit-in" id="cv-note" value="${esc(convF.note)}" placeholder="e.g. for KUI order"></label>
     <div class="row-end"><button class="btn" data-x>Cancel</button><button class="go" id="cv-ok">✓ Convert</button></div>`;
     const S=$('#stb');
-    S.querySelectorAll('[data-cvp]').forEach(e=>e.onchange=()=>{const[k,i]=e.dataset.cvp.split(':');convF[k][+i].code=e.value;draw()});
-    S.querySelectorAll('[data-cvq]').forEach(e=>e.oninput=()=>{const[k,i]=e.dataset.cvq.split(':');convF[k][+i].qty=e.value;const C=convCostJS();C.unit.forEach((u,j)=>{const c=document.getElementById('cvc-to'+j);if(c)c.textContent=u!=null?peso(u):'—'});const sm=$('#cv-sum'),t=sum(C);sm.innerHTML=t;sm.hidden=!t});
+    S.querySelectorAll('[data-cvp]').forEach(e=>e.onchange=()=>{const[k,i]=e.dataset.cvp.split(':');convF[k][+i].code=e.value;if(k==='to')cvAuto();draw()});
+    S.querySelectorAll('[data-cvrec]').forEach(b=>b.onclick=()=>{const c=b.dataset.cvrec,st=(ST.pset||{})['cv:'+c]||{};convF.from=convF.from.filter(l=>!l.auto&&l.code);convF.to=[{code:c,qty:st.batch?String(st.batch):''}];cvAuto();draw();setTimeout(()=>{const e=document.querySelector('[data-cvq="to:0"]');if(e){e.focus();e.select&&e.select()}},60)});
+    S.querySelectorAll('[data-cvset]').forEach(b=>b.onclick=()=>prodSetDialog('cv:'+b.dataset.cvset));
+    S.querySelectorAll('[data-cvok]').forEach(c=>c.onchange=()=>{const l=convF.from[+c.dataset.cvok];if(l){l.ok=c.checked;cvSync()}});
+    S.querySelectorAll('[data-cvq]').forEach(e=>e.oninput=()=>{const[k,i]=e.dataset.cvq.split(':');convF[k][+i].qty=e.value;if(k==='from'&&convF.from[+i].auto){convF.from[+i].man=true;convF.from[+i].ok=false}if(k==='to'){cvAuto();cvSync()}else cvSync();const C=convCostJS();C.unit.forEach((u,j)=>{const c=document.getElementById('cvc-to'+j);if(c)c.textContent=u!=null?peso(u):'—'});const sm=$('#cv-sum'),t=sum(C);sm.innerHTML=t;sm.hidden=!t});
     S.querySelectorAll('[data-cvadd]').forEach(b=>b.onclick=()=>{convF[b.dataset.cvadd].push({code:'',qty:''});draw()});
     S.querySelectorAll('[data-cvdel]').forEach(b=>b.onclick=()=>{const[k,i]=b.dataset.cvdel.split(':');convF[k].splice(+i,1);if(!convF[k].length)convF[k].push({code:'',qty:''});draw()});
     $('#cv-note').oninput=e=>{convF.note=e.target.value};
     S.querySelector('[data-x]').onclick=()=>{convF=null;box.classList.remove('on')};
-    $('#cv-ok').onclick=async()=>{const ok=l=>l.code&&+l.qty>0,from=convF.from.filter(ok),to=convF.to.filter(ok);
+    $('#cv-ok').onclick=async()=>{if(convF.from.some(l=>l.auto&&l.code&&!l.ok))return alert('Checklist not done — tick ✓ each recommended item after checking the actual qty (change it if different, or ✕ remove it):\n\n'+convF.from.filter(l=>l.auto&&l.code&&!l.ok).map(l=>'• '+(pBy(l.code)||{}).name).join('\n'));
+      const ok=l=>l.code&&+l.qty>0,from=convF.from.filter(ok),to=convF.to.filter(ok);
       if(!from.length)return alert('Choose the product to convert FROM and its qty.');if(!to.length)return alert('Choose the product to convert TO and its qty.');
       if(to.some(t=>from.some(f=>f.code===t.code)))return alert('A product cannot be converted into itself.');
       const over=from.filter(l=>+l.qty>pBy(l.code).avail);if(over.length&&!confirm('Stock in the system is lower for: '+over.map(l=>pBy(l.code).name).join(', ')+'. Convert anyway?'))return;
@@ -5190,25 +5205,27 @@ function prodSum(C,mgr){if(!(C.yp!=null||mgr&&C.total))return '';const ys=C.ys||
   const st=C.yp==null?'':!ys.std?`<span class="ychip lrn">📚 learning the standard · ${ys.n||0} of 5 batches</span>`:C.ab?`<span class="ychip bad">⚠ ${C.ab}% below the standard${mgr?' · ≈ '+peso(C.waste)+' extra loss':''} · remark only</span>`:`<span class="ychip ok">✓ normal (standard ${ys.std}%${ys.src==='set'?' · set by manager':''})</span>`;
   return `<div class="snote prsum2">${C.yp!=null?`⚖ in <b>${qf(C.inKg)} kg</b> → out <b>${qf(C.outKg)} kg</b> · yield <b>${C.yp}%</b>${ys.std?' · standard '+ys.std+'%':''} ${st}`:''}${mgr&&C.total?`<div>💰 Total cost <b>${peso(C.total)}</b> — all into the product</div>`:''}${C.ab?'<div>📝 Write why the yield is low in the <b>Note</b> below.</div>':''}</div>`}
 // packaging per unit (manager setting) is filled in automatically under "used"
-function prodAuto(){if(!prodF||prodF.kind==='conv')return;const S=ST.pset||{},want=[];
-  prodF.made.forEach(m=>{const set=m.code&&S[m.code];if(set&&set.pack)set.pack.forEach(x=>want.push({code:x.code,qty:+m.qty>0?String(r2(x.per*+m.qty)):'',auto:m.code}))});
+function prodAuto(){if(!prodF)return;const S=ST.pset||{},want=[],pre=prodF.kind==='conv'?'cv:':'';
+  prodF.made.forEach(m=>{const set=m.code&&S[pre+m.code];if(set&&set.pack)set.pack.forEach(x=>want.push({code:x.code,qty:+m.qty>0?String(r2(x.per*+m.qty)):'',auto:m.code}))});
   prodF.used=prodF.used.filter(l=>!l.auto||want.some(w=>w.auto===l.auto&&w.code===l.code));
-  want.forEach(w=>{const ex=prodF.used.find(l=>l.auto===w.auto&&l.code===w.code);if(ex)ex.qty=w.qty;else prodF.used.push(w)});
+  want.forEach(w=>{const ex=prodF.used.find(l=>l.auto===w.auto&&l.code===w.code);if(ex){if(ex.qty!==w.qty&&!ex.man){ex.qty=w.qty;ex.ok=false}}else prodF.used.push(w)});
   const man=prodF.used.filter(l=>!l.auto),au=prodF.used.filter(l=>l.auto);prodF.used=(man.length?man:[{code:'',qty:''}]).concat(au)}
-function prodRefresh(){prodAuto();prodF.used.forEach((l,k)=>{if(!l.auto)return;const e=document.querySelector(`[data-prq="used:${k}"]`);if(e&&e!==document.activeElement)e.value=l.qty});
+function prchkSync(){prodF.used.forEach((l,k)=>{const c=document.querySelector(`[data-prok="${k}"]`);if(!c)return;c.checked=!!l.ok;const lb=c.closest('.prchk');lb.classList.toggle('on',!!l.ok);lb.lastChild.textContent=l.ok?' ✓ checked':' check the actual qty, then tick'})}
+function prodRefresh(){prodAuto();prodF.used.forEach((l,k)=>{if(!l.auto)return;const e=document.querySelector(`[data-prq="used:${k}"]`);if(e&&e!==document.activeElement)e.value=l.qty});prchkSync();
   const C=prodCostJS(),mgr=me.role==='manager';C.unit.forEach((u,k)=>{const e=document.getElementById('prcu'+k);if(e)e.textContent=u!=null?peso(u):'—'});
   prodF.made.forEach((l,k)=>{const e=document.getElementById('prpg'+k),p=pBy(l.code);if(e&&p)e.innerHTML=prPackTxt(l,p)});const s=document.getElementById('prsum');if(s)s.innerHTML=prodSum(C,mgr)}
-function prodSetDialog(code){const p=pBy(code),S=(ST.pset||{})[code]||{pack:[],std:null},ys=(ST.ystd||{})[code]||{n:0},box=stBox();let L=(S.pack||[]).map(x=>({code:x.code,per:x.per}));if(!L.length)L=[{code:'',per:''}];
-  const draw=()=>{$('#stb').innerHTML=`<h2>⚙ ${esc(p.name)}</h2>
-    <h3>📦 Packaging per 1 ${esc(String(p.unit).toLowerCase())} <small>filled in automatically at production</small></h3>
-    <div class="sc"><table class="stbl"><thead><tr><th>Item (wrapper, tray, plastic…)</th><th style="width:110px">Qty per ${esc(String(p.unit).toLowerCase())}</th><th></th></tr></thead><tbody>${L.map((l,i)=>`<tr><td>${uSel(l.code,'','data-psc="'+i+'"')}</td><td><input class="edit-in nq" type="number" step="0.001" data-psq="${i}" value="${esc(l.per)}"></td><td><button class="del" data-psd="${i}">✕</button></td></tr>`).join('')}</tbody></table></div>
+function prodSetDialog(code){const cvk=/^cv:/.test(code),p=pBy(code.replace(/^cv:/,'')),S=(ST.pset||{})[code]||{pack:[],std:null},ys=(ST.ystd||{})[code]||{n:0},box=stBox();let L=(S.pack||[]).map(x=>({code:x.code,per:x.per}));if(!L.length)L=[{code:'',per:''}];
+  const draw=()=>{$('#stb').innerHTML=`<h2>⚙ Recipe — ${esc(p.name)}${cvk?' <small>(conversion)</small>':''}</h2>
+    <h3>📋 Standard ${cvk?'"from" items':'ingredients & packaging'} per 1 ${esc(String(p.unit).toLowerCase())} made <small>filled in by one click at ${cvk?'conversion':'production'}</small></h3>
+    <div class="sc"><table class="stbl"><thead><tr><th>Item (meat, spices, wrapper, tray…)</th><th style="width:110px">Qty per ${esc(String(p.unit).toLowerCase())}</th><th></th></tr></thead><tbody>${L.map((l,i)=>`<tr><td>${uSel(l.code,'','data-psc="'+i+'"')}</td><td><input class="edit-in nq" type="number" step="0.001" data-psq="${i}" value="${esc(l.per)}"></td><td><button class="del" data-psd="${i}">✕</button></td></tr>`).join('')}</tbody></table></div>
     <button class="btn sm" id="ps-add">+ Add item</button>
     <h3 style="margin-top:14px">⚖ Standard yield</h3><div class="unit">Blank = the app learns it (average of the last 10 batches, from 5 batches on). Now: <b>${ys.std?ys.std+'% ('+(ys.src==='set'?'set':'learned from '+ys.n+' batches')+')':'learning · '+(ys.n||0)+' of 5 batches'}</b>. More than ${YTOL}% under it = flagged on the batch (remark only — the cost stays in the product).</div>
     <label>Fixed standard yield % <small>(optional)</small><input class="edit-in nq" type="number" step="0.1" id="ps-std" value="${S.std||''}" placeholder="learn"></label>
+    <label>Usual batch — ${esc(String(p.unit).toLowerCase())} made per batch <small>(optional · the one-click recipe fills it in)</small><input class="edit-in nq" type="number" step="0.001" id="ps-bt" value="${S.batch||''}" placeholder="e.g. 500"></label>
     <div class="row-end"><button class="btn" data-x>Cancel</button><button class="go" id="ps-ok">Save</button></div>`;
     const B=$('#stb');B.querySelectorAll('[data-psc]').forEach(e=>e.onchange=()=>{L[+e.dataset.psc].code=e.value});B.querySelectorAll('[data-psq]').forEach(e=>e.oninput=()=>{L[+e.dataset.psq].per=e.value});
     B.querySelectorAll('[data-psd]').forEach(e=>e.onclick=()=>{L.splice(+e.dataset.psd,1);if(!L.length)L.push({code:'',per:''});draw()});$('#ps-add').onclick=()=>{L.push({code:'',per:''});draw()};
-    $('#ps-ok').onclick=async()=>{try{ST=await api('api_prodSet',session.token,code,{pack:L.filter(l=>l.code&&+l.per>0),std:$('#ps-std').value});stCache();box.classList.remove('on');prodRefresh();drawStock();toast('Saved')}catch(e){alert(errMsg(e))}}};
+    $('#ps-ok').onclick=async()=>{try{ST=await api('api_prodSet',session.token,code,{pack:L.filter(l=>l.code&&+l.per>0),std:$('#ps-std').value,batch:$('#ps-bt').value});stCache();box.classList.remove('on');if(cvk&&convF){cvAuto();convDialog()}else{if(prodF)prodRefresh();drawStock()}toast('Recipe saved')}catch(e){alert(errMsg(e))}}};
   draw();box.classList.add('on')}
 // 🎯 daily target = max stock − stock (fixed for the day) · the manager can change today's target
 function ptgtHTML(){const T=ST.ptgt;if(!T||!T.rows||!T.rows.length)return '';const mgr=me.role==='manager';
@@ -5222,6 +5239,9 @@ function prodHTML(){
   const cv=prodF.kind==='conv',mgr=me.role==='manager',C=prodCostJS();
   const tab=(kind,t,s)=>`<h3>${t} <small>${s}</small></h3><div class="sc"><table class="stbl lines pr"><thead><tr><th>Product</th><th style="width:100px">Qty</th><th>Unit</th>${kind==='made'&&mgr?'<th class="r">Cost / unit</th>':''}<th></th></tr></thead><tbody>${prodLines(kind,C)}</tbody></table></div><button class="btn sm" data-pradd="${kind}">+ Add line</button>`;
   return (cv?'':ptgtHTML())+`<div class="shead"><div><h2>${cv?'🔁 Conversion':'🏭 Production'}</h2><div class="unit">${cv?'Change one product into another: <b>whole chicken → cuts</b>, <b>kilo → packs</b>, <b>box → pieces</b>.':'Raw meat used goes out of stock; finished products (longganisa, siomai…) go in.'} The cost moves to the new product.</div></div><div class="sbtns"><button class="btn sm" data-sref>↻ Refresh</button></div></div>
+    ${(()=>{const S=ST.pset||{},ks=Object.keys(S).filter(k=>(cv?/^cv:/.test(k):!/^cv:/.test(k))&&(S[k].pack||[]).length&&pBy(k.replace(/^cv:/,'')));
+      return ks.length?`<div class="panel rcp"><b>📋 One-click recipe</b> <span class="unit">tap a product → its standard ${cv?'"from" items':'ingredients'} fill in; change the qty made and they follow</span><div class="rcp-chips">${ks.map(k=>`<button type="button" class="rcp-b${prodF.made.some(m=>m.code===k.replace(/^cv:/,''))?' on':''}" data-prrec="${esc(k)}">${esc(pBy(k.replace(/^cv:/,'')).name)}${S[k].batch?` <small>${qf(S[k].batch)} ${esc(String(pBy(k.replace(/^cv:/,'')).unit).toLowerCase())}</small>`:''}</button>`).join('')}</div></div>`
+        :(mgr?`<div class="unit" style="margin:4px 0 10px">💡 Save a recipe once: add the product under ${cv?'"To"':'"Finished made"'} and tap <b>⚙ Recipe & yield</b>. Next time it is one click.</div>`:'')})()}
     <div class="panel">${tab('used',cv?'⬅ From':'🥩 Raw used','taken out of stock')}<div style="height:14px"></div>${tab('made',cv?'➡ To':'📦 Finished made','added to stock')}
       <div class="fgrid">${cv?'':`<label>Other costs ₱ <small>(casing, spices, packs)</small><input class="edit-in" type="number" step="0.01" inputmode="decimal" id="pr-extra" data-k="prx" value="${esc(prodF.extra)}" placeholder="0.00"></label>`}
         <label class="${cv?'full':''}">Note (optional)<input class="edit-in" id="pr-note" data-k="prn" value="${esc(prodF.note)}" placeholder="${cv?'e.g. 10 kg whole chicken cut up':'e.g. 2 kg trimmings'}"></label></div>
@@ -5932,11 +5952,15 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const igr=e.target
   // production
   if(d.pradd){prodF[d.pradd].push(d.pradd==='made'?{code:'',qty:'',kg:''}:{code:'',qty:''});drawStock();return}
   if(d.prset){prodSetDialog(d.prset);return}
+  if(d.prrec){const S=(ST.pset||{})[d.prrec]||{},c=d.prrec.replace(/^cv:/,'');prodF.used=prodF.used.filter(l=>!l.auto&&l.code);prodF.made=[{code:c,qty:S.batch?String(S.batch):'',kg:''}];
+    if(!prodF.used.length)prodF.used=[{code:'',qty:''}];prodAuto();drawStock();setTimeout(()=>{const e=document.querySelector('[data-prq="made:0"]');if(e){e.focus();e.select&&e.select()}},60);return}
   if(d.ptset){const v=prompt('Today\'s target for '+(pBy(d.ptset)||{}).name+':',d.ptv);if(v==null)return;await busy(async()=>{ST=await api('api_prodTarget',session.token,d.ptset,v);stCache();drawStock();toast('Target saved')});return}
   if(d.prdel){const[k,i]=d.prdel.split(':');prodF[k].splice(+i,1);if(!prodF[k].length)prodF[k].push({code:'',qty:''});drawStock();return}
   if('prclear' in d){prodF=null;drawStock();return}
   if('pconv' in d){convDialog();return}
   if(d.prkind){prodF=prodF||{};const keep=prodF;prodF={kind:d.prkind,used:keep.used||[{code:'',qty:''}],made:keep.made||[{code:'',qty:''}],note:keep.note||'',extra:''};drawStock();return}
+  if('prsave' in d&&prodF.used.some(l=>l.auto&&l.code&&!l.ok)){const n=prodF.used.filter(l=>l.auto&&l.code&&!l.ok).map(l=>'• '+(pBy(l.code)||{}).name).join('\n');
+    alert('Checklist not done — tick ✓ each recommended item after checking the actual qty used (change the qty if different, or ✕ remove it):\n\n'+n);const b=document.querySelector('.prchk:not(.on)');if(b)b.scrollIntoView({block:'center'});return}
   if('prsave' in d){prodF.note=$('#pr-note').value;const ok=l=>l.code&&+l.qty>0,used=prodF.used.filter(ok),made=prodF.made.filter(ok);
     if(!made.length)return alert('Add the finished product made and its qty.');
     const over=used.filter(l=>{const p=pBy(l.code);return p&&+l.qty>p.avail});
@@ -5997,7 +6021,8 @@ function stockInput(e){if(!STOCKV.includes(view))return;const t=e.target,d=t.dat
    if(d.rqu!==undefined){const v=rvF.L[d.rqu]=rvF.L[d.rqu]||{r:'',q:'',p:''};v.u=t.value;if(po)drawStock();return}
    if(d.rr!==undefined||d.rq!==undefined||d.rqp!==undefined||d.rqk!==undefined){const c=d.rr??d.rq??d.rqp??d.rqk,v=rvF.L[c]=rvF.L[c]||{r:'',q:'',p:''};if(d.rr!==undefined)v.r=t.value;else if(d.rqp!==undefined)v.p=t.value;else if(d.rqk!==undefined)v.k=t.value;else v.q=t.value;if(po)rfLive(po);return}
    if(t.id==='rf-why'){rvF.why=t.value;return}if(t.id==='rf-no'){rvF.no=t.value;return}}
-  if(d.prq!==undefined){const[k,i]=d.prq.split(':');prodF[k][+i].qty=t.value;prodRefresh();return}
+  if(d.prok!==undefined){const l=prodF.used[+d.prok];if(l){l.ok=t.checked;prchkSync()}return}
+  if(d.prq!==undefined){const[k,i]=d.prq.split(':');prodF[k][+i].qty=t.value;if(k==='used'&&prodF.used[+i].auto){prodF.used[+i].man=true;prodF.used[+i].ok=false}prodRefresh();return}
   if(d.psq!==undefined&&PSx[d.psq]){PSx[d.psq].qty=t.value;return}
   if(d.psp!==undefined&&PSx[d.psp]){PSx[d.psp].cost=t.value;return}
   if(d.prkg!==undefined){prodF.made[+d.prkg].kg=t.value;prodRefresh();return}
