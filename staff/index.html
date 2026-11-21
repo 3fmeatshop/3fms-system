@@ -1364,7 +1364,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 21 · 6:30 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 21 · 9:40 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -4794,7 +4794,7 @@ function productDialog(code){const p=code?pBy(code):{code:'',name:'',cat:'',unit
       <label>Code${isNew?' <small>(next code — filled in for you)</small>':''}<input class="edit-in" id="pf-code" value="${esc(isNew?nextCode(''):p.code)}" ${isNew?'':'readonly'} placeholder="e.g. P010"></label>
       <label>Product name<input class="edit-in" id="pf-name" value="${esc(p.name)}"></label>
       <label>Category<input class="edit-in" id="pf-cat" list="pf-cats" value="${esc(p.cat)}" placeholder="Pork / Chicken / Processed"><datalist id="pf-cats">${cats.map(c=>`<option value="${esc(c)}">`).join('')}</datalist></label>
-      <label>Unit<select class="edit-in" id="pf-unit">${['Kg','Pack','Pc'].map(u=>`<option${p.unit===u?' selected':''}>${u}</option>`).join('')}</select></label>
+      <label>Unit<select class="edit-in" id="pf-unit">${isNew?'<option value="" selected>Choose…</option>':''}${['Kg','Pack','Pc'].map(u=>`<option${!isNew&&p.unit===u?' selected':''}>${u}</option>`).join('')}</select>${isNew?'<small class="unit">Kg = weighed (meat) · Pc / Pack = counted (packaging, stickers, bottles)</small>':''}</label>
       <label>Retail price (₱)<input class="edit-in" id="pf-ret" type="number" step="0.01" value="${p.retail||''}"></label>
       <label>Wholesale price (₱)<input class="edit-in" id="pf-ws" type="number" step="0.01" value="${p.wholesale||''}"></label>
       <label>Cost (₱ per unit)<input class="edit-in" id="pf-cost" type="number" step="0.01" value="${p.cost||''}"></label>
@@ -4816,7 +4816,7 @@ function productDialog(code){const p=code?pBy(code):{code:'',name:'',cat:'',unit
   box.classList.add('on');
   if(isNew){const ci=$('#pf-code');ci.oninput=()=>{ci.dataset.typed=ci.value.trim()?'1':''};   // typed by hand → keep it
     $('#pf-cat').addEventListener('input',()=>{if(ci.dataset.typed!=='1')ci.value=nextCode($('#pf-cat').value)})}   // category picked → next code of that category
-  $('#pf-save').onclick=async()=>{const b=$('#pf-save');b.disabled=true;
+  $('#pf-save').onclick=async()=>{if(isNew&&!$('#pf-unit').value){alert('Choose the unit: Kg (weighed) or Pc / Pack (counted)');$('#pf-unit').focus();return}const b=$('#pf-save');b.disabled=true;
     try{ST=await api('api_saveProduct',session.token,{isNew,auto:isNew&&$('#pf-code').dataset.typed!=='1',code:$('#pf-code').value,name:$('#pf-name').value,cat:$('#pf-cat').value,unit:$('#pf-unit').value,retail:$('#pf-ret').value,wholesale:$('#pf-ws').value,
       cost:$('#pf-cost').value,reorder:$('#pf-ro').value,kg:$('#pf-kg').value,group:$('#pf-grp').value,max:$('#pf-max').value,alias:$('#pf-al').value,on:$('#pf-on').checked,avail:isNew?$('#pf-av').value:0});stCache();box.classList.remove('on');toast('Product saved');drawStock()}
     catch(e){alert(errMsg(e))}b.disabled=false};
@@ -4833,7 +4833,7 @@ async function shrinkPhoto(file,max){const url=URL.createObjectURL(file);try{con
   const k=Math.min(1,max/Math.max(img.naturalWidth,img.naturalHeight)),w=Math.round(img.naturalWidth*k),h=Math.round(img.naturalHeight*k),c=document.createElement('canvas');c.width=w;c.height=h;
   const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,w,h);x.drawImage(img,0,0,w,h);return c.toDataURL('image/jpeg',.82)}finally{URL.revokeObjectURL(url)}}
 /* ---------- PURCHASE ORDERS (manager) ---------- */
-function poLines(){return poEdit.items.map((l,k)=>{const p=pBy(l.code);return `<tr><td>${uSel(l.code,'','data-pol="'+k+'"')}</td><td><input class="edit-in nq" type="number" step="0.001" inputmode="decimal" data-poq="${k}" data-k="poq${k}" value="${l.qty}" placeholder="Qty"></td><td>${p?(/^pc/i.test(p.unit)?esc(p.unit):`<select class="edit-in" data-pou="${k}" style="width:auto"><option value=""${l.ounit?'':' selected'}>${esc(p.unit)}</option><option value="Pc"${l.ounit?' selected':''}>Pc</option></select>`):''}</td><td><input class="edit-in nq" type="number" step="0.01" inputmode="decimal" data-poc="${k}" data-k="poc${k}" value="${l.cost}" placeholder="Cost ₱"></td><td class="r" data-pa="${k}">${peso((+l.qty||0)*(+l.cost||0))}</td><td><button class="del" data-podel="${k}">✕</button></td></tr>`}).join('')}
+function poLines(){return poEdit.items.map((l,k)=>{const p=pBy(l.code);return `<tr><td>${uSel(l.code,'','data-pol="'+k+'"')}</td><td><input class="edit-in nq" type="number" step="0.001" inputmode="decimal" data-poq="${k}" data-k="poq${k}" value="${l.qty}" placeholder="Qty"></td><td>${p?(/^pc/i.test(p.unit)||poEdit.direct?esc(p.unit):`<select class="edit-in" data-pou="${k}" style="width:auto"><option value=""${l.ounit?'':' selected'}>${esc(p.unit)}</option><option value="Pc"${l.ounit?' selected':''}>Pc</option></select>`):''}</td><td><input class="edit-in nq" type="number" step="0.01" inputmode="decimal" data-poc="${k}" data-k="poc${k}" value="${l.cost}" placeholder="Cost ₱"></td><td class="r" data-pa="${k}">${peso((+l.qty||0)*(+l.cost||0))}</td><td><button class="del" data-podel="${k}">✕</button></td></tr>`}).join('')}
 /* ---------- LIVE PIG / CARCASS P.O. & RECEIVING ---------- */
 const PIECE_CUTS=['Pork Skull'];   // counted per piece — not part of the weight / yield
 const YLOSS={good:17,band:0.5};    // lost weight 17% of liveweight = good (83% yield); below = very good; above = bad (needs a reason)
@@ -4953,6 +4953,16 @@ const psOdd=()=>`<div class="snote">🔎 Not counted (no matching product or dif
 function poHTML(){
   const all=ST.pos||[],appr=all.filter(p=>p.status==='for approval');
   if(poEdit&&poEdit.kind==='carcass')return carcassPOForm();
+  if(poEdit&&poEdit.direct){const tot=poEdit.items.reduce((s,l)=>s+(+l.qty||0)*(+l.cost||0),0);
+    return `<div class="shead"><div><h2>🧾 Supplier invoice — receive without a P.O.</h2><div class="unit">Copy the supplier's invoice: the items go into stock <b>now</b>, the cost updates and the amount goes to <b>Payables</b> (cash or charge) — the same as a received P.O.</div></div></div>
+    <div class="panel"><div class="fgrid"><label>Supplier<input class="edit-in" data-k="pos" id="po-sup" value="${esc(poEdit.supplier)}" placeholder="Supplier name" list="po-sups"><datalist id="po-sups">${[...new Set((ST.pos||[]).map(p=>p.supplier).filter(Boolean))].map(x=>`<option value="${esc(x)}">`).join('')}</datalist></label>
+      <label>Invoice no.<input class="edit-in" id="po-inv" value="${esc(poEdit.inv||'')}" placeholder="e.g. SI 004512"></label><label>Invoice date<input class="edit-in" type="date" id="po-d" value="${esc(poEdit.d||today())}"></label>
+      <label>Payment<select class="edit-in" id="po-pay">${termOpts(poEdit.pay)}</select></label><label>Due date <small class="unit">(charge only)</small><input class="edit-in" type="date" id="po-due" value="${esc(poEdit.due||'')}"></label><label>Who pays<select class="edit-in" id="po-by">${[['mgr','👔 Manager (bank / safe / e-wallet)'],['cashier','🧾 Cashier (from the drawer)']].map(([k,t])=>`<option value="${k}"${(poEdit.payBy||'mgr')===k?' selected':''}>${t}</option>`).join('')}</select></label>
+      <label class="full">Note<input class="edit-in" id="po-note" data-k="pon" value="${esc(poEdit.note)}"></label></div>
+      <div class="sc"><table class="stbl lines po"><thead><tr><th>Product</th><th style="width:110px">Qty received</th><th>Unit</th><th style="width:110px">Cost / unit</th><th class="r">Amount</th><th></th></tr></thead><tbody>${poLines()}</tbody>
+      <tfoot><tr><td colspan="4"><button class="btn sm" data-poadd>+ Add line</button></td><td class="r"><b id="potot">${peso(tot)}</b></td><td></td></tr></tfoot></table></div>
+      <label class="full" style="display:block;margin-top:10px">📷 Photo of the supplier's invoice <small class="unit">(optional)</small><br><input type="file" accept="image/*" capture="environment" id="po-ph"></label><div id="po-prev"></div>
+      <div class="row-end"><button class="btn" data-pocancel>Cancel</button><button class="go" data-posave>✓ Save & receive</button></div></div>`}
   if(poEdit){const tot=poEdit.items.reduce((s,l)=>s+(+l.qty||0)*(+l.cost||0),0);
     return `<div class="shead"><div><h2>📝 ${poEdit.id?'Edit '+esc(poEdit.no):'New purchase order'}</h2><div class="unit">Operations receives the delivery against this P.O. If what arrives is different, it waits for your approval.</div></div></div>
     <div class="panel"><div class="fgrid"><label>Supplier<input class="edit-in" data-k="pos" id="po-sup" value="${esc(poEdit.supplier)}" placeholder="Supplier name"></label><label>Expected date<input class="edit-in" type="date" id="po-exp" value="${esc(poEdit.expected)}"></label><label>Receiving<select class="edit-in" id="po-rt"><option value="delivery"${(poEdit.rtype||'delivery')==='delivery'?' selected':''}>🚚 Delivered by the supplier</option><option value="pickup"${poEdit.rtype==='pickup'?' selected':''}>🛻 Pick up by us</option></select></label><label>Time <small class="unit">(optional)</small><input class="edit-in" type="time" id="po-et" value="${esc(poEdit.etime||'')}"></label>
@@ -4961,7 +4971,7 @@ function poHTML(){
       <div class="sc"><table class="stbl lines po"><thead><tr><th>Product</th><th style="width:110px">Qty</th><th>Unit</th><th style="width:110px">Cost / unit</th><th class="r">Amount</th><th></th></tr></thead><tbody>${poLines()}</tbody>
       <tfoot><tr><td colspan="4"><button class="btn sm" data-poadd>+ Add line</button></td><td class="r"><b id="potot">${peso(tot)}</b></td><td></td></tr></tfoot></table></div>
       <div class="row-end"><button class="btn" data-pocancel>Cancel</button><button class="go" data-posave>💾 Save P.O.</button></div></div>`}
-  const row=p=>`<div class="pocard"><div class="poh"><b>${esc(p.no)}</b> · ${esc(p.supplier)} ${poBadge(p)}<span style="flex:1"></span><span class="unit">made ${stamp(p.madeAt)} by ${esc(p.madeBy)}${p.expected?' · expected '+day(p.expected):''} · ${p.rtype==='pickup'?'🛻 pick up':'🚚 delivery'}${p.etime?' '+time12h(p.etime):''}</span></div>
+  const row=p=>`<div class="pocard"><div class="poh"><b>${esc(p.no)}</b> · ${esc(p.supplier)}${p.direct?` <span class="pill" style="background:#E0F2FE;color:#075985">🧾 Invoice ${esc(p.direct.inv)}</span>`:''} ${poBadge(p)}<span style="flex:1"></span><span class="unit">made ${stamp(p.madeAt)} by ${esc(p.madeBy)}${p.expected?' · expected '+day(p.expected):''} · ${p.rtype==='pickup'?'🛻 pick up':'🚚 delivery'}${p.etime?' '+time12h(p.etime):''}</span></div>
     <div class="unit">${p.carcass?ccLine(p):p.items.map(i=>`${esc(i.name)} <b>${qf(i.qty)} ${esc(i.ounit||i.unit)}</b>${i.cost?' @ '+peso(i.cost)+(i.ounit?'/pc':''):''}`).join(' · ')}${p.note?'<br>📝 '+esc(p.note):''}</div>
     ${p.carcass&&p.recv&&p.recv.carcass&&p.status==='received'?`<details><summary class="unit"><b>🔪 Cuts received & cost per kg</b></summary>${cutTable(p.recv.carcass,p.carcass)}</details>`:''}
     ${p.status!=='cancelled'?poPayHTML(p):''}
@@ -4972,7 +4982,7 @@ function poHTML(){
   return `<div class="shead"><div><h2>📝 Purchase orders</h2><div class="unit">Make a P.O. for each supplier delivery. Operations counts what arrives in <b>📥 Receiving</b>. Stock goes up only when it matches — or when you approve the difference.</div></div>
     <div class="sbtns"><button class="go sm" data-ponew>+ New P.O.</button><button class="go sm" data-ponewc>🐖 + Live pig P.O.</button><button class="btn sm" data-sref>↻ Refresh</button></div></div>
     ${retApproveHTML()}
-    ${appr.length?`<div class="panel apprp"><h3>⚠ Waiting for your approval <small>check the supplier receipt vs P.O. and the actual count vs receipt</small></h3>${appr.map(p=>`<div class="pocard"><div class="poh"><b>${esc(p.no)}</b> · ${esc(p.supplier)}<span style="flex:1"></span><span class="unit">received ${stamp(p.recv.at)} by <b>${esc(p.recv.by)}</b></span></div>
+    ${appr.length?`<div class="panel apprp"><h3>⚠ Waiting for your approval <small>check the supplier receipt vs P.O. and the actual count vs receipt</small></h3>${appr.map(p=>`<div class="pocard"><div class="poh"><b>${esc(p.no)}</b> · ${esc(p.supplier)}${p.direct?` <span class="pill" style="background:#E0F2FE;color:#075985">🧾 Invoice ${esc(p.direct.inv)}</span>`:''}<span style="flex:1"></span><span class="unit">received ${stamp(p.recv.at)} by <b>${esc(p.recv.by)}</b></span></div>
       ${p.carcass?ccRecvDiff(p):recvTable(p.recv.lines,p.recv)}${p.recv.note?`<div class="unit">📝 ${esc(p.recv.note)}</div>`:''}${p.recv.photo?`<button class="btn sm" data-rphoto="${esc(p.recv.photo)}">📷 Delivery receipt photo</button>`:''}
       <div class="fgrid"><label class="full">Note (optional)<input class="edit-in" data-anote="${p.id}"></label></div>
       <div class="row-end"><button class="btn" data-poreject="${p.id}">↩ Send back — receive again</button><button class="go" data-poapprove="${p.id}">✓ Approve — add received qty to stock</button></div></div>`).join('')}</div>`:''}
@@ -4989,7 +4999,7 @@ function retApproveHTML(){const L=retList('for approval');if(!L.length)return ''
     <div class="row-end"><button class="btn" data-rapp="${o.id}:${r.id}:0">Not approved</button><button class="go" data-rapp="${o.id}:${r.id}:1">✓ Approve return</button></div></div>`).join('')}</div>`}
 function ccRecvDiff(p){const c=p.carcass,rc=p.recv.carcass,a=ccMoney(c),b=ccMoney(c,rc),row=(t,x,y,f)=>`<tr class="${r2(x)!==r2(y)?'rlow':''}"><td>${t}</td><td class="r">${f(x)}</td><td class="r"><b>${f(y)}</b></td></tr>`;
   return `<div class="sc"><table class="stbl"><thead><tr><th></th><th class="r">P.O.</th><th class="r">Received</th></tr></thead><tbody>${row('Liveweight',a.lw,b.lw,v=>qf(v)+' kg')}${row('Payment',a.pay,b.pay,peso)}${row('Expenses',a.et,b.et,peso)}${row('<b>Total cost</b>',a.total,b.total,peso)}</tbody></table></div>${cutTable(rc,c)}`}
-const pcU=i=>!i.ounit&&/^pc/i.test(String(i.unit||''));   // product stocked per piece: the receiver also weighs the kg
+const pcU=i=>!i.ounit&&!i.noKg&&/^pc/i.test(String(i.unit||''));   // product stocked per piece with a kg per pc (meat): the receiver also weighs the kg · packaging / supplies: count only
 function recvTable(lines,R){const hasR=lines.some(l=>l.rcpt!=null),u=l=>esc(String(l.ounit||l.unit||'').toLowerCase()),gotOf=l=>l.ounit?l.pcs:l.qty,rcOf=l=>l.rcpt!=null?l.rcpt:l.ordered;
   const rD=l=>r2(rcOf(l)-l.ordered),aD=l=>r2(gotOf(l)-rcOf(l)),showR=hasR&&lines.some(l=>rD(l)),nR=lines.filter(l=>rD(l)).length,nA=lines.filter(l=>aD(l)).length;
   const dc=d=>d?`<b style="color:${d<0?'var(--rose)':'var(--amber)'}">${d>0?'+':''}${qf(d)}</b>`:'<span style="color:var(--green,#15803d)">✓</span>';
@@ -5104,6 +5114,7 @@ function rxPaint(){const T=RXT[rxS.type];document.querySelectorAll('[data-rxt]')
 const rxOut=()=>({type:rxS.type,freight:+rxS.amt>0,freightAmt:rxS.amt});
 /* ---------- RECEIVING (operations) ---------- */
 function recvHTML(){
+  if(poEdit&&poEdit.direct)return poHTML();                      // 🧾 supplier invoice (no P.O.) — manager
   const all=ST.pos||[],open=all.filter(p=>p.status==='open'),wait=all.filter(p=>p.status==='for approval'),done=all.filter(p=>p.status==='received').slice(0,10);
   const po=recvId&&open.find(p=>p.id===recvId);
   if(po&&po.kind==='carcass')return carcassRecvForm(po);
@@ -5126,12 +5137,12 @@ function recvHTML(){
     <div class="stoff" style="margin:8px 0">🏷 After saving: <b>LABEL every item</b> — product · kg / pcs · date received · GRN no. — before it goes to the chiller / inventory or a bulk order delivery.</div>
     <div class="row-end"><button class="btn" data-rcback>Back</button><button class="go" data-rcsave="${po.id}">✓ Save receiving</button></div></div>`}
   if(RVrep)return rvHTML();
-  return `<div class="shead"><div><h2>📥 Receiving</h2><div class="unit">Deliveries from suppliers are received <b>against the P.O. made by the Manager</b>. Tap <b>Receive</b> when the delivery arrives.</div></div><div class="sbtns">${['manager','ops'].includes(me.role)?'<button class="go sm" data-rvrep>📊 Receiving report</button>':''}<button class="btn sm" data-sref>↻ Refresh</button></div></div>
+  return `<div class="shead"><div><h2>📥 Receiving</h2><div class="unit">Deliveries from suppliers are received <b>against the P.O. made by the Manager</b>. Tap <b>Receive</b> when the delivery arrives.</div></div><div class="sbtns">${me.role==='manager'?'<button class="go sm" data-dirnew>🧾 Supplier invoice (no P.O.)</button>':''}${['manager','ops'].includes(me.role)?'<button class="go sm" data-rvrep>📊 Receiving report</button>':''}<button class="btn sm" data-sref>↻ Refresh</button></div></div>
     ${retCheckHTML()}
-    <div class="panel"><h3>🚚 Waiting for delivery</h3>${open.map(p=>`<div class="pocard"><div class="poh"><b>${esc(p.no)}</b> · ${esc(p.supplier)}<span style="flex:1"></span>${p.expected?`<span class="unit">expected ${day(p.expected)}</span>`:''}<span class="unit">&nbsp;${p.rtype==='pickup'?'🛻 Pick up':'🚚 Delivery'}${p.etime?' · '+time12h(p.etime):''}</span><button class="go sm" data-rcopen="${p.id}">📥 Receive</button></div>
+    <div class="panel"><h3>🚚 Waiting for delivery</h3>${open.map(p=>`<div class="pocard"><div class="poh"><b>${esc(p.no)}</b> · ${esc(p.supplier)}${p.direct?` <span class="pill" style="background:#E0F2FE;color:#075985">🧾 Invoice ${esc(p.direct.inv)}</span>`:''}<span style="flex:1"></span>${p.expected?`<span class="unit">expected ${day(p.expected)}</span>`:''}<span class="unit">&nbsp;${p.rtype==='pickup'?'🛻 Pick up':'🚚 Delivery'}${p.etime?' · '+time12h(p.etime):''}</span><button class="go sm" data-rcopen="${p.id}">📥 Receive</button></div>
       <div class="unit">${p.carcass?ccLine(p):p.items.map(i=>`${esc(i.name)} <b>${qf(i.qty)} ${esc(i.ounit||i.unit)}</b>`).join(' · ')}${p.note?'<br>📝 '+esc(p.note):''}${p.rejected?`<br><b style="color:var(--rose)">↩ Sent back by ${esc(p.rejected[p.rejected.length-1].by)}${p.rejected[p.rejected.length-1].note?': '+esc(p.rejected[p.rejected.length-1].note):''} — please receive again</b>`:''}</div></div>`).join('')||'<div class="empty">No P.O. waiting for delivery.</div>'}</div>
-    ${wait.length?`<div class="panel"><h3>⏳ Waiting for manager approval</h3>${wait.map(p=>`<div class="pocard"><div class="poh"><b>${esc(p.no)}</b> · ${esc(p.supplier)}<span style="flex:1"></span><span class="unit">received by ${esc(p.recv.by)} ${stamp(p.recv.at)}</span></div>${p.carcass?ccRecvDiff(p):recvTable(p.recv.lines,p.recv)}${p.recv.photo?`<button class="btn sm" data-rphoto="${esc(p.recv.photo)}">📷 Delivery receipt photo</button>`:''}</div>`).join('')}</div>`:''}
-    ${done.length?`<div class="panel"><h3>✅ Recently received</h3>${done.map(p=>`<div class="unit" style="padding:4px 0"><b>${esc(p.no)}</b> · ${esc(p.supplier)} · ${stamp(p.recv.at)} by ${esc(p.recv.by)}</div>`).join('')}</div>`:''}`}
+    ${wait.length?`<div class="panel"><h3>⏳ Waiting for manager approval</h3>${wait.map(p=>`<div class="pocard"><div class="poh"><b>${esc(p.no)}</b> · ${esc(p.supplier)}${p.direct?` <span class="pill" style="background:#E0F2FE;color:#075985">🧾 Invoice ${esc(p.direct.inv)}</span>`:''}<span style="flex:1"></span><span class="unit">received by ${esc(p.recv.by)} ${stamp(p.recv.at)}</span></div>${p.carcass?ccRecvDiff(p):recvTable(p.recv.lines,p.recv)}${p.recv.photo?`<button class="btn sm" data-rphoto="${esc(p.recv.photo)}">📷 Delivery receipt photo</button>`:''}</div>`).join('')}</div>`:''}
+    ${done.length?`<div class="panel"><h3>✅ Recently received</h3>${done.map(p=>`<div class="unit" style="padding:4px 0"><b>${esc(p.no)}</b> · ${esc(p.supplier)}${p.direct?` <span class="pill" style="background:#E0F2FE;color:#075985">🧾 Invoice ${esc(p.direct.inv)}</span>`:''} · ${stamp(p.recv.at)} by ${esc(p.recv.by)}</div>`).join('')}</div>`:''}`}
 
 /* ---------- PRODUCTION (operations) ---------- */
 function prodLines(kind,C){return prodF[kind].map((l,k)=>{const p=pBy(l.code),pk=kind==='made'&&p&&!/^kg$/i.test(p.unit);return `<tr${l.auto?' class="prauto"':''}><td>${uSel(l.code,'','data-prl="'+kind+':'+k+'"')}${l.auto?'<small class="unit">📦 auto · per '+esc(pBy(l.auto)?pBy(l.auto).name:'')+'</small>':''}${kind==='made'&&p&&me.role==='manager'&&prodF.kind!=='conv'?`<button type="button" class="btn sm prsetb" data-prset="${esc(p.code)}">⚙ Packaging & yield</button>`:''}</td><td><input class="edit-in nq" type="number" step="0.001" inputmode="decimal" data-prq="${kind}:${k}" data-k="prq${kind}${k}" value="${l.qty}" placeholder="Qty">${pk?`<input class="edit-in nq prkg" type="number" step="0.001" inputmode="decimal" data-prkg="${k}" value="${esc(l.kg||'')}" placeholder="kg weighed (all)">`:''}</td><td class="unit">${p?esc(p.unit)+'<br>stock '+qf(p.avail):''}${p&&kind==='used'&&+l.qty>p.avail?'<br><b style="color:var(--rose)">not enough</b>':''}${pk?`<br><span id="prpg${k}">${prPackTxt(l,p)}</span>`:''}</td>${kind==='made'&&me.role==='manager'?`<td class="r" id="prcu${k}">${C&&C.unit[k]!=null?peso(C.unit[k]):'—'}</td>`:''}<td><button class="del" data-prdel="${kind}:${k}">✕</button></td></tr>`}).join('')}
@@ -5859,6 +5870,7 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const igr=e.target
   if(d.psmake!==undefined){const sup=d.psmake==='— no supplier yet —'?'':d.psmake,L=PS.rows.filter(r=>!r.made&&PSx[r.code].on&&((PSx[r.code].sup||'').trim()||'— no supplier yet —')===d.psmake);
     const fd=L.map(r=>r.first).filter(Boolean).sort()[0],ex=fd?iso(new Date(pISO(fd).getTime()-864e5)):'',exp=ex&&ex>=today()?ex:today();
     poEdit={supplier:sup,expected:exp,note:'From 📈 Inventory Forecast · for orders up to '+day(PS.to),items:L.map(r=>({code:r.code,qty:PSx[r.code].qty,cost:PSx[r.code].cost}))};PSback=true;view='po';render();window.scrollTo(0,0);toast('Check the P.O. and save it');return}
+  if('dirnew' in d){poEdit={direct:true,supplier:'',inv:'',d:today(),note:'',pay:'cash',due:'',payBy:'mgr',items:[{code:'',qty:'',cost:''}]};recvId=null;drawStock();return}
   if('ponew' in d){poEdit={supplier:'',expected:'',note:'',items:[{code:'',qty:'',cost:''}]};drawStock();return}
   if('ponewc' in d){poEdit={kind:'carcass',supplier:'',expected:'',note:'',items:[],carcass:{heads:1,lw:'',price:'',pay:'cash',due:'',orNo:'',exp:{transport:'',butcher:'',slaughter:'',others:[{desc:'',amt:''}]}}};drawStock();return}
   if(d.ccoadd){const o=d.ccoadd==='po'?poEdit.carcass:rcC;o.exp.others.push({desc:'',amt:''});drawStock();return}
@@ -5878,6 +5890,13 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const igr=e.target
   if('poadd' in d){poEdit.items.push({code:'',qty:'',cost:''});drawStock();return}
   if(d.podel){poEdit.items.splice(+d.podel,1);if(!poEdit.items.length)poEdit.items.push({code:'',qty:'',cost:''});drawStock();return}
   if('pocancel' in d){poEdit=null;if(PSback){PSback=false;view='inv';render();return}drawStock();return}
+  if('posave' in d&&poEdit&&poEdit.direct){const P=poEdit;P.supplier=$('#po-sup').value.trim();P.inv=$('#po-inv').value.trim();P.d=$('#po-d').value;P.note=$('#po-note').value;P.pay=$('#po-pay').value;P.due=$('#po-due').value;P.payBy=$('#po-by').value;
+    if(!P.supplier)return alert('Type the supplier');if(!P.inv)return alert('Type the supplier invoice no.');
+    const it=P.items.filter(l=>l.code&&+l.qty>0);if(!it.length)return alert('Add at least one product with a qty');if(it.some(l=>!(+l.cost>0))&&!confirm('Some lines have no cost. Save anyway?'))return;
+    if(!confirm(`Receive invoice ${P.inv} of ${P.supplier}?\n${it.length} item(s) · ${peso(it.reduce((s,l)=>s+(+l.qty)*(+l.cost||0),0))}\nStock goes up now.`))return;
+    await busy(async()=>{let ph='';if(P.photo){ph=P.up?await P.up:'';if(!ph)ph='D'+await api('api_uploadPhoto',session.token,P.photo,'invoice-'+Date.now());await putPhoto(ph,P.photo)}
+      const r=await api('api_directRecv',session.token,{supplier:P.supplier,inv:P.inv,d:P.d,note:P.note,pay:P.pay,due:P.due,payBy:P.payBy,items:it.map(l=>({code:l.code,qty:l.qty,cost:l.cost}))},ph);
+      poEdit=null;toast('✅ Invoice '+P.inv+' received — stock updated');stAfter(r&&r.po)});return}
   if('posave' in d){poEdit.supplier=$('#po-sup').value;poEdit.expected=$('#po-exp').value;poEdit.note=$('#po-note').value;if($('#po-pay')){poEdit.pay=$('#po-pay').value;poEdit.due=$('#po-due').value}if($('#po-by'))poEdit.payBy=$('#po-by').value;if($('#po-rt')){poEdit.rtype=$('#po-rt').value;poEdit.etime=$('#po-et').value}
     await busy(async()=>{ST=await api('api_savePO',session.token,poEdit);stCache();poEdit=null;if(PSback){PSback=false;PS=null;PSerr='';view='inv';toast('P.O. saved — back to 📈 Inventory Forecast');render();return}toast('P.O. saved — Operations can now receive it');drawStock()});return}
   if(d.pokill){if(!confirm('Cancel this P.O.?'))return;await busy(async()=>{ST=await api('api_cancelPO',session.token,d.pokill);stCache();drawStock()});return}
@@ -5964,7 +5983,7 @@ function stockInput(e){if(!STOCKV.includes(view))return;const t=e.target,d=t.dat
   if(d.k==='mbq'){MBq=t.value;drawStock();return}
   if(d.k==='lgq'){LG.q=t.value;drawStock();return}
   if(d.k==='posq'){posQ=t.value;drawStock();return}
-  if(poEdit&&({'po-rt':'rtype','po-et':'etime','po-pay':'pay','po-due':'due','po-by':'payBy'})[t.id]){poEdit[({'po-rt':'rtype','po-et':'etime','po-pay':'pay','po-due':'due','po-by':'payBy'})[t.id]]=t.value;return}
+  if(poEdit&&({'po-rt':'rtype','po-et':'etime','po-pay':'pay','po-due':'due','po-by':'payBy','po-inv':'inv','po-d':'d'})[t.id]){poEdit[({'po-rt':'rtype','po-et':'etime','po-pay':'pay','po-due':'due','po-by':'payBy','po-inv':'inv','po-d':'d'})[t.id]]=t.value;return}
   if(poEdit&&t.id==='po-sup'){poEdit.supplier=t.value;return}if(poEdit&&t.id==='po-exp'){poEdit.expected=t.value;return}if(poEdit&&t.id==='po-note'){poEdit.note=t.value;return}
   if(prodF&&t.id==='pr-note'){prodF.note=t.value;return}
   if(prodF&&t.id==='pr-extra'){prodF.extra=t.value;prodRefresh();return}
@@ -6019,6 +6038,7 @@ function stockChange(e){if(!STOCKV.includes(view))return;const t=e.target,d=t.da
   if(t.id==='pc-cust'){posCust=t.value;drawStock();return}
   if(t.id==='pc-pay'){posPay=t.value;drawStock();return}
   if(t.id==='pc-price'){posPrice=t.value;cart.forEach(l=>{const p=pBy(l.code);if(p)l.price=priceOf(p)});drawStock();return}
+  if(t.id==='po-ph'&&t.files[0]&&poEdit&&poEdit.direct){stampPhoto(t.files[0],['SUPPLIER INVOICE '+(poEdit.inv||''),fullStamp(Date.now())+' · by '+me.name]).then(x=>{poEdit.photo=x;poEdit.up=api('api_uploadPhoto',session.token,x,'invoice-'+Date.now()).then(id=>'D'+id).catch(()=>'');const pv=$('#po-prev');if(pv)pv.innerHTML=`<img src="${x}" style="max-width:160px;border-radius:8px;margin-top:6px">`});return}
   if(t.id==='rc-ph'&&t.files[0]){stampPhoto(t.files[0],['RECEIVED · '+((ST.pos||[]).find(p=>p.id===recvId)||{}).no,fullStamp(Date.now())+' · by '+me.name]).then(x=>{recvPhoto=x;recvUp={x,p:api('api_uploadPhoto',session.token,x,'receiving-'+Date.now()).then(id=>'D'+id).catch(()=>'')};const pv=$('#rc-prev');if(pv)pv.innerHTML=`<img src="${x}" style="max-width:160px;border-radius:8px;margin-top:6px">`}).catch(()=>toast('Could not read the photo'));return}
 }
 
