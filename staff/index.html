@@ -1339,6 +1339,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
 #lg.xmas .rtab::before{content:"";position:absolute;top:-16px;left:-8px;width:46px;height:34px;z-index:2;transform:rotate(-24deg);background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 46 34'%3E%3Cpath d='M6 26 C14 6 30 0 40 8 C34 10 32 16 34 22 Z' fill='%23DC2626'/%3E%3Crect x='2' y='23' width='36' height='9' rx='4.5' fill='%23fff'/%3E%3Ccircle cx='40' cy='9' r='5' fill='%23fff'/%3E%3C/svg%3E") no-repeat center/contain;filter:drop-shadow(0 2px 2px rgba(0,0,0,.25))}
 #lg.xmas .rt-h::after{content:" 🎅";}
 #lg.xmas .teamfoot{color:#166534;font-weight:700}
+.sinv{display:inline-block;margin:4px 0 2px;padding:3px 10px;border-radius:8px;background:#FEF3C7;color:#7C2D12;font-size:14px;letter-spacing:.02em}.sinv b{font-weight:900}
 </style>
 </head>
 <body>
@@ -1365,7 +1366,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 22 · 11:00 AM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 23 · 12:05 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -2744,6 +2745,7 @@ function stopHTML(o,n){
    <div class="srow">
     <div class="sno">${ol&&ol.queue?'#'+ol.queue:n}</div>
     <div class="swho" data-wtog="${o.id}"><b>${esc(o.customer)}</b>${ol?` <em class="tg">${ol.type==='wholesale'?'Wholesale':'Online'}</em>`:` <em class="tg b">Bulk</em>`}${isAdd(o)?' <em class="tg a">➕ Additional</em>':''}${o.balanceOf?' <em class="tg a">Balance</em>':''}
+      ${o.posSale||o.dr?`<span class="sinv">${o.posSale?'🧾 SI # <b>'+esc(o.posSale.no)+'</b>':''}${o.posSale&&o.dr?' · ':''}${o.dr?'DR # <b>'+esc(o.dr.no)+'</b>':''}</span>`:''}
       <small>${ol?'📍 '+esc(ol.address||'')+(ol.area?' · '+esc(ol.area):''):(o.use?'Date of use: '+esc(o.use):'Bulk delivery')}</small>
       <small>🚚 left ${time12(new Date(ds.at||Date.now()))}${ds.riderName?' · 🛵 '+esc(ds.riderName):''} · ${o.items.length} item${o.items.length>1?'s':''}${ol&&ol.note?' · 📝 '+esc(ol.note):''}</small></div>
     <div class="scoll">${cod?`<b>${onTot(ol)}</b><small>💵 collect (COD)</small>`:ol?`<b class="paid">Paid ✓</b><small>${PAY[ol.pay]||''}</small>`:''}</div>
