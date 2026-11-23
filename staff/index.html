@@ -1366,7 +1366,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 23 · 12:05 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 23 · 12:20 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -3234,8 +3234,8 @@ async function liveCam(input){camClose();
   $('#lc-x').onclick=camClose;$('#lc-g').onclick=()=>camPick(input);
   try{camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:input.getAttribute('capture')==='user'?'user':'environment'},width:{ideal:1920},height:{ideal:1080}},audio:false});
     const v=$('#lc-v');v.srcObject=camStream;await v.play().catch(()=>{});$('#lc-m').textContent='';$('#lc-shot').disabled=false;
-    $('#lc-shot').onclick=()=>{const w=v.videoWidth,h=v.videoHeight;if(!w||!h)return;const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(v,0,0,w,h);
-      c.toBlob(b=>{if(!b){toast('Could not take the photo — try again');return}const dt=new DataTransfer();dt.items.add(new File([b],'photo_'+Date.now()+'.jpg',{type:'image/jpeg'}));
+    $('#lc-shot').onclick=()=>{const w=v.videoWidth,h=v.videoHeight;if(!w||!h||$('#lc-shot').dataset.busy)return;$('#lc-shot').dataset.busy='1';   // one photo per tap — a quick double tap sends only oneconst c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(v,0,0,w,h);
+      c.toBlob(b=>{if(!b){const sb=document.getElementById('lc-shot');if(sb)delete sb.dataset.busy;toast('Could not take the photo — try again');return}const dt=new DataTransfer();dt.items.add(new File([b],'photo_'+Date.now()+'.jpg',{type:'image/jpeg'}));
         camClose();input.files=dt.files;input.dispatchEvent(new Event('change',{bubbles:true}))},'image/jpeg',.9)}}
   catch(err){$('#lc-m').innerHTML='📷 Camera not available here.<br><button type="button" class="go" id="lc-alt">Take / choose a photo the usual way</button>';$('#lc-alt').onclick=()=>camPick(input)}}
 // phone app v2+: the app hands the photo over as a ready JPEG; it goes into the file box that was tapped
@@ -3257,7 +3257,8 @@ async function stampPhoto(file,label){const img=await openPhoto(file),W=img.widt
   g.fillStyle='#fff';g.font='bold '+fs+'px system-ui,Arial';g.fillText(label[0],fs*.6,c.height-h+fs*1.1);
   g.font=Math.round(fs*.8)+'px system-ui,Arial';g.fillText(label[1],fs*.6,c.height-h+fs*2.15);
   return c.toDataURL('image/jpeg',.72)}
-$('#ph-in').onchange=async e=>{const f=e.target.files[0];if(!f)return;const o=find(P.oid)||{customer:'',delivery:today()};
+$('#ph-in').onchange=async e=>{const f=e.target.files[0];if(!f)return;if(!P){e.target.value='';toast('The photo window was closed — tap ✅ Delivered (or 🚚 Dispatch) again and take the photo');return}   // photo came back after the window closed
+  const o=find(P.oid)||{customer:'',delivery:today()};
   try{P.at=nowT();
     P.data=await stampPhoto(f,[(P.kind==='dispatch'?'DISPATCHED':'DELIVERED')+' · '+o.customer+' · Deliver '+day(o.delivery),fullStamp(P.at)+' · by '+me.name+(navigator.onLine?'':' · 📴 offline')]);
     $('#ph-img').src=P.data;$('#ph-img').hidden=false;$('#ph-cam').hidden=true;$('#ph-retake').hidden=false;$('#ph-ok').disabled=false;$('#ph-time').textContent=fullStamp(P.at)}
