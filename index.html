@@ -378,6 +378,42 @@ body:not(.bulk) nav.bar button[data-v="orders"],nav.bar button[data-v="acct"]{di
 .gia b{font-size:14.5px}.gia .btn{min-width:200px}
 .gbtn{display:inline-flex;align-items:center;justify-content:center;gap:10px;width:100%;max-width:400px;height:46px;border:1px solid #DADCE0;border-radius:999px;background:#fff;color:#3C4043;font:600 15px/1 system-ui,"Segoe UI",Roboto,Arial,sans-serif;transition:background .2s,box-shadow .2s,transform .12s}
 .gbtn:hover{background:#F8FAFF;box-shadow:0 2px 8px rgba(60,64,67,.15)}.gbtn:active{transform:scale(.98)}
+/* 🛒 product page (tap a product) */
+.prod{cursor:pointer}
+.pd-back{background:none;border:0;color:var(--red);font-weight:700;font-size:15px;padding:4px 0;margin:0 0 10px;cursor:pointer}
+.pd{display:grid;grid-template-columns:1.05fr 1fr;gap:30px;align-items:start}
+.pd-img{border-radius:18px;overflow:hidden;background:var(--rosel);aspect-ratio:4/3;display:grid;place-items:center;font-size:110px;position:relative;border:1px solid var(--line)}
+.pd-img img{width:100%;height:100%;object-fit:cover;display:block}
+.pd-img .pso{font-size:14px;padding:6px 12px;left:14px;top:14px}
+.pd-k{font:600 12.5px var(--cond);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.pd h1{font-family:var(--disp);font-weight:400;font-size:42px;line-height:1.02;text-transform:uppercase;margin:6px 0 4px;color:var(--ink);letter-spacing:.01em}
+.pd-lab{font:600 12px var(--cond);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:16px 0 7px}
+.pd-vars,.pd-qs{display:flex;gap:8px;flex-wrap:wrap}
+.pd-var,.pd-q{border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:9px 13px;font-weight:600;font-size:14.5px;color:var(--ink);cursor:pointer;transition:border-color .15s,background .15s}
+.pd-q{min-width:66px;font-weight:700}
+.pd-var:hover,.pd-q:hover{border-color:var(--rose2)}
+.pd-var.on,.pd-q.on{border-color:var(--red);background:var(--rosel);color:var(--red);box-shadow:inset 0 0 0 1px var(--red)}
+.pd-var.out{color:var(--muted)}.pd-var.out small{color:var(--bad)}
+.pd-price{font-family:var(--disp);font-size:46px;color:var(--red);line-height:1;margin-top:16px;display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 10px}
+.pd-price s{font-size:24px;color:var(--muted);text-decoration-thickness:2px}.pd-price small{font:600 18px system-ui;color:var(--muted)}
+.pd-save{color:var(--green);font-weight:700;font-size:14px;margin-top:6px}.pd-ws{color:var(--muted);font-size:14px;margin-top:6px}
+.pd-facts{display:flex;flex-wrap:wrap;gap:8px 20px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:12px 0;margin:16px 0 4px;font-size:14px;color:var(--muted)}
+.pd-facts b{color:var(--ink)}.pd-facts .ok{color:var(--green);font-weight:600}
+.pd-step{display:inline-flex;align-items:center;border:1.5px solid var(--line);border-radius:12px;overflow:hidden;margin-top:10px;background:#fff}
+.pd-step button{width:48px;height:48px;border:0;background:#fff;font-size:22px;color:var(--red);cursor:pointer}.pd-step button:disabled{color:#ccc;cursor:default}
+.pd-step input{width:70px;height:48px;border:0;border-left:1px solid var(--line);text-align:center;font-size:19px;font-weight:700;color:var(--ink);background:var(--soft)}
+.pd-step span{padding:0 12px 0 4px;color:var(--muted);font-weight:600;background:var(--soft);height:48px;display:grid;place-items:center;border-right:1px solid var(--line)}
+.pd-sub{display:flex;justify-content:space-between;align-items:baseline;margin-top:18px;color:var(--muted);font-size:15px;gap:10px}
+.pd-sub b{font-size:28px;color:var(--ink)}.pd-sub small{display:block;text-align:right;color:var(--green);font-weight:700;font-size:13px}
+.pd-note{margin-top:8px;font-size:14px;color:var(--muted)}.pd-note.g{color:var(--green);font-weight:600}
+.pd-add{width:100%;margin-top:14px;border:0;border-radius:14px;background:var(--red);color:#fff;font:600 19px var(--cond);letter-spacing:.05em;padding:16px;text-transform:uppercase;cursor:pointer;box-shadow:0 6px 16px rgba(142,27,34,.25);transition:transform .15s,background .15s}
+.pd-add:hover:not(:disabled){background:var(--red2);transform:translateY(-1px)}.pd-add:disabled{background:#cfc4c2;box-shadow:none;cursor:not-allowed}
+.pd-share{background:none;border:1.5px solid var(--line);border-radius:12px;padding:10px 14px;margin-top:10px;font-weight:600;color:var(--ink);cursor:pointer;width:100%}
+.pd-about{margin-top:18px}.pd-about p{margin:0 0 8px;line-height:1.55;color:var(--ink)}.pd-about p:first-of-type{font-size:16px}
+.pd-h{font-family:var(--disp);font-weight:400;font-size:26px;text-transform:uppercase;margin:30px 0 12px;color:var(--ink)}
+.pd-more{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(210px,232px);gap:12px;overflow-x:auto;padding:2px 2px 10px;scroll-snap-type:x mandatory}
+.pd-more .prod{scroll-snap-align:start}.pd-more .prod.rv{opacity:1;transform:none;filter:none}
+@media (max-width:760px){.pd{grid-template-columns:1fr;gap:14px}.pd h1{font-size:30px}.pd-price{font-size:38px}.pd-img{font-size:80px}.pd-more{grid-auto-columns:46%}.pd-h{font-size:22px}}
 </style>
 </head>
 <body>
@@ -396,7 +432,7 @@ body:not(.bulk) nav.bar button[data-v="orders"],nav.bar button[data-v="acct"]{di
 <script>
 /* ===================== 3F MEATSHOP — CUSTOMER ORDER SITE =====================
    Bulk buyers (KUI etc.): log in → monitor their orders only.
-   Retail / wholesale buyers: browse products & available qty → cart → payment (COD / bank / e-wallet) → track.
+   Retail / wholesale buyers: browse products → cart → payment (COD / bank / e-wallet) → track.
    Orders are delivered the DAY AFTER they are placed.                                                        */
 const KEY=window.APP_KEY||new URLSearchParams(location.search).get('k')||'';const SESS='shop3f_s';
 const $=s=>document.querySelector(s);
@@ -423,6 +459,7 @@ let newsShown=null;const SEEN='shop3f_seen';let seen={};try{seen=JSON.parse(loca
 // what changed since the customer last looked (placed → confirmed → preparing → on the way → delivered / cancelled)
 function news(){if(!orders||!me)return[];const k=me.id;return orders.filter(o=>{const st=stOf(o);const was=(seen[k]||{})[o.id];return was!==undefined&&was!==st.t})}
 function markSeen(){if(!orders||!me)return;const m={};orders.forEach(o=>m[o.id]=stOf(o).t);seen[me.id]=m;try{localStorage.setItem(SEEN,JSON.stringify(seen))}catch(e){}}
+let pv=null,pq=1;try{const h=new URLSearchParams(location.hash.slice(1));if(h.get('p'))pv=h.get('p')}catch(e){}
 let info=null,me=null,token=null,view='shop',cat='All',q='',cart={},orders=null,openId=null,pay='cod',proofId='',busy=false;
 try{const s=JSON.parse(localStorage.getItem(SESS)||'null');if(s&&s.token){token=s.token;me=s.me}}catch(e){}
 try{cart=JSON.parse(localStorage.getItem('shop3f_cart')||'{}')||{}}catch(e){cart={}}
@@ -455,7 +492,7 @@ function render(){
   if(me&&me.mustChange){rFirstPin();cartBar();return}
   ({shop:rShop,cart:rCart,orders:rOrders,acct:rAcct,login:rLogin,info:rInfo,points:rPoints,card:rCard})[view]();
   cartBar();
-  const ak=view+(info?1:0)+(view==='orders'&&orders?1:0);if(ak!==lastView){lastView=ak;animIn()}   // animate when the page changes or its data first arrives
+  const ak=view+(view==='shop'&&pv?':'+pv:'')+(info?1:0)+(view==='orders'&&orders?1:0);if(ak!==lastView){lastView=ak;animIn()}   // animate when the page changes or its data first arrives
 }
 // ✨ page animation: content slides + un-blurs in, headings sweep in with a motion trail, cards reveal as you scroll
 const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;let rvObs=null;
@@ -496,6 +533,7 @@ function annBar(){const a=$('#ann');if(!info){a.hidden=true;return}const s=info.
   if($('#annin').dataset.t!==t){$('#annin').dataset.t=t;$('#annin').innerHTML=`<div class="ann-row">${t}</div><div class="ann-row" aria-hidden="true">${t}</div>`}}
 function rShop(){
   if(!info){$('#view').innerHTML='<div class="empty">Loading products…</div>';return}
+  if(pv){if(prod(pv))return rItem();pv=null}
   const cats=['All',...new Set(info.products.map(p=>p.cat))];
   const list=info.products.filter(p=>(cat==='All'||p.cat===cat)&&(!q||p.name.toLowerCase().includes(q.toLowerCase())));
   $('#view').innerHTML=hero()+`<div class="tools"><input class="search" id="q" placeholder="🔍 Search a product" value="${esc(q)}"></div>
@@ -506,18 +544,56 @@ function rShop(){
   const qi=$('#q');qi.oninput=()=>{q=qi.value;const pos=qi.selectionStart;rShop();const n=$('#q');n.focus();n.setSelectionRange(pos,pos)};
 }
 function prodCard(p){
-  const inC=cart[p.code]||0,out=p.avail<1,low=!out&&p.avail<=(p.unit==='Kg'?5:5);
+  const inC=cart[p.code]||0,out=p.avail<1;
   const ph=p.photo&&window.SB_URL?window.SB_URL.replace(/\/$/,'')+'/storage/v1/object/public/products/'+p.photo:'';
-  return `<div class="prod${out?' out':''}${ph?' hasph':''}" data-p="${esc(p.code)}">${ph?`<div class="pimg"><img src="${esc(ph)}" alt="${esc(p.name)}" loading="lazy" decoding="async" onerror="this.closest('.prod').classList.remove('hasph');this.parentNode.remove()">${out?'<span class="pso">Sold out</span>':''}</div>`:''}<div class="top"><span class="em">${emo(p.cat)}</span><div style="min-width:0"><b>${esc(p.name)}</b><span class="cat">${esc(p.cat)} · per ${p.unit==='Kg'?'kg':p.unit.toLowerCase()}${p.unit!=='Kg'&&p.kg?' ('+fmt(p.kg)+' kg)':''}</span></div></div>
+  return `<div class="prod${out?' out':''}${ph?' hasph':''}" data-p="${esc(p.code)}">${ph?`<div class="pimg"><img src="${esc(ph)}" alt="${esc(p.name)}" loading="lazy" decoding="async" onerror="this.closest('.prod').classList.remove('hasph');this.parentNode.remove()">${out?'<span class="pso">Not available today</span>':''}</div>`:''}<div class="top"><span class="em">${emo(p.cat)}</span><div style="min-width:0"><b>${esc(p.name)}</b><span class="cat">${esc(p.cat)} · per ${p.unit==='Kg'?'kg':p.unit.toLowerCase()}${p.unit!=='Kg'&&p.kg?' ('+fmt(p.kg)+' kg)':''}</span></div></div>
     <div class="price">${peso(priceOf(p))}<small> / ${p.unit==='Kg'?'kg':p.unit.toLowerCase()}</small></div>
     ${!me&&p.wholesale&&p.wholesale!==p.retail?`<div class="price2">Wholesale ${peso(p.wholesale)}</div>`:''}
-    <span class="avail${out?' none':low?' low':''}">${out?'Sold out':'Available: '+fmt(Math.floor(p.avail))+' '+(p.unit==='Kg'?'kg':p.unit.toLowerCase())}</span>
+    ${out?'<span class="avail none">Not available today</span>':''}
     ${isBulk()?'':`<div class="qrow"><div class="step"><button data-dec="${esc(p.code)}" ${out?'disabled':''}>−</button><input data-qty="${esc(p.code)}" type="number" inputmode="numeric" step="1" min="0" value="${inC||''}" placeholder="0" ${out?'disabled':''}><button data-inc="${esc(p.code)}" ${out?'disabled':''}>+</button></div>
       <button class="add${inC?' in':''}" data-add="${esc(p.code)}" ${out?'disabled':''}><i class="ai">${inC?'✓':'🛒'}</i><span>${inC?'In cart':'Add'}</span></button></div>`}</div>`;
 }
 const prod=c=>info&&info.products.find(p=>p.code===c);
+/* 🛒 product page: big photo, variants, quick quantities, subtotal, add to cart, description, more products — share link: …/#p=CODE */
+const pBase=n=>String(n).replace(/\s*[\(\[].*$/,'').replace(/\s+[-–—]\s+.*$/,'').trim().toLowerCase();
+const pVarLab=(x,b)=>{const t=x.name.trim(),r=t.slice(b.length).replace(/^[\s\-–—(\[]+|[)\]\s]+$/g,'').trim();return t.toLowerCase().startsWith(b)&&r?r:t};
+const pPhoto=p=>p.photo&&window.SB_URL?window.SB_URL.replace(/\/$/,'')+'/storage/v1/object/public/products/'+p.photo:'';
+const uOf=p=>p.unit==='Kg'?'kg':p.unit.toLowerCase(),uN=(p,n)=>uOf(p)+(p.unit!=='Kg'&&+n!==1?'s':'');
+const pqFor=code=>{const p=prod(code);return p?Math.max(1,Math.min(cart[code]||1,Math.max(1,Math.floor(p.avail)))):1};
+function openItem(code,replace){pv=code;pq=pqFor(code);view='shop';
+  const url=location.pathname+location.search+'#p='+encodeURIComponent(code);try{replace?history.replaceState({pv:code},'',url):history.pushState({pv:code},'',url)}catch(e){}
+  render();scrollTo(0,0)}
+function closeItem(){if(history.state&&history.state.pv&&history.state.back){history.back();return}pv=null;try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}render();scrollTo(0,0)}
+addEventListener('popstate',e=>{const h=new URLSearchParams(location.hash.slice(1));pv=(e.state&&e.state.pv)||h.get('p')||null;if(pv)pq=pqFor(pv);if(view==='shop'||pv){view='shop';render();scrollTo(0,0)}});
+function rItem(){const p=prod(pv),u=uOf(p),out=p.avail<1,max=Math.max(0,Math.floor(p.avail)),pr=priceOf(p),ph=pPhoto(p),b=pBase(p.name);
+  if(!out&&pq>max)pq=max;if(pq<1)pq=1;
+  const V=info.products.filter(x=>x.cat===p.cat&&pBase(x.name)===b),desc=String(((info.set||{}).desc||{})[p.code]||'').split(/\n+/).map(x=>x.trim()).filter(Boolean);
+  const more=info.products.filter(x=>x.code!==p.code&&!V.includes(x)&&x.cat===p.cat);
+  if(more.length<6)info.products.filter(x=>x.cat!==p.cat&&x.avail>=1).slice(0,8-more.length).forEach(x=>more.push(x));
+  const pre=[1,2,3,5,10].filter(v=>v<=max),inC=cart[p.code]||0,sub=Math.round(pq*pr*100)/100,save=isWs()&&p.retail>p.wholesale?Math.round(pq*(p.retail-p.wholesale)*100)/100:0;
+  const otherKg=Math.round(cartLines().filter(l=>l.p.code!==p.code).reduce((a,l)=>a+l.qty*(l.p.kg||0),0)*1000)/1000,newKg=Math.round((otherKg+pq*(p.kg||0))*1000)/1000,f=freeKg();
+  const kgNote=isWs()||!f||out?'':newKg>=f?`<div class="pd-note g">🎉 Your cart will have FREE delivery (${fmt(newKg)} kg)</div>`:`<div class="pd-note">🚚 Add ${fmt(Math.round((f-newKg)*1000)/1000)} kg more to your cart for <b>FREE delivery</b></div>`;
+  $('#view').innerHTML=`<button class="pd-back" data-pback>← Back to products</button>
+  <div class="pd"><div><div class="pd-img">${ph?`<img src="${esc(ph)}" alt="${esc(p.name)}" onerror="this.remove()">`:emo(p.cat)}${out?'<span class="pso">Not available today</span>':''}</div>
+      ${desc.length?`<div class="pd-about"><div class="pd-lab" style="margin-top:0">About this item</div>${desc.map(x=>`<p>${esc(x)}</p>`).join('')}</div>`:''}</div>
+    <div><div class="pd-k">${esc(p.cat)}${V.length>1?' · '+esc(pVarLab(p,b)):''}</div><h1>${esc(p.name)}</h1>
+      ${V.length>1?`<div class="pd-lab">Variant</div><div class="pd-vars">${V.map(x=>`<button class="pd-var${x.code===p.code?' on':''}${x.avail<1?' out':''}" data-pvar="${esc(x.code)}">${esc(pVarLab(x,b))} · ${peso(priceOf(x))}${x.avail<1?' <small>· not today</small>':''}</button>`).join('')}</div>`:''}
+      <div class="pd-price">${peso(pr)}${save?`<s>${peso(p.retail)}</s>`:''}<small>/ ${u}</small></div>
+      ${save?`<div class="pd-save">Wholesale price — you save ${peso(p.retail-p.wholesale)}/${u}</div>`:!me&&p.wholesale&&p.wholesale<p.retail?`<div class="pd-ws">Wholesale ${peso(p.wholesale)}/${u} · for wholesale accounts</div>`:''}
+      <div class="pd-facts"><span>Order by <b>1 ${u}</b></span>${p.unit!=='Kg'&&p.kg?`<span>Weight <b>${fmt(p.kg)} kg</b> / ${u}</span>`:''}${out?'<span style="color:var(--bad);font-weight:700">Not available today</span>':`<span class="ok">✓ Delivered ${esc(longDay(info.delivery))}</span>`}</div>
+      ${isBulk()?'':out?`<button class="pd-add" disabled>Not available today</button>`:`
+      <div class="pd-lab">Quantity</div>
+      ${pre.length>1?`<div class="pd-qs">${pre.map(v=>`<button class="pd-q${v===pq?' on':''}" data-pq="${v}">${v} ${uN(p,v)}</button>`).join('')}</div>`:''}
+      <div class="pd-step"><button data-pstep="-1" ${pq<=1?'disabled':''} aria-label="Less">−</button><input id="pq-in" type="number" inputmode="numeric" min="1" max="${max}" step="1" value="${pq}"><span>${uN(p,pq)}</span><button data-pstep="1" ${pq>=max?'disabled':''} aria-label="More">+</button></div>
+      <div class="pd-sub"><span>Subtotal</span><div><b>${peso(sub)}</b>${save?`<small>You save ${peso(save)}</small>`:''}</div></div>
+      ${kgNote}<div class="pd-note">📅 Order today, delivered <b>${esc(longDay(info.delivery))}</b></div>
+      <button class="pd-add" data-padd="${esc(p.code)}">🛒 ${inC?(inC===pq?'In cart · ':'Update cart · '):'Add '}${fmt(pq)} ${uN(p,pq)} · ${peso(sub)}</button>`}
+      <button class="pd-share" data-pshare="${esc(p.code)}">🔗 Share this product</button></div></div>
+  ${more.length?`<div class="pd-h">${!more.some(x=>x.cat===p.cat)?'You may also like':'More '+esc(p.cat)+(more.some(x=>x.cat!==p.cat)?' &amp; more':'')}</div><div class="pd-more">${more.map(prodCard).join('')}</div>`:''}`;
+  const qi=$('#pq-in');if(qi)qi.onchange=()=>{let v=Math.round(+qi.value||1);if(v>max){v=max;toast('Sorry — that is the most we can take for '+p.name+' today')}pq=Math.max(1,v);rItem()}}
+
 function setQty(code,v){const p=prod(code);if(!p)return;v=Math.max(0,Math.round(+v||0));
-  if(v>p.avail){v=Math.floor(p.avail);toast('Only '+fmt(Math.floor(p.avail))+' '+p.unit+' available')}
+  if(v>p.avail){v=Math.floor(p.avail);toast('Sorry — that is the most we can take for '+p.name+' today')}
   if(v>0)cart[code]=v;else delete cart[code];saveCart();}
 function cartLines(){return Object.entries(cart).map(([c,qty])=>{const p=prod(c);return p?{p,qty,amt:Math.round(qty*priceOf(p)*100)/100}:null}).filter(Boolean)}
 function cartBar(){const L=cartLines(),b=$('#cartbar');if(!L.length||isBulk()||view!=='shop'){b.hidden=true;return}
@@ -534,7 +610,7 @@ function rCart(){
   const area=$('#c-area')?$('#c-area').value:(me&&me.area)||'',fee=feeOf(area),s=info.set||{};
   const keep={addr:$('#c-addr')?$('#c-addr').value:(me&&me.address)||'',ref:$('#c-ref')?$('#c-ref').value:'',note:$('#c-note')?$('#c-note').value:''};
   $('#view').innerHTML=`<div class="card gold"><h2>🧺 Checkout</h2><p class="lead">3 quick steps: check your items → delivery → payment.</p><div class="stepno">1 · Your items</div>
-    ${L.map(l=>`<div class="line"><div><b>${esc(l.p.name)}</b><br><span class="muted">${peso(priceOf(l.p))} / ${l.p.unit==='Kg'?'kg':l.p.unit.toLowerCase()} · available ${fmt(l.p.avail)}</span></div>
+    ${L.map(l=>`<div class="line"><div><b>${esc(l.p.name)}</b><br><span class="muted">${peso(priceOf(l.p))} / ${l.p.unit==='Kg'?'kg':l.p.unit.toLowerCase()} </span></div>
       <div class="step"><button data-dec="${esc(l.p.code)}">−</button><input data-qty="${esc(l.p.code)}" type="number" inputmode="numeric" step="1" value="${l.qty}"><button data-inc="${esc(l.p.code)}">+</button></div>
       <div class="r2"><b>${peso(l.amt)}</b><button class="x" data-rm="${esc(l.p.code)}">✕</button></div></div>`).join('')}
     ${isWs()?'':(()=>{const k=cartKg(),f=freeKg();if(!f)return'';const pct=Math.min(100,k/f*100);
@@ -586,7 +662,7 @@ function rInfo(){
   const step=(n,t,d)=>`<div style="display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line)"><span style="flex:none;width:32px;height:32px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;font-weight:900">${n}</span><div><b>${t}</b><div class="muted" style="font-size:14.5px">${d}</div></div></div>`;
   $('#view').innerHTML=`<div class="card gold"><h2>ℹ️ How to order</h2><p class="lead">Simple, like any online shop — but fresh from 3F Meatshop.</p>
     ${step(1,'Sign up once','Tap <b>Continue with Google</b> — or type your name, username, mobile no., email (we send a code to check it), a strong password, your address and barangay. Stores, restaurants and resellers can ask for a <b>wholesale</b> account.')}
-    ${step(2,'Choose products','You see the price and the <b>quantity available</b> right now. Order in whole numbers: 1 kg, 2 kg, 3 kg… and per pack / piece.')}
+    ${step(2,'Choose products','You see the price of every product; items marked <b>Not available today</b> cannot be ordered yet. Order in whole numbers: 1 kg, 2 kg, 3 kg… and per pack / piece.')}
     ${step(3,'Pay your way','<b>Cash on delivery</b> — pay the rider.<br><b>Bank transfer</b> or <b>GCash / Maya</b> — send the total, type the reference no. (and attach the receipt if you like).')}
     ${step(4,'We confirm your order','Our <b>sales team</b> confirms every order — COD by a quick call or text, bank / e-wallet after checking your payment. Orders placed today are <b>confirmed today</b> when possible, then <b>prepared and delivered tomorrow</b>.')}
     ${step(5,'We prepare it','The day before delivery our team prepares your order — weighed and packed, then checked again before it leaves. You see <b>🔪 Preparing</b> in My orders.')}
@@ -970,9 +1046,18 @@ $('#m').addEventListener('click',e=>{if(e.target.id==='m'||e.target.closest('[da
 document.addEventListener('click',async e=>{
   const im=e.target.closest('img[data-ph]');if(im&&im.src){openM(`<div class="viewer"><img src="${im.src}"><p class="muted">${esc(im.alt)}</p><button class="btn sec" data-close>Close</button></div>`);return}
   const lm=e.target.closest('a[data-lm]');if(lm){e.preventDefault();lmode=lm.dataset.lm;rLogin();scrollTo(0,0);return}
+  const pc=e.target.closest('.prod[data-p]');if(pc&&!e.target.closest('button,input,a,label')){openItem(pc.dataset.p);try{history.replaceState({pv:pc.dataset.p,back:1},'',location.href)}catch(er){}return}
   const b=e.target.closest('button');if(!b)return;const d=b.dataset;
+  if('pback' in d){closeItem();return}
+  if(d.pvar){const bk=history.state&&history.state.back;openItem(d.pvar,true);try{history.replaceState({pv:d.pvar,back:bk},'',location.href)}catch(er){}return}
+  if(d.pq){pq=+d.pq;rItem();return}
+  if(d.pstep){pq=Math.max(1,pq+(+d.pstep));rItem();return}
+  if(d.padd){const p=prod(d.padd);if(!p)return;const fr=(document.querySelector('.pd-img img')||document.querySelector('.pd-img')).getBoundingClientRect();setQty(p.code,pq);nav();cartBar();flyToCart(fr,emo(p.cat),p.code);toast('🛒 '+fmt(cart[p.code]||0)+' '+uN(p,cart[p.code]||0)+' '+p.name+' in your cart');rItem();return}
+  if(d.pshare){const p=prod(d.pshare),url=location.origin+location.pathname+location.search+'#p='+encodeURIComponent(d.pshare),t=p?p.name+' — '+peso(p.retail)+'/'+uOf(p)+' at 3F Meatshop':'3F Meatshop';
+    try{if(navigator.share){await navigator.share({title:t,text:t,url});return}}catch(er){if(er&&er.name==='AbortError')return}
+    try{await navigator.clipboard.writeText(url);toast('🔗 Link copied — paste it on Facebook or Messenger')}catch(er){prompt('Copy this link:',url)}return}
   if(d.bn){bnGo(bnI+(+d.bn));return}if(d.bnGo!==undefined){bnGo(+d.bnGo);return}
-  if(d.v){if(d.v!=='orders')newsShown=null;view=d.v;if(view==='orders'&&me){orders=orders||null;loadOrders()}render();scrollTo(0,0);return}
+  if(d.v){if(d.v!=='orders')newsShown=null;if(pv){pv=null;try{history.replaceState(null,'',location.pathname+location.search)}catch(er){}}view=d.v;if(view==='orders'&&me){orders=orders||null;loadOrders()}render();scrollTo(0,0);return}
   if(d.cat!==undefined){cat=d.cat;rShop();return}
   if(d.lm){lmode=d.lm;rLogin();return}
   if(d.inc||d.dec){const c=d.inc||d.dec,p=prod(c),st=stepOf(p),inp=document.querySelector(`[data-qty="${CSS.escape(c)}"]`);let v=+(inp&&inp.value)||cart[c]||0;v=d.inc?v+st:v-st;
@@ -984,7 +1069,7 @@ document.addEventListener('click',async e=>{
   if(d.rm){delete cart[d.rm];saveCart();rCart();nav();return}
   if(d.pay){pay=d.pay;rCart();return}
   if(d.again){const o=orders.find(x=>x.id===d.again);if(!o||!info)return;let added=0,miss=[];
-    o.items.forEach(i=>{const p=info.products.find(x=>x.name===i.product);if(!p||p.avail<=0){miss.push(i.product);return}const q=Math.min(+i.qty||0,p.avail);if(q>0){cart[p.code]=q;added++}if(q<i.qty)miss.push(i.product+' (only '+fmt(p.avail)+' left)')});
+    o.items.forEach(i=>{const p=info.products.find(x=>x.name===i.product);if(!p||p.avail<=0){miss.push(i.product);return}const q=Math.min(+i.qty||0,p.avail);if(q>0){cart[p.code]=q;added++}if(q<i.qty)miss.push(i.product+' (not enough today)')});
     saveCart();view='cart';render();scrollTo(0,0);toast(added?'Added '+added+' item(s) to your cart'+(miss.length?' · not available: '+miss.join(', '):''):'Those items are not available right now');return}
   if(d.open){openId=openId===d.open?null:d.open;rOrders();return}
   if(d.cancel){openM(`<h2>Cancel this order?</h2><p class="lead">The items go back to the shop's stock.</p><div style="display:flex;gap:10px;justify-content:flex-end"><button class="btn sec" data-close>Keep order</button><button class="btn danger" id="cx" data-id="${esc(d.cancel)}">Yes, cancel</button></div>`);return}
