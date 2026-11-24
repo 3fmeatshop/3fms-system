@@ -1340,6 +1340,11 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
 #lg.xmas .rt-h::after{content:" 🎅";}
 #lg.xmas .teamfoot{color:#166534;font-weight:700}
 .sinv{display:inline-block;margin:4px 0 2px;padding:3px 10px;border-radius:8px;background:#FEF3C7;color:#7C2D12;font-size:14px;letter-spacing:.02em}.sinv b{font-weight:900}
+.arc{border:1px solid var(--line,#eee);border-radius:12px;padding:8px 10px;margin:8px 0}.arc-h{display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 0}
+.arc-r{display:flex;align-items:center;gap:10px;padding:7px 4px;border-top:1px dashed #eee;cursor:pointer}.arc-r span{flex:1}.arc-r.on{background:#FFF8E6}.arc input,.apck input{width:20px;height:20px}
+.apck{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;margin-right:8px;cursor:pointer}
+.selbar{position:sticky;bottom:8px;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px;padding:10px 14px;border-radius:14px;background:#7F1D1D;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.selbar .btn{background:#fff}
 </style>
 </head>
 <body>
@@ -1366,7 +1371,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 23 · 12:25 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 24 · 3:45 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -4437,7 +4442,7 @@ function owPayables(){const O=OW,bills=(O.ap||[]).filter(a=>a.kind==='exp'),bt=b
   return `<div class="pay-cards">${card('sup','🏭','Suppliers',supT,SL&&SL.overdue?`<span style="color:#FFD5D5">${peso(SL.overdue)} overdue</span>`:'unpaid deliveries')}${card('bill','🧾','Unpaid bills',bt,bills.length+' bill(s)')}${card('loan','🤝','Loans',lt,'balance borrowed')}</div>
    <div class="pay-total">Total payables <b>${peso(supT+bt+lt)}</b></div>
    ${PAYsec==='sup'?paySuppliers():PAYsec==='bill'?payBills(bills):owLoans('borrow')}`}
-function payBills(B){return `<div class="panel"><h3>🧾 Unpaid bills <small class="unit">(charged expenses)</small></h3>${B.map(a=>{const late=a.due&&a.due<today();return `<div class="posx-row"><span><b>${esc(a.supplier)}</b> <small class="unit">due ${a.due?day(a.due):'—'}${late?' · <b style="color:var(--rose)">overdue</b>':''}</small></span><b>${a.payBy==='cashier'?badge('cashier to pay','violet')+' ':''}${peso(a.amount)} <button class="go sm" data-owpay="${a.kind}:${a.id}">Pay</button></b></div>`}).join('')||'<div class="unit">No unpaid bills. 👍</div>'}
+function payBills(B){return `<div class="panel"><h3>🧾 Unpaid bills <small class="unit">(charged expenses)</small></h3>${B.map(a=>{const late=a.due&&a.due<today();return `<div class="posx-row"><span><b>${esc(a.supplier)}</b> <small class="unit">due ${a.due?day(a.due):'—'}${late?' · <b style="color:var(--rose)">overdue</b>':''}</small></span><b>${a.payBy==='cashier'?badge('cashier to pay','violet')+' ':''}${peso(a.amount)} <button class="go sm" data-owpay="${a.kind}:${a.id}">Pay</button> <label class="apck"><input type="checkbox" data-apsel="exp:${esc(a.id)}"${APSEL.has('exp:'+a.id)?' checked':''}> tick</label></b></div>`}).join('')||'<div class="unit">No unpaid bills. 👍</div>'}${apBar()}
   <div class="unit" style="margin-top:6px">Add a bill in 🧾 Expenses with "Charge (pay later)".</div></div>`}
 function paySuppliers(){if(!SL&&!SLerr){slLoad();return '<div class="empty">Loading suppliers…</div>'}if(SLerr)return `<div class="empty">⚠ ${esc(SLerr)} <button class="btn sm" data-slre>↻ Try again</button></div>`;
   const q=SLq.trim().toLowerCase(),L=SL.suppliers.filter(s=>(!q||s.name.toLowerCase().includes(q))&&(SLall||s.unpaid>0||q)),hid=SL.suppliers.length-SL.suppliers.filter(s=>s.unpaid>0).length;
@@ -4445,7 +4450,7 @@ function paySuppliers(){if(!SL&&!SLerr){slLoad();return '<div class="empty">Load
   const po=(r,open)=>`<div class="sl-po${r.late?' late':''}"><div class="sl-poh"><b>${esc(r.no)}</b> <small class="unit">${r.recv?'received '+dt(r.recv):'ordered '+dt(r.made)}${r.notYet?' · <b>not received yet</b>':''}</small><span style="flex:1"></span>${open?`<b>${peso(r.bal)}</b>`:badge('PAID','green')+` <b>${peso(r.amount)}</b>`}</div>
      <div class="unit">${esc(r.items)}${open?` · amount ${peso(r.amount)}${r.paid?' · paid '+peso(r.paid):''} · due ${r.due?day(r.due):'on delivery'}${r.late?' · <b style="color:var(--rose)">OVERDUE</b>':''}`:''}</div>
      ${r.pays.length?`<div class="sl-pays">${r.pays.map(p=>`<div>💸 ${dt(p.at)} · <b>${peso(p.amt)}</b> · ${esc(p.acc)}${p.ref?' · ref '+esc(p.ref):''}${p.by?' · '+esc(p.by):''}</div>`).join('')}</div>`:''}
-     ${open&&(OW.ap||[]).some(a=>a.kind==='po'&&a.id===r.id)?`<div class="row-end" style="margin:4px 0 0"><button class="go sm" data-owpay="po:${r.id}">Pay ${peso(r.bal)}</button></div>`:''}</div>`;
+     ${open&&(OW.ap||[]).some(a=>a.kind==='po'&&a.id===r.id)?`<div class="row-end" style="margin:4px 0 0"><label class="apck"><input type="checkbox" data-apsel="po:${esc(r.id)}"${APSEL.has('po:'+r.id)?' checked':''}> tick to pay with others</label><button class="go sm" data-owpay="po:${r.id}">Pay ${peso(r.bal)}</button></div>`:''}</div>`;
   return `<div class="panel"><div class="poh"><h3 style="margin:0">🏭 Suppliers</h3><span style="flex:1"></span><button class="btn sm" data-slre>↻</button></div>
    <div class="row-end" style="justify-content:flex-start;gap:10px;flex-wrap:wrap;margin:8px 0"><input class="edit-in" id="sl-q" data-slq placeholder="🔍 Find supplier" value="${esc(SLq)}" style="max-width:240px"><label class="chk2"><input type="checkbox" id="sl-all" data-slall${SLall?' checked':''}> Show fully-paid suppliers too${hid?' ('+hid+')':''}</label></div>
    <div class="sc"><table class="stbl sl-tb"><thead><tr><th>Supplier</th><th class="r">Unpaid P.O.s</th><th class="r">Overdue</th><th class="r">Unpaid total</th></tr></thead><tbody>
@@ -4454,7 +4459,43 @@ function paySuppliers(){if(!SL&&!SLerr){slLoad();return '<div class="empty">Load
        <div><h4>✅ Paid history <small class="unit">(${s.done.length})</small></h4>${s.done.map(r=>po(r,0)).join('')||'<div class="unit">No paid P.O. yet.</div>'}</div></div>
        <div class="unit" style="margin-top:6px">Bought (received) ${peso(s.bought)} · paid so far ${peso(s.paid)}</div></td></tr>`:''}`}).join('')||'<tr><td colspan="4" class="empty">No supplier owed. 👍</td></tr>'}
    ${L.length?`<tr class="srtot"><td><b>GRAND TOTAL</b>${SL.overdue?`<small class="sl-mob" style="color:var(--rose)">overdue ${peso(SL.overdue)}</small>`:''}</td><td></td><td class="r">${SL.overdue?peso(SL.overdue):'—'}</td><td class="r"><b style="font-size:17px">${peso(L.reduce((a,s)=>a+s.unpaid,0))}</b></td></tr>`:''}</tbody></table></div>
-   <div class="unit" style="margin-top:6px">Tap a supplier to see the unpaid P.O.s and the paid history. Paid from the drawer? The cashier does it in POS › Cash out.</div></div>`}
+   ${apBar()}<div class="unit" style="margin-top:6px">Tap a supplier to see the unpaid P.O.s and the paid history. Tick several P.O.s (any supplier) → 💸 Pay selected — paid by the manager from the safe / bank, not by the cashier.</div></div>`}
+function apSync(){const ap=OW&&OW.ap||[];[...APSEL.keys()].forEach(k=>{const[kd,id]=k.split(':');if(!ap.some(a=>a.kind===kd&&a.id===id))APSEL.delete(k)})}
+function apBar(){apSync();if(!APSEL.size)return '';const L=[...APSEL.keys()].map(k=>{const[kd,id]=k.split(':');return (OW.ap||[]).find(a=>a.kind===kd&&a.id===id)}).filter(Boolean),t=r2(L.reduce((s,a)=>s+a.amount,0));
+  return `<div class="selbar"><span><b>${L.length}</b> ticked · <b>${peso(t)}</b></span><span><button class="btn sm" data-apclr>Clear</button> <button class="go" data-appay>💸 Pay selected</button></span></div>`}
+function apPayDialog(){const L=[...APSEL.keys()].map(k=>{const[kd,id]=k.split(':');return (OW.ap||[]).find(a=>a.kind===kd&&a.id===id)}).filter(Boolean),t=r2(L.reduce((s,a)=>s+a.amount,0)),box=stBox(),accs=noDrawer(OW.accounts);
+  $('#stb').innerHTML=`<h2>💸 Pay ${L.length} item(s) — ${peso(t)}</h2>
+    <div class="sc"><table class="stbl"><tbody>${L.map(a=>`<tr><td>${esc(a.supplier)}<br><small class="unit">${esc(a.no||(a.kind==='exp'?'bill':''))}</small></td><td class="r"><b>${peso(a.amount)}</b></td></tr>`).join('')}</tbody></table></div>
+    <div class="fgrid" style="margin-top:8px"><label>Paid from<select class="edit-in" id="ap-acc">${accs.map(a=>`<option value="${esc(a.id)}">${esc(a.name)}</option>`).join('')}</select></label>
+    <label>Date paid<input class="edit-in" type="date" id="ap-d" value="${today()}"></label><label class="full">Reference no. <small>(bank / check — optional)</small><input class="edit-in" id="ap-r"></label></div>
+    <div class="snote">Each one is paid in <b>full</b> (its balance). To pay part of one, use its own Pay button.</div>
+    <div class="row-end"><button class="btn" data-x>Cancel</button><button class="go" id="ap-ok">💸 Pay ${peso(t)}</button></div>`;box.classList.add('on');
+  $('#ap-ok').onclick=async()=>{const b=$('#ap-ok');b.disabled=true;try{const R=await api('api_payMany',session.token,L.map(a=>({kind:a.kind,id:a.id,label:a.supplier+' '+(a.no||'')})),$('#ap-acc').value,$('#ap-d').value,$('#ap-r').value,OW.ym);
+      box.classList.remove('on');APSEL.clear();SL=null;if(ST)ST.stale=true;toast(`💸 Paid ${R.paid} item(s) — ${peso(R.total)} saved`);if(R.errs&&R.errs.length)alert('Not paid:\n'+R.errs.join('\n'));
+      OWold=OWold||Date.now();OWload=false;owLoad();drawStock()}catch(e){alert(errMsg(e));b.disabled=false}}}
+/* 💳 COLLECT (manager): tick the receipts a customer is paying → one payment, into Cash safe / bank (never the cashier drawer) */
+let ARSEL=new Set(),APSEL=new Map();
+function arPick(O,C){const ar=O.ar.filter(a=>a.balance>0),sel=ar.filter(a=>ARSEL.has(a.no)),st=r2(sel.reduce((s,a)=>s+a.balance,0));
+  return `<h3 style="margin-top:14px">💳 Collect a payment <small class="unit">tick the receipts the customer is paying</small></h3>
+  ${C.map(c=>{const R=ar.filter(a=>a.customer===c.name).sort((a,b)=>a.at-b.at),all=R.length&&R.every(a=>ARSEL.has(a.no));
+    return `<div class="arc"><label class="arc-h"><input type="checkbox" data-arall="${esc(c.name)}"${all?' checked':''}> <b>${esc(c.name)}</b> <small class="unit">${R.length} receipt(s) · ${peso(c.t)}</small></label>
+    ${R.map(a=>`<label class="arc-r${ARSEL.has(a.no)?' on':''}"><input type="checkbox" data-arsel="${esc(a.no)}"${ARSEL.has(a.no)?' checked':''}><span>${esc(a.no)}${a.dr?' · '+esc(a.dr):''} <small class="unit">${day(iso(new Date(a.at)))} · due ${day(a.due)}${a.over?` · <b style="color:var(--rose)">${a.over} day(s) late</b>`:''}</small></span><b>${peso(a.balance)}</b></label>`).join('')}</div>`}).join('')}
+  ${sel.length?`<div class="selbar"><span><b>${sel.length}</b> receipt(s) ticked · <b>${peso(st)}</b></span><span><button class="btn sm" data-arclr>Clear</button> <button class="go" data-arpay>💳 Record payment</button></span></div>`:''}
+  <div class="unit" style="margin-top:6px">The cashier still records payments made at the counter in POS › 💳 Unpaid (those go to the drawer).</div>`}
+function arPayDialog(){const O=OW,sel=O.ar.filter(a=>ARSEL.has(a.no)&&a.balance>0).sort((a,b)=>a.at-b.at),tot=r2(sel.reduce((s,a)=>s+a.balance,0)),box=stBox();
+  const accs=noDrawer(O.accounts),cust=[...new Set(sel.map(a=>a.customer))];
+  $('#stb').innerHTML=`<h2>💳 Record payment — ${esc(cust.join(', '))}</h2><div class="unit">${sel.length} receipt(s): ${sel.map(a=>esc(a.no)).join(', ')}</div>
+    <div class="fgrid" style="margin-top:8px"><label>Amount received ₱ <small>(total ${peso(tot)} · less = oldest receipts first)</small><input class="edit-in" type="number" step="0.01" id="ac-a" value="${tot}"></label>
+    <label>Date received<input class="edit-in" type="date" id="ac-d" value="${today()}"></label>
+    <label>Method<select class="edit-in" id="ac-m">${['Cash','Bank transfer','GCash','Maya','Check'].map(x=>`<option>${x}</option>`).join('')}</select></label>
+    <label>Reference no. <small>(bank / GCash / check)</small><input class="edit-in" id="ac-r"></label>
+    <label class="full">Money went into<select class="edit-in" id="ac-acc">${accs.map(a=>`<option value="${esc(a.id)}">${esc(a.name)}</option>`).join('')}</select></label></div>
+    <div class="snote">👔 Recorded by the manager → <b>not</b> in the cashier's Z reading.</div>
+    <div class="row-end"><button class="btn" data-x>Cancel</button><button class="go" id="ac-ok">💳 Save payment</button></div>`;box.classList.add('on');
+  $('#ac-ok').onclick=async()=>{const amt=+$('#ac-a').value;if(!(amt>0))return alert('Type the amount received');if(amt>tot+0.005)return alert('More than the total of the ticked receipts ('+peso(tot)+')');
+    const b=$('#ac-ok');b.disabled=true;try{const R=await api('api_collectMany',session.token,sel.map(a=>a.no),$('#ac-m').value,$('#ac-r').value,$('#ac-acc').value,amt,$('#ac-d').value);
+      box.classList.remove('on');ARSEL.clear();toast(`💳 Payment saved — ${peso(R.total)} on ${R.paid.length} receipt(s)${R.paid.some(x=>x.bal>0)?' (last one partly paid)':''}`);
+      if(ST)ST.stale=true;OWold=OWold||Date.now();OWload=false;owLoad();drawStock()}catch(e){alert(errMsg(e));b.disabled=false}}}
 function owCollect(){const O=OW,cust={},B=[['Not yet due',a=>a.over===0],['1–30 days late',a=>a.over>0&&a.over<=30],['31–60 days late',a=>a.over>30&&a.over<=60],['Over 60 days',a=>a.over>60]];
   O.ar.forEach(a=>{const c=cust[a.customer]=cust[a.customer]||{name:a.customer,b:[0,0,0,0],t:0};B.forEach(([,f],i)=>{if(f(a))c.b[i]+=a.balance});c.t+=a.balance});
   const C=Object.values(cust).sort((a,b)=>b.t-a.t),tb=B.map((_,i)=>C.reduce((s,c)=>s+c.b[i],0));
@@ -4462,8 +4503,7 @@ function owCollect(){const O=OW,cust={},B=[['Not yet due',a=>a.over===0],['1–3
     <div class="sc"><table class="stbl"><thead><tr><th>Customer</th>${B.map(([t])=>`<th class="r">${t}</th>`).join('')}<th class="r">Total</th></tr></thead><tbody>
     ${C.map(c=>`<tr><td><b>${esc(c.name)}</b></td>${c.b.map((v,i)=>`<td class="r" style="${i>=2&&v?'color:var(--rose);font-weight:800':''}">${v?peso(v):'—'}</td>`).join('')}<td class="r"><b>${peso(c.t)}</b></td></tr>`).join('')||'<tr><td colspan="6" class="empty">Nobody owes you. 👍</td></tr>'}
     ${C.length?`<tr class="srtot"><td><b>Total</b></td>${tb.map(v=>`<td class="r">${peso(v)}</td>`).join('')}<td class="r"><b>${peso(O.bs.ar)}</b></td></tr>`:''}</tbody></table></div>
-    <details><summary class="unit"><b>Every unpaid receipt</b></summary>${O.ar.map(a=>`<div class="posx-row"><span>${esc(a.customer)} · ${esc(a.no)}${a.dr?' · '+esc(a.dr):''} <small class="unit">${day(iso(new Date(a.at)))} · due ${day(a.due)}${a.over?` · <b style="color:var(--rose)">${a.over} day(s) late</b>`:''}</small></span><b>${peso(a.balance)}</b></div>`).join('')}</details>
-    <div class="unit">Payments are recorded by the cashier in POS › 💳 Unpaid.</div>
+    ${arPick(O,C)}
     <div class="snote" style="margin-top:10px">🏷 <b>Customer discounts</b> — taken off the amount to collect on <b>Charge</b> sales. Not shown on the receipt.
       ${(O.custDisc||[]).map(x=>`<span class="sb sb-violet" style="margin-left:6px">${esc(x.name)} ${x.pct}%</span>`).join('')||' <i>none</i>'} <button class="btn sm" data-cdisc style="margin-left:6px">✏ Edit</button></div></div>
 `}
@@ -5802,7 +5842,11 @@ window.addEventListener('online',()=>{if(session)posFlush()});
 if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost'))navigator.serviceWorker.register('sw.js').catch(()=>{});   // the app opens even with no signal
 
 /* ---------- clicks & typing on these screens ---------- */
-async function stockClick(e){if(!STOCKV.includes(view))return;const igr=e.target.closest('tr[data-igrp]');if(igr&&!e.target.closest('button')){const g=igr.dataset.igrp;invOpenG.has(g)?invOpenG.delete(g):invOpenG.add(g);drawStock();return}const rvr=e.target.closest('tr[data-rvsup]');if(rvr&&view==='recv'){RVF.sup=rvr.dataset.rvsup;RVtab='all';drawStock();return}const crr=e.target.closest('tr[data-crcu]');if(crr&&view==='crep'){CRF.cust=crr.dataset.crcu;drawStock();window.scrollTo({top:0,behavior:'smooth'});return}const srr=e.target.closest('tr[data-srcu]');if(srr&&view==='srep'){SRF.cust=srr.dataset.srcu;drawStock();window.scrollTo({top:0,behavior:'smooth'});return}const tr=e.target.closest('[data-psel]');if(tr&&!e.target.closest('button')){posSel=+tr.dataset.psel;document.querySelectorAll('[data-psel]').forEach(r=>r.classList.toggle('sel',r===tr));const ps=$('#psel');if(ps)ps.innerHTML=pselHTML();return}
+async function stockClick(e){if(!STOCKV.includes(view))return;
+  {const ck=e.target.closest&&e.target.closest('input[data-arsel],input[data-arall],input[data-apsel]');if(ck){const d=ck.dataset;
+    if(d.arsel!==undefined)ck.checked?ARSEL.add(d.arsel):ARSEL.delete(d.arsel);
+    else if(d.arall!==undefined)(OW.ar||[]).filter(a=>a.customer===d.arall&&a.balance>0).forEach(a=>ck.checked?ARSEL.add(a.no):ARSEL.delete(a.no));
+    else ck.checked?APSEL.set(d.apsel,1):APSEL.delete(d.apsel);drawStock();return}}const igr=e.target.closest('tr[data-igrp]');if(igr&&!e.target.closest('button')){const g=igr.dataset.igrp;invOpenG.has(g)?invOpenG.delete(g):invOpenG.add(g);drawStock();return}const rvr=e.target.closest('tr[data-rvsup]');if(rvr&&view==='recv'){RVF.sup=rvr.dataset.rvsup;RVtab='all';drawStock();return}const crr=e.target.closest('tr[data-crcu]');if(crr&&view==='crep'){CRF.cust=crr.dataset.crcu;drawStock();window.scrollTo({top:0,behavior:'smooth'});return}const srr=e.target.closest('tr[data-srcu]');if(srr&&view==='srep'){SRF.cust=srr.dataset.srcu;drawStock();window.scrollTo({top:0,behavior:'smooth'});return}const tr=e.target.closest('[data-psel]');if(tr&&!e.target.closest('button')){posSel=+tr.dataset.psel;document.querySelectorAll('[data-psel]').forEach(r=>r.classList.toggle('sel',r===tr));const ps=$('#psel');if(ps)ps.innerHTML=pselHTML();return}
   const b=e.target.closest('button');if(!b)return;const d=b.dataset;
   if(view==='kpi'){
     if(d.kpym!==undefined){KPF=d.kpym;KP=null;KPerr='';drawStock();return}
@@ -5903,6 +5947,8 @@ async function stockClick(e){if(!STOCKV.includes(view))return;const igr=e.target
     if(d.paysec){PAYsec=d.paysec;drawStock();return}
     if('slre' in d){SL=null;SLerr='';drawStock();return}
     if(d.slopen!==undefined){SLopen.has(d.slopen)?SLopen.delete(d.slopen):SLopen.add(d.slopen);drawStock();return}
+    if('arpay' in d){arPayDialog();return}if('arclr' in d){ARSEL.clear();drawStock();return}
+    if('appay' in d){apPayDialog();return}if('apclr' in d){APSEL.clear();drawStock();return}
     if(d.owpay){const[k,i]=d.owpay.split(':'),a=OW.ap.find(x=>x.id===i&&x.kind===k);if(!a)return;
       supPayDialog({title:'Pay '+a.supplier,sub:a.no+(a.pig?` · pig ${peso(a.pig)} + expenses ${peso(a.exp)}`:''),bal:a.amount,accounts:OW.accounts,part:k!=='exp',method:a.terms==='transfer'?'transfer':'cash',payBy:a.payBy,onAssign:async w=>{await api('api_payAssign',session.token,k,a.id,w);OW=null;drawStock()},
         onPay:async(amt,acc,ref,dd)=>{if(k==='exp')OW=await owSave('api_expPay',session.token,a.id,acc,dd,OW.ym);else{await api('api_payPO',session.token,a.id,ref,acc,amt,dd);OW=null}SL=null;drawStock()}});return}
