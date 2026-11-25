@@ -1,0 +1,17 @@
+3F PRINTER HELPER - print receipts directly (no print window), cut the paper, open the cash drawer
+
+INSTALL (once, on the POS computer only)
+1. Copy this whole "printer" folder to the POS computer (Desktop is fine).
+2. Double-click  INSTALL-3F-Printer.bat
+   - If Windows shows "Windows protected your PC": click  More info  then  Run anyway.
+   - When it says DONE, press any key.
+3. Open the 3FMS POS in Chrome, press the  printer button  (Receipt printer settings):
+   - Printing: Direct - no print window
+   - Receipt printer: choose your thermal printer (e.g. POS-80 / XP-80)
+   - Press  Test print .  Chrome asks once to let the site use apps on this device: click  Allow .
+   - Press  Save .
+
+From now on the receipt prints by itself after YES, the paper is cut and the
+cash drawer opens on every cash sale. The helper starts by itself with Windows.
+
+REMOVE: double-click REMOVE-3F-Printer.bat

@@ -539,7 +539,7 @@ header h1 .tt small{display:block;font-size:11px;color:var(--sky2);letter-spacin
   #print,#print *{visibility:visible}
   #print{display:block;position:absolute;inset:0;padding:10mm;color:#000;font-size:12px}
   #print td,#print th{border:1px solid #555;padding:5px;background:none;color:#000}
-  #print.rp{padding:0;width:72mm;left:0;right:0;margin:0 auto}#print.rp.p58{width:48mm}#print.rp .rcpt{max-width:none;padding:0;font-size:13px}#print.rp.p58 .rcpt{font-size:10.5px}#print.rp .rcpt .rbig{font-size:17px}#print.rp.p58 .rcpt .rbig{font-size:14px}
+  #print.rp{padding:0;width:72mm;left:0;right:auto;margin:0}   /* receipt on the LEFT edge: a thermal printer only prints the first 72/48 mm, so a centred receipt on an A4/Letter page comes out blank */#print.rp.p58{width:48mm}#print.rp .rcpt{max-width:none;padding:0;font-size:13px}#print.rp.p58 .rcpt{font-size:10.5px}#print.rp .rcpt .rbig{font-size:17px}#print.rp.p58 .rcpt .rbig{font-size:14px}
   #print .rcpt{break-inside:avoid;page-break-after:always}#print .rcpt:last-child{page-break-after:auto}#print .rcut{display:none}
   @page{margin:2mm}
 }
@@ -682,6 +682,16 @@ header .clock b{white-space:nowrap}@media(max-width:380px){header .clock b{font-
 .td-m{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:12px}.td-m button{border:2px solid var(--line);background:#fff;border-radius:12px;padding:10px 4px;font-weight:800;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}.td-m button span{font-size:24px}.td-m button.on{border-color:var(--navy);background:#FDF2F2;color:var(--navy)}.td-m button:disabled{opacity:.4;cursor:default}
 .td-l{display:flex;flex-direction:column;font-weight:700;gap:4px}.td-in{font-size:26px!important;text-align:right;padding:10px 12px!important}
 .td-q{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.td-q button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 12px;font-weight:700;cursor:pointer}
+.tdc-on{max-width:400px!important;padding:0!important;overflow:hidden}
+.tdc{text-align:center}.tdc-q{background:#8E1B22;color:#fff;font:800 22px system-ui;letter-spacing:.06em;padding:16px 12px}
+.tdc-l{display:flex;justify-content:space-between;align-items:baseline;padding:10px 22px;font:700 18px system-ui;border-bottom:1px dashed #E6DCDA}.tdc-l span{color:#6F5F5C;letter-spacing:.05em}.tdc-l b{font-size:24px;font-variant-numeric:tabular-nums}
+.tdc-c b{color:#1c7a44;font-size:28px}
+.tdc-bs{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px}
+.tdc-bs button{border:0;border-radius:12px;padding:14px 8px;font:900 24px system-ui;letter-spacing:.06em;cursor:pointer}.tdc-bs small{display:block;font:600 12px system-ui;letter-spacing:0;opacity:.8;margin-top:2px}
+.tdc-yes{background:#1c7a44;color:#fff}.tdc-yes:focus{outline:4px solid rgba(28,122,68,.35)}.tdc-no{background:#F1ECEB;color:#5A4A47}
+.chgbig{text-align:center;background:#0F5132;color:#fff;border-radius:16px;padding:18px 12px;margin-bottom:12px}.chgbig small{display:block;font:800 18px system-ui;letter-spacing:.12em;opacity:.85}
+.chgbig b{display:block;font:900 64px/1.05 system-ui;font-variant-numeric:tabular-nums;margin:4px 0}.chgbig div{font:600 16px system-ui;opacity:.9}.chgbig.np{background:#1E3A8A}
+.rcv summary{cursor:pointer;font-weight:700;padding:8px 0;color:#5A4A47}
 .td-chg{font-size:24px;font-weight:800;text-align:right;color:#15803D;padding:6px 2px}.td-chg.bad{color:var(--rose)}.td-btn{font-size:18px!important}
 @media(max-width:500px){.td-m{grid-template-columns:repeat(3,1fr)}}
 .zsum{background:#F9FAFB;border:1px solid var(--line);border-radius:14px;padding:12px}.zs-net{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}.zs-net span{font-weight:700;color:var(--muted)}.zs-net b{font-size:26px}
@@ -1371,7 +1381,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 24 · 11:55 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 25 · 5:00 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -4603,7 +4613,8 @@ function invHTML0(){
     ${ST.moves?`<details class="panel"><summary><b>🧾 Recent stock movements</b> <span class="unit">(last ${ST.moves.length})</span></summary><div class="sc"><table class="stbl"><thead><tr><th>When</th><th>Type</th><th>Product</th><th class="r">Qty</th><th class="r">Stock after</th><th>Reference</th><th>By</th></tr></thead><tbody>
       ${ST.moves.slice(0,120).map(m=>`<tr><td>${stamp(m.at)}</td><td>${esc(m.type)}</td><td>${esc(m.name)}</td><td class="r"><b style="color:${m.q<0?'var(--rose)':'var(--green)'}">${m.q>0?'+':''}${qf(m.q)}</b> ${esc(m.unit)}</td><td class="r">${qf(m.after)}</td><td class="unit">${esc(m.ref)}${m.note?' — '+esc(m.note):''}</td><td>${esc(m.by)}</td></tr>`).join('')||'<tr><td colspan="7" class="empty">No movements yet.</td></tr>'}</tbody></table></div></details>`:''}`}
 function stBox(){let box=$('#stm');if(!box){box=document.createElement('div');box.className='modal';box.id='stm';box.innerHTML='<div class="sheet" id="stb"></div>';document.body.appendChild(box);
-  box.addEventListener('click',e=>{if(e.target===box||e.target.closest('[data-x]'))box.classList.remove('on')})}return box}
+  box.addEventListener('click',e=>{if(e.target===box||e.target.closest('[data-x]'))box.classList.remove('on')})}
+  const sb=$('#stb');sb.classList.remove('tdc-on');sb.onkeydown=null;return box}   /* every dialog starts clean (no leftover size / Enter key) */
 /* ---------- IMPORT products & stock counts from a file (manager) ---------- */
 const XLSX_URL='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
 function loadXlsx(){if(window.XLSX)return Promise.resolve(window.XLSX);return new Promise((res,rej)=>{const s=document.createElement('script');s.src=XLSX_URL;s.onload=()=>res(window.XLSX);s.onerror=()=>rej(new Error('Could not load the Excel reader — check the internet'));document.head.appendChild(s)})}
@@ -5666,7 +5677,42 @@ window.print=function(){if(!isPhoneUI())return _realPrint();const P=$('#print');
       else{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();toast('💾 Saved '+name)}
     }catch(e){if(e&&e.name!=='AbortError')toast('Could not make the image — check the internet')}
     b.disabled=false;b.textContent='📤 Share'}};
-function printReceipt(s,reprint){const C=RCPT(),copies=[''];   /* one receipt only — the store copy is the record the Manager finds with 🔎 Find receipt */
+/* ---------- 🖨 DIRECT PRINTING (mall style): the 3F Printer Helper on the POS computer sends the receipt straight to the
+   thermal printer — no print window — cuts the paper and opens the cash drawer. Falls back to the print window if the helper is off. ---------- */
+const PH='http://127.0.0.1:17890';
+async function phCall(path,body,ms){const ac=new AbortController(),t=setTimeout(()=>ac.abort(),ms||4000);
+  try{const r=await fetch(PH+path,body?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),signal:ac.signal}:{signal:ac.signal});
+    const j=await r.json().catch(()=>({}));if(!r.ok||!j.ok)throw new Error(j.error||'The printer helper answered '+r.status);return j}
+  catch(e){if(e.name==='AbortError'||/fetch|network|load/i.test(e.message||''))throw new Error('3F Printer Helper is not running on this computer');throw e}finally{clearTimeout(t)}}
+const phPing=()=>phCall('/ping',null,1500);
+const ESC_KICK=[0x1B,0x70,0x00,0x19,0xFA],ESC_CUT=[0x1B,0x64,0x05,0x1D,0x56,0x42,0x00];
+const b64=a=>{let s='';for(let i=0;i<a.length;i+=8192)s+=String.fromCharCode.apply(null,a.slice(i,i+8192));return btoa(s)};
+const phSend=(bytes)=>phCall('/print',{printer:RCPT().printer||'',data:b64(bytes)},8000);
+function phKick(){return phSend(ESC_KICK)}
+/* receipt → ESC/POS text, read from the same receipt the screen shows (so both always match) */
+function rcptBytes(s,reprint,kick){const C=RCPT(),W=+C.cols||(C.paper==='58'?32:48),out=[0x1B,0x40];if(kick)out.push(...ESC_KICK);
+  const asc=t=>String(t||'').replace(/ /g,' ').replace(/₱/g,'P').replace(/[·•]/g,'-').replace(/…/g,'...').replace(/[–—]/g,'-').replace(/[ñ]/g,'n').replace(/[Ñ]/g,'N').replace(/⭐/g,'*').replace(/[^\x20-\x7E]/g,'').replace(/\s+/g,' ').trim();
+  const put=t=>{for(const ch of t)out.push(ch.charCodeAt(0));out.push(0x0A)};
+  const fmt=(al,bold,size)=>out.push(0x1B,0x61,al,0x1B,0x45,bold?1:0,0x1D,0x21,size);
+  const wrap=(t,w)=>{const L=[];let cur='';t.split(' ').forEach(wd=>{while(wd.length>w){if(cur){L.push(cur);cur=''}L.push(wd.slice(0,w));wd=wd.slice(w)}if(!cur)cur=wd;else if((cur+' '+wd).length<=w)cur+=' '+wd;else{L.push(cur);cur=wd}});if(cur)L.push(cur);return L.length?L:['']};
+  const lr=(l,r,w)=>{l=asc(l);r=asc(r);if(l.length+r.length+1<=w)return [l+' '.repeat(w-l.length-r.length)+r];const L=wrap(l,w);const last=L[L.length-1];if(last.length+r.length+1<=w)L[L.length-1]=last+' '.repeat(w-last.length-r.length)+r;else L.push(' '.repeat(Math.max(0,w-r.length))+r);return L};
+  const box=document.createElement('div');box.style.cssText='position:fixed;left:-9999px;top:0;width:300px';box.innerHTML=receiptHTML(s,'',reprint);document.body.appendChild(box);
+  try{[...box.querySelector('.rcpt').children].forEach(el=>{const c=el.classList,b=c.contains('b'),big=c.contains('rbig'),tx=asc(el.innerText);
+    if(c.contains('rd')){fmt(0,0,0);put('-'.repeat(W));return}
+    if(c.contains('rstar')){fmt(0,0,0);put('.'.repeat(W));return}
+    if(c.contains('rni')){fmt(0,0,0);const t=' '+tx+' ',a=Math.max(0,W-t.length),l=Math.floor(a/2);put('-'.repeat(l)+t+'-'.repeat(a-l));return}
+    if(c.contains('rat')){fmt(0,0,0);wrap(tx,W-6).forEach(x=>put('      '+x));return}
+    if(c.contains('rr')){const sp=el.children;fmt(0,b,big?0x01:0);lr(sp[0]?sp[0].innerText:'',sp[1]?sp[1].innerText:'',W).forEach(put);return}
+    if(c.contains('rbl')){const sp=el.children,l=asc(sp[0]&&sp[0].innerText),v=asc(sp[1]&&sp[1].innerText);fmt(0,0,0);put(l+' '+(v||'_'.repeat(Math.max(0,W-l.length-1))));return}
+    if(c.contains('rvt')){const sp=[...el.children];fmt(0,0,0);for(let i=0;i+2<sp.length;i+=3)lr(sp[i].innerText,sp[i+2].innerText,W).forEach(put);return}
+    if(c.contains('rc')||c.contains('rcopy')){const w=big?Math.floor(W/2):W;fmt(1,b||big,big?0x11:0);wrap(tx,w).forEach(put);return}
+    if(!tx)return;fmt(0,b,0);wrap(tx,W).forEach(put)})}
+  finally{box.remove()}
+  fmt(0,0,0);if(RCPT().cut!=='0')out.push(...ESC_CUT);else out.push(0x1B,0x64,0x05);return out}
+function printReceipt(s,reprint){const C=RCPT();
+  if(C.mode==='direct'){phSend(rcptBytes(s,reprint,false)).then(()=>toast('🧾 Receipt printed')).catch(e=>{toast('⚠ '+errMsg(e)+' — using the print window');winPrint(s,reprint)});return}
+  winPrint(s,reprint)}
+function winPrint(s,reprint){const C=RCPT(),copies=[''];   /* one receipt only — the store copy is the record the Manager finds with 🔎 Find receipt */
   $('#print').className='rp'+(C.paper==='58'?' p58':'');$('#print').innerHTML=copies.map(c=>receiptHTML(s,c,reprint)).join('<div class="rcut">✂ - - - - - - - - - - - - - - - -</div>');window.print();setTimeout(()=>{$('#print').className=''},1500)}
 setInterval(()=>{const e=document.querySelector('.pbclk');if(e)e.textContent=new Date().toLocaleTimeString('en-PH',{hour:'numeric',minute:'2-digit'})},15000);
 let posPanel=false,posFS=(()=>{try{return localStorage.getItem('fms_posfs')!=='0'}catch(e){return true}})();   /* full screen is the default; ⤡ Exit full remembers the choice */
@@ -5696,12 +5742,27 @@ function findReceipt(q){const box=stBox();
           else{const R=await api('api_posPayVoid',session.token,r.no,p.at,why.trim());ST=Object.assign(ST||{},R);note=R.note||''}stCache();toast('❌ Payment voided — '+r.no+' is unpaid again');if(note)alert(note);findReceipt(r.no)}catch(e){alert(errMsg(e));b.disabled=false}})}
     catch(e){o.innerHTML=`<div class="snote">⚠ ${esc(errMsg(e))}</div>`}};
   $('#fr-go').onclick=go;$('#fr-q').onkeydown=e=>{if(e.key==='Enter')go()};$('#fr-q').focus();if(q)go()}
-function receiptSetup(){const C=RCPT(),box=stBox();$('#stb').innerHTML=`<h2>🖨 Receipt printer</h2><div class="fgrid"><label>Paper width<select class="edit-in" id="rs-p"><option value="80"${C.paper==='80'?' selected':''}>80 mm</option><option value="58"${C.paper==='58'?' selected':''}>58 mm</option></select></label>
-
+function receiptSetup(){const C=RCPT(),box=stBox();$('#stb').innerHTML=`<h2>🖨 Receipt printer</h2>
+  <div class="fgrid"><label>Printing<select class="edit-in" id="rs-m"><option value="direct"${C.mode==='direct'?' selected':''}>⚡ Direct — no print window (like a mall POS)</option><option value="window"${C.mode!=='direct'?' selected':''}>Print window (Chrome)</option></select></label>
+  <label>Paper width<select class="edit-in" id="rs-p"><option value="80"${C.paper==='80'?' selected':''}>80 mm</option><option value="58"${C.paper==='58'?' selected':''}>58 mm</option></select></label>
+  <label class="rs-d">Receipt printer<select class="edit-in" id="rs-pr"><option value="">(Windows default printer)</option>${C.printer?`<option selected>${esc(C.printer)}</option>`:''}</select></label>
+  <label class="rs-d">Letters per line<select class="edit-in" id="rs-c">${[['','Automatic'],['48','48 (80 mm)'],['42','42 (80 mm small)'],['32','32 (58 mm)']].map(([v,t])=>`<option value="${v}"${String(C.cols||'')===v?' selected':''}>${t}</option>`).join('')}</select></label>
+  <label class="rs-d">Cash drawer<select class="edit-in" id="rs-dr"><option value="1"${C.drawer!=='0'?' selected':''}>Open on every cash sale</option><option value="0"${C.drawer==='0'?' selected':''}>Don't open</option></select></label>
+  <label class="rs-d">Paper cut<select class="edit-in" id="rs-ct"><option value="1"${C.cut!=='0'?' selected':''}>Cut after each receipt</option><option value="0"${C.cut==='0'?' selected':''}>No cutter</option></select></label>
   <label>After ✓ Confirm tender<select class="edit-in" id="rs-a"><option value="1"${C.auto!=='0'?' selected':''}>Print the receipt automatically</option><option value="0"${C.auto==='0'?' selected':''}>Don't print (tick "Print" when needed)</option></select></label></div>
-  <div class="unit" style="margin-top:6px">💡 To print <b>without the print window</b> on the POS computer: open Chrome with <b>--kiosk-printing</b> and make the receipt printer the <b>default printer</b> (ask us for the 1-minute setup).</div>
+  <div class="snote rs-d" id="rs-st">⏳ Looking for the 3F Printer Helper on this computer…</div>
+  <div class="row-end rs-d" style="justify-content:flex-start"><button class="btn" id="rs-tp">🧾 Test print</button><button class="btn" id="rs-td">💵 Open drawer</button></div>
   <div class="unit">Shop name, address, contact no., TIN and the receipt footer are edited in the Google Sheet › <b>Shop Settings</b> (rows starting with "Receipt:").</div><div class="row-end"><button class="btn" data-x>Close</button><button class="go" id="rs-ok">Save</button></div>`;box.classList.add('on');
-  $('#rs-ok').onclick=()=>{try{localStorage.setItem('fms_rcpt',JSON.stringify({paper:$('#rs-p').value,auto:$('#rs-a').value}))}catch(e){}box.classList.remove('on');toast('🖨 Saved for this device')}}
+  const vals=()=>({paper:$('#rs-p').value,auto:$('#rs-a').value,mode:$('#rs-m').value,printer:$('#rs-pr').value,cols:$('#rs-c').value,drawer:$('#rs-dr').value,cut:$('#rs-ct').value});
+  const save=()=>{try{localStorage.setItem('fms_rcpt',JSON.stringify(vals()))}catch(e){}};
+  const showD=()=>$('#stb').querySelectorAll('.rs-d').forEach(x=>x.style.display=$('#rs-m').value==='direct'?'':'none');$('#rs-m').onchange=showD;showD();
+  phPing().then(j=>{const sel=$('#rs-pr');if(!sel)return;const cur=C.printer||'';sel.innerHTML=`<option value="">(Windows default: ${esc(j.default||'none')})</option>`+(j.printers||[]).map(n=>`<option${n===cur?' selected':''}>${esc(n)}</option>`).join('');
+      if(!C.printer){const g=(j.printers||[]).find(n=>/pos|xp|receipt|thermal|80|58|epson tm|rongta|gprinter|xprinter/i.test(n));if(g)sel.value=g}
+      $('#rs-st').innerHTML=`✅ <b>3F Printer Helper is running</b> — ${(j.printers||[]).length} printer(s) found. Choose the receipt printer, press <b>Test print</b>, then <b>Save</b>.`})
+    .catch(()=>{const st=$('#rs-st');if(st)st.innerHTML=`❌ <b>3F Printer Helper not found on this computer.</b> Install it once: run <b>INSTALL-3F-Printer.bat</b> on the POS computer, then open this window again. Until then receipts use the print window.`});
+  $('#rs-tp').onclick=async()=>{save();const b=$('#rs-tp');b.disabled=true;try{await phSend(rcptBytes({no:'TEST',at:Date.now(),items:[{code:'',name:'Test print',unit:'pc',qty:1,price:0}],total:0,pay:'Cash',cashier:me.name},false,false));toast('🧾 Test receipt sent to the printer')}catch(e){alert(errMsg(e))}b.disabled=false};
+  $('#rs-td').onclick=async()=>{save();try{await phKick();toast('💵 Drawer opened')}catch(e){alert(errMsg(e))}};
+  $('#rs-ok').onclick=()=>{save();box.classList.remove('on');toast('🖨 Saved for this device')}}
 /* ---------- SALES & MARKETING › MEMBERSHIP ---------- */
 let MB=null,MBload=false,MBerr='',MBq='',MBsub='list';
 function mbLoad(){if(MBload)return;MBload=true;MBerr='';api('api_members',session.token).then(r=>MB=r).catch(e=>MBerr=errMsg(e)).finally(()=>{MBload=false;if(view==='memb')drawStock()})}
@@ -5829,7 +5890,19 @@ function tenderDialog(){const total=cartTotal();
     $('#stb').querySelectorAll('[data-tm]').forEach(b=>b.onclick=()=>{pay=b.dataset.tm;draw()});
     $('#stb').querySelectorAll('[data-tq]').forEach(b=>b.onclick=()=>{cash=String(b.dataset.tq);draw();setTimeout(()=>{const o=$('#td-ok');if(o)o.focus()},60)});
     $('#stb').onkeydown=e=>{if(e.key==='Enter'&&!$('#td-ok').disabled){e.preventDefault();$('#td-ok').click()}};
-    $('#td-ok').onclick=()=>{if(!ok())return;$('#stb').onkeydown=null;posPay=pay;posCash=pay==='cash'?cash:'';posRef=pay==='cash'||pay==='terms'?'':ref;posPrint=prt;box.classList.remove('on');completeSale(true)}};
+    $('#td-ok').onclick=()=>{if(!ok())return;sure()}};
+  /* ❓ mall-style "Confirm payment?" — Enter = YES, Esc = NO */
+  const sure=()=>{const chg=pay==='cash'?r2(+cash-total):0,pm={cash:'CASH',gcash:'GCASH',maya:'MAYA',bank:'BANK TRANSFER',terms:'CHARGE'}[pay];let done=false;const sh=$('#stb');sh.classList.add('tdc-on');
+    sh.innerHTML=`<div class="tdc"><div class="tdc-q">CONFIRM PAYMENT?</div>
+      <div class="tdc-l"><span>TOTAL</span><b>${peso(total)}</b></div>
+      <div class="tdc-l"><span>${pm}</span><b>${pay==='cash'?peso(+cash):pay==='terms'?'UNPAID':esc(ref)}</b></div>
+      ${pay==='cash'?`<div class="tdc-l tdc-c"><span>CHANGE</span><b>${peso(chg)}</b></div>`:''}
+      <div class="tdc-bs"><button class="tdc-no" id="tdc-no">NO<small>Esc</small></button><button class="tdc-yes" id="tdc-yes">YES<small>Enter</small></button></div></div>`;
+    const yes=()=>{if(done)return;done=true;sh.classList.remove('tdc-on');sh.onkeydown=null;posPay=pay;posCash=pay==='cash'?cash:'';posRef=pay==='cash'||pay==='terms'?'':ref;posPrint=prt;box.classList.remove('on');completeSale(true)},
+      no=()=>{if(done)return;sh.classList.remove('tdc-on');draw()};
+    $('#tdc-yes').onclick=yes;$('#tdc-no').onclick=no;
+    sh.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();e.stopPropagation();yes()}else if(e.key==='Escape'){e.preventDefault();e.stopPropagation();no()}};
+    setTimeout(()=>{const y=$('#tdc-yes');if(y)y.focus()},30)};
   draw();box.classList.add('on')}
 function completeSale(ok){const total=cartTotal();if(!ok)return tenderDialog();
   if(cart.some(l=>!(+l.qty>0)))return alert('Check the qty — every line needs a qty.');
@@ -5846,6 +5919,7 @@ function completeSale(ok){const total=cartTotal();if(!ok)return tenderDialog();
     setPosQueue(posQueue().map(x=>x.cid===s.cid?Object.assign({},x,{sbNo:r.no}):x));Object.keys(r.avail||{}).forEach(k=>{const p=pBy(k);if(p)p.avail=+r.avail[k]});stCache()}).catch(()=>{})}
   if(ord)ST.toCash=ST.toCash.filter(x=>x.id!==ord.id);
   resetSale();drawStock();
+  {const C=RCPT();if(C.mode==='direct'&&C.drawer!=='0'&&/cash/i.test(s.pay||'')&&s.cash>0)phKick().catch(e=>toast('⚠ Cash drawer: '+errMsg(e)))}   /* 💵 drawer opens right away, like a mall POS */
   s.noWait=1;showReceipt(s);const pp=posPrint;posPrint=false;if(pp)toast('🖨 Getting the receipt no. then printing…');
   waitNo(s,pp?10000:30000).then(()=>{if(pp)printReceipt(s)})}
 let posPrint=false,posNos={},rcShown='';
@@ -5853,8 +5927,11 @@ let posPrint=false,posNos={},rcShown='';
 async function waitNo(s,ms){const t0=Date.now();s.noWait=1;let last=s.sbT?Date.now()-1000:0;   /* fast POS: give Supabase ~2 s before asking Google */
  while(!posNos[s.cid]&&Date.now()-t0<ms){if(!posSending&&Date.now()-last>3000){last=Date.now();posFlush()}await new Promise(r=>setTimeout(r,400))}
   delete s.noWait;if(posNos[s.cid])s.no=posNos[s.cid];if(rcShown===s.cid&&stBox().classList.contains('on'))showReceipt(s)}
-function showReceipt(s){const box=stBox();rcShown=s.cid;$('#stb').innerHTML=`<h2>✅ Sale done — ${peso(s.total)}</h2>${s.cash&&s.cash>s.total?`<div class="snote" style="font-size:20px">Change: <b>${peso(s.cash-s.total)}</b></div>`:''}${receiptHTML(s)}
-  <div class="row-end"><button class="btn" id="rc-pr">🖨 Print receipt</button><button class="go" data-x>Next customer</button></div>`;box.classList.add('on');$('#rc-pr').onclick=()=>printReceipt(s)}
+function showReceipt(s){const box=stBox(),sh=$('#stb');rcShown=s.cid;const cashS=s.cash>0,charge=/^(terms|charge)/i.test(s.pay||'');sh.classList.remove('tdc-on');
+  sh.innerHTML=`<div class="chgbig${cashS?'':' np'}"><small>${cashS?'CHANGE':charge?'CHARGED':'PAID'}</small><b>${peso(cashS?Math.max(0,s.cash-s.total):s.total)}</b><div>TOTAL ${peso(s.total)} · ${esc(String(s.pay||'Cash').toUpperCase())}${cashS?' '+peso(s.cash):''}${s.no?' · SI# '+esc(s.no):''}</div></div>
+  <details class="rcv"><summary>🧾 View receipt</summary>${receiptHTML(s)}</details>
+  <div class="row-end"><button class="btn" id="rc-pr">🖨 Print receipt</button><button class="go" data-x id="rc-next" style="font-size:18px;padding:12px 22px">Next customer ⏎</button></div>`;box.classList.add('on');
+  $('#rc-pr').onclick=()=>printReceipt(s);sh.onkeydown=e=>{const n=$('#rc-next');if(n&&e.key==='Enter'&&e.target.tagName!=='BUTTON'){e.preventDefault();n.click()}};setTimeout(()=>{const n=$('#rc-next');if(n&&box.classList.contains('on'))n.focus()},40)}
 async function posFlush(){const Q=posQueue();if(!Q.length||posSending||!session)return;posSending=true;
   try{const r=await Promise.race([api('api_posSync',session.token,Q),new Promise((_,rej)=>setTimeout(()=>rej(new Error('TIMEOUT')),30000))]);const ok=new Set(r.done.map(d=>d.cid));r.done.forEach(d=>{if(d.no)posNos[d.cid]=d.no});setPosQueue(posQueue().filter(s=>!ok.has(s.cid)));
     try{ST=await api('api_stock',session.token);ST.offline=false;stCache()}catch(e){}
