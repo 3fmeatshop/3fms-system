@@ -682,6 +682,7 @@ header .clock b{white-space:nowrap}@media(max-width:380px){header .clock b{font-
 .td-m{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:12px}.td-m button{border:2px solid var(--line);background:#fff;border-radius:12px;padding:10px 4px;font-weight:800;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}.td-m button span{font-size:24px}.td-m button.on{border-color:var(--navy);background:#FDF2F2;color:var(--navy)}.td-m button:disabled{opacity:.4;cursor:default}
 .td-l{display:flex;flex-direction:column;font-weight:700;gap:4px}.td-in{font-size:26px!important;text-align:right;padding:10px 12px!important}
 .td-q{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.td-q button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 12px;font-weight:700;cursor:pointer}
+.posx-snd{color:#B7791F;font-weight:700;font-size:11px}
 .tdc-on{max-width:400px!important;padding:0!important;overflow:hidden}
 .tdc{text-align:center}.tdc-q{background:#8E1B22;color:#fff;font:800 22px system-ui;letter-spacing:.06em;padding:16px 12px}
 .tdc-l{display:flex;justify-content:space-between;align-items:baseline;padding:10px 22px;font:700 18px system-ui;border-bottom:1px dashed #E6DCDA}.tdc-l span{color:#6F5F5C;letter-spacing:.05em}.tdc-l b{font-size:24px;font-variant-numeric:tabular-nums}
@@ -1381,7 +1382,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 25 · 5:30 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 25 · 5:40 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -5529,7 +5530,7 @@ function posHTML(){
   if(!ST.shift&&!ST.offline)return openCashHTML();
   const Q=posQueue(),srv=(ST.sales||[]).filter(s=>s.status!=='void'),tot=srv.reduce((s,x)=>s+x.total,0)+Q.reduce((s,x)=>s+x.total,0);
   const sug=posSug(),ord=posOrder&&(ST.toCash||[]).find(x=>x.id===posOrder);
-  const log=[...Q.map(s=>({at:s.at,no:'not sent',total:s.total,q:1})),...(ST.sales||[])].sort((a,b)=>b.at-a.at);
+  const log=[...Q.map(s=>({at:s.at,no:s.sbNo||posNos[s.cid]||'',total:s.total,q:1})),...(ST.sales||[])].sort((a,b)=>b.at-a.at);
   const last=(ST.sales||[]).slice().sort((a,b)=>b.at-a.at)[0];
   const SN=(ST.rcpt&&ST.rcpt.name)||'3F MEATSHOP',TL=(ST.rcpt&&ST.rcpt.line2)||'Fresh · Frozen · Fine Cuts';
   return posSw('pos')+`<div class="posx-brand"><img src="${LOGO_3F}" alt=""><div class="pb-n"><b>${esc(SN.toUpperCase())}</b><small>${esc(TL)}</small></div><span style="flex:1"></span>
@@ -5548,7 +5549,7 @@ function posHTML(){
       </div>
       <div class="posx-right">
         <div class="posx-big" id="pbig">${fmt2(cartTotal())}</div>
-        <div class="posx-box"><h4>Sales information</h4><div class="posx-log">${log.slice(0,12).map(x=>`<div class="${x.status==='void'?'void':''}"><span>${stampShort(x.at)} ${esc(x.no)}${x.status==='void'?' VOID':''}</span><b>${fmt2(x.total)}</b>${x.no!=='not sent'&&x.status!=='void'&&x.status!=='return'?`<i><button data-preprint="${esc(x.no)}" title="Reprint">🖨</button><button data-pvoid="${esc(x.no)}" title="Void">✕</button></i>`:''}</div>`).join('')||'<div><span>No sale yet today</span></div>'}
+        <div class="posx-box"><h4>Sales information</h4><div class="posx-log">${log.slice(0,12).map(x=>`<div class="${x.status==='void'?'void':''}"><span>${stampShort(x.at)} ${esc(x.no||'—')}${x.q?' <small class="posx-snd">⏳ saving…</small>':''}${x.status==='void'?' VOID':''}</span><b>${fmt2(x.total)}</b>${!x.q&&x.status!=='void'&&x.status!=='return'?`<i><button data-preprint="${esc(x.no)}" title="Reprint">🖨</button><button data-pvoid="${esc(x.no)}" title="Void">✕</button></i>`:''}</div>`).join('')||'<div><span>No sale yet today</span></div>'}
           <div class="tot"><span>${today()} Terminal sales</span><b>${fmt2(tot)}</b></div></div>
           <div class="posx-sync">${Q.length?`⏳ ${Q.length} sale(s) not sent yet <button class="btn sm" data-psend>Send now</button>`:'✓ All sales sent'}</div></div>
         <div class="posx-box" id="psel">${pselHTML()}</div>
@@ -5918,7 +5919,7 @@ function completeSale(ok){const total=cartTotal();if(!ok)return tenderDialog();
   const mu=posMem?r2(posMemUse):0;
   const s={mem:posMem?posMem.card:'',memUse:mu,memName:posMem?posMem.name:'',memCardFmt:posMem?posMem.cardFmt:'',memTier:posMem?posMem.tier:'',memEarnEst:posMem&&posMem.pct?Math.floor(total*posMem.pct)/100:0,memBal:posMem?r2(posMem.bal-mu+(posMem.pct?Math.floor(total*posMem.pct)/100:0)):0,cid:'p'+uid()+uid(),at:Date.now(),order:ord?ord.id:'',items:cart.map(l=>({code:l.code,name:l.name,unit:l.unit,qty:+l.qty,price:l.price,...(l.orig!=null?{orig:l.orig,why:l.why}:{})})),disc:posDiscO?{...posDiscO,amount:discAmt()}:null,voidLines:posVoids,shift:ST.shift?ST.shift.id:'',cust:posCust,custName:cname||(posMem&&!cu&&!ord?posMem.name:cu?cu.name:ord?ord.customer:'Walk-in'),price:posPrice,discount:r2(discAmt()+mu),
     pay:{cash:'Cash',gcash:'GCash',maya:'Maya',bank:'Bank transfer',terms:'Charge'}[posPay],dr:ord?ord.dr:'',ref:posRef,cash:posPay==='cash'?+posCash||0:0,total,cashier:me.name,pts:cu?Math.floor(total/500):0,charges:posCharges.map(c=>({kind:c.kind,label:c.label,amt:c.amt})),note:posNote.trim()};
-  setPosQueue(posQueue().concat([s]));
+  setPosQueue(posQueue().concat([s]));setTimeout(()=>posFlush(),700);   /* send to the records right away (not after 20 s) */
   s.items.forEach(i=>{const p=pBy(i.code);if(p)p.avail=r2(p.avail-i.qty)});stCache();
   if(ST.posSb){s.sbT=Date.now();sbCall('st_pos_sale',Object.assign({},s,{noWait:undefined})).then(r=>{if(!r||!r.no)return;posNos[s.cid]=r.no;   /* ⚡ Fast POS: SI# + stock from Supabase */
     setPosQueue(posQueue().map(x=>x.cid===s.cid?Object.assign({},x,{sbNo:r.no}):x));Object.keys(r.avail||{}).forEach(k=>{const p=pBy(k);if(p)p.avail=+r.avail[k]});stCache()}).catch(()=>{})}
@@ -5942,7 +5943,7 @@ async function posFlush(){const Q=posQueue();if(!Q.length||posSending||!session)
     try{ST=await api('api_stock',session.token);ST.offline=false;stCache()}catch(e){}
     posSending=false;if(view==='pos')drawStock();return true}
   catch(e){posSending=false;if(/AUTH/.test(errMsg(e)))handleErr(e);return false}}
-setInterval(()=>{if(session&&posQueue().length)posFlush()},20000);
+setInterval(()=>{if(session&&posQueue().length)posFlush()},6000);
 window.addEventListener('online',()=>{if(session)posFlush()});
 if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost'))navigator.serviceWorker.register('sw.js').catch(()=>{});   // the app opens even with no signal
 
