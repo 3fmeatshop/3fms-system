@@ -1381,7 +1381,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 25 · 5:10 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 25 · 5:30 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -5869,7 +5869,8 @@ function tenderDialog(){const total=cartTotal();
     <div class="snote">⏳ The <b>over qty</b> is sold now, but its <b>profit is not counted yet</b>. The cost comes from the <b>next receiving</b> (P.O. / live pig) of that item.</div>
     <div class="row-end"><button class="btn" data-x>Back</button><button class="go" id="ov-ok">Override & sell</button></div>`;box.classList.add('on');
     $('#ov-ok').onclick=()=>{box.classList.remove('on');tenderDialog.ovr=1;try{tenderDialog()}finally{tenderDialog.ovr=0}};return}
-  const box=stBox(),canTerms=!!(posOrder||posCust);let pay=posPay==='terms'&&!canTerms?'cash':posPay,cash=posCash,ref=posRef,prt=RCPT().auto!=='0';
+  {const cn=$('#pc-cname');if(cn)posCName=cn.value.replace(/\s+/g,' ').trim()}
+  const box=stBox(),mgrChg=me&&me.role==='manager'&&!posOrder&&!posCust,canTerms=!!(posOrder||posCust)||mgrChg;let pay=posPay==='terms'&&!canTerms?'cash':posPay,cash=posCash,ref=posRef,prt=RCPT().auto!=='0',cname=posCName;   /* 👔 manager: Charge for any customer (name required) */
   const quick=[...new Set([total,Math.ceil(total/50)*50,Math.ceil(total/100)*100,Math.ceil(total/500)*500,Math.ceil(total/1000)*1000,Math.ceil(total/1000)*1000+1000])].filter(v=>v>=total).slice(0,6);
   const cu=(ST.bulk||[]).find(c=>c.id===posCust),ord=posOrder&&(ST.toCash||[]).find(x=>x.id===posOrder);
   const draw=()=>{const chg=pay==='cash'&&cash!==''?r2(+cash-total):null;
@@ -5879,13 +5880,14 @@ function tenderDialog(){const total=cartTotal();
     ${pay==='cash'?`<label class="td-l">Cash tendered<input class="edit-in td-in" id="td-cash" type="number" step="0.01" inputmode="decimal" value="${esc(cash)}" placeholder="0.00"></label>
       <div class="td-q">${quick.map(v=>`<button data-tq="${v}">${v===total?'Exact':peso(v)}</button>`).join('')}</div>
       <div class="td-chg ${chg!=null&&chg<0?'bad':''}" id="td-chg">${chg==null?'Type the cash received':chg<0?'Short by '+peso(-chg):'CHANGE '+peso(chg)}</div>`
-    :pay==='terms'?`<div class="snote">🗓 <b>Charge — unpaid.</b> The balance goes to 💳 Unpaid; record the payment when it comes.</div>`
+    :pay==='terms'?`${mgrChg?`<label class="td-l">Charge to — customer name<input class="edit-in td-in" id="td-cn" maxlength="60" autocomplete="off" list="pc-cnames" value="${esc(cname)}" placeholder="required — who will pay?"></label>`:''}<div class="snote">🗓 <b>Charge — unpaid.</b> The balance goes to 💳 Unpaid${mgrChg?' under this name':''}; record the payment when it comes.</div>`
     :`<label class="td-l">Reference no. (${pay==='gcash'?'GCash':pay==='maya'?'Maya':'bank transfer'})<input class="edit-in td-in" id="td-ref" value="${esc(ref)}" placeholder="required"></label><div class="unit">Check the payment on the phone / bank app before confirming.</div>`}
     <label class="td-prt"><input type="checkbox" id="td-prt"${prt?' checked':''}> 🖨 Print receipt</label>
     <div class="row-end"><button class="btn" data-x>Back</button><button class="go td-ok" id="td-ok">✓ Confirm tender</button></div>`;
     $('#td-prt').onchange=e=>{prt=e.target.checked};
-    const ok=()=>pay==='cash'?(cash!==''&&+cash>=total):pay==='terms'?true:!!String(ref).trim();$('#td-ok').disabled=!ok();
-    const ci=$('#td-cash'),ri=$('#td-ref');
+    const ok=()=>pay==='cash'?(cash!==''&&+cash>=total):pay==='terms'?(!mgrChg||!!cname.trim()&&!/^walk-?in$/i.test(cname.trim())):!!String(ref).trim();$('#td-ok').disabled=!ok();
+    const ci=$('#td-cash'),ri=$('#td-ref'),ni=$('#td-cn');
+    if(ni){ni.oninput=()=>{cname=ni.value.replace(/\s+/g,' ');$('#td-ok').disabled=!ok()};setTimeout(()=>ni.focus(),30)}
     if(ci){ci.oninput=()=>{cash=ci.value;const c=r2(+cash-total),el=$('#td-chg');el.className='td-chg'+(cash!==''&&c<0?' bad':'');el.textContent=cash===''?'Type the cash received':c<0?'Short by '+peso(-c):'CHANGE '+peso(c);$('#td-ok').disabled=!ok()};setTimeout(()=>{ci.focus();ci.select()},30)}
     if(ri){ri.oninput=()=>{ref=ri.value;$('#td-ok').disabled=!ok()};setTimeout(()=>ri.focus(),30)}
     $('#stb').querySelectorAll('[data-tm]').forEach(b=>b.onclick=()=>{pay=b.dataset.tm;draw()});
@@ -5897,9 +5899,10 @@ function tenderDialog(){const total=cartTotal();
     sh.innerHTML=`<div class="tdc"><div class="tdc-q">CONFIRM PAYMENT?</div>
       <div class="tdc-l"><span>TOTAL</span><b>${peso(total)}</b></div>
       <div class="tdc-l"><span>${pm}</span><b>${pay==='cash'?peso(+cash):pay==='terms'?'UNPAID':esc(ref)}</b></div>
+      ${pay==='terms'&&mgrChg?`<div class="tdc-l"><span>CHARGE TO</span><b style="font-size:20px">${esc(cname.trim().toUpperCase())}</b></div>`:''}
       ${pay==='cash'?`<div class="tdc-l tdc-c"><span>CHANGE</span><b>${peso(chg)}</b></div>`:''}
       <div class="tdc-bs"><button class="tdc-no" id="tdc-no">NO<small>Esc</small></button><button class="tdc-yes" id="tdc-yes">YES<small>Enter</small></button></div></div>`;
-    const yes=()=>{if(done)return;done=true;sh.classList.remove('tdc-on');sh.onkeydown=null;posPay=pay;posCash=pay==='cash'?cash:'';posRef=pay==='cash'||pay==='terms'?'':ref;posPrint=prt;box.classList.remove('on');completeSale(true)},
+    const yes=()=>{if(done)return;done=true;sh.classList.remove('tdc-on');sh.onkeydown=null;if(mgrChg&&pay==='terms'){posCName=cname.trim();const cn=$('#pc-cname');if(cn)cn.value=posCName}posPay=pay;posCash=pay==='cash'?cash:'';posRef=pay==='cash'||pay==='terms'?'':ref;posPrint=prt;box.classList.remove('on');completeSale(true)},
       no=()=>{if(done)return;sh.classList.remove('tdc-on');draw()};
     $('#tdc-yes').onclick=yes;$('#tdc-no').onclick=no;
     sh.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();e.stopPropagation();yes()}else if(e.key==='Escape'){e.preventDefault();e.stopPropagation();no()}};
@@ -5909,7 +5912,7 @@ function completeSale(ok){const total=cartTotal();if(!ok)return tenderDialog();
   if(cart.some(l=>!(+l.qty>0)))return alert('Check the qty — every line needs a qty.');
   if(total<0)return alert('The discount is bigger than the total.');
   if(posPay==='cash'&&posCash!==''&&+posCash<total)return alert('Cash received is less than the total.');
-  if(posPay==='terms'&&!posOrder&&!posCust)return alert('Terms is for a DR or a bulk buyer account. Choose the customer first.');
+  if(posPay==='terms'&&!posOrder&&!posCust&&!(me.role==='manager'&&posCName))return alert('Charge is for a DR, a bulk buyer account, or a manager sale with the customer name.');
   const cu=(ST.bulk||[]).find(c=>c.id===posCust),ord=posOrder&&(ST.toCash||[]).find(x=>x.id===posOrder);
   {const cn=$('#pc-cname');if(cn)posCName=cn.value.replace(/\s+/g,' ').trim()}const cname=!cu&&!ord&&posCName?posCName:'';
   const mu=posMem?r2(posMemUse):0;
