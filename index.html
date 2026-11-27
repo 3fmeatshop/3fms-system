@@ -849,14 +849,15 @@ function stOf(o){
 let PT='all';
 const isCx=o=>(o.online&&o.online.status==='cancelled')||!!o.closed||!!(o.delivered&&o.delivered.result==='cancelled');
 const isRet=o=>!!(o.delivered&&o.delivered.result==='returned')||(o.items||[]).some(i=>i.status==='Returned');
-const PTABS=[['all','All',o=>true],['tc','To confirm',o=>!isCx(o)&&stOf(o).k==='pend'],['prep','Preparing',o=>!isCx(o)&&['conf','prep','ready'].includes(stOf(o).k)],
+const isPaidNow=o=>!!(o.online&&o.online.pay!=='cod');   // GCash / bank: paid at checkout, the shop checks the payment
+const PTABS=[['all','All',o=>true],['pay','To pay',o=>!isCx(o)&&stOf(o).k==='pend'&&isPaidNow(o)],['tc','To confirm',o=>!isCx(o)&&stOf(o).k==='pend'&&!isPaidNow(o)],['prep','For dispatch',o=>!isCx(o)&&['conf','prep','ready'].includes(stOf(o).k)],
   ['recv','To receive',o=>!isCx(o)&&stOf(o).k==='way'],['done','Completed',o=>!isCx(o)&&stOf(o).k==='done'],['ret','Returned',isRet],['cx','Cancelled',o=>isCx(o)&&!isRet(o)]];
-function purTabs(act,done,bulk){setTimeout(()=>{const h=document.querySelector('header');if(h)document.documentElement.style.setProperty('--hh',h.offsetHeight+'px')},0);const T=PTABS.filter(t=>!(bulk&&t[0]==='tc'));if(!T.some(t=>t[0]===PT))PT='all';
+function purTabs(act,done,bulk){setTimeout(()=>{const h=document.querySelector('header');if(h)document.documentElement.style.setProperty('--hh',h.offsetHeight+'px')},0);const T=PTABS.filter(t=>!(bulk&&['tc','pay'].includes(t[0])));if(!T.some(t=>t[0]===PT))PT='all';
   const by=(a,b)=>String(b.delivery||'').localeCompare(String(a.delivery||''))||((b.online&&b.online.placedAt)||b.createdAt||0)-((a.online&&a.online.placedAt)||a.createdAt||0);
   const cur=T.find(t=>t[0]===PT),L=PT==='all'?act.concat(done.slice().sort(by)).slice(0,60):orders.filter(cur[2]).sort(by).slice(0,60);
   return `<h3 id="ptop">My purchases</h3><div class="ptabs" role="tablist">${T.map(([k,t,f])=>{const n=k==='all'?0:orders.filter(f).length;
-    return `<button role="tab" aria-selected="${PT===k}" class="${PT===k?'on':''}" data-pt="${k}">${t}${n&&['tc','prep','recv'].includes(k)?`<i>${n}</i>`:''}</button>`}).join('')}</div>
-    ${L.length?L.map(orderCard).join(''):`<div class="card pempty"><b>No orders here</b><span>${PT==='recv'?'Orders on the way to you show here.':PT==='done'?'Delivered orders show here.':PT==='ret'?'Items returned at delivery show here.':PT==='cx'?'Cancelled orders show here.':PT==='prep'?'Confirmed orders being prepared show here.':'New orders waiting for our call / payment check show here.'}</span></div>`}`}
+    return `<button role="tab" aria-selected="${PT===k}" class="${PT===k?'on':''}" data-pt="${k}">${t}${n&&['pay','tc','prep','recv'].includes(k)?`<i>${n}</i>`:''}</button>`}).join('')}</div>
+    ${L.length?L.map(orderCard).join(''):`<div class="card pempty"><b>No orders here</b><span>${PT==='recv'?'Orders on the way to you show here.':PT==='done'?'Delivered orders show here.':PT==='ret'?'Items returned at delivery show here.':PT==='cx'?'Cancelled orders show here.':PT==='prep'?'Confirmed orders waiting for their delivery day show here.':PT==='pay'?'GCash / bank orders waiting for our payment check show here.':'New orders waiting for our call / payment check show here.'}</span></div>`}`}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-pt]');if(!b)return;PT=b.dataset.pt;rOrders();const t=document.getElementById('ptop');if(t&&t.getBoundingClientRect().top<70)t.scrollIntoView({block:'start'});const on=document.querySelector('.ptabs .on');if(on)on.scrollIntoView({block:'nearest',inline:'center'})});
 /* 📦 TRACK WITH A TRACKING NUMBER — no login needed (like SPX). Link: …/#t=W00012-7A3F */
 function trackBox(big){return `<div class="card${big?' gold':''} trk"><h2>📦 Track your order</h2><p class="lead">Type the tracking number from your order confirmation — no need to log in.</p>
@@ -882,8 +883,8 @@ function rOrders(){
   markSeen();
   // spending summary (retail / wholesale)
   let spend='';if(!bulk&&orders.length){const m=info?info.today.slice(0,7):new Date().toISOString().slice(0,7),mo=orders.filter(o=>o.online&&o.online.status!=='cancelled'&&!o.closed&&o.delivery.slice(0,7)===m);
-    const tot=mo.reduce((a,o)=>a+(o.online.total!=null?o.online.total:o.online.subtotal),0),all=orders.filter(o=>o.online&&o.delivered&&!o.delivered.result).length;
-    spend=`<div class="kpis"><div class="kpi"><span>Orders this month</span><b>${mo.length}</b></div><div class="kpi"><span>Spent this month</span><b>${peso(tot)}</b></div><div class="kpi"><span>Delivered (all time)</span><b>${all}</b></div><div class="kpi"><span>Open now</span><b>${act.length}</b></div></div>`}
+    const tot=mo.filter(o=>isPaidNow(o)?o.online.status==='confirmed'&&!isRet(o)&&!(o.delivered&&o.delivered.result):o.delivered&&!o.delivered.result).reduce((a,o)=>a+(o.online.total!=null?o.online.total:o.online.subtotal),0),all=orders.filter(o=>o.online&&o.delivered&&!o.delivered.result).length;
+    spend=`<div class="kpis"><div class="kpi"><span>Orders this month</span><b>${mo.length}</b></div><div class="kpi"><span>Spent this month</span><b>${peso(tot)}</b><span>paid · COD once delivered</span></div><div class="kpi"><span>Delivered (all time)</span><b>${all}</b></div><div class="kpi"><span>Open now</span><b>${act.length}</b></div></div>`}
   const pban=bulk&&ptsReady()?`<div class="card" style="border-left:6px solid var(--gold);background:var(--goldl)"><b style="color:var(--red);font-size:17px">🎉 Your ${pts.claimable} points (${peso(pts.claimable)}) are ready to claim!</b><div style="margin-top:4px">Thank you for being a valued partner of 3F Meatshop.</div><button class="btn gold sm" data-v="points" style="margin-top:8px">⭐ Go to My points</button></div>`:'';
   $('#view').innerHTML=head+pban+notes+(bulk?'':trackBox(false))+spend+(orders.length?purTabs(act,done,bulk)
     :`<div class="card"><h2>No orders yet</h2><p class="lead">${bulk?'Your orders will show here once the shop enters them.':'Your orders will show here.'}</p>${bulk?'':'<button class="btn" data-v="shop">Start shopping</button>'}</div>`);
