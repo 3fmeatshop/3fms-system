@@ -627,7 +627,7 @@ function rShop(){
   const cats=['All',...new Set(info.products.map(p=>p.cat))];
   const ql=q.trim().toLowerCase(),list=info.products.filter(p=>ql?(p.name+' '+p.cat).toLowerCase().includes(ql):(cat==='All'||p.cat===cat));
   $('#view').innerHTML=(ql?`<div class="srch-h"><b>${list.length} result${list.length===1?'':'s'} for “${esc(q.trim())}”</b><button class="btn sec sm" data-qclr>✕ Clear search</button></div>`:hero()+`
-    ${!me?`<div class="rule">💡 Prices shown: <b>Retail</b> (wholesale price below it). <b>Log in or sign up</b> to order — wholesale accounts get wholesale prices and free delivery.</div>`:isWs()?`<div class="rule">✅ Wholesale account — wholesale prices and <b>free delivery</b>${info.set.wsMin?' · minimum order '+peso(info.set.wsMin):''}.</div>`:''}`)+`
+    ${!me?'':isWs()?`<div class="rule">✅ Wholesale account — wholesale prices and <b>free delivery</b>${info.set.wsMin?' · minimum order '+peso(info.set.wsMin):''}.</div>`:''}`)+`
     ${!ql?bunSection():''}${ql?'':`<div class="sec-h" id="prods"><small>Today's products</small><h2>Choose your fresh cuts</h2><p>Fresh &amp; frozen meat, prepared the day before and delivered to your door.</p><i>*Prices are per kg or per pack. Availability changes daily.</i>
       ${cats.length>2?`<div class="ctabs" role="tablist">${cats.map(c=>`<button data-cat="${esc(c)}" role="tab" aria-selected="${c===cat}" class="${c===cat?'on':''}">${c==='All'?'All':esc(c)}</button>`).join('')}</div>`:''}</div>`}
     ${list.length?`<div class="grid">${list.map(prodCard).join('')}</div>`:`<div class="empty">${ql?'No product matches “'+esc(q.trim())+'”. Try another word, like “pork” or “chicken”.':'No products found.'}</div>`}`;
