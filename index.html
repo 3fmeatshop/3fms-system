@@ -413,6 +413,9 @@ nav.bar .ls{display:none}
 .bn-s.ph::after{content:'';position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(55,6,9,.86) 0%,rgba(55,6,9,.6) 38%,rgba(0,0,0,.08) 72%,rgba(0,0,0,0) 100%)}
 .bn-s.ph .bn-t{color:#fff;z-index:2}.bn-s.ph .bn-t h1{color:var(--gold);text-shadow:0 3px 14px rgba(0,0,0,.35)}.bn-s.ph .bn-t small{color:var(--gold)}
 @media (max-width:760px){.bn-s.ph::after{background:linear-gradient(90deg,rgba(55,6,9,.88) 0%,rgba(55,6,9,.7) 60%,rgba(0,0,0,.2) 100%)}}
+.ctabs{display:flex;gap:4px 20px;flex-wrap:wrap;margin-top:12px;border-bottom:1px solid var(--line)}
+.ctabs button{background:none;border:0;padding:8px 2px;font:700 14px system-ui;color:var(--muted);cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-1px}
+.ctabs button:hover{color:var(--ink)}.ctabs button.on{color:var(--red);border-bottom-color:var(--red)}
 /* 🧺 bundles */
 .bart{position:absolute;inset:0;display:grid;gap:3px;background:#fff}.bart img{width:100%;height:100%;object-fit:cover;display:block;min-height:0}
 .bart.n2{grid-template-columns:1fr 1fr}.bart.n3{grid-template-columns:1.3fr 1fr;grid-template-rows:1fr 1fr}.bart.n3>:first-child{grid-row:span 2}.bart.n4{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr}
@@ -428,6 +431,7 @@ nav.bar .ls{display:none}
 .bth{width:44px;height:44px;border-radius:10px;overflow:hidden;background:#FFF3D6;display:grid;place-items:center;font-size:22px}.bth img{width:100%;height:100%;object-fit:cover}
 @media (max-width:760px){.brow{grid-template-columns:40px 1fr;row-gap:2px}.brow>small{grid-column:2}}
 .bsave{position:absolute;left:12px;top:12px;z-index:3;background:#1c7a44;color:#fff;font:800 12.5px system-ui;padding:6px 12px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+@media (max-width:760px){.bsave{left:8px;top:8px;font-size:11.5px;padding:5px 9px}.bbadge{right:auto;top:auto;left:8px;bottom:8px;font-size:10.5px;padding:4px 9px}}
 .prod.tile .pbot .price s.bold{display:block;font:600 14px system-ui;color:var(--muted);letter-spacing:0;margin-top:-2px}
 /* 🧺 product tiles (like tulayhub.ph): big picture on top, name, price + Add on one row */
 .sec-h{margin:6px 0 16px;scroll-margin-top:120px}.sec-h small{display:block;font:800 12px var(--cond);letter-spacing:.16em;text-transform:uppercase;color:var(--red2)}
@@ -623,9 +627,9 @@ function rShop(){
   const cats=['All',...new Set(info.products.map(p=>p.cat))];
   const ql=q.trim().toLowerCase(),list=info.products.filter(p=>ql?(p.name+' '+p.cat).toLowerCase().includes(ql):(cat==='All'||p.cat===cat));
   $('#view').innerHTML=(ql?`<div class="srch-h"><b>${list.length} result${list.length===1?'':'s'} for “${esc(q.trim())}”</b><button class="btn sec sm" data-qclr>✕ Clear search</button></div>`:hero()+`
-    <div class="chips" style="margin-bottom:12px">${cats.map(c=>`<button data-cat="${esc(c)}" class="cchip${c===cat?' on':''}"><i class="ci">${c==='All'?'🛒':emo(c)}</i><span>${c==='All'?'All':esc(c)}</span></button>`).join('')}</div>
     ${!me?`<div class="rule">💡 Prices shown: <b>Retail</b> (wholesale price below it). <b>Log in or sign up</b> to order — wholesale accounts get wholesale prices and free delivery.</div>`:isWs()?`<div class="rule">✅ Wholesale account — wholesale prices and <b>free delivery</b>${info.set.wsMin?' · minimum order '+peso(info.set.wsMin):''}.</div>`:''}`)+`
-    ${!ql&&cat==='All'?bunSection():''}${ql?'':`<div class="sec-h"><small>${cat==='All'?"Today's products":esc(cat)}</small><h2>${cat==='All'?'Choose your fresh cuts':esc(cat)+' — fresh picks'}</h2><p>Fresh &amp; frozen meat, prepared the day before and delivered to your door.</p><i>*Prices are per kg or per pack. Availability changes daily.</i></div>`}
+    ${!ql?bunSection():''}${ql?'':`<div class="sec-h" id="prods"><small>Today's products</small><h2>Choose your fresh cuts</h2><p>Fresh &amp; frozen meat, prepared the day before and delivered to your door.</p><i>*Prices are per kg or per pack. Availability changes daily.</i>
+      ${cats.length>2?`<div class="ctabs" role="tablist">${cats.map(c=>`<button data-cat="${esc(c)}" role="tab" aria-selected="${c===cat}" class="${c===cat?'on':''}">${c==='All'?'All':esc(c)}</button>`).join('')}</div>`:''}</div>`}
     ${list.length?`<div class="grid">${list.map(prodCard).join('')}</div>`:`<div class="empty">${ql?'No product matches “'+esc(q.trim())+'”. Try another word, like “pork” or “chicken”.':'No products found.'}</div>`}`;
   setLogos();bnWire();
 
@@ -1191,7 +1195,7 @@ document.addEventListener('click',async e=>{
   if('qclr' in d){q='';$('#hq').value='';$('#hqx').hidden=true;rShop();scrollTo(0,0);return}
   if(d.v&&b.classList.contains('brand')&&q){q='';$('#hq').value='';$('#hqx').hidden=true}
   if(d.v){if(d.v!=='orders')newsShown=null;if(pv){pv=null;try{history.replaceState(null,'',location.pathname+location.search)}catch(er){}}view=d.v;if(view==='orders'&&me){orders=orders||null;loadOrders()}render();scrollTo(0,0);return}
-  if(d.cat!==undefined){cat=d.cat;rShop();return}
+  if(d.cat!==undefined){cat=d.cat;rShop();const y=$('#prods');if(y&&y.getBoundingClientRect().top<80)y.scrollIntoView({block:'start'});return}
   if(d.lm){lmode=d.lm;rLogin();return}
   if(d.inc||d.dec){const c=d.inc||d.dec,p=prod(c),st=stepOf(p),inp=document.querySelector(`[data-qty="${CSS.escape(c)}"]`);let v=+(inp&&inp.value)||cart[c]||0;v=d.inc?v+st:v-st;
     if(view==='cart'){setQty(c,v);rCart();cartBar();nav();return}
