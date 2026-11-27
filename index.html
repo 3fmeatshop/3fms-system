@@ -408,6 +408,18 @@ nav.bar .ls{display:none}
   nav.bar button:active i{transform:scale(.9)}
   nav.bar .cnt{position:absolute;top:3px;left:calc(50% + 6px);background:var(--red);color:#fff;border:2px solid #fff;font:800 10px/1.4 system-ui;padding:0 5px;border-radius:999px;margin:0;min-width:18px;text-align:center}
 }
+/* 🖥 full-screen shop (like tulayhub.ph): header and product list use the whole width, the banner goes edge to edge */
+:root{--gut:clamp(16px,3.2vw,64px)}
+header .wrap,.cartbar .wrap{max-width:none;padding-left:var(--gut);padding-right:var(--gut)}
+body.vshop main.wrap{max-width:none;padding-left:var(--gut);padding-right:var(--gut);padding-top:0}
+body.vshop .bn{margin:0 calc(-1 * var(--gut)) 22px;border-radius:0;height:clamp(300px,30vw,480px);box-shadow:none}
+body.vshop .bn-t{padding-left:calc(var(--gut) + 16px)}
+body.vshop .bn-t h1{font-size:clamp(40px,5.2vw,92px)}
+body.vshop .bn-t p{font-size:clamp(15px,1.15vw,19px);max-width:560px}
+body.vshop .grid{grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
+body.vshop .srch-h{padding-top:16px}
+@media (max-width:760px){body.vshop .bn{height:236px;margin-bottom:12px}body.vshop .bn-t h1{font-size:clamp(30px,8vw,40px)}body.vshop .grid{grid-template-columns:1fr 1fr;gap:10px}}
+@media (max-width:380px){body.vshop .grid{grid-template-columns:1fr}}
 /* 🛒 product page (tap a product) */
 .prod{cursor:pointer}
 .pd-back{background:none;border:0;color:var(--red);font-weight:700;font-size:15px;padding:4px 0;margin:0 0 10px;cursor:pointer}
@@ -521,6 +533,7 @@ let lastView=null;
 function render(){
   nav();
   if(me&&me.mustChange){rFirstPin();cartBar();return}
+  document.body.classList.toggle('vshop',view==='shop'&&!pv);
   ({shop:rShop,cart:rCart,orders:rOrders,acct:rAcct,login:rLogin,info:rInfo,points:rPoints,card:rCard})[view]();
   cartBar();
   const ak=view+(view==='shop'&&pv?':'+pv:'')+(info?1:0)+(view==='orders'&&orders?1:0);if(ak!==lastView){lastView=ak;animIn()}   // animate when the page changes or its data first arrives
