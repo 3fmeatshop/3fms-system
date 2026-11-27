@@ -1382,7 +1382,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 25 · 7:15 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 27 · 9:15 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -4604,7 +4604,7 @@ function invHTML0(){
   const val=mgr?ST.products.reduce((s,p)=>s+Math.max(0,p.avail)*(p.cost||0),0):0;
   const CN=ST.cnt||{},cban=CN.open==='counting'?`<button class="snote cntban" data-sview="count">🧮 <b>Stock count in progress</b> — tap to continue</button>`:CN.open==='submitted'?`<button class="snote cntban" data-sview="count">🧮 <b>Stock count waiting for approval</b>${me.role==='manager'?' — tap to review':''}</button>`:CN.dueOpen?`<button class="snote cntban due" data-sview="count">⏰ <b>Stock count due</b> (${day(CN.due)}) — tap to start</button>`:'';
   return cban+`<div class="shead"><div><h2>🗃️ Inventory</h2><div class="unit">One stock count for the shop. It goes up with <b>Receiving</b> and <b>Production</b>, and down with <b>POS sales</b> (walk-in and delivery orders cashed out by the cashier) and <b>online orders</b>. Prepared orders are <b>not</b> taken out until the cashier rings them up.${mgr?'':' <b>View only</b> — the Manager changes products and counts.'}</div></div>
-    <div class="sbtns">${me.role==='manager'&&window.SB_URL?`<button class="btn sm" data-invmatch>${APR&&APR.inv&&APR.inv.nBad?'🟡':'✅'} Stock check</button>`:''}${me.role==='manager'?'<button class="go sm sugb" data-posug>📈 Inventory Forecast</button>':''}${mgr?'<button class="go sm" data-padd>+ Add product</button><button class="btn sm" data-pimp>⬆ Import</button><button class="btn sm" data-precost>🔧 Correct costs</button>':''}${mgr?'<button class="btn sm" data-onsel>🛒 Online shop products</button><button class="btn sm" data-pullout>🗑 Pull-out (spoiled)</button>':''}${mgr||me.role==='ops'?'<button class="btn sm" data-pconv>🔁 Convert</button>':''}<button class="btn sm" data-sref>↻ Refresh</button></div></div>
+    <div class="sbtns">${me.role==='manager'&&window.SB_URL?`<button class="btn sm" data-invmatch>${APR&&APR.inv&&APR.inv.nBad?'🟡':'✅'} Stock check</button>`:''}${me.role==='manager'?'<button class="go sm sugb" data-posug>📈 Inventory Forecast</button>':''}${mgr?'<button class="go sm" data-padd>+ Add product</button><button class="btn sm" data-pimp>⬆ Import</button><button class="btn sm" data-precost>🔧 Correct costs</button>':''}${mgr?'<button class="btn sm" data-onsel>🛒 Online shop products</button><button class="btn sm" data-bundles>🧺 Shop bundles</button><button class="btn sm" data-pullout>🗑 Pull-out (spoiled)</button>':''}${mgr||me.role==='ops'?'<button class="btn sm" data-pconv>🔁 Convert</button>':''}<button class="btn sm" data-sref>↻ Refresh</button></div></div>
     <div class="kpis"><div><b>${ST.products.length}</b><span>products</span></div><div class="${low.length?'warn':''}"><b>${low.length}</b><span>low stock</span></div><div class="${out.length?'bad':''}"><b>${out.length}</b><span>out of stock</span></div>${mgr?`<div><b>${peso(val)}</b><span>stock value (cost)</span></div>`:''}</div>
     ${mgr&&appr.length?`<div class="snote violet">⚠ <b>${appr.length}</b> receiving(s) don't match the P.O. and wait for your approval. <button class="btn sm" data-sview="po">Open P.O.</button></div>`:''}
     ${mgr&&ST.unmatched&&ST.unmatched.length?`<div class="snote">🔎 These order names did not match a product, so dispatch could not take them out of stock: <b>${ST.unmatched.map(esc).join(', ')}</b>. Edit the product and add the name under <b>Other names</b>.</div>`:''}
@@ -5218,6 +5218,40 @@ function cvAuto(){if(!convF)return;const S=ST.pset||{},want=[];
   const man=convF.from.filter(l=>!l.auto&&l.code),au=convF.from.filter(l=>l.auto);convF.from=(man.length||!au.length?(man.length?man:[{code:'',qty:''}]):[]).concat(au)}
 /* 🗑 PULL-OUT — spoiled / expired / damaged stock out of inventory; the loss can be charged (all or part) to the staff in charge */
 let pullF=null,STAFFL=null;
+/* 🧺 SHOP BUNDLES (manager): meat packs the customer adds in one click — e.g. "Family Pack: 1 kg pork belly + 1 kg chicken + 1 pack siomai" */
+async function bundlesDialog(){const box=stBox();$('#stb').innerHTML='<h2>🧺 Shop bundles</h2><div class="empty">Loading…</div>';box.classList.add('on');
+  let L;try{L=await api('api_bundles',session.token)}catch(e){$('#stb').innerHTML=`<h2>🧺 Shop bundles</h2><div class="snote">${esc(errMsg(e))}</div><div class="row-end"><button class="btn" data-x>Close</button></div>`;return}
+  const P=ST.products||[],pc=c=>P.find(p=>p.code===c),base=b=>Math.round(b.items.reduce((a,i)=>{const p=pc(i.code);return a+(p?(+p.retail||0)*(+i.qty||0):0)},0)*100)/100,
+    off=b=>{const B=base(b),v=+b.dv||0;return b.dt==='amt'?Math.min(B,v):Math.round(B*Math.min(v,99.99))/100},tot=b=>Math.round((base(b)-off(b))*100)/100;
+  const list=()=>{$('#stb').innerHTML=`<h2>🧺 Shop bundles</h2><div class="unit">Ready-made packs on the online shop (like "Family Pack"). The customer taps <b>Add all to cart</b> and every item goes in the cart. The price is the total of the items' prices.</div>
+    ${L.length?L.map(b=>`<div class="posx-row"><span><b>${esc(b.name)}</b> ${b.on?'':'<small class="unit">(hidden)</small>'}<br><small class="unit">${esc(b.forWho||'')}${b.forWho?' · ':''}${b.items.length} item(s) · ${b.items.map(i=>{const p=pc(i.code);return esc(p?p.name:i.code)+' ×'+i.qty}).join(', ')}</small></span><b>${off(b)?`<s class="unit">${peso(base(b))}</s> `:''}${peso(tot(b))} <button class="btn sm" data-bned="${esc(b.id)}">Edit</button></b></div>`).join(''):'<div class="empty">No bundles yet.</div>'}
+    <div class="row-end"><button class="btn" data-x>Close</button><button class="go" id="bn-new">＋ New bundle</button></div>`;
+    $('#bn-new').onclick=()=>edit({name:'',forWho:'',desc:'',badge:'',on:true,dt:'pct',dv:0,items:[{code:'',qty:1}]});
+    $('#stb').querySelectorAll('[data-bned]').forEach(x=>x.onclick=()=>edit(JSON.parse(JSON.stringify(L.find(b=>b.id===x.dataset.bned)))))};
+  const opts=c=>`<option value="">— choose product —</option>`+P.slice().sort((a,b)=>(a.cat||'').localeCompare(b.cat||'')||a.name.localeCompare(b.name)).map(p=>`<option value="${esc(p.code)}"${p.code===c?' selected':''}>${esc(p.name)} · ${esc(p.unit)} · ${peso(p.retail)}${p.on?'':' (not on shop)'}</option>`).join('');
+  const edit=b=>{const draw=()=>{$('#stb').innerHTML=`<h2>🧺 ${b.id?'Edit':'New'} bundle</h2>
+      <div class="fgrid"><label class="full">Bundle name<input class="edit-in" id="bn-nm" maxlength="60" value="${esc(b.name)}" placeholder="e.g. Family Pork Pack"></label>
+      <label>For who <small>(optional)</small><input class="edit-in" id="bn-fw" maxlength="40" value="${esc(b.forWho)}" placeholder="e.g. For 3–4 people"></label>
+      <label>Badge <small>(optional)</small><input class="edit-in" id="bn-bd" maxlength="20" value="${esc(b.badge)}" placeholder="e.g. POPULAR"></label>
+      <label class="full">Description <small>(optional · one idea per line)</small><textarea class="edit-in" id="bn-ds" rows="2" maxlength="1500" placeholder="Good for a week of family meals.">${esc(b.desc)}</textarea></label></div>
+      <h3 style="margin:12px 0 6px">Items in the bundle</h3>
+      ${b.items.map((i,k)=>`<div class="row-end" style="justify-content:flex-start;gap:8px;margin:6px 0"><select class="edit-in" data-bnc="${k}" style="flex:1;min-width:0">${opts(i.code)}</select><input class="edit-in" data-bnq="${k}" type="number" min="0" step="0.5" value="${i.qty}" style="width:90px"><span class="unit" style="width:60px">${esc((pc(i.code)||{}).unit||'')}</span><button class="btn sm" data-bnx="${k}" aria-label="Remove">✕</button></div>`).join('')}
+      <button class="btn sm" id="bn-add">＋ Add item</button>
+      <h3 style="margin:14px 0 6px">Bundle discount</h3>
+      <div class="row-end" style="justify-content:flex-start;gap:8px"><select class="edit-in" id="bn-dt" style="width:auto"><option value="pct"${b.dt!=='amt'?' selected':''}>Percent (%)</option><option value="amt"${b.dt==='amt'?' selected':''}>Amount (₱)</option></select>
+        <input class="edit-in" id="bn-dv" type="number" min="0" step="${b.dt==='amt'?'1':'0.5'}" value="${+b.dv||''}" placeholder="${b.dt==='amt'?'e.g. 100':'e.g. 10'}" style="width:120px"><span class="unit">${b.dt==='amt'?'₱ off the bundle':'% off the bundle'} · 0 = no discount</span></div>
+      <div class="snote" style="margin-top:10px">Regular total: <b>${peso(base(b))}</b>${off(b)?` · Discount: <b style="color:var(--rose)">−${peso(off(b))}</b>`:''}<br>Bundle price on the shop: <b style="font-size:18px">${peso(tot(b))}</b>${off(b)?` <span class="badge ok">customer saves ${peso(off(b))}</span>`:''} <small class="unit">(follows the retail prices)</small></div>
+      <label class="chk2"><input type="checkbox" id="bn-on"${b.on?' checked':''}> Show on the online shop</label>
+      <div class="row-end">${b.id?'<button class="btn" id="bn-del" style="margin-right:auto;color:var(--rose)">🗑 Delete</button>':''}<button class="btn" id="bn-back">Back</button><button class="go" id="bn-ok">✓ Save</button></div>`;
+    const keep=()=>{b.name=$('#bn-nm').value;b.forWho=$('#bn-fw').value;b.badge=$('#bn-bd').value;b.desc=$('#bn-ds').value;b.on=$('#bn-on').checked;b.dt=$('#bn-dt').value;b.dv=+$('#bn-dv').value||0};
+    $('#bn-dt').onchange=()=>{keep();draw()};$('#bn-dv').onchange=()=>{keep();if(b.dt!=='amt'&&b.dv>=100){b.dv=0;alert('Percent must be below 100')}draw()};
+    $('#stb').querySelectorAll('[data-bnc]').forEach(x=>x.onchange=()=>{keep();b.items[+x.dataset.bnc].code=x.value;draw()});
+    $('#stb').querySelectorAll('[data-bnq]').forEach(x=>x.onchange=()=>{keep();b.items[+x.dataset.bnq].qty=+x.value||0;draw()});
+    $('#stb').querySelectorAll('[data-bnx]').forEach(x=>x.onclick=()=>{keep();b.items.splice(+x.dataset.bnx,1);if(!b.items.length)b.items.push({code:'',qty:1});draw()});
+    $('#bn-add').onclick=()=>{keep();b.items.push({code:'',qty:1});draw()};$('#bn-back').onclick=list;
+    $('#bn-ok').onclick=async()=>{keep();const ok=$('#bn-ok');ok.disabled=true;try{L=await api('api_bundleSave',session.token,b);toast('🧺 Bundle saved — on the shop within a minute');list()}catch(e){alert(errMsg(e));ok.disabled=false}};
+    if($('#bn-del'))$('#bn-del').onclick=async()=>{if(!confirm('Delete this bundle?'))return;try{L=await api('api_bundleDel',session.token,b.id);toast('Bundle deleted');list()}catch(e){alert(errMsg(e))}}};draw()};
+  list()}
 /* 🛒 choose many products for the online shop at once (tick = shown on www.3fmeatshop.com) */
 function onlineDialog(){const P=(ST.products||[]).slice().sort((a,b)=>(a.cat||'').localeCompare(b.cat||'')||a.name.localeCompare(b.name)),on=new Set(P.filter(p=>p.on).map(p=>p.code)),na=new Set(P.filter(p=>p.on&&p.na).map(p=>p.code)),box=stBox();let q='';
   const cats=[...new Set(P.map(p=>p.cat||'Others'))];
@@ -6153,6 +6187,7 @@ async function stockClick(e){if(!STOCKV.includes(view))return;
   if(d.prdel){const[k,i]=d.prdel.split(':');prodF[k].splice(+i,1);if(!prodF[k].length)prodF[k].push({code:'',qty:''});drawStock();return}
   if('prclear' in d){prodF=null;drawStock();return}
   if('onsel' in d){onlineDialog();return}
+  if('bundles' in d){bundlesDialog();return}
   if('pullout' in d){pullDialog();return}
   if('pconv' in d){convDialog();return}
   if(d.prkind){prodF=prodF||{};const keep=prodF;prodF={kind:d.prkind,used:keep.used||[{code:'',qty:''}],made:keep.made||[{code:'',qty:''}],note:keep.note||'',extra:''};drawStock();return}

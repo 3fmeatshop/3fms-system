@@ -408,6 +408,46 @@ nav.bar .ls{display:none}
   nav.bar button:active i{transform:scale(.9)}
   nav.bar .cnt{position:absolute;top:3px;left:calc(50% + 6px);background:var(--red);color:#fff;border:2px solid #fff;font:800 10px/1.4 system-ui;padding:0 5px;border-radius:999px;margin:0;min-width:18px;text-align:center}
 }
+.bn-ph{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+.bn-s.ph{grid-template-columns:1fr}.bn-s.ph .bn-a{display:none}
+.bn-s.ph::after{content:'';position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(55,6,9,.86) 0%,rgba(55,6,9,.6) 38%,rgba(0,0,0,.08) 72%,rgba(0,0,0,0) 100%)}
+.bn-s.ph .bn-t{color:#fff;z-index:2}.bn-s.ph .bn-t h1{color:var(--gold);text-shadow:0 3px 14px rgba(0,0,0,.35)}.bn-s.ph .bn-t small{color:var(--gold)}
+@media (max-width:760px){.bn-s.ph::after{background:linear-gradient(90deg,rgba(55,6,9,.88) 0%,rgba(55,6,9,.7) 60%,rgba(0,0,0,.2) 100%)}}
+/* 🧺 bundles */
+.bart{position:absolute;inset:0;display:grid;gap:3px;background:#fff}.bart img{width:100%;height:100%;object-fit:cover;display:block;min-height:0}
+.bart.n2{grid-template-columns:1fr 1fr}.bart.n3{grid-template-columns:1.3fr 1fr;grid-template-rows:1fr 1fr}.bart.n3>:first-child{grid-row:span 2}.bart.n4{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr}
+.bart.bem{background:radial-gradient(circle at 50% 45%,#FFF8E1 0,#FFEBB0 100%);display:flex;flex-wrap:wrap;align-items:center;justify-content:center;align-content:center;gap:6px 14px;padding:16px}.bart.bem span{font-size:clamp(46px,4.6vw,72px);line-height:1;filter:drop-shadow(0 6px 8px rgba(0,0,0,.14))}
+.bpd .bart.bem span{font-size:clamp(70px,8vw,120px)}
+.bbadge{position:absolute;right:12px;top:12px;z-index:3;background:var(--gold);color:var(--red);font:800 11.5px system-ui;letter-spacing:.08em;text-transform:uppercase;padding:5px 11px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.prod.bun .pimg{border-bottom:1px solid #F1E7E5}
+.bpd{position:relative}.bthumbs{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.bthumbs>div{width:64px;height:64px;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:#fff;display:grid;place-items:center;font-size:30px}.bthumbs img{width:100%;height:100%;object-fit:cover}
+.blist{margin:14px 0 4px;max-height:320px;overflow:auto;border-top:1px solid var(--line)}
+.brow{display:grid;grid-template-columns:44px 1fr auto;align-items:center;gap:12px;padding:9px 2px;border-bottom:1px solid var(--line)}.brow span{font-weight:700;color:var(--ink)}.brow span small{color:var(--bad);font-weight:600}
+.brow>small{color:var(--muted);font-size:13px;white-space:nowrap}.brow.na{opacity:.6}
+.bth{width:44px;height:44px;border-radius:10px;overflow:hidden;background:#FFF3D6;display:grid;place-items:center;font-size:22px}.bth img{width:100%;height:100%;object-fit:cover}
+@media (max-width:760px){.brow{grid-template-columns:40px 1fr;row-gap:2px}.brow>small{grid-column:2}}
+.bsave{position:absolute;left:12px;top:12px;z-index:3;background:#1c7a44;color:#fff;font:800 12.5px system-ui;padding:6px 12px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+.prod.tile .pbot .price s.bold{display:block;font:600 14px system-ui;color:var(--muted);letter-spacing:0;margin-top:-2px}
+/* 🧺 product tiles (like tulayhub.ph): big picture on top, name, price + Add on one row */
+.sec-h{margin:6px 0 16px;scroll-margin-top:120px}.sec-h small{display:block;font:800 12px var(--cond);letter-spacing:.16em;text-transform:uppercase;color:var(--red2)}
+.sec-h h2{font-family:var(--disp);font-weight:400;font-size:clamp(24px,2.2vw,34px);line-height:1.05;margin:6px 0 6px;color:var(--ink);text-transform:none}
+.sec-h p{margin:0;color:var(--muted);font-size:15px}.sec-h i{display:block;margin-top:4px;color:#A28F8B;font-size:12.5px}
+.prod.tile{padding:0;border:1px solid #EADFDC;border-left:1px solid #EADFDC;border-radius:16px;overflow:hidden;gap:0;box-shadow:0 1px 2px rgba(60,20,20,.04)}
+.prod.tile:hover{border-color:#D9B9B4;box-shadow:0 10px 26px rgba(110,20,20,.12);transform:translateY(-3px)}
+.prod.tile .pimg{margin:0;aspect-ratio:4/3;display:grid;place-items:center;border-bottom:1px solid #F1E7E5}
+.prod.tile .pimg .pem{width:auto;height:auto;background:none;font-size:clamp(64px,6vw,96px);filter:drop-shadow(0 8px 10px rgba(0,0,0,.12));transition:transform .45s cubic-bezier(.3,1.6,.5,1)}
+.prod.tile:not(.out):hover .pem{transform:scale(1.1) rotate(-6deg)}
+.prod.tile .top{padding:14px 16px 0}.prod.tile .top b{font-size:17px;font-weight:800}.prod.tile .cat{display:block;margin-top:3px;font-size:13px}
+.prod.tile .price2{padding:2px 16px 0}
+.prod.tile .pbot{flex-direction:row;align-items:center;justify-content:space-between;gap:8px;padding:12px 16px 16px;margin-top:auto;flex-wrap:wrap}
+.prod.tile .pbot .price{font-family:var(--disp);font-weight:400;font-size:27px;white-space:nowrap;letter-spacing:.3px;color:var(--red)}.prod.tile .pbot .price small{font-family:system-ui;font-size:13px}
+.prod.tile .add2{width:auto;padding:0 16px;height:42px;font-size:14.5px}.prod.tile .add2.na{width:100%}
+.prod.tile .mstep{width:auto;min-width:0;height:40px}.prod.tile .mstep button{width:34px}.prod.tile .mstep b{min-width:40px;font-size:13.5px}
+.prod.tile .pbot .price small{margin-left:1px}
+.prod.tile .pso{left:12px;top:12px}
+@media (max-width:760px){.prod.tile{padding:0}.prod.tile .pimg{margin:0}.prod.tile .top{padding:10px 10px 0}.prod.tile .top b{font-size:15px}.prod.tile .price2{padding:2px 10px 0}
+  .prod.tile .pbot{padding:8px 10px 10px}.prod.tile .pbot .price{font-size:24px}.prod.tile .add2,.prod.tile .mstep{width:100%;justify-content:center}.prod.tile .mstep{justify-content:space-between}}
 /* 🖥 full-screen shop (like tulayhub.ph): header and product list use the whole width, the banner goes edge to edge */
 :root{--gut:clamp(16px,3.2vw,64px)}
 header .wrap,.cartbar .wrap{max-width:none;padding-left:var(--gut);padding-right:var(--gut)}
@@ -416,7 +456,7 @@ body.vshop .bn{margin:0 calc(-1 * var(--gut)) 22px;border-radius:0;height:clamp(
 body.vshop .bn-t{padding-left:calc(var(--gut) + 16px)}
 body.vshop .bn-t h1{font-size:clamp(40px,5.2vw,92px)}
 body.vshop .bn-t p{font-size:clamp(15px,1.15vw,19px);max-width:560px}
-body.vshop .grid{grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
+body.vshop .grid{grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px}
 body.vshop .srch-h{padding-top:16px}
 @media (max-width:760px){body.vshop .bn{height:236px;margin-bottom:12px}body.vshop .bn-t h1{font-size:clamp(30px,8vw,40px)}body.vshop .grid{grid-template-columns:1fr 1fr;gap:10px}}
 @media (max-width:380px){body.vshop .grid{grid-template-columns:1fr}}
@@ -560,7 +600,8 @@ function banners(){const s=info.set||{},f=fmt(s.freeKg||5),dd=longDay(info.deliv
    {c:'b-cream',k:'Order today',h:'ORDER NGAYON,<br>DELIVER BUKAS!',p:`Next delivery: <b>${esc(dd)}</b>`,tag:'Sariwa!',art:A[0].svg,fl:['🥩','🌿','⭐']},
    {c:'b-rose',k:'Fresh · Frozen · Fine cuts',h:'SKIP THE<br>PALENGKE!',p:'Sariwang karne, hatid sa pinto mo — walang pila, walang init.',tag:'Walang pila!',art:A[1].svg,fl:['🍖','🥓','🌿']}]}
 function hero(){const B=banners();bnI%=B.length;
-  return `<div class="bn" id="bn" aria-roledescription="carousel">${B.map((b,i)=>`<div class="bn-s ${b.c}${i===bnI?' on':''}" aria-hidden="${i!==bnI}">
+  const PH=window.BNPH=window.BNPH||{};   /* 📷 your own banner photo: upload banner1.jpg / banner2.jpg / banner3.jpg to the top of the GitHub repo */
+  return `<div class="bn" id="bn" aria-roledescription="carousel">${B.map((b,i)=>`<div class="bn-s ${b.c}${i===bnI?' on':''}${PH[i]===true?' ph':''}" aria-hidden="${i!==bnI}">${PH[i]===false?'':`<img class="bn-ph" src="banner${i+1}.jpg" alt="" onload="BNPH[${i}]=true;this.parentNode.classList.add('ph')" onerror="BNPH[${i}]=false;this.remove()">`}
       <div class="bn-t"><small>${b.k}</small><h1>${b.h}</h1><p>${b.p}</p><button class="btn gold sm" data-v="info">How to order →</button></div>
       <div class="bn-a"><span class="fl f1">${b.fl[0]}</span><span class="fl f2">${b.fl[1]}</span><span class="fl f3">${b.fl[2]}</span>${b.art.replace('viewBox="0 0 600 560" preserveAspectRatio="xMidYMax slice"','viewBox="0 70 600 390" preserveAspectRatio="xMidYMid slice"')}<span class="bn-tag">${b.tag}</span></div></div>`).join('')}
     <button class="bn-nav prev" data-bn="-1" aria-label="Previous">‹</button><button class="bn-nav next" data-bn="1" aria-label="Next">›</button>
@@ -578,12 +619,13 @@ function annBar(){const a=$('#ann');a.hidden=true;return;   // the moving announ
   if($('#annin').dataset.t!==t){$('#annin').dataset.t=t;$('#annin').innerHTML=`<div class="ann-row">${t}</div><div class="ann-row" aria-hidden="true">${t}</div>`}}
 function rShop(){
   if(!info){$('#view').innerHTML='<div class="empty">Loading products…</div>';return}
-  if(pv){if(prod(pv))return rItem();pv=null}
+  if(pv){if(String(pv).startsWith('b:')&&bun(String(pv).slice(2)))return rBundle();if(prod(pv))return rItem();pv=null}
   const cats=['All',...new Set(info.products.map(p=>p.cat))];
   const ql=q.trim().toLowerCase(),list=info.products.filter(p=>ql?(p.name+' '+p.cat).toLowerCase().includes(ql):(cat==='All'||p.cat===cat));
   $('#view').innerHTML=(ql?`<div class="srch-h"><b>${list.length} result${list.length===1?'':'s'} for “${esc(q.trim())}”</b><button class="btn sec sm" data-qclr>✕ Clear search</button></div>`:hero()+`
     <div class="chips" style="margin-bottom:12px">${cats.map(c=>`<button data-cat="${esc(c)}" class="cchip${c===cat?' on':''}"><i class="ci">${c==='All'?'🛒':emo(c)}</i><span>${c==='All'?'All':esc(c)}</span></button>`).join('')}</div>
     ${!me?`<div class="rule">💡 Prices shown: <b>Retail</b> (wholesale price below it). <b>Log in or sign up</b> to order — wholesale accounts get wholesale prices and free delivery.</div>`:isWs()?`<div class="rule">✅ Wholesale account — wholesale prices and <b>free delivery</b>${info.set.wsMin?' · minimum order '+peso(info.set.wsMin):''}.</div>`:''}`)+`
+    ${!ql&&cat==='All'?bunSection():''}${ql?'':`<div class="sec-h"><small>${cat==='All'?"Today's products":esc(cat)}</small><h2>${cat==='All'?'Choose your fresh cuts':esc(cat)+' — fresh picks'}</h2><p>Fresh &amp; frozen meat, prepared the day before and delivered to your door.</p><i>*Prices are per kg or per pack. Availability changes daily.</i></div>`}
     ${list.length?`<div class="grid">${list.map(prodCard).join('')}</div>`:`<div class="empty">${ql?'No product matches “'+esc(q.trim())+'”. Try another word, like “pork” or “chicken”.':'No products found.'}</div>`}`;
   setLogos();bnWire();
 
@@ -591,7 +633,9 @@ function rShop(){
 function prodCard(p){
   const inC=cart[p.code]||0,out=p.avail<1;
   const ph=p.photo&&window.SB_URL?window.SB_URL.replace(/\/$/,'')+'/storage/v1/object/public/products/'+p.photo:'';
-  return `<div class="prod${out?' out':''}${ph?' hasph':''}" data-p="${esc(p.code)}">${ph?`<div class="pimg"><img src="${esc(ph)}" alt="${esc(p.name)}" loading="lazy" decoding="async" onerror="this.closest('.prod').classList.remove('hasph');this.parentNode.remove()">${out?'<span class="pso">Unavailable today</span>':''}</div>`:''}${out&&!ph?'<span class="pso inl">Unavailable today</span>':''}<div class="top"><span class="em">${emo(p.cat)}</span><div style="min-width:0"><b>${esc(p.name)}</b><span class="cat">${esc(p.cat)} · per ${p.unit==='Kg'?'kg':p.unit.toLowerCase()}${p.unit!=='Kg'&&p.kg?' ('+fmt(p.kg)+' kg)':''}</span></div></div>
+  const tint=['#FDECEA','#FFF3D6','#EAF4EC','#EDEBFA','#FCE9F1','#E8F1FA'][[...String(p.cat)].reduce((a,c)=>a+c.charCodeAt(0),0)%6];
+  return `<div class="prod tile${out?' out':''}${ph?' hasph':''}" data-p="${esc(p.code)}"><div class="pimg${ph?'':' noph'}" style="${ph?'':'background:'+tint}">${ph?`<img src="${esc(ph)}" alt="${esc(p.name)}" loading="lazy" decoding="async" onerror="this.closest('.prod').classList.remove('hasph');this.parentNode.classList.add('noph');this.replaceWith(Object.assign(document.createElement('span'),{className:'em pem',textContent:'${emo(p.cat)}'}))">`:`<span class="em pem">${emo(p.cat)}</span>`}${out?'<span class="pso">Unavailable today</span>':''}</div>
+    <div class="top"><div style="min-width:0"><b>${esc(p.name)}</b><span class="cat">${esc(p.cat)} · per ${p.unit==='Kg'?'kg':p.unit.toLowerCase()}${p.unit!=='Kg'&&p.kg?' ('+fmt(p.kg)+' kg)':''}</span></div></div>
     ${!me&&p.wholesale&&p.wholesale!==p.retail?`<div class="price2">Wholesale ${peso(p.wholesale)}</div>`:''}
     <div class="pbot"><div class="price">${peso(priceOf(p))}<small>/${p.unit==='Kg'?'kg':p.unit.toLowerCase()}</small></div>
       ${isBulk()?(out?'<span class="avail none">Unavailable today</span>':''):out?'<button class="add2 na" disabled>Unavailable today</button>':inC?`<div class="mstep" aria-label="In cart"><button data-dec="${esc(p.code)}" aria-label="Less">−</button><b>${fmt(inC)} ${uN(p,inC)}</b><button data-inc="${esc(p.code)}" aria-label="More">+</button></div>`
@@ -605,7 +649,7 @@ const NI={shop:'<path d="M4 9.5 5.3 4.6A1 1 0 0 1 6.3 4h11.4a1 1 0 0 1 1 .6L20 9
   info:'<circle cx="12" cy="12" r="9"/><path d="M9.6 9.3a2.5 2.5 0 0 1 4.8 1c0 1.7-2.4 2.2-2.4 3.7"/><circle cx="12" cy="17.2" r=".6" fill="currentColor"/>',
   acct:'<circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20c.8-3.8 3.8-5.8 7.5-5.8s6.7 2 7.5 5.8"/>'};
 const nIco=k=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${NI[k]}</svg>`;
-const prod=c=>info&&info.products.find(p=>p.code===c);
+const prod=c=>{if(!info)return undefined;if(String(c).startsWith('b:')){const b=bun(String(c).slice(2));return b?b.pp:undefined}return info.products.find(p=>p.code===c)};
 /* 🛒 product page: big photo, variants, quick quantities, subtotal, add to cart, description, more products — share link: …/#p=CODE */
 const pBase=n=>String(n).replace(/\s*[\(\[].*$/,'').replace(/\s+[-–—]\s+.*$/,'').trim().toLowerCase();
 const pVarLab=(x,b)=>{const t=x.name.trim(),r=t.slice(b.length).replace(/^[\s\-–—(\[]+|[)\]\s]+$/g,'').trim();return t.toLowerCase().startsWith(b)&&r?r:t};
@@ -617,6 +661,40 @@ function openItem(code,replace){pv=code;pq=pqFor(code);view='shop';
   render();scrollTo(0,0)}
 function closeItem(){if(history.state&&history.state.pv&&history.state.back){history.back();return}pv=null;try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}render();scrollTo(0,0)}
 addEventListener('popstate',e=>{const h=new URLSearchParams(location.hash.slice(1));pv=(e.state&&e.state.pv)||h.get('p')||null;if(pv)pq=pqFor(pv);if(view==='shop'||pv){view='shop';render();scrollTo(0,0)}});
+
+/* 🧺 BUNDLES (meat packs): set up in the staff app › Inventory › Stock › 🧺 Shop bundles. Link: …/#p=b:ID */
+const bunList=()=>((info&&info.set&&info.set.bundles)||[]).map(b=>{const it=b.items.map(i=>({p:prod(i.code),qty:+i.qty||0})).filter(i=>i.p&&i.qty>0);
+  const base=Math.round(it.reduce((a,i)=>a+priceOf(i.p)*i.qty,0)*100)/100,v=+b.dv||0,save=b.dt==='amt'?Math.min(base,v):Math.round(base*Math.min(v,99.99))/100,total=Math.round((base-save)*100)/100,na=it.filter(i=>i.p.avail<1);
+  const B={...b,it,base,save,pct:base?Math.round(save/base*100):0,total,na};
+  B.pp={code:'b:'+b.id,name:b.name,cat:'Bundle',unit:'Bundle',retail:total,wholesale:total,bundle:B,kg:Math.round(it.reduce((a,i)=>a+i.qty*(i.p.kg||0),0)*1000)/1000,
+    avail:na.length?0:Math.min(...it.map(i=>Math.floor(i.p.avail/i.qty)))};return B}).filter(b=>b.it.length);
+const bun=id=>bunList().find(b=>b.id===id);
+function bunArt(b,big){const ph=b.it.map(i=>pPhoto(i.p)).filter(Boolean).slice(0,4);
+  if(ph.length)return `<div class="bart n${ph.length}">${ph.map(u=>`<img src="${esc(u)}" alt="" loading="lazy" onerror="this.remove()">`).join('')}</div>`;
+  const em=[...new Set(b.it.map(i=>emo(i.p.cat)))].slice(0,4);return `<div class="bart bem n${em.length}">${em.map(e=>`<span>${e}</span>`).join('')}</div>`}
+function bunCard(b){const out=b.na.length>0,k='b:'+b.id,inC=cart[k]||0;
+  return `<div class="prod tile bun${out?' out':''}" data-p="b:${esc(b.id)}"><div class="pimg" style="background:#FFF3D6">${bunArt(b)}${b.badge?`<span class="bbadge">${esc(b.badge)}</span>`:''}${out?'<span class="pso">Unavailable today</span>':b.save?`<span class="bsave">Save ${peso(b.save)}</span>`:''}</div>
+    <div class="top"><div style="min-width:0"><b>${esc(b.name)}</b><span class="cat">${esc(b.forWho||'')}${b.forWho?' · ':''}${b.it.length} item${b.it.length===1?'':'s'}</span></div></div>
+    <div class="pbot"><div class="price">${peso(b.total)}${b.save?`<s class="bold">${peso(b.base)}</s>`:''}</div>${isBulk()?'':out?'<button class="add2 na" disabled>Unavailable today</button>':inC?`<div class="mstep" aria-label="In cart"><button data-dec="${esc(k)}" aria-label="Less">−</button><b>${inC} ${inC===1?'pack':'packs'}</b><button data-inc="${esc(k)}" aria-label="More">+</button></div>`:`<button class="add2" data-badd="${esc(b.id)}"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2l2.4 11.2a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.1L21 8H6.2"/><circle cx="9.5" cy="20" r="1.3"/><circle cx="17.5" cy="20" r="1.3"/></svg><span>Add</span></button>`}</div></div>`}
+function bunSection(){const B=bunList();if(!B.length)return '';
+  return `<div class="sec-h"><small>Today's bundles</small><h2>Choose your meat pack</h2><p>Ready-made packs for every household size — one tap adds everything to your cart.</p><i>*Pack contents may change based on what is fresh today.</i></div>
+    <div class="grid">${B.map(bunCard).join('')}</div><div style="height:26px"></div>`}
+function bunAdd(id,fromEl){const b=bun(id);if(!b)return;if(b.na.length)return toast('Some items are unavailable today');
+  const k='b:'+b.id;setQty(k,(cart[k]||0)+1);nav();cartBar();
+  try{const r=(fromEl||document.body).getBoundingClientRect();flyToCart(r,'🧺',b.it[0].p.code)}catch(e){}
+  toast('🧺 '+b.name+' added · '+peso(b.total)+(b.save?' · you save '+peso(b.save):''))}
+function rBundle(){const b=bun(pv.slice(2)),out=b.na.length>0,desc=String(b.desc||'').split(/\n+/).map(x=>x.trim()).filter(Boolean);
+  const th=b.it.map(i=>pPhoto(i.p)?`<img src="${esc(pPhoto(i.p))}" alt="${esc(i.p.name)}" loading="lazy">`:`<span>${emo(i.p.cat)}</span>`);
+  $('#view').innerHTML=`<button class="pd-back" data-pback>← Back to products</button>
+  <div class="pd"><div><div class="pd-img bpd" style="background:#FFF3D6">${bunArt(b,1)}${b.badge?`<span class="bbadge">${esc(b.badge)}</span>`:''}${out?'<span class="pso">Unavailable today</span>':''}</div>
+      <div class="bthumbs">${th.map(t=>`<div>${t}</div>`).join('')}</div></div>
+    <div><div class="pd-k">Meat bundle · ${b.it.length} item${b.it.length===1?'':'s'}</div><h1>${esc(b.name)}</h1>
+      <div class="pd-price">${peso(b.total)}${b.save?`<s>${peso(b.base)}</s>`:''}</div>${b.save?`<div class="pd-save">Bundle discount${b.dt==='amt'?'':' '+b.pct+'%'} — you save ${peso(b.save)}</div>`:''}<div class="pd-ws">estimated total</div>
+      <div class="pd-facts"><span><b>${b.it.length}</b> items</span>${b.forWho?`<span>${esc(b.forWho)}</span>`:''}<span>Fresh per batch</span>${out?'':`<span class="ok">✓ Delivered ${esc(longDay(info.delivery))}</span>`}</div>
+      <div class="blist">${b.it.map(i=>`<div class="brow${i.p.avail<1?' na':''}" data-p="${esc(i.p.code)}"><div class="bth">${pPhoto(i.p)?`<img src="${esc(pPhoto(i.p))}" alt="">`:emo(i.p.cat)}</div><span>${esc(i.p.name)}${i.p.avail<1?' <small>· unavailable today</small>':''}</span><small>${fmt(i.qty)} ${uN(i.p,i.qty)} · ${peso(priceOf(i.p))}/${uOf(i.p)}</small></div>`).join('')}</div>
+      ${isBulk()?'':out?'<button class="pd-add" disabled>Some items are unavailable today</button>':`<button class="pd-add" data-badd="${esc(b.id)}">🛒 ${cart['b:'+b.id]?'Add another · ':'Add all to cart · '}${peso(b.total)}</button>${cart['b:'+b.id]?`<div class="pd-note g">✓ ${cart['b:'+b.id]} in your cart</div>`:''}`}
+      <div class="row-end" style="justify-content:flex-start;margin-top:10px;gap:8px"><button class="btn sec sm" data-v="cart">View cart →</button><button class="btn sec sm" data-pshare="b:${esc(b.id)}">🔗 Share</button></div>
+      ${desc.length?`<div class="pd-about"><div class="pd-lab">About this pack</div>${desc.map(x=>`<p>${esc(x)}</p>`).join('')}</div>`:''}</div></div>`}
 function rItem(){const p=prod(pv),u=uOf(p),out=p.avail<1,max=Math.max(0,Math.floor(p.avail)),pr=priceOf(p),ph=pPhoto(p),b=pBase(p.name);
   if(!out&&pq>max)pq=max;if(pq<1)pq=1;
   const V=info.products.filter(x=>x.cat===p.cat&&pBase(x.name)===b),desc=String(((info.set||{}).desc||{})[p.code]||'').split(/\n+/).map(x=>x.trim()).filter(Boolean);
@@ -662,7 +740,7 @@ function rCart(){
   const area=$('#c-area')?$('#c-area').value:(me&&me.area)||'',fee=feeOf(area),s=info.set||{};
   const keep={addr:$('#c-addr')?$('#c-addr').value:(me&&me.address)||'',ref:$('#c-ref')?$('#c-ref').value:'',note:$('#c-note')?$('#c-note').value:''};
   $('#view').innerHTML=`<div class="card gold"><h2>🧺 Checkout</h2><p class="lead">3 quick steps: check your items → delivery → payment.</p><div class="stepno">1 · Your items</div>
-    ${L.map(l=>`<div class="line"><div><b>${esc(l.p.name)}</b><br><span class="muted">${peso(priceOf(l.p))} / ${l.p.unit==='Kg'?'kg':l.p.unit.toLowerCase()} </span></div>
+    ${L.map(l=>`<div class="line"><div><b>${l.p.bundle?'🧺 ':''}${esc(l.p.name)}</b><br><span class="muted">${peso(priceOf(l.p))} / ${l.p.unit==='Kg'?'kg':l.p.unit.toLowerCase()} </span>${l.p.bundle?`<br><span class="muted" style="font-size:12.5px">${l.p.bundle.it.map(i=>esc(i.p.name)+' '+fmt(i.qty)+' '+uN(i.p,i.qty)).join(' · ')}</span>${l.p.bundle.save?`<br><b style="color:var(--green);font-size:13px">You save ${peso(l.p.bundle.save*l.qty)}</b>`:''}`:''}</div>
       <div class="step"><button data-dec="${esc(l.p.code)}">−</button><input data-qty="${esc(l.p.code)}" type="number" inputmode="numeric" step="1" value="${l.qty}"><button data-inc="${esc(l.p.code)}">+</button></div>
       <div class="r2"><b>${peso(l.amt)}</b><button class="x" data-rm="${esc(l.p.code)}">✕</button></div></div>`).join('')}
     ${isWs()?'':(()=>{const k=cartKg(),f=freeKg();if(!f)return'';const pct=Math.min(100,k/f*100);
@@ -1104,6 +1182,7 @@ document.addEventListener('click',async e=>{
   if(d.pvar){const bk=history.state&&history.state.back;openItem(d.pvar,true);try{history.replaceState({pv:d.pvar,back:bk},'',location.href)}catch(er){}return}
   if(d.pq){pq=+d.pq;rItem();return}
   if(d.pstep){pq=Math.max(1,pq+(+d.pstep));rItem();return}
+  if(d.badd){bunAdd(d.badd,b);if(view==='shop')rShop();return}
   if(d.padd){const p=prod(d.padd);if(!p)return;const fr=(document.querySelector('.pd-img img')||document.querySelector('.pd-img')).getBoundingClientRect();setQty(p.code,pq);nav();cartBar();flyToCart(fr,emo(p.cat),p.code);toast('🛒 '+fmt(cart[p.code]||0)+' '+uN(p,cart[p.code]||0)+' '+p.name+' in your cart');rItem();return}
   if(d.pshare){const p=prod(d.pshare),url=location.origin+location.pathname+location.search+'#p='+encodeURIComponent(d.pshare),t=p?p.name+' — '+peso(p.retail)+'/'+uOf(p)+' at 3F Meatshop':'3F Meatshop';
     try{if(navigator.share){await navigator.share({title:t,text:t,url});return}}catch(er){if(er&&er.name==='AbortError')return}
