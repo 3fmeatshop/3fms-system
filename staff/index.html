@@ -1382,7 +1382,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 27 · 11:25 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 27 · 11:30 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -2634,7 +2634,7 @@ function onRow(o){
      <div class="ondet2">${ol.note?`<span>📝 ${esc(ol.note)}</span>`:''}${n?`<span>📵 No answer: ${(ol.calls||[]).map(c=>esc(c.by)+' '+time12(new Date(c.at))).join(', ')}</span>`:''}
       ${ol.verifiedBy?`<span>✓ Confirmed by <b>${esc(ol.verifiedBy)}</b> ${stamp(ol.verifiedAt)} · delivery ${day(o.delivery)}</span>`:''}${ol.cancelledBy?`<span>✕ Cancelled by ${esc(ol.cancelledBy)}${ol.why?' — '+esc(ol.why):''}</span>`:''}
       ${ol.proof?`<img data-ph="${esc(ol.proof)}" data-cap="Payment receipt ${esc(ol.no||'')}" alt="receipt" class="onproof">`:''}
-      ${pend||(ol.status==='confirmed'&&stage(o)==='prep'&&!o.items.some(i=>String(i.actual||'').trim()))?`<button class="btn sm" data-oncancel="${o.id}" style="color:var(--rose)">✕ Cancel order</button>`:''}</div></div>`:''}
+      ${pend||(ol.status==='confirmed'&&stage(o)==='prep'&&(!o.items.some(i=>String(i.actual||'').trim())||(me&&me.role==='manager')))?`<button class="btn sm" data-oncancel="${o.id}" style="color:var(--rose)">✕ Cancel order</button>`:''}</div></div>`:''}
   </div>`;
 }
 const CLC=[['late-prep','⏱ Late preparation'],['late-delivery','🚚 Late delivery'],['customer','🙅 Customer cancelled / not needed'],['other','Other']];
