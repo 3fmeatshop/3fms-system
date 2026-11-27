@@ -416,6 +416,13 @@ nav.bar .ls{display:none}
 .ctabs{display:flex;gap:4px 20px;flex-wrap:wrap;margin-top:12px;border-bottom:1px solid var(--line)}
 .ctabs button{background:none;border:0;padding:8px 2px;font:700 14px system-ui;color:var(--muted);cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-1px}
 .ctabs button:hover{color:var(--ink)}.ctabs button.on{color:var(--red);border-bottom-color:var(--red)}
+/* 📷 product photos: show the WHOLE photo, centred on white (no cut-off sides) — same on cards, bundles and the product page */
+.prod.hasph .pimg,.pd-img:has(img){background:#fff!important}
+.pimg img,.pd-img img{object-fit:contain!important;object-position:center!important;padding:4%;box-sizing:border-box;background:#fff}
+.bart img{object-fit:contain;background:#fff;padding:3%;box-sizing:border-box}
+.bthumbs img,.bth img{object-fit:contain;background:#fff}
+.trkf{display:flex;gap:8px;margin-top:10px}.trkf .in{flex:1;font:700 18px ui-monospace,Menlo,Consolas,monospace;letter-spacing:.06em;text-transform:uppercase}.trkf .btn{white-space:nowrap}
+.trkno{margin:12px auto 4px;max-width:340px;border:2px dashed var(--gold);border-radius:14px;padding:12px;background:var(--goldl)}.trkno small{display:block;font-weight:700;color:var(--muted)}.trkno b{display:block;font:800 24px ui-monospace,Menlo,Consolas,monospace;letter-spacing:.08em;color:var(--red);margin:4px 0 8px}
 /* 🧺 bundles */
 .bart{position:absolute;inset:0;display:grid;gap:3px;background:#fff}.bart img{width:100%;height:100%;object-fit:cover;display:block;min-height:0}
 .bart.n2{grid-template-columns:1fr 1fr}.bart.n3{grid-template-columns:1.3fr 1fr;grid-template-rows:1fr 1fr}.bart.n3>:first-child{grid-row:span 2}.bart.n4{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr}
@@ -546,7 +553,7 @@ let newsShown=null;const SEEN='shop3f_seen';let seen={};try{seen=JSON.parse(loca
 // what changed since the customer last looked (placed → confirmed → preparing → on the way → delivered / cancelled)
 function news(){if(!orders||!me)return[];const k=me.id;return orders.filter(o=>{const st=stOf(o);const was=(seen[k]||{})[o.id];return was!==undefined&&was!==st.t})}
 function markSeen(){if(!orders||!me)return;const m={};orders.forEach(o=>m[o.id]=stOf(o).t);seen[me.id]=m;try{localStorage.setItem(SEEN,JSON.stringify(seen))}catch(e){}}
-let pv=null,pq=1;try{const h=new URLSearchParams(location.hash.slice(1));if(h.get('p'))pv=h.get('p')}catch(e){}
+let pv=null,pq=1,TRK={code:'',o:null,err:'',busy:false};try{const h=new URLSearchParams(location.hash.slice(1));if(h.get('p'))pv=h.get('p');if(h.get('t'))TRK.code=h.get('t')}catch(e){}
 let info=null,me=null,token=null,view='shop',cat='All',q='',cart={},orders=null,openId=null,pay='cod',proofId='',busy=false;
 try{const s=JSON.parse(localStorage.getItem(SESS)||'null');if(s&&s.token){token=s.token;me=s.me}}catch(e){}
 try{cart=JSON.parse(localStorage.getItem('shop3f_cart')||'{}')||{}}catch(e){cart={}}
@@ -558,7 +565,7 @@ const stepOf=p=>1;   // whole numbers only (1 kg, 2 kg … / 1 pack, 2 packs …
 
 /* ---------------- screens ---------------- */
 function nav(){
-  const n=Object.values(cart).reduce((a,b)=>a+(b>0?1:0),0),act=orders?orders.filter(o=>!(o.delivered||(o.online&&o.online.status==='cancelled'))).length:0;
+  const n=Object.values(cart).reduce((a,b)=>a+(b>0?1:0),0),act=orders?orders.filter(o=>!(o.delivered||o.closed||(o.online&&o.online.status==='cancelled'))).length:0;
   const nw=news().length;
   const ready=ptsReady();
   const T=(ic,l,c,sl)=>`<i>${nIco(ic)}</i><span class="lf">${l}</span><span class="ls">${sl||l}</span>${c||''}`;
@@ -781,7 +788,7 @@ async function placeOrder(){
   if(pay!=='cod'&&!x.ref&&!x.proof){e.textContent='Type the reference no. of your transfer (or attach the receipt)';return}
   busy=true;$('#place').disabled=true;$('#place').textContent='Placing order…';
   try{const o=await api('shop_place',token,x);cart={};saveCart();proofId='';orders=null;
-    openM(`<div style="text-align:center"><div style="font-size:54px">✅</div><h2>Order placed!</h2><p class="lead">Order no. <b>${esc(o.online.no)}</b><br>Delivery on <b>${longDay(o.delivery)}</b></p>
+    openM(`<div style="text-align:center"><div style="font-size:54px">✅</div><h2>Order placed!</h2><p class="lead">Order no. <b>${esc(o.online.no)}</b><br>Delivery on <b>${longDay(o.delivery)}</b></p>${o.track?`<div class="trkno"><small>Your tracking number</small><b>${esc(o.track)}</b><button class="btn sec sm" data-trkcopy="${esc(o.track)}">📋 Copy</button><p class="muted" style="margin:6px 0 0;font-size:13px">Track anytime at <b>Track order</b> — no need to log in. Screenshot or save it.</p></div>`:''}
       <p>${o.online.pay==='cod'?'⏳ Our sales team will <b>call or text you to confirm</b> your order.':'⏳ Our sales team will check your payment and confirm your order.'}<br>We confirm orders the <b>next morning</b>, then prepare and deliver them the same day.</p><p class="muted">📞 Our rider will call or text you once your order is out for delivery.</p>
       <button class="btn wide" data-close data-v="orders">Track my order</button></div>`);
     loadInfo();loadOrders();}
@@ -821,6 +828,7 @@ function rInfo(){
 function stOf(o){
   const ol=o.online;
   if(ol&&ol.status==='cancelled')return{k:'x',t:'Cancelled',n:-1};
+  if(o.closed)return{k:'x',t:'✕ Closed by the shop',n:-1};
   if(o.delivered&&o.delivered.result)return{k:'x',t:o.delivered.result==='returned'?'↩️ Returned':'✕ Cancelled at delivery',n:0};
   if(o.delivered)return{k:'done',t:'✅ Delivered',n:5};
   if(o.dispatched)return{k:'way',t:'🚚 Out for delivery',n:4};
@@ -831,8 +839,16 @@ function stOf(o){
   if(o.prepStarted)return{k:'prep',t:'🔪 Preparing',n:3};
   return{k:'conf',t:ol?'Confirmed':'Order received',n:ol?2:1};
 }
+/* 📦 TRACK WITH A TRACKING NUMBER — no login needed (like SPX). Link: …/#t=W00012-7A3F */
+function trackBox(big){return `<div class="card${big?' gold':''} trk"><h2>📦 Track your order</h2><p class="lead">Type the tracking number from your order confirmation — no need to log in.</p>
+  <form class="trkf" onsubmit="return false"><input class="in" id="trk-in" placeholder="e.g. W00012-7A3F" value="${esc(TRK.code)}" autocomplete="off" autocapitalize="characters" spellcheck="false" enterkeyhint="search"><button class="btn" id="trk-go" ${TRK.busy?'disabled':''}>${TRK.busy?'Checking…':'Track'}</button></form>
+  ${TRK.err?`<div class="err">${esc(TRK.err)}</div>`:''}</div>${TRK.o?`<h3>Order ${esc(TRK.o.online?TRK.o.online.no:'')} <span class="muted" style="font-weight:600;font-size:14px">· tracking no. ${esc(TRK.o.track||TRK.code)}</span></h3>${orderCard(TRK.o)}`:''}`}
+async function trackGo(){const t=($('#trk-in')?$('#trk-in').value:TRK.code).replace(/\s/g,'').toUpperCase();if(!t)return;TRK={code:t,o:null,err:'',busy:true};rOrders();
+  try{const o=await api('shop_track',t);o.id='trk-'+o.id;openId=o.id;TRK.o=o;try{history.replaceState(null,'',location.pathname+location.search+'#t='+encodeURIComponent(t))}catch(e){}}catch(e){TRK.err=errMsg(e)}
+  TRK.busy=false;rOrders()}
+function wireTrack(){const b=$('#trk-go');if(b)b.onclick=trackGo;const i=$('#trk-in');if(i)i.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();trackGo()}}}
 function rOrders(){
-  if(!me){$('#view').innerHTML=`<div class="card gold"><h2>📦 Track your orders</h2><p class="lead">Log in to see your orders.</p><button class="btn" data-v="login">Log in</button></div>`;return}
+  if(!me){$('#view').innerHTML=trackBox(true)+(TRK.o?'':`<div class="card"><p class="lead" style="margin:0">Have an account? <b>Log in</b> to see all your orders.</p><button class="btn sec" data-v="login" style="margin-top:10px">Log in</button></div>`);wireTrack();return}
   if(!orders){$('#view').innerHTML='<div class="empty">Loading your orders…</div>';loadOrders();return}
   const bulk=isBulk();
   let head='';
@@ -841,18 +857,18 @@ function rOrders(){
     head=`<div class="card gold"><h2>📦 ${esc(me.name)} — order monitoring</h2><p class="lead">All your orders with 3F Meatshop: what was prepared, when it left and when it arrived. Updates every minute.</p>${me.tempPw?'<div class="rule">🔒 You are using the password given by 3F Meatshop. You can change it anytime in <b>Account</b>.</div>':''}
       <div class="kpis"><div class="kpi"><span>This month</span><b>${mo.length}</b><span>deliveries</span></div><div class="kpi"><span>Delivered</span><b>${mo.filter(o=>o.delivered&&!o.delivered.result).length}</b><span>this month</span></div>
       <div class="kpi"><span>Out for delivery</span><b>${orders.filter(o=>o.dispatched&&!o.delivered).length}</b><span>now</span></div><div class="kpi"><span>Kg delivered</span><b>${fmt(Math.round(kg*100)/100)}</b><span>this month</span></div></div></div>`}
-  const act=orders.filter(o=>!o.delivered&&!(o.online&&o.online.status==='cancelled')),done=orders.filter(o=>!act.includes(o));
+  const act=orders.filter(o=>!o.delivered&&!o.closed&&!(o.online&&o.online.status==='cancelled')),done=orders.filter(o=>!act.includes(o));
   const fresh=news();if(fresh.length)newsShown=[...new Set([...(newsShown||[]),...fresh.map(o=>o.id)])];const nw=orders.filter(o=>(newsShown||[]).includes(o.id));
   const notes=nw.length?`<div class="card" style="border-left:6px solid var(--gold);padding:14px 18px"><b style="color:var(--red)">🔔 Updates since your last visit</b>${nw.map(o=>{const st=stOf(o);return `<div style="padding:6px 0;border-top:1px solid var(--line);margin-top:6px">${o.online?'Order <b>'+esc(o.online.no)+'</b>':'Delivery <b>'+longDay(o.delivery)+'</b>'} is now <span class="pill p-${st.k}" style="padding:2px 9px">${st.t}</span>${st.k==='way'?' — '+(o.dispatched&&o.dispatched.rider?esc(o.dispatched.rider)+(o.dispatched.phone?' ('+esc(o.dispatched.phone)+')':'')+' will call or text you':'the rider will call or text you'):''}</div>`}).join('')}</div>`:'';
   markSeen();
   // spending summary (retail / wholesale)
-  let spend='';if(!bulk&&orders.length){const m=info?info.today.slice(0,7):new Date().toISOString().slice(0,7),mo=orders.filter(o=>o.online&&o.online.status!=='cancelled'&&o.delivery.slice(0,7)===m);
+  let spend='';if(!bulk&&orders.length){const m=info?info.today.slice(0,7):new Date().toISOString().slice(0,7),mo=orders.filter(o=>o.online&&o.online.status!=='cancelled'&&!o.closed&&o.delivery.slice(0,7)===m);
     const tot=mo.reduce((a,o)=>a+(o.online.total!=null?o.online.total:o.online.subtotal),0),all=orders.filter(o=>o.online&&o.delivered&&!o.delivered.result).length;
     spend=`<div class="kpis"><div class="kpi"><span>Orders this month</span><b>${mo.length}</b></div><div class="kpi"><span>Spent this month</span><b>${peso(tot)}</b></div><div class="kpi"><span>Delivered (all time)</span><b>${all}</b></div><div class="kpi"><span>Open now</span><b>${act.length}</b></div></div>`}
   const pban=bulk&&ptsReady()?`<div class="card" style="border-left:6px solid var(--gold);background:var(--goldl)"><b style="color:var(--red);font-size:17px">🎉 Your ${pts.claimable} points (${peso(pts.claimable)}) are ready to claim!</b><div style="margin-top:4px">Thank you for being a valued partner of 3F Meatshop.</div><button class="btn gold sm" data-v="points" style="margin-top:8px">⭐ Go to My points</button></div>`:'';
-  $('#view').innerHTML=head+pban+notes+spend+(orders.length?`${act.length?`<h3>Open orders</h3>${act.map(orderCard).join('')}`:''}${done.length?`<h3>Completed</h3>${done.slice(0,40).map(orderCard).join('')}`:''}`
+  $('#view').innerHTML=head+pban+notes+(bulk?'':trackBox(false))+spend+(orders.length?`${act.length?`<h3>Open orders</h3>${act.map(orderCard).join('')}`:''}${done.length?`<h3>Completed</h3>${done.slice(0,40).map(orderCard).join('')}`:''}`
     :`<div class="card"><h2>No orders yet</h2><p class="lead">${bulk?'Your orders will show here once the shop enters them.':'Your orders will show here.'}</p>${bulk?'':'<button class="btn" data-v="shop">Start shopping</button>'}</div>`);
-  fillPhotos();nav();
+  fillPhotos();nav();wireTrack();
 }
 function orderCard(o){
   const s=stOf(o),d=pISO(o.delivery),ol=o.online,isOpen=openId===o.id;
@@ -861,7 +877,7 @@ function orderCard(o){
     return `<div class="st${s.n>=n?' on':''}${s.n+1===n&&s.n>0?' now':''}"><i>${s.n>=n?'✓':n}</i><b>${t}</b></div>`}).join('');
   const it=o.items.map(i=>{const tg=i.status?`<span class="tag t-bad">${i.status}</span>`:i.short?`<span class="tag t-short">Short ${fmt(i.short.qty)} · ${{carry:'follows on '+(i.short.date?longDay(i.short.date):'next delivery'),later:'balance later today'+(i.short.time?' by '+i.short.time:''),forfeit:'not delivered'}[i.short.d]||''}</span>`:'';
     return `<tr><td><b>${esc(i.product)}</b>${i.late?' <span class="tag t-late">Late delivery</span>':''}<br>${tg}</td><td class="r">${fmt(i.qty)} ${esc(i.unit)}</td><td class="r">${i.prepared!=null?fmt(i.prepared)+' '+esc(i.unit):'<span class="muted">—</span>'}</td>${ol?`<td class="r">${peso(i.price)}</td>`:''}</tr>`}).join('');
-  const canCancel=ol&&ol.status!=='cancelled'&&!o.dispatched&&!o.prepStarted;
+  const canCancel=!o.tracked&&ol&&ol.status!=='cancelled'&&!o.dispatched&&!o.prepStarted;
   return `<div class="order${isOpen?' open':''}" id="o-${o.id}"><button class="head" data-open="${o.id}">
      <div class="cal ${s.k==='done'?'done':s.k==='x'?'x':''}"><small>${MON[d.getMonth()].toUpperCase()}</small><b>${d.getDate()}</b><span>${DOW[d.getDay()]}</span></div>
      <div class="who"><b>${ol?'Order '+esc(ol.no):'Delivery '+longDay(o.delivery)}${o.kind==='add'?' <span class="badge">Additional</span>':o.balance?' <span class="badge">Balance</span>':o.carry?' <span class="badge">Carry-over</span>':''}</b>
@@ -880,8 +896,9 @@ function orderCard(o){
        <div class="rule">📞 <b>The rider will call or text you</b> before arriving. Please keep your phone on${ol&&ol.pay==='cod'?' and prepare <b>'+sum+'</b> for cash on delivery':''}.</div>`}`:''}
      ${o.delivered&&o.delivered.result?`<p style="margin:4px 0 0;color:#B3191B"><b>${o.delivered.result==='returned'?'↩️ Returned':'✕ Cancelled'}</b> ${t12(o.delivered.at)}${o.delivered.why?' — reason: <b>'+esc(o.delivered.why)+'</b>':''}<br><span style="color:#555">Questions? Please call or text the shop${info&&info.set&&info.set.phone?' ('+esc(info.set.phone)+')':''}.</span></p>`:o.delivered?`<p style="margin:4px 0 0">✅ Delivered <b>${t12(o.delivered.at)}</b>${o.delivered.receiver?' · received by '+esc(o.delivered.receiver):''}</p>`:''}
      ${(o.dispatched&&o.dispatched.photo)||(o.delivered&&o.delivered.photo)?`<div class="photos">${o.dispatched&&o.dispatched.photo?`<figure><img data-ph="${esc(o.dispatched.photo)}" alt="Dispatch photo">Packed &amp; dispatched</figure>`:''}${o.delivered&&o.delivered.photo?`<figure><img data-ph="${esc(o.delivered.photo)}" alt="Delivery photo">Delivered</figure>`:''}</div>`:''}
+     ${o.closed&&!(ol&&ol.status==='cancelled')?`<p class="tag t-bad" style="margin-top:10px">This order was closed by the shop${o.closed.why?' — '+esc(o.closed.why):''}. It will not be delivered. Questions? Message us anytime.</p>`:''}
      ${ol&&ol.status==='cancelled'?`<p class="tag t-bad" style="margin-top:10px">Cancelled${ol.cancelledBy?' by '+esc(ol.cancelledBy==='Customer'?'you':'the shop'):''}${ol.why?' — '+esc(ol.why):''}</p>`:''}
-     <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">${ol&&!isBulk()?`<button class="btn sm" data-again="${o.id}">🔁 Order these again</button>`:''}${canCancel?`<button class="btn danger sm" data-cancel="${o.id}">Cancel this order</button>`:''}</div>
+     <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">${o.track&&!o.tracked?`<button class="btn sec sm" data-trkcopy="${esc(o.track)}">📋 Copy tracking no. ${esc(o.track)}</button>`:''}${ol&&!isBulk()&&!o.tracked?`<button class="btn sm" data-again="${o.id}">🔁 Order these again</button>`:''}${canCancel?`<button class="btn danger sm" data-cancel="${o.id}">Cancel this order</button>`:''}</div>
    </div></div>`;
 }
 const pcache={};
@@ -1209,6 +1226,7 @@ document.addEventListener('click',async e=>{
     o.items.forEach(i=>{const p=info.products.find(x=>x.name===i.product);if(!p||p.avail<=0){miss.push(i.product);return}const q=Math.min(+i.qty||0,p.avail);if(q>0){cart[p.code]=q;added++}if(q<i.qty)miss.push(i.product+' (not enough today)')});
     saveCart();view='cart';render();scrollTo(0,0);toast(added?'Added '+added+' item(s) to your cart'+(miss.length?' · not available: '+miss.join(', '):''):'Those items are not available right now');return}
   if(d.open){openId=openId===d.open?null:d.open;rOrders();return}
+  if(d.trkcopy){const t=d.trkcopy,url=location.origin+location.pathname+'#t='+encodeURIComponent(t);try{await navigator.clipboard.writeText(t+' — track: '+url);toast('📋 Tracking no. '+t+' copied')}catch(er){prompt('Your tracking number:',t)}return}
   if(d.cancel){openM(`<h2>Cancel this order?</h2><p class="lead">The items go back to the shop's stock.</p><div style="display:flex;gap:10px;justify-content:flex-end"><button class="btn sec" data-close>Keep order</button><button class="btn danger" id="cx" data-id="${esc(d.cancel)}">Yes, cancel</button></div>`);return}
   if(b.id==='cx'){try{await api('shop_cancel',token,b.dataset.id);$('#m').classList.remove('on');toast('Order cancelled');orders=null;loadOrders();loadInfo()}catch(er){$('#m').classList.remove('on');toast(errMsg(er))}return}
 });
@@ -1217,6 +1235,7 @@ $('#acct').onclick=()=>{view=me?'acct':'login';render()};
 $('#cbgo').onclick=()=>{view='cart';render();scrollTo(0,0)};
 function setLogos(){const l=window.LOGO_ICON,f=window.LOGO_FULL;if(l)$('#logo').style.backgroundImage=`url(${l})`;const b=$('#biglogo');if(b&&f)b.style.backgroundImage=`url(${f})`}
 setLogos();render();loadInfo();if(token)loadOrders();gReturn();
+if(TRK.code){view='orders';render();trackGo()}
 /* 🔍 search in the header (like Shopee): works from any page */
 (function(){const hq=$('#hq'),hx=$('#hqx'),go=()=>{const g=document.querySelector('#view .grid,#view .empty');if(g)g.scrollIntoView({behavior:RM?'auto':'smooth',block:'start'})};
   hq.oninput=()=>{q=hq.value;hx.hidden=!q;if(pv||view!=='shop'){pv=null;try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}view='shop';render();scrollTo(0,0)}else{rShop();if(q)scrollTo(0,0)}};

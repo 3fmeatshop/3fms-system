@@ -1382,7 +1382,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 27 · 11:30 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 27 · 11:45 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -2575,11 +2575,11 @@ async function sbDialog(){const box=stBox();$('#stb').innerHTML='<h2>🌐 Online
 let onQD='',onQL=null;
 function onQueueHTML(list){const td=iso(new Date()),tm=(()=>{const d=new Date();d.setDate(d.getDate()+1);return iso(d)})();
   if(!onQD){onQD=list.some(o=>o.online.status==='confirmed'&&o.online.released===false&&o.delivery===td)?td:tm}
-  const L0=list.filter(o=>o.online.status==='confirmed'&&o.delivery===onQD&&!o.dispatched).sort((a,b)=>(a.online.queue||999)-(b.online.queue||999));
+  const L0=list.filter(o=>o.online.status==='confirmed'&&o.delivery===onQD&&stage(o)==='prep').sort((a,b)=>(a.online.queue||999)-(b.online.queue||999));
   if(!onQL||onQL.d!==onQD||onQL.ids.length!==L0.length||!L0.every(o=>onQL.ids.includes(o.id)))onQL={d:onQD,ids:L0.map(o=>o.id)};
   const L=onQL.ids.map(id=>L0.find(o=>o.id===id)).filter(Boolean),waiting=L.filter(o=>o.online.released===false).length,mgr=!!(me&&me.role==='manager');
   const dayBtn=(d,t)=>`<button class="btn sm" data-onqd="${d}" style="${onQD===d?'background:#8E1B22;color:#fff;border-color:#8E1B22':''}">${onQD===d?'● ':''}${t} · ${day(d)}</button>`;
-  const old=[...new Set(list.filter(o=>o.online.status==='confirmed'&&o.online.released===false&&!o.dispatched&&o.delivery&&o.delivery<td).map(o=>o.delivery))].sort();   // delivery day already passed, never sent to preparation
+  const old=[...new Set(list.filter(o=>o.online.status==='confirmed'&&o.online.released===false&&stage(o)==='prep'&&o.delivery&&o.delivery<td).map(o=>o.delivery))].sort();   // delivery day already passed, never sent to preparation
   return `<div class="panel"><div class="poh"><h3 style="margin:0">🔢 Online queue</h3><span style="flex:1"></span>${old.map(d=>`<button class="btn sm" data-onqd="${d}" style="${onQD===d?'background:#B3261E;color:#fff;border-color:#B3261E':'color:#B3261E;border-color:#F3B1AC;background:#FDECEC'}">⚠ Overdue · ${day(d)}</button>`).join('')}${dayBtn(td,'Today')}${dayBtn(tm,'Tomorrow')}</div>
    ${onQD<td&&L0.length?`<div class="snote" style="background:#FDECEC;border-color:#F3B1AC;color:#8E1B22;margin-bottom:8px">⚠ The delivery day (${day(onQD)}) has passed and ${L0.length===1?'this order was':'these orders were'} never sent to preparation. Deliver it: tap <b>Proceed</b>. Not delivering: open it in <b>All</b> and cancel it, so the customer is told.</div>`:''}
    <div class="unit" style="margin:6px 0 10px">Arrange who is prepared first (▲ ▼), then tap <b>Proceed</b>. Until then the customer sees <b>Confirmed</b>; after Proceed they see <b>🔪 Preparing</b>.</div>
@@ -2590,7 +2590,7 @@ function onQueueHTML(list){const td=iso(new Date()),tm=(()=>{const d=new Date();
 function onlineHTML(list){
   const admin=can('admin')?'<div class="onadmin"><button class="btn sm" id="feesbtn">🚚 Delivery fees</button><button class="btn sm" id="bulkbtn2">🏢 Bulk buyer accounts</button><button class="btn sm" id="sbbtn">🌐 Online shop sync</button></div>':'';
   const G=onlineGroups(list),tmr=(()=>{const d=new Date();d.setDate(d.getDate()+1);return iso(d)})();
-  const F=[['todo','⏳','To confirm',G.todo.length,'hot'],['cod','📞','COD · call',G.cod.length,''],['pay','🏦','Check payment',G.pay.length,''],['noans','📵','No answer',G.noans.length,'warn'],['tmr','🕑','Placed today · deliver tmrw',G.tmr.length,'mute'],['queue','🔢','Queue · set & proceed',list.filter(o=>o.online.status==='confirmed'&&o.online.released===false&&!o.dispatched).length,list.some(o=>o.online.status==='confirmed'&&o.online.released===false&&!o.dispatched)?'hot':'mute'],['done','✅','Confirmed today',G.done.length,'ok'],['all','📋','All',null,'mute']];
+  const F=[['todo','⏳','To confirm',G.todo.length,'hot'],['cod','📞','COD · call',G.cod.length,''],['pay','🏦','Check payment',G.pay.length,''],['noans','📵','No answer',G.noans.length,'warn'],['tmr','🕑','Placed today · deliver tmrw',G.tmr.length,'mute'],['queue','🔢','Queue · set & proceed',list.filter(o=>o.online.status==='confirmed'&&o.online.released===false&&stage(o)==='prep').length,list.some(o=>o.online.status==='confirmed'&&o.online.released===false&&stage(o)==='prep')?'hot':'mute'],['done','✅','Confirmed today',G.done.length,'ok'],['all','📋','All',null,'mute']];
   if(!F.some(f=>f[0]===onF))onF='todo';
   if(onF==='queue')return `${admin}<div class="onkpi">${F.map(([k,ic,l,n,c])=>`<button class="kp ${c}${onF===k?' on':''}" data-onf="${k}"><i>${ic}</i><b>${n==null?'':n}</b><span>${l}</span></button>`).join('')}</div>${onQueueHTML(list)}`;
   const q=onQ.trim().toLowerCase();
@@ -2613,7 +2613,7 @@ function wireOnline(onl){
 function onRow(o){
   const ol=o.online,pend=ol.status==='pending',early=false,today0=pend&&placedToday(o),open=onOpen.has(o.id),n=tries(ol),tel=telOf(ol.phone);
   const st=pend?(today0&&!n?'<span class="pill" style="background:#E8F0FE;color:#1A56B0">📅 Placed today · deliver tomorrow</span>':n?`<span class="pill p-appr">📵 ${n} tr${n>1?'ies':'y'}</span>`:`<span class="pill p-appr">${ol.pay==='cod'?'📞 To call':'🏦 Check payment'}</span>`)
-    :ol.status==='confirmed'?(ol.released===false&&!o.dispatched?`<span class="pill" style="background:#FFF3D6;color:#8A5A00">✓ Queue #${ol.queue||'–'} · waiting for Proceed</span>`:`<span class="pill p-ready">✓ Queue #${ol.queue||'–'}</span>`):'<span class="pill" style="background:#eee;color:#666">Cancelled</span>';
+    :ol.status==='confirmed'&&stage(o)==='closed'?`<span class="pill" style="background:#eee;color:#666">🔒 Closed${o.closed&&o.closed.causeTxt?' · '+esc(o.closed.causeTxt):''}</span>`:ol.status==='confirmed'&&stage(o)==='delivered'?`<span class="pill p-ready">✅ ${o.delivered.result==='returned'?'Returned':o.delivered.result==='cancelled'?'Cancelled at delivery':'Delivered'}</span>`:ol.status==='confirmed'&&stage(o)==='way'?'<span class="pill p-ready">🛵 On the way</span>':ol.status==='confirmed'?(ol.released===false&&stage(o)==='prep'?`<span class="pill" style="background:#FFF3D6;color:#8A5A00">✓ Queue #${ol.queue||'–'} · waiting for Proceed</span>`:`<span class="pill p-ready">✓ Queue #${ol.queue||'–'}</span>`):'<span class="pill" style="background:#eee;color:#666">Cancelled</span>';
   const ago=ol.placedAt?Math.floor((Date.now()-ol.placedAt)/36e5):0;
   return `<div class="onrow${open?' open':''}${onSel.has(o.id)?' sel':''}">
    <div class="onmain">
@@ -2634,7 +2634,7 @@ function onRow(o){
      <div class="ondet2">${ol.note?`<span>📝 ${esc(ol.note)}</span>`:''}${n?`<span>📵 No answer: ${(ol.calls||[]).map(c=>esc(c.by)+' '+time12(new Date(c.at))).join(', ')}</span>`:''}
       ${ol.verifiedBy?`<span>✓ Confirmed by <b>${esc(ol.verifiedBy)}</b> ${stamp(ol.verifiedAt)} · delivery ${day(o.delivery)}</span>`:''}${ol.cancelledBy?`<span>✕ Cancelled by ${esc(ol.cancelledBy)}${ol.why?' — '+esc(ol.why):''}</span>`:''}
       ${ol.proof?`<img data-ph="${esc(ol.proof)}" data-cap="Payment receipt ${esc(ol.no||'')}" alt="receipt" class="onproof">`:''}
-      ${pend||(ol.status==='confirmed'&&stage(o)==='prep'&&(!o.items.some(i=>String(i.actual||'').trim())||(me&&me.role==='manager')))?`<button class="btn sm" data-oncancel="${o.id}" style="color:var(--rose)">✕ Cancel order</button>`:''}</div></div>`:''}
+      ${pend||(ol.status==='confirmed'&&stage(o)==='prep'&&(!o.items.some(i=>String(i.actual||'').trim())||(me&&me.role==='manager')))?`<button class="btn sm" data-oncancel="${o.id}" style="color:var(--rose)">✕ Cancel order</button>`:ol.status==='confirmed'?`<span class="unit">✕ Cannot cancel — ${stage(o)==='closed'?'this order was already closed'+(o.closed&&o.closed.by?' by '+esc(o.closed.by):'')+(o.closed&&o.closed.at?' '+stamp(o.closed.at):'')+(o.closed&&o.closed.reason?' ('+esc(o.closed.reason)+')':''):stage(o)==='delivered'?'already delivered':stage(o)==='way'?'already dispatched':'weights entered — the Manager can cancel'}.</span>`:''}</div></div>`:''}
   </div>`;
 }
 const CLC=[['late-prep','⏱ Late preparation'],['late-delivery','🚚 Late delivery'],['customer','🙅 Customer cancelled / not needed'],['other','Other']];
