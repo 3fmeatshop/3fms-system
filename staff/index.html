@@ -1382,7 +1382,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 27 · 11:20 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 27 · 11:25 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -2579,7 +2579,9 @@ function onQueueHTML(list){const td=iso(new Date()),tm=(()=>{const d=new Date();
   if(!onQL||onQL.d!==onQD||onQL.ids.length!==L0.length||!L0.every(o=>onQL.ids.includes(o.id)))onQL={d:onQD,ids:L0.map(o=>o.id)};
   const L=onQL.ids.map(id=>L0.find(o=>o.id===id)).filter(Boolean),waiting=L.filter(o=>o.online.released===false).length,mgr=!!(me&&me.role==='manager');
   const dayBtn=(d,t)=>`<button class="btn sm" data-onqd="${d}" style="${onQD===d?'background:#8E1B22;color:#fff;border-color:#8E1B22':''}">${onQD===d?'● ':''}${t} · ${day(d)}</button>`;
-  return `<div class="panel"><div class="poh"><h3 style="margin:0">🔢 Online queue</h3><span style="flex:1"></span>${dayBtn(td,'Today')}${dayBtn(tm,'Tomorrow')}</div>
+  const old=[...new Set(list.filter(o=>o.online.status==='confirmed'&&o.online.released===false&&!o.dispatched&&o.delivery&&o.delivery<td).map(o=>o.delivery))].sort();   // delivery day already passed, never sent to preparation
+  return `<div class="panel"><div class="poh"><h3 style="margin:0">🔢 Online queue</h3><span style="flex:1"></span>${old.map(d=>`<button class="btn sm" data-onqd="${d}" style="${onQD===d?'background:#B3261E;color:#fff;border-color:#B3261E':'color:#B3261E;border-color:#F3B1AC;background:#FDECEC'}">⚠ Overdue · ${day(d)}</button>`).join('')}${dayBtn(td,'Today')}${dayBtn(tm,'Tomorrow')}</div>
+   ${onQD<td&&L0.length?`<div class="snote" style="background:#FDECEC;border-color:#F3B1AC;color:#8E1B22;margin-bottom:8px">⚠ The delivery day (${day(onQD)}) has passed and ${L0.length===1?'this order was':'these orders were'} never sent to preparation. Deliver it: tap <b>Proceed</b>. Not delivering: open it in <b>All</b> and cancel it, so the customer is told.</div>`:''}
    <div class="unit" style="margin:6px 0 10px">Arrange who is prepared first (▲ ▼), then tap <b>Proceed</b>. Until then the customer sees <b>Confirmed</b>; after Proceed they see <b>🔪 Preparing</b>.</div>
    ${L.length?L.map((o,i)=>{const ol=o.online,rel=ol.released!==false;return `<div class="oq-row${rel?' rel':''}"><b class="oq-n">#${i+1}</b><div style="flex:1;min-width:0"><b>${esc(o.customer)}</b> <small class="unit">${esc(ol.no||'')} · ${esc(ol.area||'')} · ${(o.items||[]).length} item(s) · ${peso(ol.total!=null?ol.total:ol.subtotal)}${ol.pay==='cod'?' · COD':''}</small><br><small class="unit">${rel?'▶ Sent to preparation'+(ol.releasedBy?' by '+esc(ol.releasedBy):''):'⏳ Waiting for Proceed'}</small></div>
      ${mgr?`<button class="btn sm" data-onqup="${i}" ${i?'':'disabled'}>▲</button><button class="btn sm" data-onqdn="${i}" ${i<L.length-1?'':'disabled'}>▼</button>`:''}</div>`}).join('')
