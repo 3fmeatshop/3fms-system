@@ -1382,7 +1382,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 27 · 9:15 PM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 27 · 8:50 PM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -5224,11 +5224,13 @@ async function bundlesDialog(){const box=stBox();$('#stb').innerHTML='<h2>🧺 S
   const P=ST.products||[],pc=c=>P.find(p=>p.code===c),base=b=>Math.round(b.items.reduce((a,i)=>{const p=pc(i.code);return a+(p?(+p.retail||0)*(+i.qty||0):0)},0)*100)/100,
     off=b=>{const B=base(b),v=+b.dv||0;return b.dt==='amt'?Math.min(B,v):Math.round(B*Math.min(v,99.99))/100},tot=b=>Math.round((base(b)-off(b))*100)/100;
   const list=()=>{$('#stb').innerHTML=`<h2>🧺 Shop bundles</h2><div class="unit">Ready-made packs on the online shop (like "Family Pack"). The customer taps <b>Add all to cart</b> and every item goes in the cart. The price is the total of the items' prices.</div>
-    ${L.length?L.map(b=>`<div class="posx-row"><span><b>${esc(b.name)}</b> ${b.on?'':'<small class="unit">(hidden)</small>'}<br><small class="unit">${esc(b.forWho||'')}${b.forWho?' · ':''}${b.items.length} item(s) · ${b.items.map(i=>{const p=pc(i.code);return esc(p?p.name:i.code)+' ×'+i.qty}).join(', ')}</small></span><b>${off(b)?`<s class="unit">${peso(base(b))}</s> `:''}${peso(tot(b))} <button class="btn sm" data-bned="${esc(b.id)}">Edit</button></b></div>`).join(''):'<div class="empty">No bundles yet.</div>'}
+    ${L.length?L.map(b=>`<div class="posx-row"><span><b>${esc(b.name)}</b> ${b.on?'':'<small class="unit">(hidden)</small>'}${offShop(b).length?' <small style="color:var(--rose);font-weight:700">⚠ '+offShop(b).length+' item(s) not on the shop</small>':''}<br><small class="unit">${esc(b.forWho||'')}${b.forWho?' · ':''}${b.items.length} item(s) · ${b.items.map(i=>{const p=pc(i.code);return esc(p?p.name:i.code)+' ×'+i.qty}).join(', ')}</small></span><b>${off(b)?`<s class="unit">${peso(base(b))}</s> `:''}${peso(tot(b))} <button class="btn sm" data-bned="${esc(b.id)}">Edit</button></b></div>`).join(''):'<div class="empty">No bundles yet.</div>'}
     <div class="row-end"><button class="btn" data-x>Close</button><button class="go" id="bn-new">＋ New bundle</button></div>`;
     $('#bn-new').onclick=()=>edit({name:'',forWho:'',desc:'',badge:'',on:true,dt:'pct',dv:0,items:[{code:'',qty:1}]});
     $('#stb').querySelectorAll('[data-bned]').forEach(x=>x.onclick=()=>edit(JSON.parse(JSON.stringify(L.find(b=>b.id===x.dataset.bned)))))};
-  const opts=c=>`<option value="">— choose product —</option>`+P.slice().sort((a,b)=>(a.cat||'').localeCompare(b.cat||'')||a.name.localeCompare(b.name)).map(p=>`<option value="${esc(p.code)}"${p.code===c?' selected':''}>${esc(p.name)} · ${esc(p.unit)} · ${peso(p.retail)}${p.on?'':' (not on shop)'}</option>`).join('');
+  /* only products shown on the online shop can go in a bundle (an item that was later hidden stays listed, marked) */
+  const opts=c=>`<option value="">— choose product —</option>`+P.filter(p=>p.on||p.code===c).sort((a,b)=>(a.cat||'').localeCompare(b.cat||'')||a.name.localeCompare(b.name)).map(p=>`<option value="${esc(p.code)}"${p.code===c?' selected':''}>${esc(p.name)} · ${esc(p.unit)} · ${peso(p.retail)}${p.on?'':' ⚠ not on the shop — left out'}</option>`).join('');
+  const offShop=b=>b.items.filter(i=>{const p=pc(i.code);return i.code&&(!p||!p.on)});
   const edit=b=>{const draw=()=>{$('#stb').innerHTML=`<h2>🧺 ${b.id?'Edit':'New'} bundle</h2>
       <div class="fgrid"><label class="full">Bundle name<input class="edit-in" id="bn-nm" maxlength="60" value="${esc(b.name)}" placeholder="e.g. Family Pork Pack"></label>
       <label>For who <small>(optional)</small><input class="edit-in" id="bn-fw" maxlength="40" value="${esc(b.forWho)}" placeholder="e.g. For 3–4 people"></label>
@@ -5236,7 +5238,8 @@ async function bundlesDialog(){const box=stBox();$('#stb').innerHTML='<h2>🧺 S
       <label class="full">Description <small>(optional · one idea per line)</small><textarea class="edit-in" id="bn-ds" rows="2" maxlength="1500" placeholder="Good for a week of family meals.">${esc(b.desc)}</textarea></label></div>
       <h3 style="margin:12px 0 6px">Items in the bundle</h3>
       ${b.items.map((i,k)=>`<div class="row-end" style="justify-content:flex-start;gap:8px;margin:6px 0"><select class="edit-in" data-bnc="${k}" style="flex:1;min-width:0">${opts(i.code)}</select><input class="edit-in" data-bnq="${k}" type="number" min="0" step="0.5" value="${i.qty}" style="width:90px"><span class="unit" style="width:60px">${esc((pc(i.code)||{}).unit||'')}</span><button class="btn sm" data-bnx="${k}" aria-label="Remove">✕</button></div>`).join('')}
-      <button class="btn sm" id="bn-add">＋ Add item</button>
+      <button class="btn sm" id="bn-add">＋ Add item</button> <small class="unit">Only products ticked in 🛒 Online shop products are listed.</small>
+      ${offShop(b).length?`<div class="snote" style="border-color:var(--rose)">⚠ <b>${offShop(b).map(i=>esc((pc(i.code)||{}).name||i.code)).join(', ')}</b> ${offShop(b).length>1?'are':'is'} not on the online shop, so customers won't get ${offShop(b).length>1?'them':'it'} in this bundle. Tick ${offShop(b).length>1?'them':'it'} in 🛒 Online shop products, or remove ${offShop(b).length>1?'them':'it'} here.</div>`:''}
       <h3 style="margin:14px 0 6px">Bundle discount</h3>
       <div class="row-end" style="justify-content:flex-start;gap:8px"><select class="edit-in" id="bn-dt" style="width:auto"><option value="pct"${b.dt!=='amt'?' selected':''}>Percent (%)</option><option value="amt"${b.dt==='amt'?' selected':''}>Amount (₱)</option></select>
         <input class="edit-in" id="bn-dv" type="number" min="0" step="${b.dt==='amt'?'1':'0.5'}" value="${+b.dv||''}" placeholder="${b.dt==='amt'?'e.g. 100':'e.g. 10'}" style="width:120px"><span class="unit">${b.dt==='amt'?'₱ off the bundle':'% off the bundle'} · 0 = no discount</span></div>
