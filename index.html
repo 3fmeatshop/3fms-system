@@ -148,6 +148,12 @@ a.btn{display:inline-block;text-decoration:none}
 .photos{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
 .photos figure{margin:0;font-size:12px;color:var(--muted);text-align:center}
 .photos img{display:block;width:120px;height:120px;object-fit:cover;border-radius:10px;border:1px solid var(--line);cursor:zoom-in;background:var(--soft)}
+.ptabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;background:#fff;border:1px solid var(--line);border-radius:12px;margin:0 0 12px;padding:0 6px;position:sticky;top:var(--hh,64px);z-index:5}
+.ptabs::-webkit-scrollbar{display:none}
+.ptabs button{flex:0 0 auto;border:0;background:none;padding:14px 12px 11px;font:600 15px/1.1 inherit;color:#444;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:6px}
+.ptabs button.on{color:var(--red);border-bottom-color:var(--red)}
+.ptabs button i{font-style:normal;background:var(--red);color:#fff;border-radius:10px;font-size:11px;padding:2px 6px;line-height:1}
+.pempty{text-align:center;padding:28px 16px;color:var(--muted,#777)}.pempty b{display:block;color:#333;margin-bottom:4px}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
 .kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
 .kpi span{display:block;font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
@@ -839,6 +845,19 @@ function stOf(o){
   if(o.prepStarted)return{k:'prep',t:'🔪 Preparing',n:3};
   return{k:'conf',t:ol?'Confirmed':'Order received',n:ol?2:1};
 }
+/* 🧾 MY PURCHASES tabs (like Shopee) — monitoring only: All · To confirm · Preparing · To receive · Completed · Returned · Cancelled */
+let PT='all';
+const isCx=o=>(o.online&&o.online.status==='cancelled')||!!o.closed||!!(o.delivered&&o.delivered.result==='cancelled');
+const isRet=o=>!!(o.delivered&&o.delivered.result==='returned')||(o.items||[]).some(i=>i.status==='Returned');
+const PTABS=[['all','All',o=>true],['tc','To confirm',o=>!isCx(o)&&stOf(o).k==='pend'],['prep','Preparing',o=>!isCx(o)&&['conf','prep','ready'].includes(stOf(o).k)],
+  ['recv','To receive',o=>!isCx(o)&&stOf(o).k==='way'],['done','Completed',o=>!isCx(o)&&stOf(o).k==='done'],['ret','Returned',isRet],['cx','Cancelled',o=>isCx(o)&&!isRet(o)]];
+function purTabs(act,done,bulk){setTimeout(()=>{const h=document.querySelector('header');if(h)document.documentElement.style.setProperty('--hh',h.offsetHeight+'px')},0);const T=PTABS.filter(t=>!(bulk&&t[0]==='tc'));if(!T.some(t=>t[0]===PT))PT='all';
+  const by=(a,b)=>String(b.delivery||'').localeCompare(String(a.delivery||''))||((b.online&&b.online.placedAt)||b.createdAt||0)-((a.online&&a.online.placedAt)||a.createdAt||0);
+  const cur=T.find(t=>t[0]===PT),L=PT==='all'?act.concat(done.slice().sort(by)).slice(0,60):orders.filter(cur[2]).sort(by).slice(0,60);
+  return `<h3 id="ptop">My purchases</h3><div class="ptabs" role="tablist">${T.map(([k,t,f])=>{const n=k==='all'?0:orders.filter(f).length;
+    return `<button role="tab" aria-selected="${PT===k}" class="${PT===k?'on':''}" data-pt="${k}">${t}${n&&['tc','prep','recv'].includes(k)?`<i>${n}</i>`:''}</button>`}).join('')}</div>
+    ${L.length?L.map(orderCard).join(''):`<div class="card pempty"><b>No orders here</b><span>${PT==='recv'?'Orders on the way to you show here.':PT==='done'?'Delivered orders show here.':PT==='ret'?'Items returned at delivery show here.':PT==='cx'?'Cancelled orders show here.':PT==='prep'?'Confirmed orders being prepared show here.':'New orders waiting for our call / payment check show here.'}</span></div>`}`}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-pt]');if(!b)return;PT=b.dataset.pt;rOrders();const t=document.getElementById('ptop');if(t&&t.getBoundingClientRect().top<70)t.scrollIntoView({block:'start'});const on=document.querySelector('.ptabs .on');if(on)on.scrollIntoView({block:'nearest',inline:'center'})});
 /* 📦 TRACK WITH A TRACKING NUMBER — no login needed (like SPX). Link: …/#t=W00012-7A3F */
 function trackBox(big){return `<div class="card${big?' gold':''} trk"><h2>📦 Track your order</h2><p class="lead">Type the tracking number from your order confirmation — no need to log in.</p>
   <form class="trkf" onsubmit="return false"><input class="in" id="trk-in" placeholder="e.g. W00012-7A3F" value="${esc(TRK.code)}" autocomplete="off" autocapitalize="characters" spellcheck="false" enterkeyhint="search"><button class="btn" id="trk-go" ${TRK.busy?'disabled':''}>${TRK.busy?'Checking…':'Track'}</button></form>
@@ -866,7 +885,7 @@ function rOrders(){
     const tot=mo.reduce((a,o)=>a+(o.online.total!=null?o.online.total:o.online.subtotal),0),all=orders.filter(o=>o.online&&o.delivered&&!o.delivered.result).length;
     spend=`<div class="kpis"><div class="kpi"><span>Orders this month</span><b>${mo.length}</b></div><div class="kpi"><span>Spent this month</span><b>${peso(tot)}</b></div><div class="kpi"><span>Delivered (all time)</span><b>${all}</b></div><div class="kpi"><span>Open now</span><b>${act.length}</b></div></div>`}
   const pban=bulk&&ptsReady()?`<div class="card" style="border-left:6px solid var(--gold);background:var(--goldl)"><b style="color:var(--red);font-size:17px">🎉 Your ${pts.claimable} points (${peso(pts.claimable)}) are ready to claim!</b><div style="margin-top:4px">Thank you for being a valued partner of 3F Meatshop.</div><button class="btn gold sm" data-v="points" style="margin-top:8px">⭐ Go to My points</button></div>`:'';
-  $('#view').innerHTML=head+pban+notes+(bulk?'':trackBox(false))+spend+(orders.length?`${act.length?`<h3>Open orders</h3>${act.map(orderCard).join('')}`:''}${done.length?`<h3>Completed</h3>${done.slice(0,40).map(orderCard).join('')}`:''}`
+  $('#view').innerHTML=head+pban+notes+(bulk?'':trackBox(false))+spend+(orders.length?purTabs(act,done,bulk)
     :`<div class="card"><h2>No orders yet</h2><p class="lead">${bulk?'Your orders will show here once the shop enters them.':'Your orders will show here.'}</p>${bulk?'':'<button class="btn" data-v="shop">Start shopping</button>'}</div>`);
   fillPhotos();nav();wireTrack();
 }
@@ -877,7 +896,7 @@ function orderCard(o){
     return `<div class="st${s.n>=n?' on':''}${s.n+1===n&&s.n>0?' now':''}"><i>${s.n>=n?'✓':n}</i><b>${t}</b></div>`}).join('');
   const it=o.items.map(i=>{const tg=i.status?`<span class="tag t-bad">${i.status}</span>`:i.short?`<span class="tag t-short">Short ${fmt(i.short.qty)} · ${{carry:'follows on '+(i.short.date?longDay(i.short.date):'next delivery'),later:'balance later today'+(i.short.time?' by '+i.short.time:''),forfeit:'not delivered'}[i.short.d]||''}</span>`:'';
     return `<tr><td><b>${esc(i.product)}</b>${i.late?' <span class="tag t-late">Late delivery</span>':''}<br>${tg}</td><td class="r">${fmt(i.qty)} ${esc(i.unit)}</td><td class="r">${i.prepared!=null?fmt(i.prepared)+' '+esc(i.unit):'<span class="muted">—</span>'}</td>${ol?`<td class="r">${peso(i.price)}</td>`:''}</tr>`}).join('');
-  const canCancel=!o.tracked&&ol&&ol.status!=='cancelled'&&!o.dispatched&&!o.prepStarted;
+  const canCancel=!o.tracked&&ol&&ol.status!=='cancelled'&&!o.closed&&!o.dispatched&&!o.prepStarted;
   return `<div class="order${isOpen?' open':''}" id="o-${o.id}"><button class="head" data-open="${o.id}">
      <div class="cal ${s.k==='done'?'done':s.k==='x'?'x':''}"><small>${MON[d.getMonth()].toUpperCase()}</small><b>${d.getDate()}</b><span>${DOW[d.getDay()]}</span></div>
      <div class="who"><b>${ol?'Order '+esc(ol.no):'Delivery '+longDay(o.delivery)}${o.kind==='add'?' <span class="badge">Additional</span>':o.balance?' <span class="badge">Balance</span>':o.carry?' <span class="badge">Carry-over</span>':''}</b>
