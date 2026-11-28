@@ -151,6 +151,29 @@ nav.bar button i{font-style:normal;margin-right:4px}
 .oinfo{margin-top:10px;background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:2px 12px;font-size:14px;line-height:1.4}
 .oinfo>div{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}.oinfo>div:last-child{border:0}.oinfo b{font-size:12.5px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px}
 .lnk{border:0;background:none;color:var(--red);font-weight:700;padding:0 4px;text-decoration:underline;font-size:13.5px}
+.cxw{display:flex;flex-direction:column;gap:2px}.cxw label{display:flex;gap:10px;align-items:center;padding:9px 10px;border:1px solid var(--line);border-radius:10px;cursor:pointer;font-size:15px}.cxw label:has(input:checked){border-color:var(--red);background:var(--rosel,#FDECEC)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.me-top{display:flex;align-items:center;gap:14px;margin:-18px -16px 14px;padding:20px 18px 26px;background:linear-gradient(115deg,var(--red) 0,var(--red2) 75%,var(--red3,#C2281E) 100%);color:#fff;border-radius:0 0 18px 18px}
+.me-av{width:58px;height:58px;border-radius:50%;background:#fff;color:var(--red);display:grid;place-items:center;font:800 26px/1 var(--cond,inherit);border:3px solid var(--gold);flex:none}
+.me-nm b{display:block;font-size:20px;line-height:1.2}.me-nm small{opacity:.9;font-size:13.5px}
+.me-card{padding:14px 16px}
+.me-h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}.me-h b{font-size:17px}
+.me-h button{border:0;background:none;color:#555;font-size:14px;cursor:pointer;padding:6px 0;display:flex;align-items:center;gap:4px}.me-h button span{font-size:20px;line-height:1;color:#999}
+.me-ic{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.me-ic button{border:0;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:7px;padding:10px 2px;color:#333;font-size:13.5px;border-radius:12px}
+.me-ic button:hover{background:var(--soft,#FBF3F2)}
+.me-ic .mi{position:relative;color:#333}.me-ic .mi i{position:absolute;top:-7px;right:-12px;background:var(--red);color:#fff;font-style:normal;font-size:11px;font-weight:700;min-width:19px;height:19px;border-radius:10px;display:grid;place-items:center;padding:0 5px;border:2px solid #fff}
+.me-card .kpis{margin:6px 0 0}
+@media (max-width:760px){.me-ic button{font-size:12.5px;white-space:nowrap}.me-ic button span:last-child{letter-spacing:-.1px}}
+.vt{display:flex;align-items:center;gap:14px;border:1px solid #F3C9C4;border-radius:12px;overflow:hidden;background:#FFF8F6;padding-right:12px}
+.vt-l{flex:none;width:92px;align-self:stretch;background:var(--red);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px 4px;position:relative;
+  -webkit-mask:radial-gradient(circle 7px at right 0 top 50%,transparent 98%,#000) ;mask:radial-gradient(circle 7px at right 0 top 50%,transparent 98%,#000)}
+.vt-l b{font-size:26px;line-height:1;font-weight:800}.vt-l span{font-size:12px;font-weight:700;letter-spacing:2px;margin-top:3px}
+.vt-r{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;padding:10px 0}.vt-r b{font-size:15px}.vt-r span{font-size:13px;color:#555}.vt-r small{font-size:12.5px;color:var(--red)}
+.vt.gone{filter:grayscale(1);opacity:.75}.vt.gone .vt-r small{color:#666}
+.vrow td,.vrow span{color:var(--red)!important;font-weight:600}.vrow.off td{color:#8A6A12!important;font-weight:400;background:#FFF6E0;font-size:13.5px}
+.phback{border:0;background:none;color:var(--red);font-weight:700;font-size:15px;padding:4px 0 10px;cursor:pointer}
+@media (min-width:761px){.me-top{margin:0 0 14px;border-radius:18px}}
 .nret{background:#FFF6E0;border-color:#F1D48A;color:#6B4E00;font-size:14px}
 .oact{display:flex;gap:8px;margin-top:14px}.oact .btn{flex:1;justify-content:center;text-align:center;white-space:nowrap;padding-left:8px;padding-right:8px}
 .who{flex:1;min-width:0}
@@ -184,6 +207,11 @@ a.btn{display:inline-block;text-decoration:none}
 .photos img{display:block;width:120px;height:120px;object-fit:cover;border-radius:10px;border:1px solid var(--line);cursor:zoom-in;background:var(--soft)}
 .ptabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;background:#fff;border:1px solid var(--line);border-radius:12px;margin:0 0 12px;padding:0 6px;position:sticky;top:var(--hh,64px);z-index:5}
 .ptabs::-webkit-scrollbar{display:none}
+.ptabs:after{content:"";flex:0 0 10px}   /* room after the last tab */
+.ptabs.more{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 44px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 44px),transparent)}
+.ptabs.less{-webkit-mask-image:linear-gradient(90deg,transparent,#000 44px);mask-image:linear-gradient(90deg,transparent,#000 44px)}
+.ptabs.more.less{-webkit-mask-image:linear-gradient(90deg,transparent,#000 44px,#000 calc(100% - 44px),transparent);mask-image:linear-gradient(90deg,transparent,#000 44px,#000 calc(100% - 44px),transparent)}
+@media (max-width:760px){.ptabs{border-radius:10px;padding:0 4px}.ptabs button{padding:13px 11px 10px;font-size:14.5px}}
 .ptabs button{flex:0 0 auto;border:0;background:none;padding:14px 12px 11px;font:600 15px/1.1 inherit;color:#444;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:6px}
 .ptabs button.on{color:var(--red);border-bottom-color:var(--red)}
 .ptabs button i{font-style:normal;background:var(--red);color:#fff;border-radius:10px;font-size:11px;padding:2px 6px;line-height:1}
@@ -807,16 +835,18 @@ function rCart(){
       <p class="muted" style="font-size:13px;margin:6px 0 0">Retail delivery fee depends on your barangay${area&&fee!==undefined?': <b>'+(fee==null?'to be confirmed by the shop':fee?peso(fee):'FREE')+'</b>':''}. Wholesale buyers get free delivery.</p>`}`:''}
     <div class="stepno">3 · Payment</div>
     <div class="pays">${[['cod','💵 Cash on delivery','Pay the rider'],['bank','🏦 Bank transfer','Send before delivery'],['ewallet','📱 GCash / Maya','E-wallet transfer']].map(([k,t,d])=>`<button data-pay="${k}" class="${pay===k?'on':''}"><b>${t}</b><small>${d}</small></button>`).join('')}</div>
-    ${pay==='bank'?`<div class="paybox">Send <b>${fee==null?peso(sub)+' + delivery fee':peso(sub+(fee||0))}</b> to:<br>🏦 <b>${esc(s.bank||'(bank — ask the shop)')}</b><br>Account name: <b>${esc(s.bankName||'—')}</b><br>Account no.: <b>${esc(s.bankNo||'—')}</b></div>`:''}
-    ${pay==='ewallet'?`<div class="paybox">Send <b>${fee==null?peso(sub)+' + delivery fee':peso(sub+(fee||0))}</b> to:<br>📱 <b>${esc(s.ewName||'(name — ask the shop)')}</b><br>Number: <b>${esc(s.ewNo||'—')}</b></div>`:''}
+    ${pay==='bank'?`<div class="paybox">Send <b>${(()=>{const s2=vchOn(sub)?Math.round((sub-VCH.amt)*100)/100:sub;return fee==null?peso(s2)+' + delivery fee':peso(s2+(fee||0))})()}</b> to:<br>🏦 <b>${esc(s.bank||'(bank — ask the shop)')}</b><br>Account name: <b>${esc(s.bankName||'—')}</b><br>Account no.: <b>${esc(s.bankNo||'—')}</b></div>`:''}
+    ${pay==='ewallet'?`<div class="paybox">Send <b>${(()=>{const s2=vchOn(sub)?Math.round((sub-VCH.amt)*100)/100:sub;return fee==null?peso(s2)+' + delivery fee':peso(s2+(fee||0))})()}</b> to:<br>📱 <b>${esc(s.ewName||'(name — ask the shop)')}</b><br>Number: <b>${esc(s.ewNo||'—')}</b></div>`:''}
     ${pay!=='cod'?`<label class="f">Reference no. of your transfer</label><input class="in" id="c-ref" value="${esc(keep.ref)}" placeholder="e.g. 1234 567 890">
       <label class="f">Receipt / screenshot (optional)</label><input type="file" id="c-proof" accept="image/*" class="in">${proofId?'<span class="tag t-ok">✓ Receipt attached</span>':''}
       <p class="muted" style="font-size:13px;margin:6px 0 0">The shop checks your payment, then confirms the order.</p>`:''}
     <label class="f">Note to the shop (optional)</label><input class="in" id="c-note" value="${esc(keep.note)}" placeholder="e.g. slice thin, call when near">
-    <table class="sum"><tr><td>Subtotal</td><td class="r">${peso(sub)}</td></tr>
+    ${me&&!VCH&&!isWs()&&!isBulk()?(loadVch(),''):''}<table class="sum"><tr><td>Subtotal</td><td class="r">${peso(sub)}</td></tr>
+      ${vchOn(sub)?`<tr class="vrow"><td>🎟 New customer voucher</td><td class="r">−${peso(VCH.amt)}</td></tr>`:me&&VCH&&VCH.ok&&!isWs()&&!isBulk()?`<tr class="vrow off"><td colspan="2">🎟 Add <b>${peso(Math.round((VCH.min-sub)*100)/100)}</b> more to use your ${peso(VCH.amt)} voucher (min. ${peso(VCH.min)})</td></tr>`:''}
       <tr><td>Delivery fee</td><td class="r">${isWs()?'FREE':isFree()?'<b style="color:var(--green)">FREE 🎉</b>':!me?'—':fee===undefined?'choose your barangay':fee==null?'to be confirmed by the shop':fee?peso(fee):'FREE'}</td></tr>
-      <tr class="tot"><td>Total</td><td class="r">${fee==null||fee===undefined?peso(sub)+(isWs()?'':' + fee'):peso(sub+fee)}</td></tr></table>
+      <tr class="tot"><td>Total</td><td class="r">${(()=>{const s2=vchOn(sub)?Math.round((sub-VCH.amt)*100)/100:sub;return fee==null||fee===undefined?peso(s2)+(isWs()?'':' + fee'):peso(s2+fee)})()}</td></tr></table>
     <div class="rule nret" style="margin-top:12px">⚠️ <b>No returns once received.</b> Please check your items when the rider arrives. Once the order is received and paid, items can no longer be returned.</div>
+    <p class="muted" style="font-size:13px;margin:8px 0 0">By placing an order you agree to the <a href="terms.html" target="_blank" rel="noopener">Terms &amp; Refund Policy</a>.</p>
     ${me?`<button class="btn wide" id="place" style="margin-top:14px">Place order · deliver ${DOW[pISO(info.delivery).getDay()]}, ${MON[pISO(info.delivery).getMonth()]} ${pISO(info.delivery).getDate()}</button>`:
       `<div class="rule">Log in or sign up to place your order.</div><button class="btn wide" data-v="login">Log in / Sign up</button>`}
     <div class="err" id="perr"></div></div>`;
@@ -832,7 +862,7 @@ async function placeOrder(){
   if(!isWs()&&!x.area){e.textContent='Choose your barangay';return}
   if(pay!=='cod'&&!x.ref&&!x.proof){e.textContent='Type the reference no. of your transfer (or attach the receipt)';return}
   busy=true;$('#place').disabled=true;$('#place').textContent='Placing order…';
-  try{const o=await api('shop_place',token,x);cart={};saveCart();proofId='';orders=null;
+  try{const o=await api('shop_place',token,x);cart={};saveCart();proofId='';orders=null;VCH=null;
     openM(`<div style="text-align:center"><div style="font-size:54px">✅</div><h2>Order placed!</h2><p class="lead">Order no. <b>${esc(o.online.no)}</b><br>Delivery on <b>${longDay(o.delivery)}</b></p>${o.track?`<div class="trkno"><small>Your tracking number</small><b>${esc(o.track)}</b><button class="btn sec sm" data-trkcopy="${esc(o.track)}">📋 Copy</button><p class="muted" style="margin:6px 0 0;font-size:13px">Track anytime at <b>Track order</b> — no need to log in. Screenshot or save it.</p></div>`:''}
       <p>${o.online.pay==='cod'?'⏳ Our sales team will <b>call or text you to confirm</b> your order.':'⏳ Our sales team will check your payment and confirm your order.'}<br>We confirm orders the <b>next morning</b>, then prepare and deliver them the same day.</p><p class="muted">📞 Our rider will call or text you once your order is out for delivery.</p>
       <button class="btn wide" data-close data-v="orders">Track my order</button></div>`);
@@ -866,6 +896,7 @@ function rInfo(){
     <p style="margin:6px 0">🏦 <b>Bank transfer</b> — ${s.bank?esc(s.bank)+' · '+esc(s.bankName)+' · <b>'+esc(s.bankNo)+'</b>':'details shown at checkout'}</p>
     <p style="margin:6px 0">📱 <b>GCash / Maya</b> — ${s.ewNo?esc(s.ewName)+' · <b>'+esc(s.ewNo)+'</b>':'details shown at checkout'}</p>
     <p class="muted" style="font-size:13.5px">Bank / e-wallet orders are confirmed once the shop sees your payment.</p></div>
+  <div class="card"><h2>📄 Terms &amp; Refund Policy</h2><p class="lead" style="margin:0">Ordering, delivery, payment, cancelling, returns and refunds. <a href="terms.html" target="_blank" rel="noopener"><b>Read the Terms &amp; Refund Policy</b></a></p></div>
   <div class="card"><h2>🔒 Your privacy</h2><p class="lead" style="margin:0">We only use your details to take, deliver and follow up your orders. <a href="#" data-priv><b>Read the Privacy Notice</b></a></p></div>
   <div class="card"><h2>🏢 Bulk buyers</h2><p class="lead" style="margin:0">Companies with a supply agreement (like KUI) send their orders to the shop directly and use this site to <b>monitor</b> them: what was prepared, when it left and when it arrived. Ask the shop for your login.</p></div>`;
 }
@@ -886,13 +917,29 @@ function stOf(o){
   return{k:'conf',t:ol?'Confirmed':'Order received',n:ol?2:1};
 }
 /* 🧾 MY PURCHASES tabs (like Shopee) — monitoring only: All · To confirm · Preparing · To receive · Completed · Returned · Cancelled */
-let PT='all';
+let PT='all',PH=true;   // PH: the "My purchases" home (like Shopee "Me") · false: the purchase history with tabs
+const MEI={pay:'<path d="M4 7h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4z"/><path d="M4 7V5.5A1.5 1.5 0 0 1 5.5 4H16v3"/><path d="M15 13.5h5"/>',
+  tc:'<rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9.5 4V3h5v1"/><path d="m9 13 2 2 4-4"/>',
+  prep:'<path d="M3 8.5 12 4l9 4.5v8L12 21l-9-4.5z"/><path d="m3 8.5 9 4.5 9-4.5M12 13v8"/><path d="m7.5 6.2 9 4.6"/>',
+  recv:'<path d="M2 6h11v10H2z"/><path d="M13 9h4.5L21 12.5V16h-8"/><circle cx="6" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/>'};
+function meHome(act,spend){const T=[['pay','To pay'],['tc','To confirm'],['prep','For dispatch'],['recv','To receive']];
+  const n=k=>orders.filter(PTABS.find(t=>t[0]===k)[2]).length;
+  return `<div class="me-top"><div class="me-av">${esc((me.name||'?').trim()[0]||'?').toUpperCase()}</div><div class="me-nm"><b>${esc(me.name)}</b><small>${{wholesale:'Wholesale',retail:'Retail'}[me.type]||'Customer'}${me.mobile?' · '+esc(me.mobile):''}</small></div></div>
+  <div class="card me-card"><div class="me-h"><b>My purchases</b><button data-ph="all">View purchase history <span>›</span></button></div>
+    <div class="me-ic">${T.map(([k,t])=>{const c=n(k);return `<button data-ph="${k}"><span class="mi"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${MEI[k]}</svg>${c?`<i>${c}</i>`:''}</span><span>${t}</span></button>`}).join('')}</div></div>
+  ${meVoucher()}`}
+function meVoucher(){if(!VCH||!VCH.retail)return '';const u=new Date(VCH.until-1),ud=MON[u.getMonth()]+' '+u.getDate();
+  const st=VCH.ok?`Valid until <b>${ud}</b> · applied by itself at checkout`:VCH.usedOn?`✓ Used on order <b>${esc(VCH.usedOn)}</b>`:VCH.used?'For the first order only':`Expired ${ud}`;
+  return `<div class="card me-card"><div class="me-h"><b>My voucher</b></div>
+    <div class="vt${VCH.ok?'':' gone'}"><div class="vt-l"><b>₱${VCH.amt}</b><span>OFF</span></div><div class="vt-r"><b>New customer voucher</b><span>First order · min. spend ₱${Number(VCH.min).toLocaleString()}</span><small>${st}</small></div>${VCH.ok?'<button class="btn sm" data-v="shop">Use now</button>':''}</div></div>`}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-ph],[data-phome]');if(!b)return;
+  if(b.hasAttribute('data-phome'))PH=true;else{PH=false;PT=b.dataset.ph}rOrders();scrollTo(0,0)});
 const isCx=o=>(o.online&&o.online.status==='cancelled')||!!o.closed||!!(o.delivered&&o.delivered.result==='cancelled');
 const isRet=o=>!!(o.delivered&&o.delivered.result==='returned')||(o.items||[]).some(i=>i.status==='Returned');
 const isPaidNow=o=>!!(o.online&&o.online.pay!=='cod');   // GCash / bank: paid at checkout, the shop checks the payment
 const PTABS=[['all','All',o=>true],['pay','To pay',o=>!isCx(o)&&stOf(o).k==='pend'&&isPaidNow(o)],['tc','To confirm',o=>!isCx(o)&&stOf(o).k==='pend'&&!isPaidNow(o)],['prep','For dispatch',o=>!isCx(o)&&['conf','prep','ready'].includes(stOf(o).k)],
   ['recv','To receive',o=>!isCx(o)&&stOf(o).k==='way'],['done','Completed',o=>!isCx(o)&&stOf(o).k==='done'],['ret','Returned',isRet],['cx','Cancelled',o=>isCx(o)&&!isRet(o)]];
-function purTabs(act,done,bulk){setTimeout(()=>{const h=document.querySelector('header');if(h)document.documentElement.style.setProperty('--hh',h.offsetHeight+'px')},0);const T=PTABS.filter(t=>!(bulk&&['tc','pay'].includes(t[0])));if(!T.some(t=>t[0]===PT))PT='all';
+function purTabs(act,done,bulk){setTimeout(()=>{const t=document.querySelector('.ptabs');if(t){const f=()=>{t.classList.toggle('more',t.scrollLeft+t.clientWidth<t.scrollWidth-4);t.classList.toggle('less',t.scrollLeft>4)};t.onscroll=f;f();setTimeout(f,350)}},0);setTimeout(()=>{const h=document.querySelector('header');if(h)document.documentElement.style.setProperty('--hh',h.offsetHeight+'px')},0);const T=PTABS.filter(t=>!(bulk&&['tc','pay'].includes(t[0])));if(!T.some(t=>t[0]===PT))PT='all';
   const by=(a,b)=>String(b.delivery||'').localeCompare(String(a.delivery||''))||((b.online&&b.online.placedAt)||b.createdAt||0)-((a.online&&a.online.placedAt)||a.createdAt||0);
   const cur=T.find(t=>t[0]===PT),L=PT==='all'?act.concat(done.slice().sort(by)).slice(0,60):orders.filter(cur[2]).sort(by).slice(0,60);
   return `<h3 id="ptop">My purchases</h3><div class="ptabs" role="tablist">${T.map(([k,t,f])=>{const n=k==='all'?0:orders.filter(f).length;
@@ -927,7 +974,8 @@ function rOrders(){
     const tot=mo.filter(o=>isPaidNow(o)?o.online.status==='confirmed'&&!isRet(o)&&!(o.delivered&&o.delivered.result):o.delivered&&!o.delivered.result).reduce((a,o)=>a+(o.online.total!=null?o.online.total:o.online.subtotal),0),all=orders.filter(o=>o.online&&o.delivered&&!o.delivered.result).length;
     spend=`<div class="kpis"><div class="kpi"><span>Orders this month</span><b>${mo.length}</b></div><div class="kpi"><span>Spent this month</span><b>${peso(tot)}</b><span>paid · COD once delivered</span></div><div class="kpi"><span>Delivered (all time)</span><b>${all}</b></div><div class="kpi"><span>Open now</span><b>${act.length}</b></div></div>`}
   const pban=bulk&&ptsReady()?`<div class="card" style="border-left:6px solid var(--gold);background:var(--goldl)"><b style="color:var(--red);font-size:17px">🎉 Your ${pts.claimable} points (${peso(pts.claimable)}) are ready to claim!</b><div style="margin-top:4px">Thank you for being a valued partner of 3F Meatshop.</div><button class="btn gold sm" data-v="points" style="margin-top:8px">⭐ Go to My points</button></div>`:'';
-  $('#view').innerHTML=head+pban+notes+(orders.length?purTabs(act,done,bulk)
+  if(!bulk&&PH){$('#view').innerHTML=meHome(act,spend)+notes+trackBox(false);fillPhotos();nav();wireTrack();return}
+  $('#view').innerHTML=head+pban+(bulk?notes:`<button class="phback" data-phome>‹ Back</button>`)+(orders.length?purTabs(act,done,bulk)
     :`<div class="card"><h2>No orders yet</h2><p class="lead">${bulk?'Your orders will show here once the shop enters them.':'Your orders will show here.'}</p>${bulk?'':'<button class="btn" data-v="shop">Start shopping</button>'}</div>`);
   fillPhotos();nav();wireTrack();
 }
@@ -967,7 +1015,7 @@ function orderCard(o){
      ${eta}</div>
    <div class="body">${s.n>0?`<div class="steps">${steps}</div>`:''}
      <div class="oil">${it}</div>
-     ${ol?`<div class="osum"><div><span>Merchandise subtotal</span><span>${peso(ol.subtotal)}</span></div><div><span>Delivery fee</span><span>${ol.type==='wholesale'||ol.freeDelivery?'FREE':ol.fee==null?'to be confirmed':ol.fee?peso(ol.fee):'FREE'}</span></div><div class="tot"><span>Order total</span><b>${sum}</b></div></div>
+     ${ol?`<div class="osum"><div><span>Merchandise subtotal</span><span>${peso(ol.goods!=null?ol.goods:ol.subtotal)}</span></div>${ol.voucher?`<div class="vrow"><span>🎟 New customer voucher</span><span>−${peso(ol.voucher.amt)}</span></div>`:''}<div><span>Delivery fee</span><span>${ol.type==='wholesale'||ol.freeDelivery?'FREE':ol.fee==null?'to be confirmed':ol.fee?peso(ol.fee):'FREE'}</span></div><div class="tot"><span>Order total</span><b>${sum}</b></div></div>
        ${ol.status==='pending'?`<div class="rule">${(ol.calls&&ol.calls.length)?'📞 <b>Call attempted</b> — please keep your phone on, or call / text the shop back'+(info&&info.set&&info.set.phone?' at '+esc(info.set.phone):'')+'.':ol.pay==='cod'?'📞 The shop will call or text to confirm this order.':'⏳ Waiting for the shop to confirm your payment.'}</div>`:''}
        <div class="oinfo"><div><span>📍</span><span><b>Delivery address</b><br>${esc(ol.address)}${ol.area&&ol.type!=='wholesale'?' · Brgy. '+esc(ol.area):''}</span></div>
          <div><span>💳</span><span><b>Payment</b><br>${{cod:'Cash on delivery',bank:'Bank transfer',ewallet:'GCash / Maya'}[ol.pay]||esc(ol.pay)}${ol.ref?' · ref '+esc(ol.ref):''}</span></div>
@@ -1118,7 +1166,7 @@ function privacyNotice(){const s=(info&&info.set)||{},ov=document.createElement(
    <p><b>How we protect it:</b> passwords are stored only as a one-way <b>hash</b> (bcrypt) — nobody, not even the shop, can see your password, access is limited to staff accounts, and the connection is encrypted (https).</p>
    <p><b>Your rights:</b> you may ask to see, correct or delete your data, or withdraw your consent (we then close your account, except records the law says we must keep). You may also complain to the National Privacy Commission (privacy.gov.ph).</p>
    <p><b>Contact:</b> 3F Meatshop${s.phone?' · 📞 '+esc(s.phone):''} — or message us on our Facebook page.</p>
-   <p style="font-size:13px"><a href="privacy.html" target="_blank">Open the full Privacy Notice page</a></p><button class="btn wide" type="button" id="pv-x">Close</button></div>`;
+   <p style="font-size:13px"><a href="privacy.html" target="_blank">Open the full Privacy Notice page</a> · <a href="terms.html" target="_blank">Terms &amp; Refund Policy</a></p><button class="btn wide" type="button" id="pv-x">Close</button></div>`;
   document.body.appendChild(ov);ov.querySelector('#pv-x').onclick=()=>ov.remove();ov.onclick=e=>{if(e.target===ov)ov.remove()}}
 document.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('[data-priv]');if(a){e.preventDefault();privacyNotice()}});
 // 🤖 Cloudflare Turnstile "I am human" check (on when TS_SITE is set in config.js) — stops bots from making fake accounts / using up the emails
@@ -1273,7 +1321,10 @@ function logout(){if(token)api('shop_logout',token).catch(()=>{});token=null;me=
 async function loadInfo(){try{info=await api('shop_info',KEY);for(const c of Object.keys(cart)){const p=prod(c);if(!p)delete cart[c];else if(cart[c]>p.avail){cart[c]=p.avail;if(!cart[c])delete cart[c]}}saveCart();if(['shop','cart','acct','login'].includes(view)&&!document.activeElement.matches('input,textarea,select'))render();else nav()}
   catch(e){if(/BADLINK/.test(errMsg(e))){document.body.innerHTML='<div style="font:18px system-ui;max-width:420px;margin:60px auto;text-align:center">🔒<h2>This link is not valid</h2><p>Please use the shop link from 3F Meatshop.</p></div>';return}
     $('#view').innerHTML=`<div class="empty">Can't reach the shop right now. Check your internet, then <a href="#" onclick="location.reload()">reload</a>.</div>`}}
-async function loadOrders(){if(!token)return;if(isBulk())loadPoints();loadCard();try{orders=await api('shop_orders',token);if(me&&!seen[me.id])markSeen();else if(me){const m=seen[me.id];orders.forEach(o=>{if(!(o.id in m))m[o.id]=stOf(o).t})}if(view==='orders'&&!document.querySelector('.modal.on')&&!(me&&me.mustChange))rOrders();nav()}catch(e){if(/AUTH/.test(errMsg(e))){logout();toast('Please log in again')}}}
+let VCH=null,vchBusy=false;   // 🎟 new customer voucher (₱50 off the first order)
+async function loadVch(){if(!token||isBulk()||vchBusy)return;vchBusy=true;try{VCH=await api('shop_voucher',token)}catch(e){VCH={retail:false,ok:false}}vchBusy=false;if(view==='cart')rCart();else if(view==='orders'&&PH&&orders&&!document.querySelector('.modal.on'))rOrders()}
+const vchOn=sub=>!!(me&&VCH&&VCH.ok&&!isWs()&&!isBulk()&&sub>=VCH.min);
+async function loadOrders(){if(!token)return;if(isBulk())loadPoints();loadCard();loadVch();try{orders=await api('shop_orders',token);if(me&&!seen[me.id])markSeen();else if(me){const m=seen[me.id];orders.forEach(o=>{if(!(o.id in m))m[o.id]=stOf(o).t})}if(view==='orders'&&!document.querySelector('.modal.on')&&!(me&&me.mustChange))rOrders();nav()}catch(e){if(/AUTH/.test(errMsg(e))){logout();toast('Please log in again')}}}
 if(token)api('shop_me',token).then(m=>{me=m;keepSess();nav()}).catch(e=>{if(/AUTH/.test(errMsg(e)))logout()});
 setInterval(()=>{if(document.hidden)return;if(token)loadOrders();if(view==='shop')loadInfo()},60000);
 
@@ -1297,7 +1348,7 @@ document.addEventListener('click',async e=>{
   if(d.bn){bnGo(bnI+(+d.bn));return}if(d.bnGo!==undefined){bnGo(+d.bnGo);return}
   if('qclr' in d){q='';$('#hq').value='';$('#hqx').hidden=true;rShop();scrollTo(0,0);return}
   if(d.v&&b.classList.contains('brand')&&q){q='';$('#hq').value='';$('#hqx').hidden=true}
-  if(d.v){if(d.v!=='orders')newsShown=null;if(pv){pv=null;try{history.replaceState(null,'',location.pathname+location.search)}catch(er){}}view=d.v;if(view==='orders'&&me){orders=orders||null;loadOrders()}render();scrollTo(0,0);return}
+  if(d.v){if(d.v!=='orders')newsShown=null;if(pv){pv=null;try{history.replaceState(null,'',location.pathname+location.search)}catch(er){}}view=d.v;if(view==='orders'){PH=true;if(me){orders=orders||null;loadOrders()}}render();scrollTo(0,0);return}
   if(d.cat!==undefined){cat=d.cat;rShop();const y=$('#prods');if(y&&y.getBoundingClientRect().top<80)y.scrollIntoView({block:'start'});return}
   if(d.lm){lmode=d.lm;rLogin();return}
   if(d.inc||d.dec){const c=d.inc||d.dec,p=prod(c),st=stepOf(p),inp=document.querySelector(`[data-qty="${CSS.escape(c)}"]`);let v=+(inp&&inp.value)||cart[c]||0;v=d.inc?v+st:v-st;
@@ -1313,8 +1364,15 @@ document.addEventListener('click',async e=>{
     saveCart();view='cart';render();scrollTo(0,0);toast(added?'Added '+added+' item(s) to your cart'+(miss.length?' · not available: '+miss.join(', '):''):'Those items are not available right now');return}
   if(d.open){openId=openId===d.open?null:d.open;rOrders();return}
   if(d.trkcopy){const t=d.trkcopy,url=location.origin+location.pathname+'#t='+encodeURIComponent(t);try{await navigator.clipboard.writeText(t+' — track: '+url);toast('📋 Tracking no. '+t+' copied')}catch(er){prompt('Your tracking number:',t)}return}
-  if(d.cancel){openM(`<h2>Cancel this order?</h2><p class="lead">The items go back to the shop's stock.</p><div style="display:flex;gap:10px;justify-content:flex-end"><button class="btn sec" data-close>Keep order</button><button class="btn danger" id="cx" data-id="${esc(d.cancel)}">Yes, cancel</button></div>`);return}
-  if(b.id==='cx'){try{await api('shop_cancel',token,b.dataset.id);$('#m').classList.remove('on');toast('Order cancelled');orders=null;loadOrders();loadInfo()}catch(er){$('#m').classList.remove('on');toast(errMsg(er))}return}
+  if(d.cancel){const W=['I changed my mind','I ordered the wrong item or quantity','I want a different delivery date','I found a better price elsewhere','Payment problem'];
+    openM(`<h2>Cancel this order?</h2><p class="lead" style="margin-bottom:8px">Reason for cancelling <small class="muted">(required)</small></p>
+    <div class="cxw">${W.map(w=>`<label><input type="radio" name="cxw" value="${esc(w)}"> ${esc(w)}</label>`).join('')}<label><input type="radio" name="cxw" value="other"> Other</label></div>
+    <input class="in" id="cx-o" maxlength="200" placeholder="Type the reason" style="display:none;margin-top:8px">
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px"><button class="btn sec" data-close>Keep order</button><button class="btn danger" id="cx" data-id="${esc(d.cancel)}" disabled>Yes, cancel</button></div>`);
+    const val=()=>{const r=document.querySelector('#m input[name=cxw]:checked');return !r?'':r.value==='other'?$('#cx-o').value.trim():r.value};
+    const chk=()=>{const r=document.querySelector('#m input[name=cxw]:checked');$('#cx-o').style.display=r&&r.value==='other'?'':'none';$('#cx').disabled=!val()};
+    document.querySelectorAll('#m input[name=cxw]').forEach(x=>x.onchange=()=>{chk();if(x.value==='other')$('#cx-o').focus()});$('#cx-o').oninput=chk;return}
+  if(b.id==='cx'){const r=document.querySelector('#m input[name=cxw]:checked'),why=!r?'':r.value==='other'?$('#cx-o').value.trim():r.value;if(!why)return;try{await api('shop_cancel',token,b.dataset.id,why);$('#m').classList.remove('on');toast('Order cancelled');orders=null;loadOrders();loadInfo()}catch(er){$('#m').classList.remove('on');toast(errMsg(er))}return}
 });
 document.addEventListener('change',e=>{const c=e.target.dataset&&e.target.dataset.qty;if(!c)return;const v=e.target.value;setTimeout(()=>{e={target:{value:v}};if(view==='cart'){setQty(c,e.target.value);rCart();nav();cartBar()}else if(cart[c]){setQty(c,e.target.value);rShop();nav();cartBar()}},0)});
 $('#acct').onclick=()=>{view=me?'acct':'login';render()};
