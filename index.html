@@ -126,6 +126,22 @@ nav.bar button i{font-style:normal;margin-right:4px}
 .p-pend{background:var(--abg);color:var(--amber)}.p-conf{background:var(--rosel);color:var(--red)}.p-prep{background:var(--abg);color:var(--amber)}
 .p-ready{background:var(--gbg);color:var(--green)}.p-way{background:var(--bbg);color:var(--blue)}.p-done{background:var(--gbg);color:var(--green)}.p-x{background:#fbe2df;color:#B3191B}
 .order .body{border-top:1px solid var(--line);padding:0 14px 14px;display:none}
+.order .head.shp{display:block;padding:12px 14px 0;cursor:pointer}
+.shp-top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.shp-top>b{color:var(--red);font-size:16px;min-width:0}
+.order .head.shp .pill{order:0;flex:0 0 auto;flex-basis:auto;margin:0;text-align:right;background:none!important;padding:0;font-size:14px}
+.shp-mid{display:flex;gap:12px;align-items:flex-start;padding:12px 0}
+.shp-ph{position:relative;flex:0 0 72px;width:72px;height:72px;border:1px solid var(--line);border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:34px;overflow:hidden}
+.shp-ph img{width:100%;height:100%;object-fit:contain}
+.shp-ph.gray img{filter:grayscale(1);opacity:.7}
+.shp-ph i{position:absolute;right:0;bottom:0;background:rgba(0,0,0,.6);color:#fff;font-style:normal;font-size:11px;font-weight:700;padding:2px 5px;border-top-left-radius:6px}
+.shp-it{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.shp-it b{font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#222}
+.shp-it span{color:#666;font-size:13.5px}.shp-it small{color:#888;font-size:12.5px}
+.shp-pr{flex:0 0 auto;font-weight:600;color:#333}
+.shp-tot{text-align:right;padding:0 0 10px;font-size:14px;color:#444}.shp-tot b{color:var(--red);font-size:16px}
+.shp-bar{margin:0 -14px;padding:11px 14px;font-size:14px;border-top:1px solid var(--line)}
+.shp-bar.ok{background:#E8F6EF;color:#16794C}.shp-bar.way{background:#E6F0FB;color:#1C5DA8}.shp-bar.done{background:#F3F7F4;color:#3B7A57}.shp-bar.wait{background:#FBF6EA;color:#8A6A12}
 .order.open .body{display:block}
 .steps{display:grid;grid-template-columns:repeat(5,1fr);padding:14px 0 6px}
 .st{position:relative;text-align:center;font-size:12px;color:var(--muted);padding:0 2px}
@@ -245,7 +261,7 @@ nav.bar button:hover,nav.bar button.on{color:#fff;background:none}
 nav.bar button:hover:before,nav.bar button.on:before{transform:scale(1);opacity:1}
 nav.bar button.on:before{background:var(--red2)}
 nav.bar .cnt{background:var(--gold);color:var(--red);font-family:system-ui;letter-spacing:0}
-body:not(.bulk) nav.bar button[data-v="orders"],nav.bar button[data-v="acct"]{display:none}
+nav.bar button[data-v="acct"]{display:none}
 .hact{display:flex;gap:8px;align-items:center;margin-left:auto;flex:none}
 .hb{font-family:var(--cond);font-weight:700;text-transform:uppercase;letter-spacing:1px;font-size:13.5px;border-radius:10px;padding:9px 14px;line-height:1.1;transition:transform .15s,box-shadow .2s,background .2s;position:relative}
 .hb:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(110,20,20,.15)}.hb:active{transform:none}
@@ -407,6 +423,7 @@ nav.bar .ls{display:none}
 @media (max-width:760px){
   header nav.bar{border-top:1px solid var(--line);box-shadow:0 -4px 18px rgba(110,20,20,.08);background:rgba(255,255,255,.97)}
   nav.bar .lf{display:none}nav.bar .ls{display:block}
+  nav.bar button[data-v="orders"]{flex:1.7 1 0}nav.bar button[data-v="orders"] .ls{overflow:visible;text-overflow:clip;max-width:none;white-space:nowrap}
   nav.bar button{color:#9A8783;padding:6px 2px 7px;gap:2px;background:none!important;border-top:0!important;font-size:11.5px;font-weight:600;letter-spacing:.01em}
   nav.bar button i{width:54px;height:30px;border-radius:999px;display:grid!important;place-items:center;margin:0;transition:background .2s,transform .2s}
   nav.bar button i svg{width:23px;height:23px;display:block}
@@ -575,9 +592,9 @@ function nav(){
   const nw=news().length;
   const ready=ptsReady();
   const T=(ic,l,c,sl)=>`<i>${nIco(ic)}</i><span class="lf">${l}</span><span class="ls">${sl||l}</span>${c||''}`;
-  const oldPts=true,card=me&&memOn?[['card',T('card','My card',mine&&mine.me.bal>0?`<span class="cnt" style="background:#F5C518;color:#8E1B22">${peso(mine.me.bal).replace('.00','')}</span>`:'')]]:[];
-  const tabs=isBulk()?[['orders',T('orders','My orders',nw?`<span class="cnt">${nw} new</span>`:'','Orders')],...card,...(oldPts?[['points',T('points','My points',ready?'<span class="cnt" style="background:#F5C518;color:#8E1B22">🎁</span>':'','Points')]]:[]),['acct',T('acct','Account')]]
-    :[['shop',T('shop','Shop')],['cart',T('cart','Cart',n?`<span class="cnt">${n}</span>`:'')],['orders',T('orders','My orders',nw?`<span class="cnt">${nw} new</span>`:act?`<span class="cnt">${act}</span>`:'','Orders')],...card,['info',T('info','How to order','','Help')],['acct',T('acct',me?'Account':'Log in')]];
+  const oldPts=true,card=false&&me&&memOn?[['card',T('card','My card',mine&&mine.me.bal>0?`<span class="cnt" style="background:#F5C518;color:#8E1B22">${peso(mine.me.bal).replace('.00','')}</span>`:'')]]:[];
+  const tabs=isBulk()?[['orders',T('orders','My purchases',nw?`<span class="cnt">${nw} new</span>`:'','My purchases')],...card,...(oldPts?[['points',T('points','My points',ready?'<span class="cnt" style="background:#F5C518;color:#8E1B22">🎁</span>':'','Points')]]:[]),['acct',T('acct','Account')]]
+    :[['shop',T('shop','Shop')],['cart',T('cart','Cart',n?`<span class="cnt">${n}</span>`:'')],['orders',T('orders','My purchases',nw?`<span class="cnt">${nw} new</span>`:act?`<span class="cnt">${act}</span>`:'','My purchases')],...card,['info',T('info','How to order','','Help')],['acct',T('acct',me?'Account':'Log in')]];
   if(view==='login'&&me)view='acct';
   if(view!=='login'&&!tabs.some(t=>t[0]===view))view=tabs[0][0];
   annBar();
@@ -670,6 +687,7 @@ const prod=c=>{if(!info)return undefined;if(String(c).startsWith('b:')){const b=
 /* 🛒 product page: big photo, variants, quick quantities, subtotal, add to cart, description, more products — share link: …/#p=CODE */
 const pBase=n=>String(n).replace(/\s*[\(\[].*$/,'').replace(/\s+[-–—]\s+.*$/,'').trim().toLowerCase();
 const pVarLab=(x,b)=>{const t=x.name.trim(),r=t.slice(b.length).replace(/^[\s\-–—(\[]+|[)\]\s]+$/g,'').trim();return t.toLowerCase().startsWith(b)&&r?r:t};
+const pByName=n=>{if(!info)return null;const k=String(n).trim().toUpperCase();return info.products.find(p=>String(p.name).trim().toUpperCase()===k)||null};
 const pPhoto=p=>p.photo&&window.SB_URL?window.SB_URL.replace(/\/$/,'')+'/storage/v1/object/public/products/'+p.photo:'';
 const uOf=p=>p.unit==='Kg'?'kg':p.unit.toLowerCase(),uN=(p,n)=>uOf(p)+(p.unit!=='Kg'&&+n!==1?'s':'');
 const pqFor=code=>{const p=prod(code);return p?Math.max(1,Math.min(cart[code]||1,Math.max(1,Math.floor(p.avail)))):1};
@@ -816,7 +834,7 @@ function rInfo(){
     ${step(6,'Delivered the next day','Your order is delivered <b>the day after it is confirmed</b> — no same-day delivery. You can follow it in <b>My orders</b>: Confirmed → Preparing → Out for delivery (with your rider&#39;s name and number) → Delivered, with photos.<br>📞 <b>Our rider will call or text you once your order is out for delivery</b> — please keep your phone on and someone ready to receive it.')}</div>
   <div class="card"><h2>📅 Delivery day</h2><div class="rule" style="margin-top:8px">Order placed today (<b>${longDay(info.today)}</b>) → confirmed by our sales team, then delivered on <b>${longDay(info.delivery)}</b>.<br>If we can't reach you before then, delivery moves to the day we confirm it.</div>
     <div class="rule">📞 <b>Our rider will call or text you once your order is out for delivery.</b> Please keep your phone on and have someone ready to receive the order (and the cash, for COD).</div>
-    <p class="muted" style="margin:0">You can cancel your order yourself until we start preparing it. After that, please call the shop${s.phone?' ('+esc(s.phone)+')':''}.</p></div>
+    <p class="muted" style="margin:0">This order can be cancelled here until preparation starts. After that, call the shop${s.phone?' ('+esc(s.phone)+')':''}.</p></div>
   <div class="card"><h2>🚚 Delivery fees</h2>${s.freeKg?`<div class="rule" style="background:var(--gbg);border-color:#a8dcb9;border-left-color:var(--green);color:#17603a">🎉 <b>FREE delivery for orders of ${fmt(s.freeKg)} kg and up</b> — packs count by their weight (e.g. 500 g pack = 0.5 kg).</div>`:''}
     <p class="lead"><b>Wholesale accounts: FREE delivery</b>${s.wsMin?' (minimum order '+peso(s.wsMin)+')':''}. Below ${fmt(s.freeKg||0)} kg, the retail delivery fee depends on your barangay in Santa Ana, Cagayan:</p>
     <table class="it"><thead><tr><th>Barangay</th><th class="r">Retail delivery fee</th></tr></thead><tbody>
@@ -838,7 +856,7 @@ function stOf(o){
   if(o.delivered&&o.delivered.result)return{k:'x',t:o.delivered.result==='returned'?'↩️ Returned':'✕ Cancelled at delivery',n:0};
   if(o.delivered)return{k:'done',t:'✅ Delivered',n:5};
   if(o.dispatched)return{k:'way',t:'🚚 Out for delivery',n:4};
-  if(ol&&ol.status==='pending')return{k:'pend',t:(ol.calls&&ol.calls.length)?'📞 We tried to call you':ol.pay==='cod'?'⏳ Waiting for confirmation':'⏳ Checking payment',n:1};
+  if(ol&&ol.status==='pending')return{k:'pend',t:(ol.calls&&ol.calls.length)?'📞 Call attempted — please answer':ol.pay==='cod'?'⏳ Waiting for confirmation':'⏳ Checking payment',n:1};
   if(o.prepDone&&o.checked)return{k:'ready',t:'✅ Packed & ready',n:3};
   if(ol&&ol.status==='confirmed'&&ol.released===false&&!o.prepStarted)return{k:'conf',t:'✅ Confirmed',n:2};
   if(ol&&ol.status==='confirmed')return{k:'prep',t:'🔪 Preparing',n:3};
@@ -857,7 +875,7 @@ function purTabs(act,done,bulk){setTimeout(()=>{const h=document.querySelector('
   const cur=T.find(t=>t[0]===PT),L=PT==='all'?act.concat(done.slice().sort(by)).slice(0,60):orders.filter(cur[2]).sort(by).slice(0,60);
   return `<h3 id="ptop">My purchases</h3><div class="ptabs" role="tablist">${T.map(([k,t,f])=>{const n=k==='all'?0:orders.filter(f).length;
     return `<button role="tab" aria-selected="${PT===k}" class="${PT===k?'on':''}" data-pt="${k}">${t}${n&&['pay','tc','prep','recv'].includes(k)?`<i>${n}</i>`:''}</button>`}).join('')}</div>
-    ${L.length?L.map(orderCard).join(''):`<div class="card pempty"><b>No orders here</b><span>${PT==='recv'?'Orders on the way to you show here.':PT==='done'?'Delivered orders show here.':PT==='ret'?'Items returned at delivery show here.':PT==='cx'?'Cancelled orders show here.':PT==='prep'?'Confirmed orders waiting for their delivery day show here.':PT==='pay'?'GCash / bank orders waiting for our payment check show here.':'New orders waiting for our call / payment check show here.'}</span></div>`}`}
+    ${L.length?L.map(orderCard).join(''):`<div class="card pempty"><b>No orders here</b><span>${PT==='recv'?'Orders on the way to you show here.':PT==='done'?'Delivered orders show here.':PT==='ret'?'Items returned at delivery show here.':PT==='cx'?'Cancelled orders show here.':PT==='prep'?'Confirmed orders waiting for their delivery day show here.':PT==='pay'?'GCash / bank orders waiting for payment check show here.':'COD orders waiting for confirmation show here.'}</span></div>`}`}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-pt]');if(!b)return;PT=b.dataset.pt;rOrders();const t=document.getElementById('ptop');if(t&&t.getBoundingClientRect().top<70)t.scrollIntoView({block:'start'});const on=document.querySelector('.ptabs .on');if(on)on.scrollIntoView({block:'nearest',inline:'center'})});
 /* 📦 TRACK WITH A TRACKING NUMBER — no login needed (like SPX). Link: …/#t=W00012-7A3F */
 function trackBox(big){return `<div class="card${big?' gold':''} trk"><h2>📦 Track your order</h2><p class="lead">Type the tracking number from your order confirmation — no need to log in.</p>
@@ -898,16 +916,26 @@ function orderCard(o){
   const it=o.items.map(i=>{const tg=i.status?`<span class="tag t-bad">${i.status}</span>`:i.short?`<span class="tag t-short">Short ${fmt(i.short.qty)} · ${{carry:'follows on '+(i.short.date?longDay(i.short.date):'next delivery'),later:'balance later today'+(i.short.time?' by '+i.short.time:''),forfeit:'not delivered'}[i.short.d]||''}</span>`:'';
     return `<tr><td><b>${esc(i.product)}</b>${i.late?' <span class="tag t-late">Late delivery</span>':''}<br>${tg}</td><td class="r">${fmt(i.qty)} ${esc(i.unit)}</td><td class="r">${i.prepared!=null?fmt(i.prepared)+' '+esc(i.unit):'<span class="muted">—</span>'}</td>${ol?`<td class="r">${peso(i.price)}</td>`:''}</tr>`}).join('');
   const canCancel=!o.tracked&&ol&&ol.status!=='cancelled'&&!o.closed&&!o.dispatched&&!o.prepStarted;
-  return `<div class="order${isOpen?' open':''}" id="o-${o.id}"><button class="head" data-open="${o.id}">
-     <div class="cal ${s.k==='done'?'done':s.k==='x'?'x':''}"><small>${MON[d.getMonth()].toUpperCase()}</small><b>${d.getDate()}</b><span>${DOW[d.getDay()]}</span></div>
-     <div class="who"><b>${ol?'Order '+esc(ol.no):'Delivery '+longDay(o.delivery)}${o.kind==='add'?' <span class="badge">Additional</span>':o.balance?' <span class="badge">Balance</span>':o.carry?' <span class="badge">Carry-over</span>':''}</b>
-       <span>${ol?(ol.status==='pending'?'Delivery: on the day we confirm (next day)':'Delivery '+longDay(o.delivery))+' · '+o.items.length+' item(s) · '+sum:o.items.length+' item(s)'+(o.use?' · use '+esc(o.use):'')}</span></div>
-     <span class="pill p-${s.k}">${s.t}</span></button>
+  const it0=o.items[0]||{},p0=it0.product?pByName(it0.product):null,ph=p0&&pPhoto(p0),more=o.items.length-1;
+  const lab=['conf','prep'].includes(s.k)?'📦 For dispatch':s.t,td=info?info.today:new Date().toISOString().slice(0,10);
+  const tm=(()=>{const x=pISO(td);x.setDate(x.getDate()+1);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})();
+  const dd=x=>{const q=pISO(x);return MON[q.getMonth()]+' '+q.getDate()},when=o.delivery===td?'Today, '+dd(o.delivery):o.delivery===tm?'Tomorrow, '+dd(o.delivery):longDay(o.delivery);
+  const bar=s.k==='pend'?`<div class="shp-bar wait">📅 Delivery date will be set once the order is confirmed</div>`
+    :['conf','prep','ready'].includes(s.k)?`<div class="shp-bar ok">🚚 Expected delivery: <b>${when}</b></div>`
+    :s.k==='way'?`<div class="shp-bar way">🛵 Out for delivery — arriving ${o.delivery===td?'today':when}</div>`
+    :s.k==='done'?`<div class="shp-bar done">✅ Delivered${o.delivered&&o.delivered.at?' '+dd(new Date(o.delivered.at).toISOString().slice(0,10)):''}</div>`:'';
+  const nIt=o.items.length,tot=ol?(ol.total!=null?peso(ol.total):peso(ol.subtotal)+(ol.fee==null||ol.total==null?' + fee':'')):'';
+  return `<div class="order${isOpen?' open':''}" id="o-${o.id}"><button class="head shp" data-open="${o.id}">
+     <div class="shp-top"><b>${ol?'Order '+esc(ol.no):'Delivery '+longDay(o.delivery)}${o.kind==='add'?' <span class="badge">Additional</span>':o.balance?' <span class="badge">Balance</span>':o.carry?' <span class="badge">Carry-over</span>':''}</b><span class="pill p-${s.k}">${lab}</span></div>
+     <div class="shp-mid"><div class="shp-ph${s.k==='x'?' gray':''}">${ph?`<img src="${esc(ph)}" alt="" loading="lazy" onerror="this.replaceWith(document.createTextNode('${p0?emo(p0.cat):'🥩'}'))">`:(p0?emo(p0.cat):'🥩')}${more>0?`<i>+${more}</i>`:''}</div>
+       <div class="shp-it"><b>${esc(it0.product||'')}</b><span>x${fmt(it0.qty||0)} ${esc(it0.unit||'')}</span>${more>0?`<small>+${more} more item${more===1?'':'s'}</small>`:''}</div>
+       ${ol&&it0.price?`<div class="shp-pr">${peso(Math.round((it0.price||0)*(it0.qty||0)*100)/100)}</div>`:''}</div>
+     <div class="shp-tot">Total ${nIt} item${nIt===1?'':'s'}${tot?': <b>'+tot+'</b>':''}${o.use?' · use '+esc(o.use):''}</div>${bar}</button>
    <div class="body">${s.n>0?`<div class="steps">${steps}</div>`:''}
      <table class="it"><thead><tr><th>Product</th><th class="r">Ordered</th><th class="r">Prepared</th>${ol?'<th class="r">Price</th>':''}</tr></thead><tbody>${it}</tbody></table>
      ${ol?`<table class="sum"><tr><td>Subtotal</td><td class="r">${peso(ol.subtotal)}</td></tr><tr><td>Delivery fee (${esc(ol.type==='wholesale'?'wholesale':'Brgy. '+(ol.area||''))}${ol.kg?' · '+fmt(ol.kg)+' kg':''})</td><td class="r">${ol.type==='wholesale'||ol.freeDelivery?'FREE 🎉':ol.fee==null?'to be confirmed':ol.fee?peso(ol.fee):'FREE'}</td></tr>
        <tr class="tot"><td>Total</td><td class="r">${sum}</td></tr></table>
-       <p class="muted" style="font-size:13.5px">💳 ${{cod:'Cash on delivery',bank:'Bank transfer',ewallet:'GCash / Maya'}[ol.pay]}${ol.ref?' · ref '+esc(ol.ref):''}${ol.status==='pending'?((ol.calls&&ol.calls.length)?' · <b style="color:#B3191B">📞 we tried to call you — please keep your phone on or call / text us back'+(info&&info.set&&info.set.phone?' at '+esc(info.set.phone):'')+'</b>':ol.pay==='cod'?' · <b>our sales team will call or text to confirm</b>':' · <b>waiting for the shop to confirm your payment</b>'):ol.verifiedAt?' · confirmed '+t12(ol.verifiedAt):''}<br>📍 ${esc(ol.address)}${ol.note?'<br>📝 '+esc(ol.note):''}</p>`:''}
+       <p class="muted" style="font-size:13.5px">💳 ${{cod:'Cash on delivery',bank:'Bank transfer',ewallet:'GCash / Maya'}[ol.pay]}${ol.ref?' · ref '+esc(ol.ref):''}${ol.status==='pending'?((ol.calls&&ol.calls.length)?' · <b style="color:#B3191B">📞 Call attempted — please keep your phone on, or call / text the shop back'+(info&&info.set&&info.set.phone?' at '+esc(info.set.phone):'')+'</b>':ol.pay==='cod'?' · <b>our sales team will call or text to confirm</b>':' · <b>waiting for the shop to confirm your payment</b>'):ol.verifiedAt?' · confirmed '+t12(ol.verifiedAt):''}<br>📍 ${esc(ol.address)}${ol.note?'<br>📝 '+esc(ol.note):''}</p>`:''}
      ${o.dispatched?`${o.delivered?`<p style="margin:10px 0 0">🚚 Left the shop <b>${t12(o.dispatched.at)}</b>${o.dispatched.rider?' · rider <b>'+esc(o.dispatched.rider)+'</b>':''}</p>`:
        `<div class="rider"><div class="rph">${o.dispatched.riderPhoto?`<img data-ph="${esc(o.dispatched.riderPhoto)}" alt="Rider photo">`:'🛵'}</div><div style="min-width:0"><div class="muted" style="font-size:12px;text-transform:uppercase;letter-spacing:.6px;font-weight:700">Your item is out for delivery</div>
          <b style="font-size:18px">${esc(o.dispatched.rider||'3F rider')}</b><div style="font-size:14px">${[o.dispatched.vehicle,o.dispatched.plate?'Plate '+o.dispatched.plate:''].filter(Boolean).map(esc).join(' · ')||''}</div>
@@ -916,7 +944,7 @@ function orderCard(o){
        <div class="rule">📞 <b>The rider will call or text you</b> before arriving. Please keep your phone on${ol&&ol.pay==='cod'?' and prepare <b>'+sum+'</b> for cash on delivery':''}.</div>`}`:''}
      ${o.delivered&&o.delivered.result?`<p style="margin:4px 0 0;color:#B3191B"><b>${o.delivered.result==='returned'?'↩️ Returned':'✕ Cancelled'}</b> ${t12(o.delivered.at)}${o.delivered.why?' — reason: <b>'+esc(o.delivered.why)+'</b>':''}<br><span style="color:#555">Questions? Please call or text the shop${info&&info.set&&info.set.phone?' ('+esc(info.set.phone)+')':''}.</span></p>`:o.delivered?`<p style="margin:4px 0 0">✅ Delivered <b>${t12(o.delivered.at)}</b>${o.delivered.receiver?' · received by '+esc(o.delivered.receiver):''}</p>`:''}
      ${(o.dispatched&&o.dispatched.photo)||(o.delivered&&o.delivered.photo)?`<div class="photos">${o.dispatched&&o.dispatched.photo?`<figure><img data-ph="${esc(o.dispatched.photo)}" alt="Dispatch photo">Packed &amp; dispatched</figure>`:''}${o.delivered&&o.delivered.photo?`<figure><img data-ph="${esc(o.delivered.photo)}" alt="Delivery photo">Delivered</figure>`:''}</div>`:''}
-     ${o.closed&&!(ol&&ol.status==='cancelled')?`<p class="tag t-bad" style="margin-top:10px">This order was closed by the shop${o.closed.why?' — '+esc(o.closed.why):''}. It will not be delivered. Questions? Message us anytime.</p>`:''}
+     ${o.closed&&!(ol&&ol.status==='cancelled')?`<p class="tag t-bad" style="margin-top:10px">This order was closed by the shop${o.closed.why?' — '+esc(o.closed.why):''}. It will not be delivered. For questions, message the shop.</p>`:''}
      ${ol&&ol.status==='cancelled'?`<p class="tag t-bad" style="margin-top:10px">Cancelled${ol.cancelledBy?' by '+esc(ol.cancelledBy==='Customer'?'you':'the shop'):''}${ol.why?' — '+esc(ol.why):''}</p>`:''}
      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">${o.track&&!o.tracked?`<button class="btn sec sm" data-trkcopy="${esc(o.track)}">📋 Copy tracking no. ${esc(o.track)}</button>`:''}${ol&&!isBulk()&&!o.tracked?`<button class="btn sm" data-again="${o.id}">🔁 Order these again</button>`:''}${canCancel?`<button class="btn danger sm" data-cancel="${o.id}">Cancel this order</button>`:''}</div>
    </div></div>`;
