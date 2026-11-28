@@ -151,6 +151,7 @@ nav.bar button i{font-style:normal;margin-right:4px}
 .oinfo{margin-top:10px;background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:2px 12px;font-size:14px;line-height:1.4}
 .oinfo>div{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}.oinfo>div:last-child{border:0}.oinfo b{font-size:12.5px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px}
 .lnk{border:0;background:none;color:var(--red);font-weight:700;padding:0 4px;text-decoration:underline;font-size:13.5px}
+.nret{background:#FFF6E0;border-color:#F1D48A;color:#6B4E00;font-size:14px}
 .oact{display:flex;gap:8px;margin-top:14px}.oact .btn{flex:1;justify-content:center;text-align:center;white-space:nowrap;padding-left:8px;padding-right:8px}
 .who{flex:1;min-width:0}
 .who b{display:block;font-size:17px;color:var(--red)}
@@ -815,6 +816,7 @@ function rCart(){
     <table class="sum"><tr><td>Subtotal</td><td class="r">${peso(sub)}</td></tr>
       <tr><td>Delivery fee</td><td class="r">${isWs()?'FREE':isFree()?'<b style="color:var(--green)">FREE 🎉</b>':!me?'—':fee===undefined?'choose your barangay':fee==null?'to be confirmed by the shop':fee?peso(fee):'FREE'}</td></tr>
       <tr class="tot"><td>Total</td><td class="r">${fee==null||fee===undefined?peso(sub)+(isWs()?'':' + fee'):peso(sub+fee)}</td></tr></table>
+    <div class="rule nret" style="margin-top:12px">⚠️ <b>No returns once received.</b> Please check your items when the rider arrives. Once the order is received and paid, items can no longer be returned.</div>
     ${me?`<button class="btn wide" id="place" style="margin-top:14px">Place order · deliver ${DOW[pISO(info.delivery).getDay()]}, ${MON[pISO(info.delivery).getMonth()]} ${pISO(info.delivery).getDate()}</button>`:
       `<div class="rule">Log in or sign up to place your order.</div><button class="btn wide" data-v="login">Log in / Sign up</button>`}
     <div class="err" id="perr"></div></div>`;
@@ -850,10 +852,11 @@ function rInfo(){
     ${step(3,'Pay your way','<b>Cash on delivery</b> — pay the rider.<br><b>Bank transfer</b> or <b>GCash / Maya</b> — send the total, type the reference no. (and attach the receipt if you like).')}
     ${step(4,'We confirm your order','Our <b>sales team</b> confirms every order — COD by a quick call or text, bank / e-wallet after checking your payment. Orders placed today are <b>confirmed today</b> when possible, then <b>prepared and delivered tomorrow</b>.')}
     ${step(5,'We prepare it','The day before delivery our team prepares your order — weighed and packed, then checked again before it leaves. You see <b>📦 For dispatch</b> in My purchases, with the expected delivery date.')}
-    ${step(6,'Delivered the next day','Your order is delivered <b>the day after it is confirmed</b> — no same-day delivery. You can follow it in <b>My orders</b>: Confirmed → Out for delivery (with your rider&#39;s name and number) → Delivered, with photos.<br>📞 <b>Our rider will call or text you once your order is out for delivery</b> — please keep your phone on and someone ready to receive it.')}</div>
+    ${step(6,'Delivered the next day','⚠️ <b>Check your items when they arrive — once received and paid, items can no longer be returned.</b><br>Your order is delivered <b>the day after it is confirmed</b> — no same-day delivery. You can follow it in <b>My orders</b>: Confirmed → Out for delivery (with your rider&#39;s name and number) → Delivered, with photos.<br>📞 <b>Our rider will call or text you once your order is out for delivery</b> — please keep your phone on and someone ready to receive it.')}</div>
   <div class="card"><h2>📅 Delivery day</h2><div class="rule" style="margin-top:8px">Order placed today (<b>${longDay(info.today)}</b>) → confirmed by our sales team, then delivered on <b>${longDay(info.delivery)}</b>.<br>If we can't reach you before then, delivery moves to the day we confirm it.</div>
     <div class="rule">📞 <b>Our rider will call or text you once your order is out for delivery.</b> Please keep your phone on and have someone ready to receive the order (and the cash, for COD).</div>
-    <p class="muted" style="margin:0">This order can be cancelled here until preparation starts. After that, call the shop${s.phone?' ('+esc(s.phone)+')':''}.</p></div>
+    <div class="rule nret">⚠️ <b>No returns once received.</b> Please check your items when the rider arrives. Once the order is received and paid, items can no longer be returned.</div>
+    <p class="muted" style="margin:0">This order can be cancelled here until it is out for delivery. After that, call the shop${s.phone?' ('+esc(s.phone)+')':''}.</p></div>
   <div class="card"><h2>🚚 Delivery fees</h2>${s.freeKg?`<div class="rule" style="background:var(--gbg);border-color:#a8dcb9;border-left-color:var(--green);color:#17603a">🎉 <b>FREE delivery for orders of ${fmt(s.freeKg)} kg and up</b> — packs count by their weight (e.g. 500 g pack = 0.5 kg).</div>`:''}
     <p class="lead"><b>Wholesale accounts: FREE delivery</b>${s.wsMin?' (minimum order '+peso(s.wsMin)+')':''}. Below ${fmt(s.freeKg||0)} kg, the retail delivery fee depends on your barangay in Santa Ana, Cagayan:</p>
     <table class="it"><thead><tr><th>Barangay</th><th class="r">Retail delivery fee</th></tr></thead><tbody>
@@ -953,7 +956,7 @@ function orderCard(o){
   const it=o.items.map(i=>{const tg=i.status?`<span class="tag t-bad">${i.status}</span>`:i.short?`<span class="tag t-short">Short ${fmt(i.short.qty)} · ${{carry:'follows on '+(i.short.date?longDay(i.short.date):'next delivery'),later:'balance later today'+(i.short.time?' by '+i.short.time:''),forfeit:'not delivered'}[i.short.d]||''}</span>`:'';
     const pr=i.prepared!=null&&(!ol||+i.prepared!==+i.qty)?` · <span class="prepd">prepared ${fmt(i.prepared)} ${esc(i.unit)}</span>`:'';
     return `<div class="oi">${itemThumb(i.product)}<div class="oi-in"><b>${esc(i.product)}</b><div class="q"><span>${fmt(i.qty)} ${esc(i.unit)}${pr}</span>${ol?`<span>${peso(i.price)}</span>`:''}</div>${i.late?'<span class="tag t-late">Late delivery</span> ':''}${tg}</div></div>`}).join('');
-  const canCancel=!o.tracked&&ol&&ol.status!=='cancelled'&&!o.closed&&!o.dispatched&&!o.prepStarted;
+  const canCancel=!o.tracked&&ol&&ol.status!=='cancelled'&&!o.closed&&!o.dispatched&&!o.delivered;
   const i0=(o.items||[])[0]||{},fd=['conf','prep','ready'].includes(s.k)&&!(ol&&ol.status==='pending');
   const eta=fd&&o.delivery?`<div class="eta"><span>Expected delivery: ${etaText(o.delivery)}</span></div>`:s.k==='way'?`<div class="eta way">Out for delivery — arriving ${etaText(o.delivery).replace(/^Today, .*/,'today')}</div>`:'';
   const dt=eta?'':ol&&ol.status==='pending'?'Delivery: the day after we confirm':s.k==='done'?'Delivered '+(o.delivered&&o.delivered.at?t12(o.delivered.at):longDay(o.delivery)):'Delivery '+longDay(o.delivery);
@@ -980,6 +983,7 @@ function orderCard(o){
      ${(o.dispatched&&o.dispatched.photo)||(o.delivered&&o.delivered.photo)?`<div class="photos">${o.dispatched&&o.dispatched.photo?`<figure><img data-ph="${esc(o.dispatched.photo)}" alt="Dispatch photo">Packed &amp; dispatched</figure>`:''}${o.delivered&&o.delivered.photo?`<figure><img data-ph="${esc(o.delivered.photo)}" alt="Delivery photo">Delivered</figure>`:''}</div>`:''}
      ${o.closed&&!(ol&&ol.status==='cancelled')?`<p class="tag t-bad" style="margin-top:10px">This order was closed by the shop${o.closed.why?' — '+esc(o.closed.why):''}. It will not be delivered. For questions, message the shop.</p>`:''}
      ${ol&&ol.status==='cancelled'?`<p class="tag t-bad" style="margin-top:10px">Cancelled${ol.cancelledBy?' by '+esc(ol.cancelledBy==='Customer'?'you':'the shop'):''}${ol.why?' — '+esc(ol.why):''}</p>`:''}
+     ${ol&&['pend','conf','prep','ready','way'].includes(s.k)?`<div class="rule nret" style="margin-top:12px">⚠️ <b>No returns once received.</b> Please check your items when the rider arrives. Once the order is received and paid, items can no longer be returned.</div>`:''}
      ${(ol&&!isBulk()&&!o.tracked)||canCancel?`<div class="oact">${canCancel?`<button class="btn sec sm ocx" data-cancel="${o.id}">Cancel order</button>`:''}${ol&&!isBulk()&&!o.tracked?`<button class="btn sm" data-again="${o.id}">Buy again</button>`:''}</div>`:''}
    </div></div>`;
 }
