@@ -184,9 +184,13 @@ nav.bar button i{font-style:normal;margin-right:4px}
 @media (min-width:761px){.me-top{margin:0 0 14px;border-radius:18px}}
 .dlv .dlv-h{font-size:15.5px;margin-bottom:4px}.dlv ol{margin:4px 0 6px;padding-left:22px}.dlv li{margin:2px 0}.dlv small{display:block;color:var(--muted,#6E5D5A);margin-top:4px}
 .ht-ic,.ht-sx{display:none}.hb.ghost .ht-ic{display:block}@media (min-width:761px){.hb.ghost .ht-ic{display:none}}
+nav.bar button[data-v="track"]{display:none}
+@media (max-width:760px){nav.bar button[data-v="track"]{display:flex}}
 .hmb{display:none;flex:none;width:40px;height:40px;border:0;background:none;border-radius:10px;cursor:pointer;flex-direction:column;justify-content:center;align-items:center;gap:5px;padding:0;margin-right:2px}
 .hmb span{display:block;width:22px;height:2.5px;border-radius:2px;background:var(--red);transition:transform .2s,opacity .2s}
 .hmb.on span:nth-child(1){transform:translateY(7.5px) rotate(45deg)}.hmb.on span:nth-child(2){opacity:0}.hmb.on span:nth-child(3){transform:translateY(-7.5px) rotate(-45deg)}
+.drw .hs-t,.drw.hs .hs-t{display:flex;align-items:center;gap:16px;padding:10px 6px;font-size:15.5px;color:#4A3A38}.drw a span small,.drw.hs a span small{display:block;font-size:12.5px;font-weight:400;color:#8A7A77}
+.drw.hs{position:static;animation:none;background:none;overflow:visible;margin:0 -6px}
 .drw{position:fixed;left:0;right:0;top:var(--hh,64px);bottom:0;z-index:30;background:#FBF8F6;overflow:auto;animation:drwIn .18s ease-out}
 @keyframes drwIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
 .drw-in{max-width:560px;margin:0 auto;padding:8px 18px calc(90px + env(safe-area-inset-bottom,0px))}
@@ -196,7 +200,7 @@ nav.bar button i{font-style:normal;margin-right:4px}
 .drw svg{width:24px;height:24px;flex:none;fill:none;stroke:var(--red);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 #drw-acct{color:var(--red)}
 @media (max-width:760px){.hmb{display:flex}}
-@media (min-width:761px){.drw{display:none!important}}
+@media (min-width:761px){.drw:not(.hs){display:none!important}}
 .nret{background:#FFF6E0;border-color:#F1D48A;color:#6B4E00;font-size:14px}
 .oact{display:flex;gap:8px;margin-top:14px}.oact .btn{flex:1;justify-content:center;text-align:center;white-space:nowrap;padding-left:8px;padding-right:8px}
 .who{flex:1;min-width:0}
@@ -620,8 +624,11 @@ body.vshop .srch-h{padding-top:16px}
   <button data-dv="cart"><svg viewBox="0 0 24 24"><path d="M3 4h2l2.4 11.2a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.1L21 8H6.2"/><circle cx="9.5" cy="20" r="1.3"/><circle cx="17.5" cy="20" r="1.3"/></svg>Cart</button>
   <div class="drw-g">Information</div>
   <button data-dv="info"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.3a2.6 2.6 0 0 1 5 1c0 1.7-2.5 2.2-2.5 3.7M12 17.2v.1"/></svg>How to order</button>
+  <a href="faq.html" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M10 9.2a2 2 0 0 1 3.9.6c0 1.3-1.9 1.6-1.9 2.8M12 14.4v.1"/></svg>FAQ</a>
+  <a href="story.html" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>Our story</a>
   <a href="terms.html" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/></svg>Terms &amp; Refund Policy</a>
   <a href="privacy.html" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12 3 5 6v6c0 4.3 3 7.6 7 9 4-1.4 7-4.7 7-9V6z"/><path d="m9 12 2 2 4-4"/></svg>Privacy Notice</a>
+  <div id="drw-ct"></div>
   <div class="drw-g">Account</div>
   <button data-dv="acct" id="drw-acct"><svg viewBox="0 0 24 24"><path d="M10 17l5-5-5-5M15 12H3M14 4h5a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-5"/></svg><span>Log in</span></button>
 </div></div>
@@ -678,7 +685,7 @@ function nav(){
   const T=(ic,l,c,sl)=>`<i>${nIco(ic)}</i><span class="lf">${l}</span><span class="ls">${sl||l}</span>${c||''}`;
   const oldPts=true,SHOW_CARD=false,card=SHOW_CARD&&me&&memOn?[['card',T('card','My card',mine&&mine.me.bal>0?`<span class="cnt" style="background:#F5C518;color:#8E1B22">${peso(mine.me.bal).replace('.00','')}</span>`:'')]]:[];
   const tabs=isBulk()?[['orders',T('orders','My purchases',nw?`<span class="cnt">${nw} new</span>`:'','My purchases')],...card,...(oldPts?[['points',T('points','My points',ready?'<span class="cnt" style="background:#F5C518;color:#8E1B22">🎁</span>':'','Points')]]:[]),['acct',T('acct','Account')]]
-    :[['shop',T('shop','Shop')],['cart',T('cart','Cart',n?`<span class="cnt">${n}</span>`:'')],['orders',T('orders','My purchases',nw?`<span class="cnt">${nw} new</span>`:act?`<span class="cnt">${act}</span>`:'','My purchases')],...card,['info',T('info','How to order','','Help')],['acct',T('acct',me?'Account':'Log in')]];
+    :[['shop',T('shop','Shop')],['cart',T('cart','Cart',n?`<span class="cnt">${n}</span>`:'')],['orders',T('orders','My purchases',nw?`<span class="cnt">${nw} new</span>`:act?`<span class="cnt">${act}</span>`:'','My purchases')],...card,['info',T('info','How to order','','Help')],me?['acct',T('acct','Account')]:['track',T('trk','Track order','','Track order')]];   // logged out: Log in is at the top, so the last tab tracks an order
   if(view==='login'&&me)view='acct';
   if(view!=='login'&&!tabs.some(t=>t[0]===view))view=tabs[0][0];
   annBar();
@@ -759,7 +766,7 @@ function prodCard(p){
       ${isBulk()?(out?'<span class="avail none">Unavailable today</span>':''):out?'<button class="add2 na" disabled>Unavailable today</button>':inC?`<div class="mstep" aria-label="In cart"><button data-dec="${esc(p.code)}" aria-label="Less">−</button><b>${fmt(inC)} ${uN(p,inC)}</b><button data-inc="${esc(p.code)}" aria-label="More">+</button></div>`
         :`<button class="add2" data-add="${esc(p.code)}"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2l2.4 11.2a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.1L21 8H6.2"/><circle cx="9.5" cy="20" r="1.3"/><circle cx="17.5" cy="20" r="1.3"/></svg><span>Add</span></button>`}</div></div>`;
 }
-const NI={shop:'<path d="M4 9.5 5.3 4.6A1 1 0 0 1 6.3 4h11.4a1 1 0 0 1 1 .6L20 9.5"/><path d="M4 9.5a2.7 2.7 0 0 0 5.3 0 2.7 2.7 0 0 0 5.4 0 2.7 2.7 0 0 0 5.3 0"/><path d="M5 12v7a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7"/><path d="M10 20v-4.5h4V20"/>',
+const NI={trk:'<path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',shop:'<path d="M4 9.5 5.3 4.6A1 1 0 0 1 6.3 4h11.4a1 1 0 0 1 1 .6L20 9.5"/><path d="M4 9.5a2.7 2.7 0 0 0 5.3 0 2.7 2.7 0 0 0 5.4 0 2.7 2.7 0 0 0 5.3 0"/><path d="M5 12v7a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7"/><path d="M10 20v-4.5h4V20"/>',
   cart:'<path d="M3 4h2l2.4 11.2a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.1L21 8H6.2"/><circle cx="9.5" cy="20" r="1.3"/><circle cx="17.5" cy="20" r="1.3"/>',
   orders:'<path d="M21 8.5 12 4 3 8.5v7L12 20l9-4.5z"/><path d="M3 8.5 12 13l9-4.5M12 13v7"/><path d="m7.5 6.2 9 4.6"/>',
   card:'<rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3 10h18M7 15h4"/>',
@@ -936,6 +943,8 @@ function rInfo(){
     <p style="margin:6px 0">🏦 <b>Bank transfer</b> — ${s.bank?esc(s.bank)+' · '+esc(s.bankName)+' · <b>'+esc(s.bankNo)+'</b>':'details shown at checkout'}</p>
     <p style="margin:6px 0">📱 <b>GCash / Maya</b> — ${s.ewNo?esc(s.ewName)+' · <b>'+esc(s.ewNo)+'</b>':'details shown at checkout'}</p>
     <p class="muted" style="font-size:13.5px">Bank / e-wallet orders are confirmed once the shop sees your payment.</p></div>
+  ${contactHTML()?`<div class="card"><h2>📞 Contact the shop</h2><div class="drw hs">${contactHTML()}</div></div>`:''}
+  <div class="card"><h2>💬 FAQ &amp; our story</h2><p class="lead" style="margin:0">Quick answers about ordering, delivery, payment, cancelling and returns. <a href="faq.html" target="_blank" rel="noopener"><b>Read the FAQ</b></a> · <a href="story.html" target="_blank" rel="noopener"><b>Our story</b></a></p></div>
   <div class="card"><h2>📄 Terms &amp; Refund Policy</h2><p class="lead" style="margin:0">Ordering, delivery, payment, cancelling, returns and refunds. <a href="terms.html" target="_blank" rel="noopener"><b>Read the Terms &amp; Refund Policy</b></a></p></div>
   <div class="card"><h2>🔒 Your privacy</h2><p class="lead" style="margin:0">We only use your details to take, deliver and follow up your orders. <a href="#" data-priv><b>Read the Privacy Notice</b></a></p></div>
   <div class="card"><h2>🏢 Bulk buyers</h2><p class="lead" style="margin:0">Companies with a supply agreement (like KUI) send their orders to the shop directly and use this site to <b>monitor</b> them: what was prepared, when it left and when it arrived. Ask the shop for your login.</p></div>`;
@@ -974,15 +983,38 @@ function meVoucher(){if(!VCH||!VCH.retail)return '';const u=new Date(VCH.until-1
     <div class="vc${VCH.ok?'':' off'}"><div class="vc-l"><b><small>₱</small>${VCH.amt}</b><span>OFF</span></div>
       <div class="vc-r"><b>New customer</b><span>Min. spend ₱${Number(VCH.min).toLocaleString()}</span><small>${st}</small></div>
       ${VCH.ok?'<button class="vc-use" data-v="shop">Use</button>':`<span class="vc-tag">${VCH.usedOn?'USED':VCH.used?'N/A':'EXPIRED'}</span>`}</div></div>`}
+/* 📞 contact the shop — from the Google Sheet › Shop Settings (rows starting with "Contact:" and "Shop contact no.") */
+function msgrUrl(fb){fb=String(fb||'').trim();if(!fb)return'';if(/m\.me\//i.test(fb))return /^https?:/i.test(fb)?fb:'https://'+fb.replace(/^\/+/,'');
+  const id=(fb.match(/[?&]id=(\d+)/)||[])[1];if(id)return'https://m.me/'+id;const n=fb.replace(/^https?:\/\//i,'').replace(/^(www\.|m\.|web\.)?(facebook|fb)\.com\//i,'').split(/[/?#]/)[0];return n?'https://m.me/'+encodeURIComponent(n):''}
+function contactHTML(){const s=(info&&info.set)||{},m=msgrUrl(s.fb),tel=String(s.phone||'').replace(/[^\d+]/g,'');
+  const I={msg:'<path d="M12 3C7 3 3 6.7 3 11.3c0 2.6 1.3 4.9 3.3 6.4V21l3-1.7c.9.3 1.8.4 2.7.4 5 0 9-3.7 9-8.4S17 3 12 3z"/><path d="m7.5 13.5 3-3 2.3 2.2 3.7-3.2"/>',
+    tel:'<path d="M5 4h3.5l1.7 4.2-2.2 1.4a11 11 0 0 0 6.4 6.4l1.4-2.2L20 15.5V19a1 1 0 0 1-1 1A16 16 0 0 1 4 5a1 1 0 0 1 1-1z"/>',
+    mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',pin:'<path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'};
+  const sv=k=>`<svg viewBox="0 0 24 24">${I[k]}</svg>`,L=[];
+  if(m)L.push(`<a href="${esc(m)}" target="_blank" rel="noopener">${sv('msg')}<span>Message on Messenger<small>Chat with the shop</small></span></a>`);
+  if(tel)L.push(`<a href="tel:${esc(tel)}">${sv('tel')}<span>Call or text ${esc(s.phone)}</span></a>`);
+  if(s.email)L.push(`<a href="mailto:${esc(s.email)}">${sv('mail')}<span>${esc(s.email)}</span></a>`);
+  if(s.addr)L.push(`<div class="hs-t">${sv('pin')}<span>${esc(s.addr)}</span></div>`);
+  if(s.hours)L.push(`<div class="hs-t">${sv('clock')}<span>${esc(s.hours)}</span></div>`);
+  return L.join('')}
+function helpSheet(){const c=contactHTML();openM(`<h2 style="margin:0 0 6px">Help</h2><div class="drw hs">${c?`<div class="drw-g">Contact the shop</div>${c}<div class="drw-g">Information</div>`:''}
+  <button data-dv="info" data-close><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.3a2.6 2.6 0 0 1 5 1c0 1.7-2.5 2.2-2.5 3.7M12 17.2v.1"/></svg>How to order</button>
+  <a href="faq.html" target="_blank" rel="noopener" data-close><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M10 9.2a2 2 0 0 1 3.9.6c0 1.3-1.9 1.6-1.9 2.8M12 14.4v.1"/></svg>FAQ</a>
+  <a href="story.html" target="_blank" rel="noopener" data-close><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>Our story</a>
+  <a href="terms.html" target="_blank" rel="noopener" data-close><svg viewBox="0 0 24 24"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/></svg>Terms &amp; Refund Policy</a>
+  <a href="privacy.html" target="_blank" rel="noopener" data-close><svg viewBox="0 0 24 24"><path d="M12 3 5 6v6c0 4.3 3 7.6 7 9 4-1.4 7-4.7 7-9V6z"/><path d="m9 12 2 2 4-4"/></svg>Privacy Notice</a></div>`)}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('nav.bar button[data-v="info"],nav.bar button[data-v="track"]');if(!b||!matchMedia('(max-width:760px)').matches)return;
+  e.preventDefault();e.stopImmediatePropagation();if(b.dataset.v==='info')helpSheet();else document.getElementById('htrack').click()},true);
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#m .hs [data-dv="info"]');if(!b)return;const n=document.querySelector('#nav [data-v="info"]');if(n){view='info';render();scrollTo(0,0)}});
 /* ☰ menu (phones) — Shop · Track order · My purchases · Cart · How to order · Terms · Privacy · Account */
 function drwSet(on){const d=document.getElementById('drw'),h=document.getElementById('hmb');if(!d||!h)return;d.hidden=!on;h.classList.toggle('on',on);h.setAttribute('aria-expanded',on);
-  if(on){const hd=document.querySelector('header');if(hd)document.documentElement.style.setProperty('--hh',hd.offsetHeight+'px');const a=document.getElementById('drw-acct');if(a)a.querySelector('span').textContent=me?'My account':'Log in / Sign up';
+  if(on){const ct=document.getElementById('drw-ct'),c=contactHTML();if(ct)ct.innerHTML=c?'<div class="drw-g">Contact the shop</div>'+c:'';const hd=document.querySelector('header');if(hd)document.documentElement.style.setProperty('--hh',hd.offsetHeight+'px');const a=document.getElementById('drw-acct');if(a)a.querySelector('span').textContent=me?'My account':'Log in / Sign up';
     document.querySelectorAll('.drw-me').forEach(x=>x.hidden=!me)}}
 document.addEventListener('click',e=>{const t=e.target.closest&&e.target;if(!t)return;
   if(t.closest('#hmb')){drwSet(document.getElementById('drw').hidden);return}
   const it=t.closest('#drw [data-dv],#drw a');if(!it)return;drwSet(false);if(it.tagName==='A')return;
   const v=it.dataset.dv,nb=document.querySelector(`#nav [data-v="${v==='track'?'orders':v}"]`)||document.getElementById(v==='track'?'htrack':'acct');
-  if(v==='track'){document.getElementById('htrack').click();return}if(nb)nb.click()});
+  if(v==='track'){document.getElementById('htrack').click();return}if(v==='info'){view='info';render();scrollTo(0,0);return}if(nb)nb.click()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')drwSet(false)});
 document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('#htrack'))setTimeout(()=>{const i=document.getElementById('trk-in');if(i){i.scrollIntoView({block:'center',behavior:'smooth'});try{i.focus({preventScroll:true})}catch(er){}}},450)});
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-ph],[data-phome]');if(!b)return;
