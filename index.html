@@ -133,7 +133,9 @@ nav.bar button i{font-style:normal;margin-right:4px}
 .oh-in b{display:block;font-size:16px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .oh-in .q{display:flex;justify-content:space-between;gap:8px;color:var(--muted);font-size:14px;margin-top:2px}
 .oh-in .tg{margin-top:4px}
-.oh-tot{text-align:right;font-size:15px}.oh-tot b{font-size:17px}
+.oh-tot{text-align:right;font-size:15px}
+.order.open .oh-it,.order.open .oh-tot{display:none}
+.oi-up{display:block;text-align:right;color:var(--muted,#6E5D5A);font-size:12.5px;margin-top:1px}   /* opened: the full item list below replaces the one-item preview (like Shopee's order page) */.oh-tot b{font-size:17px}
 .eta{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#E6F6F2;color:#13806C;border-radius:10px;padding:11px 14px;font-weight:700;font-size:15px;white-space:nowrap}.eta>span{overflow:hidden;text-overflow:ellipsis}
 @media (max-width:420px){.eta{font-size:14px;padding:10px 12px}}
 .eta:after{content:"›";font-size:22px;line-height:1;font-weight:400}
@@ -1054,11 +1056,11 @@ function orderCard(o){
     return `<div class="st${s.n>=n?' on':''}${n===nx&&s.n>0?' now':''}"><i>${s.n>=n?'✓':k+1}</i><b>${t}</b></div>`}).join('');
   const it=o.items.map(i=>{const tg=i.status?`<span class="tag t-bad">${i.status}</span>`:i.short?`<span class="tag t-short">Short ${fmt(i.short.qty)} · ${{carry:'follows on '+(i.short.date?longDay(i.short.date):'next delivery'),later:'balance later today'+(i.short.time?' by '+i.short.time:''),forfeit:'not delivered'}[i.short.d]||''}</span>`:'';
     const pr=i.prepared!=null&&(!ol||+i.prepared!==+i.qty)?` · <span class="prepd">prepared ${fmt(i.prepared)} ${esc(i.unit)}</span>`:'';
-    return `<div class="oi">${itemThumb(i.product)}<div class="oi-in"><b>${esc(i.product)}</b><div class="q"><span>${fmt(i.qty)} ${esc(i.unit)}${pr}</span>${ol?`<span>${peso(i.price)}</span>`:''}</div>${i.late?'<span class="tag t-late">Late delivery</span> ':''}${tg}</div></div>`}).join('');
+    return `<div class="oi">${itemThumb(i.product)}<div class="oi-in"><b>${esc(i.product)}</b><div class="q"><span>${fmt(i.qty)} ${esc(i.unit)}${pr}</span>${ol?`<span>${peso(Math.round((+i.price||0)*(+i.qty||0)*100)/100)}</span>`:''}</div>${ol&&+i.qty!==1?`<small class="oi-up">${peso(i.price)} / ${esc(String(i.unit||'').toLowerCase()==='kg'?'kg':i.unit)}</small>`:''}${i.late?'<span class="tag t-late">Late delivery</span> ':''}${tg}</div></div>`}).join('');
   const canCancel=!o.tracked&&ol&&ol.status!=='cancelled'&&!o.closed&&!o.dispatched&&!o.delivered;
   const i0=(o.items||[])[0]||{},fd=['conf','prep','ready'].includes(s.k)&&!(ol&&ol.status==='pending');
   const eta=fd&&o.delivery?`<div class="eta"><span>Expected delivery: ${etaText(o.delivery)}</span></div>`:s.k==='way'?`<div class="eta way">Out for delivery — arriving ${etaText(o.delivery).replace(/^Today, .*/,'today')}</div>`:'';
-  const dt=eta?'':ol&&ol.status==='pending'?'Delivery: the day after we confirm':s.k==='done'?'Delivered '+(o.delivered&&o.delivered.at?t12(o.delivered.at):longDay(o.delivery)):'Delivery '+longDay(o.delivery);
+  const dt=eta?'':ol&&ol.status==='pending'?'Delivery date: set once confirmed':s.k==='done'?'Delivered '+(o.delivered&&o.delivered.at?t12(o.delivered.at):longDay(o.delivery)):'Delivery '+longDay(o.delivery);
   return `<div class="order${isOpen?' open':''}" id="o-${o.id}"><div class="head sp" role="button" tabindex="0" data-open="${o.id}">
      <div class="oh-top"><b>${ol?'Order '+esc(ol.no):'Delivery '+longDay(o.delivery)}${o.kind==='add'?' <span class="badge">Additional</span>':o.balance?' <span class="badge">Balance</span>':o.carry?' <span class="badge">Carry-over</span>':''}</b><span class="ost k-${s.k}">${s.t}</span></div>
      <div class="oh-it">${orderThumb(o)}<div class="oh-in"><b>${esc(i0.product||'')}</b><div class="q"><span>${fmt(i0.qty)} ${esc(i0.unit||'')}${i0.prepared!=null&&i0.prepared!==i0.qty?' · prepared '+fmt(i0.prepared):''}</span>${o.items.length>1?`<span>+${o.items.length-1} more item${o.items.length>2?'s':''}</span>`:''}</div>${o.use?`<div class="oh-dt">Use: ${esc(o.use)}</div>`:''}${dt?`<div class="oh-dt">${dt}</div>`:''}</div></div>
