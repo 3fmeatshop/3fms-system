@@ -32,7 +32,7 @@ nav.bar .wrap{display:flex;gap:2px;overflow-x:auto;padding:0 10px}
 nav.bar button{background:none;border:0;border-bottom:3px solid transparent;color:var(--red);padding:12px 14px 9px;font-weight:700;font-size:15px;white-space:nowrap}
 nav.bar button.on{border-bottom-color:var(--gold);background:var(--rosel)}
 nav.bar .cnt{background:var(--red);color:#fff;border-radius:999px;padding:0 7px;font-size:12px;margin-left:4px}
-main{padding-top:18px;padding-bottom:110px}
+main{padding-top:18px;padding-bottom:110px}main#view{padding-bottom:110px}
 .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:16px;box-shadow:0 1px 3px rgba(110,20,20,.06)}
 .card.gold{border-top:4px solid var(--gold)}
 h2{margin:0 0 4px;color:var(--red);font-size:21px}
@@ -119,6 +119,39 @@ nav.bar button i{font-style:normal;margin-right:4px}
 .cal b{display:block;font-size:26px;line-height:1.1}
 .cal span{display:block;font-size:11px;color:var(--muted);font-weight:700;padding-bottom:2px}
 .cal.done small{background:var(--green)}.cal.x small{background:#8a8a8a}
+/* 🧾 order card like Shopee: photo of ordered item · status · total · green expected-delivery bar */
+.order .head.sp{flex-direction:column;align-items:stretch;gap:10px;color:var(--ink,#222);font:inherit;cursor:pointer}
+.oh-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.oh-top b{font-size:16px;color:var(--red);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.oh-top .ost{flex:none;font-weight:800;font-size:15px;color:var(--red)}
+.oh-top .ost.k-way{color:var(--blue)}.oh-top .ost.k-done{color:var(--green)}.oh-top .ost.k-x{color:#8a8a8a}.oh-top .ost.k-pend{color:var(--amber)}
+.oh-it{display:flex;gap:12px;align-items:flex-start}
+.oth{flex:none;width:76px;height:76px;border-radius:10px;border:1px solid var(--line);overflow:hidden;background:#fff;display:grid;place-items:center;position:relative;font-size:38px}
+.oth img{width:100%;height:100%;object-fit:contain;padding:4%;box-sizing:border-box;background:#fff}
+.oth i{position:absolute;right:3px;bottom:3px;background:rgba(0,0,0,.62);color:#fff;font-style:normal;font-size:11px;font-weight:800;border-radius:6px;padding:1px 6px}
+.oh-in{flex:1;min-width:0}
+.oh-in b{display:block;font-size:16px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.oh-in .q{display:flex;justify-content:space-between;gap:8px;color:var(--muted);font-size:14px;margin-top:2px}
+.oh-in .tg{margin-top:4px}
+.oh-tot{text-align:right;font-size:15px}.oh-tot b{font-size:17px}
+.eta{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#E6F6F2;color:#13806C;border-radius:10px;padding:11px 14px;font-weight:700;font-size:15px;white-space:nowrap}.eta>span{overflow:hidden;text-overflow:ellipsis}
+@media (max-width:420px){.eta{font-size:14px;padding:10px 12px}}
+.eta:after{content:"›";font-size:22px;line-height:1;font-weight:400}
+.eta.way{background:var(--bbg);color:var(--blue)}
+.oh-dt{font-size:13.5px;color:var(--muted)}
+/* order details (Shopee style) */
+.oil{margin-top:4px}
+.oi{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.oi .oth{width:60px;height:60px;font-size:30px}
+.oi-in{flex:1;min-width:0}.oi-in b{display:block;font-size:15px;font-weight:600;line-height:1.3}
+.oi-in .q{display:flex;justify-content:space-between;gap:8px;color:var(--muted);font-size:14px;margin-top:3px}.oi-in .q>span:last-child{color:var(--ink);white-space:nowrap}
+.oi-in .prepd{color:var(--green);font-weight:600}.oi-in .tag{margin-top:4px;display:inline-block}
+.osum{margin-top:6px;font-size:14.5px}.osum>div{display:flex;justify-content:space-between;gap:10px;padding:5px 0;color:var(--muted)}.osum>div>span:last-child{color:var(--ink);text-align:right}
+.osum .tot{border-top:1px solid var(--line);margin-top:4px;padding-top:10px;color:var(--ink);font-weight:700}.osum .tot b{color:var(--red);font-size:18px}
+.oinfo{margin-top:10px;background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:2px 12px;font-size:14px;line-height:1.4}
+.oinfo>div{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}.oinfo>div:last-child{border:0}.oinfo b{font-size:12.5px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+.lnk{border:0;background:none;color:var(--red);font-weight:700;padding:0 4px;text-decoration:underline;font-size:13.5px}
+.oact{display:flex;gap:8px;margin-top:14px}.oact .btn{flex:1;justify-content:center;text-align:center;white-space:nowrap;padding-left:8px;padding-right:8px}
 .who{flex:1;min-width:0}
 .who b{display:block;font-size:17px;color:var(--red)}
 .who span{font-size:13.5px;color:var(--muted)}
@@ -126,22 +159,6 @@ nav.bar button i{font-style:normal;margin-right:4px}
 .p-pend{background:var(--abg);color:var(--amber)}.p-conf{background:var(--rosel);color:var(--red)}.p-prep{background:var(--abg);color:var(--amber)}
 .p-ready{background:var(--gbg);color:var(--green)}.p-way{background:var(--bbg);color:var(--blue)}.p-done{background:var(--gbg);color:var(--green)}.p-x{background:#fbe2df;color:#B3191B}
 .order .body{border-top:1px solid var(--line);padding:0 14px 14px;display:none}
-.order .head.shp{display:block;padding:12px 14px 0;cursor:pointer}
-.shp-top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-bottom:10px;border-bottom:1px solid var(--line)}
-.shp-top>b{color:var(--red);font-size:16px;min-width:0}
-.order .head.shp .pill{order:0;flex:0 0 auto;flex-basis:auto;margin:0;text-align:right;background:none!important;padding:0;font-size:14px}
-.shp-mid{display:flex;gap:12px;align-items:flex-start;padding:12px 0}
-.shp-ph{position:relative;flex:0 0 72px;width:72px;height:72px;border:1px solid var(--line);border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:34px;overflow:hidden}
-.shp-ph img{width:100%;height:100%;object-fit:contain}
-.shp-ph.gray img{filter:grayscale(1);opacity:.7}
-.shp-ph i{position:absolute;right:0;bottom:0;background:rgba(0,0,0,.6);color:#fff;font-style:normal;font-size:11px;font-weight:700;padding:2px 5px;border-top-left-radius:6px}
-.shp-it{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
-.shp-it b{font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#222}
-.shp-it span{color:#666;font-size:13.5px}.shp-it small{color:#888;font-size:12.5px}
-.shp-pr{flex:0 0 auto;font-weight:600;color:#333}
-.shp-tot{text-align:right;padding:0 0 10px;font-size:14px;color:#444}.shp-tot b{color:var(--red);font-size:16px}
-.shp-bar{margin:0 -14px;padding:11px 14px;font-size:14px;border-top:1px solid var(--line)}
-.shp-bar.ok{background:#E8F6EF;color:#16794C}.shp-bar.way{background:#E6F0FB;color:#1C5DA8}.shp-bar.done{background:#F3F7F4;color:#3B7A57}.shp-bar.wait{background:#FBF6EA;color:#8A6A12}
 .order.open .body{display:block}
 .steps{display:grid;grid-template-columns:repeat(5,1fr);padding:14px 0 6px}
 .st{position:relative;text-align:center;font-size:12px;color:var(--muted);padding:0 2px}
@@ -187,7 +204,7 @@ a.btn{display:inline-block;text-decoration:none}
   .qrow{flex-wrap:wrap}.step{width:100%;justify-content:space-between}.step input{flex:1}.add{width:100%;flex:none}.steps{grid-template-columns:repeat(5,1fr)}.st b{font-size:11px}}
 @media (max-width:760px){.line{grid-template-columns:1fr auto}.line>div:first-child{grid-column:1/-1}.line .step{width:auto}.line .step input{width:60px;flex:none}nav.bar button{padding:11px 10px 8px;font-size:14px}}
 @media (max-width:760px){
-  .order .head{flex-wrap:wrap}.order .head .who{flex:1 1 0;min-width:0}.order .head .pill{order:3;flex-basis:100%;text-align:center;margin-left:0}
+  .order .head:not(.sp){flex-wrap:wrap}.order .head .who{flex:1 1 0;min-width:0}.order .head .pill{order:3;flex-basis:100%;text-align:center;margin-left:0}
   nav.bar{position:fixed;left:0;right:0;bottom:0;z-index:18;border-top:3px solid var(--gold);border-bottom:0;box-shadow:0 -3px 14px rgba(110,20,20,.15);padding-bottom:env(safe-area-inset-bottom,0px)}
   nav.bar .wrap{padding:0;gap:0;overflow:visible;justify-content:space-around}
   nav.bar button{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:1px;padding:7px 2px 6px;font-size:11.5px;border-bottom:0;border-top:3px solid transparent;margin-top:-3px;position:relative}
@@ -197,6 +214,8 @@ a.btn{display:inline-block;text-decoration:none}
   nav.bar .cnt{position:absolute;top:2px;left:55%;margin:0;font-size:10.5px;padding:0 5px}
   .cartbar{bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   main{padding-bottom:160px}
+  main#view{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+  body.vshop main#view{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
   .hero{gap:10px;margin-bottom:12px}.hero .w{display:none}
   .hero .del{padding:12px 14px}.hero .del .dd{font-size:21px;margin:0 0 4px}
   .toast{bottom:150px}
@@ -423,7 +442,7 @@ nav.bar .ls{display:none}
 @media (max-width:760px){
   header nav.bar{border-top:1px solid var(--line);box-shadow:0 -4px 18px rgba(110,20,20,.08);background:rgba(255,255,255,.97)}
   nav.bar .lf{display:none}nav.bar .ls{display:block}
-  nav.bar button[data-v="orders"]{flex:1.7 1 0}nav.bar button[data-v="orders"] .ls{overflow:visible;text-overflow:clip;max-width:none;white-space:nowrap}
+  nav.bar button[data-v="orders"]{flex:1.4 1 0!important}nav.bar button[data-v="orders"] .ls{overflow:visible;text-overflow:clip}
   nav.bar button{color:#9A8783;padding:6px 2px 7px;gap:2px;background:none!important;border-top:0!important;font-size:11.5px;font-weight:600;letter-spacing:.01em}
   nav.bar button i{width:54px;height:30px;border-radius:999px;display:grid!important;place-items:center;margin:0;transition:background .2s,transform .2s}
   nav.bar button i svg{width:23px;height:23px;display:block}
@@ -574,7 +593,7 @@ const emo=c=>EMO[String(c).toLowerCase()]||(/sio|dump|samg|long|ham/i.test(c)?'�
 
 let newsShown=null;const SEEN='shop3f_seen';let seen={};try{seen=JSON.parse(localStorage.getItem(SEEN)||'{}')||{}}catch(e){}
 // what changed since the customer last looked (placed → confirmed → preparing → on the way → delivered / cancelled)
-function news(){if(!orders||!me)return[];const k=me.id;return orders.filter(o=>{const st=stOf(o);const was=(seen[k]||{})[o.id];return was!==undefined&&was!==st.t})}
+function news(){if(!orders||!me)return[];const k=me.id;return orders.filter(o=>{const st=stOf(o);const was=(seen[k]||{})[o.id];return was!==undefined&&was!==st.t&&!(/Preparing/.test(was)&&st.k==='prep')})}
 function markSeen(){if(!orders||!me)return;const m={};orders.forEach(o=>m[o.id]=stOf(o).t);seen[me.id]=m;try{localStorage.setItem(SEEN,JSON.stringify(seen))}catch(e){}}
 let pv=null,pq=1,TRK={code:'',o:null,err:'',busy:false};try{const h=new URLSearchParams(location.hash.slice(1));if(h.get('p'))pv=h.get('p');if(h.get('t'))TRK.code=h.get('t')}catch(e){}
 let info=null,me=null,token=null,view='shop',cat='All',q='',cart={},orders=null,openId=null,pay='cod',proofId='',busy=false;
@@ -592,7 +611,7 @@ function nav(){
   const nw=news().length;
   const ready=ptsReady();
   const T=(ic,l,c,sl)=>`<i>${nIco(ic)}</i><span class="lf">${l}</span><span class="ls">${sl||l}</span>${c||''}`;
-  const oldPts=true,card=false&&me&&memOn?[['card',T('card','My card',mine&&mine.me.bal>0?`<span class="cnt" style="background:#F5C518;color:#8E1B22">${peso(mine.me.bal).replace('.00','')}</span>`:'')]]:[];
+  const oldPts=true,SHOW_CARD=false,card=SHOW_CARD&&me&&memOn?[['card',T('card','My card',mine&&mine.me.bal>0?`<span class="cnt" style="background:#F5C518;color:#8E1B22">${peso(mine.me.bal).replace('.00','')}</span>`:'')]]:[];
   const tabs=isBulk()?[['orders',T('orders','My purchases',nw?`<span class="cnt">${nw} new</span>`:'','My purchases')],...card,...(oldPts?[['points',T('points','My points',ready?'<span class="cnt" style="background:#F5C518;color:#8E1B22">🎁</span>':'','Points')]]:[]),['acct',T('acct','Account')]]
     :[['shop',T('shop','Shop')],['cart',T('cart','Cart',n?`<span class="cnt">${n}</span>`:'')],['orders',T('orders','My purchases',nw?`<span class="cnt">${nw} new</span>`:act?`<span class="cnt">${act}</span>`:'','My purchases')],...card,['info',T('info','How to order','','Help')],['acct',T('acct',me?'Account':'Log in')]];
   if(view==='login'&&me)view='acct';
@@ -687,7 +706,6 @@ const prod=c=>{if(!info)return undefined;if(String(c).startsWith('b:')){const b=
 /* 🛒 product page: big photo, variants, quick quantities, subtotal, add to cart, description, more products — share link: …/#p=CODE */
 const pBase=n=>String(n).replace(/\s*[\(\[].*$/,'').replace(/\s+[-–—]\s+.*$/,'').trim().toLowerCase();
 const pVarLab=(x,b)=>{const t=x.name.trim(),r=t.slice(b.length).replace(/^[\s\-–—(\[]+|[)\]\s]+$/g,'').trim();return t.toLowerCase().startsWith(b)&&r?r:t};
-const pByName=n=>{if(!info)return null;const k=String(n).trim().toUpperCase();return info.products.find(p=>String(p.name).trim().toUpperCase()===k)||null};
 const pPhoto=p=>p.photo&&window.SB_URL?window.SB_URL.replace(/\/$/,'')+'/storage/v1/object/public/products/'+p.photo:'';
 const uOf=p=>p.unit==='Kg'?'kg':p.unit.toLowerCase(),uN=(p,n)=>uOf(p)+(p.unit!=='Kg'&&+n!==1?'s':'');
 const pqFor=code=>{const p=prod(code);return p?Math.max(1,Math.min(cart[code]||1,Math.max(1,Math.floor(p.avail)))):1};
@@ -834,7 +852,7 @@ function rInfo(){
     ${step(6,'Delivered the next day','Your order is delivered <b>the day after it is confirmed</b> — no same-day delivery. You can follow it in <b>My orders</b>: Confirmed → Preparing → Out for delivery (with your rider&#39;s name and number) → Delivered, with photos.<br>📞 <b>Our rider will call or text you once your order is out for delivery</b> — please keep your phone on and someone ready to receive it.')}</div>
   <div class="card"><h2>📅 Delivery day</h2><div class="rule" style="margin-top:8px">Order placed today (<b>${longDay(info.today)}</b>) → confirmed by our sales team, then delivered on <b>${longDay(info.delivery)}</b>.<br>If we can't reach you before then, delivery moves to the day we confirm it.</div>
     <div class="rule">📞 <b>Our rider will call or text you once your order is out for delivery.</b> Please keep your phone on and have someone ready to receive the order (and the cash, for COD).</div>
-    <p class="muted" style="margin:0">This order can be cancelled here until preparation starts. After that, call the shop${s.phone?' ('+esc(s.phone)+')':''}.</p></div>
+    <p class="muted" style="margin:0">You can cancel your order yourself until we start preparing it. After that, please call the shop${s.phone?' ('+esc(s.phone)+')':''}.</p></div>
   <div class="card"><h2>🚚 Delivery fees</h2>${s.freeKg?`<div class="rule" style="background:var(--gbg);border-color:#a8dcb9;border-left-color:var(--green);color:#17603a">🎉 <b>FREE delivery for orders of ${fmt(s.freeKg)} kg and up</b> — packs count by their weight (e.g. 500 g pack = 0.5 kg).</div>`:''}
     <p class="lead"><b>Wholesale accounts: FREE delivery</b>${s.wsMin?' (minimum order '+peso(s.wsMin)+')':''}. Below ${fmt(s.freeKg||0)} kg, the retail delivery fee depends on your barangay in Santa Ana, Cagayan:</p>
     <table class="it"><thead><tr><th>Barangay</th><th class="r">Retail delivery fee</th></tr></thead><tbody>
@@ -856,11 +874,11 @@ function stOf(o){
   if(o.delivered&&o.delivered.result)return{k:'x',t:o.delivered.result==='returned'?'↩️ Returned':'✕ Cancelled at delivery',n:0};
   if(o.delivered)return{k:'done',t:'✅ Delivered',n:5};
   if(o.dispatched)return{k:'way',t:'🚚 Out for delivery',n:4};
-  if(ol&&ol.status==='pending')return{k:'pend',t:(ol.calls&&ol.calls.length)?'📞 Call attempted — please answer':ol.pay==='cod'?'⏳ Waiting for confirmation':'⏳ Checking payment',n:1};
+  if(ol&&ol.status==='pending')return{k:'pend',t:(ol.calls&&ol.calls.length)?'📞 We tried to call you':ol.pay==='cod'?'⏳ Waiting for confirmation':'⏳ Checking payment',n:1};
   if(o.prepDone&&o.checked)return{k:'ready',t:'✅ Packed & ready',n:3};
   if(ol&&ol.status==='confirmed'&&ol.released===false&&!o.prepStarted)return{k:'conf',t:'✅ Confirmed',n:2};
-  if(ol&&ol.status==='confirmed')return{k:'prep',t:'🔪 Preparing',n:3};
-  if(o.prepStarted)return{k:'prep',t:'🔪 Preparing',n:3};
+  if(ol&&ol.status==='confirmed')return{k:'prep',t:'📦 For dispatch',n:3};
+  if(o.prepStarted)return{k:'prep',t:'📦 For dispatch',n:3};
   return{k:'conf',t:ol?'Confirmed':'Order received',n:ol?2:1};
 }
 /* 🧾 MY PURCHASES tabs (like Shopee) — monitoring only: All · To confirm · Preparing · To receive · Completed · Returned · Cancelled */
@@ -875,7 +893,8 @@ function purTabs(act,done,bulk){setTimeout(()=>{const h=document.querySelector('
   const cur=T.find(t=>t[0]===PT),L=PT==='all'?act.concat(done.slice().sort(by)).slice(0,60):orders.filter(cur[2]).sort(by).slice(0,60);
   return `<h3 id="ptop">My purchases</h3><div class="ptabs" role="tablist">${T.map(([k,t,f])=>{const n=k==='all'?0:orders.filter(f).length;
     return `<button role="tab" aria-selected="${PT===k}" class="${PT===k?'on':''}" data-pt="${k}">${t}${n&&['pay','tc','prep','recv'].includes(k)?`<i>${n}</i>`:''}</button>`}).join('')}</div>
-    ${L.length?L.map(orderCard).join(''):`<div class="card pempty"><b>No orders here</b><span>${PT==='recv'?'Orders on the way to you show here.':PT==='done'?'Delivered orders show here.':PT==='ret'?'Items returned at delivery show here.':PT==='cx'?'Cancelled orders show here.':PT==='prep'?'Confirmed orders waiting for their delivery day show here.':PT==='pay'?'GCash / bank orders waiting for payment check show here.':'COD orders waiting for confirmation show here.'}</span></div>`}`}
+    ${L.length?L.map(orderCard).join(''):`<div class="card pempty"><b>No orders here</b><span>${PT==='recv'?'Orders on the way to you show here.':PT==='done'?'Delivered orders show here.':PT==='ret'?'Items returned at delivery show here.':PT==='cx'?'Cancelled orders show here.':PT==='prep'?'Confirmed orders waiting for their delivery day show here.':PT==='pay'?'GCash / bank orders waiting for our payment check show here.':'New orders waiting for our call / payment check show here.'}</span></div>`}`}
+document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches&&e.target.matches('.head.sp')){e.preventDefault();e.target.click()}});
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-pt]');if(!b)return;PT=b.dataset.pt;rOrders();const t=document.getElementById('ptop');if(t&&t.getBoundingClientRect().top<70)t.scrollIntoView({block:'start'});const on=document.querySelector('.ptabs .on');if(on)on.scrollIntoView({block:'nearest',inline:'center'})});
 /* 📦 TRACK WITH A TRACKING NUMBER — no login needed (like SPX). Link: …/#t=W00012-7A3F */
 function trackBox(big){return `<div class="card${big?' gold':''} trk"><h2>📦 Track your order</h2><p class="lead">Type the tracking number from your order confirmation — no need to log in.</p>
@@ -904,38 +923,51 @@ function rOrders(){
     const tot=mo.filter(o=>isPaidNow(o)?o.online.status==='confirmed'&&!isRet(o)&&!(o.delivered&&o.delivered.result):o.delivered&&!o.delivered.result).reduce((a,o)=>a+(o.online.total!=null?o.online.total:o.online.subtotal),0),all=orders.filter(o=>o.online&&o.delivered&&!o.delivered.result).length;
     spend=`<div class="kpis"><div class="kpi"><span>Orders this month</span><b>${mo.length}</b></div><div class="kpi"><span>Spent this month</span><b>${peso(tot)}</b><span>paid · COD once delivered</span></div><div class="kpi"><span>Delivered (all time)</span><b>${all}</b></div><div class="kpi"><span>Open now</span><b>${act.length}</b></div></div>`}
   const pban=bulk&&ptsReady()?`<div class="card" style="border-left:6px solid var(--gold);background:var(--goldl)"><b style="color:var(--red);font-size:17px">🎉 Your ${pts.claimable} points (${peso(pts.claimable)}) are ready to claim!</b><div style="margin-top:4px">Thank you for being a valued partner of 3F Meatshop.</div><button class="btn gold sm" data-v="points" style="margin-top:8px">⭐ Go to My points</button></div>`:'';
-  $('#view').innerHTML=head+pban+notes+(bulk?'':trackBox(false))+spend+(orders.length?purTabs(act,done,bulk)
+  $('#view').innerHTML=head+pban+notes+(orders.length?purTabs(act,done,bulk)
     :`<div class="card"><h2>No orders yet</h2><p class="lead">${bulk?'Your orders will show here once the shop enters them.':'Your orders will show here.'}</p>${bulk?'':'<button class="btn" data-v="shop">Start shopping</button>'}</div>`);
   fillPhotos();nav();wireTrack();
 }
+/* today / tomorrow in shop time (Asia/Manila) */
+const shopToday=()=>(info&&info.today)||new Date(Date.now()+8*36e5).toISOString().slice(0,10);
+const isoAdd=(s,n)=>{const d=pISO(s);d.setDate(d.getDate()+n);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const shortDay=s=>{const d=pISO(s);return MON[d.getMonth()]+' '+d.getDate()};
+function etaText(s){const t=shopToday();return s===t?'Today, '+shortDay(s):s===isoAdd(t,1)?'Tomorrow, '+shortDay(s):longDay(s)}
+/* photo of the ordered item (first item that has a product photo); emoji tile if none */
+function orderThumb(o){const P=(info&&info.products)||[],its=o.items||[];
+  let hit=null;for(const i of its){const p=P.find(x=>x.name===i.product);if(p&&pPhoto(p)){hit={p,ph:pPhoto(p)};break}}
+  const p0=P.find(x=>x.name===(its[0]||{}).product),c=(hit&&hit.p.cat)||(p0&&p0.cat)||(its[0]||{}).product||'';
+  const tint=['#FDECEA','#FFF3D6','#EAF4EC','#EDEBFA','#FCE9F1','#E8F1FA'][[...String(c)].reduce((a,ch)=>a+ch.charCodeAt(0),0)%6];
+  const more=its.length>1?`<i>+${its.length-1}</i>`:'';
+  return hit?`<div class="oth"><img src="${esc(hit.ph)}" alt="${esc(hit.p.name)}" loading="lazy" onerror="this.parentNode.style.background='${tint}';this.replaceWith(document.createTextNode('${emo(c)}'))">${more}</div>`
+    :`<div class="oth" style="background:${tint}">${emo(c)}${more}</div>`}
+function itemThumb(name){const P=(info&&info.products)||[],p=P.find(x=>x.name===name),ph=p?pPhoto(p):'',c=(p&&p.cat)||name||'';
+  const tint=['#FDECEA','#FFF3D6','#EAF4EC','#EDEBFA','#FCE9F1','#E8F1FA'][[...String(c)].reduce((a,ch)=>a+ch.charCodeAt(0),0)%6];
+  return ph?`<div class="oth"><img src="${esc(ph)}" alt="" loading="lazy" onerror="this.parentNode.style.background='${tint}';this.replaceWith(document.createTextNode('${emo(c)}'))"></div>`:`<div class="oth" style="background:${tint}">${emo(c)}</div>`}
 function orderCard(o){
   const s=stOf(o),d=pISO(o.delivery),ol=o.online,isOpen=openId===o.id;
   const sum=ol?ol.total!=null?peso(ol.total):peso(ol.subtotal)+' + fee':'';
   const steps=[['Placed',1],[ol?'Confirmed':'Received',2],['Preparing',3],['Out for delivery',4],['Delivered',5]].map(([t,n],k)=>{const on=s.n>=n+0||(n===1);const done=s.n>n||(s.n===5&&n===5);
     return `<div class="st${s.n>=n?' on':''}${s.n+1===n&&s.n>0?' now':''}"><i>${s.n>=n?'✓':n}</i><b>${t}</b></div>`}).join('');
   const it=o.items.map(i=>{const tg=i.status?`<span class="tag t-bad">${i.status}</span>`:i.short?`<span class="tag t-short">Short ${fmt(i.short.qty)} · ${{carry:'follows on '+(i.short.date?longDay(i.short.date):'next delivery'),later:'balance later today'+(i.short.time?' by '+i.short.time:''),forfeit:'not delivered'}[i.short.d]||''}</span>`:'';
-    return `<tr><td><b>${esc(i.product)}</b>${i.late?' <span class="tag t-late">Late delivery</span>':''}<br>${tg}</td><td class="r">${fmt(i.qty)} ${esc(i.unit)}</td><td class="r">${i.prepared!=null?fmt(i.prepared)+' '+esc(i.unit):'<span class="muted">—</span>'}</td>${ol?`<td class="r">${peso(i.price)}</td>`:''}</tr>`}).join('');
+    const pr=i.prepared!=null&&(!ol||+i.prepared!==+i.qty)?` · <span class="prepd">prepared ${fmt(i.prepared)} ${esc(i.unit)}</span>`:'';
+    return `<div class="oi">${itemThumb(i.product)}<div class="oi-in"><b>${esc(i.product)}</b><div class="q"><span>${fmt(i.qty)} ${esc(i.unit)}${pr}</span>${ol?`<span>${peso(i.price)}</span>`:''}</div>${i.late?'<span class="tag t-late">Late delivery</span> ':''}${tg}</div></div>`}).join('');
   const canCancel=!o.tracked&&ol&&ol.status!=='cancelled'&&!o.closed&&!o.dispatched&&!o.prepStarted;
-  const it0=o.items[0]||{},p0=it0.product?pByName(it0.product):null,ph=p0&&pPhoto(p0),more=o.items.length-1;
-  const lab=['conf','prep'].includes(s.k)?'📦 For dispatch':s.t,td=info?info.today:new Date().toISOString().slice(0,10);
-  const tm=(()=>{const x=pISO(td);x.setDate(x.getDate()+1);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})();
-  const dd=x=>{const q=pISO(x);return MON[q.getMonth()]+' '+q.getDate()},when=o.delivery===td?'Today, '+dd(o.delivery):o.delivery===tm?'Tomorrow, '+dd(o.delivery):longDay(o.delivery);
-  const bar=s.k==='pend'?`<div class="shp-bar wait">📅 Delivery date will be set once the order is confirmed</div>`
-    :['conf','prep','ready'].includes(s.k)?`<div class="shp-bar ok">🚚 Expected delivery: <b>${when}</b></div>`
-    :s.k==='way'?`<div class="shp-bar way">🛵 Out for delivery — arriving ${o.delivery===td?'today':when}</div>`
-    :s.k==='done'?`<div class="shp-bar done">✅ Delivered${o.delivered&&o.delivered.at?' '+dd(new Date(o.delivered.at).toISOString().slice(0,10)):''}</div>`:'';
-  const nIt=o.items.length,tot=ol?(ol.total!=null?peso(ol.total):peso(ol.subtotal)+(ol.fee==null||ol.total==null?' + fee':'')):'';
-  return `<div class="order${isOpen?' open':''}" id="o-${o.id}"><button class="head shp" data-open="${o.id}">
-     <div class="shp-top"><b>${ol?'Order '+esc(ol.no):'Delivery '+longDay(o.delivery)}${o.kind==='add'?' <span class="badge">Additional</span>':o.balance?' <span class="badge">Balance</span>':o.carry?' <span class="badge">Carry-over</span>':''}</b><span class="pill p-${s.k}">${lab}</span></div>
-     <div class="shp-mid"><div class="shp-ph${s.k==='x'?' gray':''}">${ph?`<img src="${esc(ph)}" alt="" loading="lazy" onerror="this.replaceWith(document.createTextNode('${p0?emo(p0.cat):'🥩'}'))">`:(p0?emo(p0.cat):'🥩')}${more>0?`<i>+${more}</i>`:''}</div>
-       <div class="shp-it"><b>${esc(it0.product||'')}</b><span>x${fmt(it0.qty||0)} ${esc(it0.unit||'')}</span>${more>0?`<small>+${more} more item${more===1?'':'s'}</small>`:''}</div>
-       ${ol&&it0.price?`<div class="shp-pr">${peso(Math.round((it0.price||0)*(it0.qty||0)*100)/100)}</div>`:''}</div>
-     <div class="shp-tot">Total ${nIt} item${nIt===1?'':'s'}${tot?': <b>'+tot+'</b>':''}${o.use?' · use '+esc(o.use):''}</div>${bar}</button>
+  const i0=(o.items||[])[0]||{},fd=['conf','prep','ready'].includes(s.k)&&!(ol&&ol.status==='pending');
+  const eta=fd&&o.delivery?`<div class="eta"><span>Expected delivery: ${etaText(o.delivery)}</span></div>`:s.k==='way'?`<div class="eta way">Out for delivery — arriving ${etaText(o.delivery).replace(/^Today, .*/,'today')}</div>`:'';
+  const dt=eta?'':ol&&ol.status==='pending'?'Delivery: the day after we confirm':s.k==='done'?'Delivered '+(o.delivered&&o.delivered.at?t12(o.delivered.at):longDay(o.delivery)):'Delivery '+longDay(o.delivery);
+  return `<div class="order${isOpen?' open':''}" id="o-${o.id}"><div class="head sp" role="button" tabindex="0" data-open="${o.id}">
+     <div class="oh-top"><b>${ol?'Order '+esc(ol.no):'Delivery '+longDay(o.delivery)}${o.kind==='add'?' <span class="badge">Additional</span>':o.balance?' <span class="badge">Balance</span>':o.carry?' <span class="badge">Carry-over</span>':''}</b><span class="ost k-${s.k}">${s.t}</span></div>
+     <div class="oh-it">${orderThumb(o)}<div class="oh-in"><b>${esc(i0.product||'')}</b><div class="q"><span>${fmt(i0.qty)} ${esc(i0.unit||'')}${i0.prepared!=null&&i0.prepared!==i0.qty?' · prepared '+fmt(i0.prepared):''}</span>${o.items.length>1?`<span>+${o.items.length-1} more item${o.items.length>2?'s':''}</span>`:''}</div>${o.use?`<div class="oh-dt">Use: ${esc(o.use)}</div>`:''}${dt?`<div class="oh-dt">${dt}</div>`:''}</div></div>
+     ${ol?`<div class="oh-tot">Total ${o.items.length} item${o.items.length>1?'s':''}: <b>${sum}</b></div>`:''}
+     ${eta}</div>
    <div class="body">${s.n>0?`<div class="steps">${steps}</div>`:''}
-     <table class="it"><thead><tr><th>Product</th><th class="r">Ordered</th><th class="r">Prepared</th>${ol?'<th class="r">Price</th>':''}</tr></thead><tbody>${it}</tbody></table>
-     ${ol?`<table class="sum"><tr><td>Subtotal</td><td class="r">${peso(ol.subtotal)}</td></tr><tr><td>Delivery fee (${esc(ol.type==='wholesale'?'wholesale':'Brgy. '+(ol.area||''))}${ol.kg?' · '+fmt(ol.kg)+' kg':''})</td><td class="r">${ol.type==='wholesale'||ol.freeDelivery?'FREE 🎉':ol.fee==null?'to be confirmed':ol.fee?peso(ol.fee):'FREE'}</td></tr>
-       <tr class="tot"><td>Total</td><td class="r">${sum}</td></tr></table>
-       <p class="muted" style="font-size:13.5px">💳 ${{cod:'Cash on delivery',bank:'Bank transfer',ewallet:'GCash / Maya'}[ol.pay]}${ol.ref?' · ref '+esc(ol.ref):''}${ol.status==='pending'?((ol.calls&&ol.calls.length)?' · <b style="color:#B3191B">📞 Call attempted — please keep your phone on, or call / text the shop back'+(info&&info.set&&info.set.phone?' at '+esc(info.set.phone):'')+'</b>':ol.pay==='cod'?' · <b>our sales team will call or text to confirm</b>':' · <b>waiting for the shop to confirm your payment</b>'):ol.verifiedAt?' · confirmed '+t12(ol.verifiedAt):''}<br>📍 ${esc(ol.address)}${ol.note?'<br>📝 '+esc(ol.note):''}</p>`:''}
+     <div class="oil">${it}</div>
+     ${ol?`<div class="osum"><div><span>Merchandise subtotal</span><span>${peso(ol.subtotal)}</span></div><div><span>Delivery fee</span><span>${ol.type==='wholesale'||ol.freeDelivery?'FREE':ol.fee==null?'to be confirmed':ol.fee?peso(ol.fee):'FREE'}</span></div><div class="tot"><span>Order total</span><b>${sum}</b></div></div>
+       ${ol.status==='pending'?`<div class="rule">${(ol.calls&&ol.calls.length)?'📞 <b>We tried to call you</b> — please keep your phone on or call / text us back'+(info&&info.set&&info.set.phone?' at '+esc(info.set.phone):'')+'.':ol.pay==='cod'?'📞 Our sales team will call or text you to confirm.':'⏳ Waiting for the shop to confirm your payment.'}</div>`:''}
+       <div class="oinfo"><div><span>📍</span><span><b>Delivery address</b><br>${esc(ol.address)}${ol.area&&ol.type!=='wholesale'?' · Brgy. '+esc(ol.area):''}</span></div>
+         <div><span>💳</span><span><b>Payment</b><br>${{cod:'Cash on delivery',bank:'Bank transfer',ewallet:'GCash / Maya'}[ol.pay]||esc(ol.pay)}${ol.ref?' · ref '+esc(ol.ref):''}</span></div>
+         ${ol.note?`<div><span>📝</span><span><b>Note</b><br>${esc(ol.note)}</span></div>`:''}
+         <div><span>🧾</span><span><b>Order no.</b><br>${esc(ol.no)}${ol.verifiedAt?' · confirmed '+t12(ol.verifiedAt):''}${o.track?`<br>Tracking no. ${esc(o.track)}${!o.tracked?` <button class="lnk" data-trkcopy="${esc(o.track)}">Copy</button>`:''}`:''}</span></div></div>`:''}
      ${o.dispatched?`${o.delivered?`<p style="margin:10px 0 0">🚚 Left the shop <b>${t12(o.dispatched.at)}</b>${o.dispatched.rider?' · rider <b>'+esc(o.dispatched.rider)+'</b>':''}</p>`:
        `<div class="rider"><div class="rph">${o.dispatched.riderPhoto?`<img data-ph="${esc(o.dispatched.riderPhoto)}" alt="Rider photo">`:'🛵'}</div><div style="min-width:0"><div class="muted" style="font-size:12px;text-transform:uppercase;letter-spacing:.6px;font-weight:700">Your item is out for delivery</div>
          <b style="font-size:18px">${esc(o.dispatched.rider||'3F rider')}</b><div style="font-size:14px">${[o.dispatched.vehicle,o.dispatched.plate?'Plate '+o.dispatched.plate:''].filter(Boolean).map(esc).join(' · ')||''}</div>
@@ -944,9 +976,9 @@ function orderCard(o){
        <div class="rule">📞 <b>The rider will call or text you</b> before arriving. Please keep your phone on${ol&&ol.pay==='cod'?' and prepare <b>'+sum+'</b> for cash on delivery':''}.</div>`}`:''}
      ${o.delivered&&o.delivered.result?`<p style="margin:4px 0 0;color:#B3191B"><b>${o.delivered.result==='returned'?'↩️ Returned':'✕ Cancelled'}</b> ${t12(o.delivered.at)}${o.delivered.why?' — reason: <b>'+esc(o.delivered.why)+'</b>':''}<br><span style="color:#555">Questions? Please call or text the shop${info&&info.set&&info.set.phone?' ('+esc(info.set.phone)+')':''}.</span></p>`:o.delivered?`<p style="margin:4px 0 0">✅ Delivered <b>${t12(o.delivered.at)}</b>${o.delivered.receiver?' · received by '+esc(o.delivered.receiver):''}</p>`:''}
      ${(o.dispatched&&o.dispatched.photo)||(o.delivered&&o.delivered.photo)?`<div class="photos">${o.dispatched&&o.dispatched.photo?`<figure><img data-ph="${esc(o.dispatched.photo)}" alt="Dispatch photo">Packed &amp; dispatched</figure>`:''}${o.delivered&&o.delivered.photo?`<figure><img data-ph="${esc(o.delivered.photo)}" alt="Delivery photo">Delivered</figure>`:''}</div>`:''}
-     ${o.closed&&!(ol&&ol.status==='cancelled')?`<p class="tag t-bad" style="margin-top:10px">This order was closed by the shop${o.closed.why?' — '+esc(o.closed.why):''}. It will not be delivered. For questions, message the shop.</p>`:''}
+     ${o.closed&&!(ol&&ol.status==='cancelled')?`<p class="tag t-bad" style="margin-top:10px">This order was closed by the shop${o.closed.why?' — '+esc(o.closed.why):''}. It will not be delivered. Questions? Message us anytime.</p>`:''}
      ${ol&&ol.status==='cancelled'?`<p class="tag t-bad" style="margin-top:10px">Cancelled${ol.cancelledBy?' by '+esc(ol.cancelledBy==='Customer'?'you':'the shop'):''}${ol.why?' — '+esc(ol.why):''}</p>`:''}
-     <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">${o.track&&!o.tracked?`<button class="btn sec sm" data-trkcopy="${esc(o.track)}">📋 Copy tracking no. ${esc(o.track)}</button>`:''}${ol&&!isBulk()&&!o.tracked?`<button class="btn sm" data-again="${o.id}">🔁 Order these again</button>`:''}${canCancel?`<button class="btn danger sm" data-cancel="${o.id}">Cancel this order</button>`:''}</div>
+     ${(ol&&!isBulk()&&!o.tracked)||canCancel?`<div class="oact">${canCancel?`<button class="btn sec sm ocx" data-cancel="${o.id}">Cancel order</button>`:''}${ol&&!isBulk()&&!o.tracked?`<button class="btn sm" data-again="${o.id}">Buy again</button>`:''}</div>`:''}
    </div></div>`;
 }
 const pcache={};
@@ -1246,7 +1278,7 @@ document.addEventListener('click',async e=>{
   const im=e.target.closest('img[data-ph]');if(im&&im.src){openM(`<div class="viewer"><img src="${im.src}"><p class="muted">${esc(im.alt)}</p><button class="btn sec" data-close>Close</button></div>`);return}
   const lm=e.target.closest('a[data-lm]');if(lm){e.preventDefault();lmode=lm.dataset.lm;rLogin();scrollTo(0,0);return}
   const pc=e.target.closest('.prod[data-p]');if(pc&&!e.target.closest('button,input,a,label')){openItem(pc.dataset.p);try{history.replaceState({pv:pc.dataset.p,back:1},'',location.href)}catch(er){}return}
-  const b=e.target.closest('button');if(!b)return;const d=b.dataset;
+  const b=e.target.closest('button,.head.sp');if(!b)return;const d=b.dataset;
   if('pback' in d){closeItem();return}
   if(d.pvar){const bk=history.state&&history.state.back;openItem(d.pvar,true);try{history.replaceState({pv:d.pvar,back:bk},'',location.href)}catch(er){}return}
   if(d.pq){pq=+d.pq;rItem();return}
