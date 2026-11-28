@@ -1382,7 +1382,7 @@ body.sidenav #seg .snav .sn-sub .sn-row.on>.sn-item .sn-lbl,.snav .sn-sub .sn-ro
     <button id="l-users">Users &amp; PINs</button>
     <button id="l-report">Open Google Sheet report</button>
     <button id="l-import">Import offline backup</button>
-    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 28 · 9:50 AM</b></span>
+    <span class="appver" style="font-size:12px;color:var(--muted);align-self:center">App version: <b>Nov 28 · 10:50 AM</b></span>
   </div>
   <input type="file" id="file" accept=".json" hidden>
 </div>
@@ -2630,6 +2630,7 @@ function onRow(o){
    </div>
    ${open?`<div class="ondet"><table><thead><tr><th>Product</th><th class="r">Qty</th><th class="r">Price</th><th class="r">Amount</th></tr></thead><tbody>
       ${o.items.map(i=>`<tr><td>${esc(i.product)}</td><td class="r">${fmt(i.qty)} ${esc(i.unit)}</td><td class="r">${peso(i.price)}</td><td class="r">${peso((+i.qty||0)*(+i.price||0))}</td></tr>`).join('')}
+      ${ol.voucher?`<tr><td colspan="3" class="r" style="color:var(--rose)">🎟 New customer voucher (${esc(ol.voucher.code||'')})</td><td class="r" style="color:var(--rose)">−${peso(ol.voucher.amt)}</td></tr>`:''}
       <tr><td colspan="3" class="r">Delivery fee${ol.kg?' · '+fmt(ol.kg)+' kg':''}</td><td class="r">${ol.type==='wholesale'?'FREE (wholesale)':ol.freeDelivery?'FREE (5 kg+)':ol.fee==null?'<b style="color:var(--rose)">set by call</b>':peso(ol.fee)}</td></tr>
       <tr><td colspan="3" class="r"><b>Total</b></td><td class="r"><b>${onTot(ol)}</b></td></tr></tbody></table>
      <div class="ondet2">${ol.note?`<span>📝 ${esc(ol.note)}</span>`:''}${n?`<span>📵 No answer: ${(ol.calls||[]).map(c=>esc(c.by)+' '+time12(new Date(c.at))).join(', ')}</span>`:''}
@@ -3348,7 +3349,7 @@ document.addEventListener('click',async e=>{
     const why=prompt('Reason (staff only):','Payment not verified');if(why==null)return;
     b.disabled=true;try{await saveThenAsync();await api('api_onlineAction',session.token,o.id,'unconfirm',why);toast('↩ Back to confirmation — check it again, then Confirm or Cancel');poll()}catch(e){alert(errMsg(e));b.disabled=false}return}
   if(d.onconfirm||d.oncancel){const id=d.onconfirm||d.oncancel,o=find(id);let why='';
-    if(d.oncancel){if(!confirm('Cancel online order '+(o.online.no||'')+' of '+o.customer+'?\nThe items go back to the shop stock.'))return;why=prompt('Reason (shown to the customer):','Could not reach the customer')||'Cancelled by the shop'}
+    if(d.oncancel){onCancelDlg(o);return}
     b.disabled=true;try{await saveThenAsync();await api('api_onlineAction',session.token,id,d.onconfirm?'confirm':'cancel',why);onSel.delete(id);toast(d.onconfirm?'✓ Confirmed — set the queue in 🔢 Queue, then Proceed':'Order cancelled');poll()}catch(e){alert(errMsg(e));b.disabled=false}return}
   if(d.invlink){linkDialog(d.invlink);return}
   if(d.reopen){const o=find(d.reopen);if(!o||!o.dr)return;const why=prompt('Reopen '+o.dr.no+' to change weights? The DR is cancelled and a new one is made after checking again. Reason:');if(why==null)return;
@@ -5230,6 +5231,17 @@ function cvAuto(){if(!convF)return;const S=ST.pset||{},want=[];
 /* 🗑 PULL-OUT — spoiled / expired / damaged stock out of inventory; the loss can be charged (all or part) to the staff in charge */
 let pullF=null,STAFFL=null;
 /* 🧺 SHOP BUNDLES (manager): meat packs the customer adds in one click — e.g. "Family Pack: 1 kg pork belly + 1 kg chicken + 1 pack siomai" */
+/* ✕ cancel an online order — a reason is required (the customer sees it) */
+const CX_WHY=['Could not reach you by phone','Payment was not received','Cancelled at your request','Item not available','Address is outside the delivery area','Duplicate order'];
+function onCancelDlg(o){const box=stBox();$('#stb').innerHTML=`<h2>✕ Cancel ${esc(o.online.no||'')}</h2><div class="unit"><b>${esc(o.customer)}</b> · ${peso(o.online.total||o.online.subtotal||0)} · the items go back to the shop stock.</div>
+  <div class="td-l" style="margin-top:10px"><b>Reason</b> <small class="unit">(required · the customer sees it)</small></div>
+  <div style="display:flex;flex-direction:column;gap:6px;margin:6px 0">${CX_WHY.map((w,k)=>`<label class="chk2" style="margin:0"><input type="radio" name="cxw" value="${esc(w)}"> ${esc(w)}</label>`).join('')}<label class="chk2" style="margin:0"><input type="radio" name="cxw" value="other"> Other</label></div>
+  <input class="edit-in" id="cx-o" maxlength="200" placeholder="Type the reason" style="display:none">
+  <div class="row-end"><button class="btn" data-x>Keep order</button><button class="go" id="cx-ok" style="background:var(--rose)" disabled>✕ Cancel order</button></div>`;box.classList.add('on');
+  const val=()=>{const r=$('#stb').querySelector('input[name=cxw]:checked');if(!r)return'';return r.value==='other'?$('#cx-o').value.trim():r.value};
+  const chk=()=>{const r=$('#stb').querySelector('input[name=cxw]:checked');$('#cx-o').style.display=r&&r.value==='other'?'':'none';$('#cx-ok').disabled=!val()};
+  $('#stb').querySelectorAll('input[name=cxw]').forEach(x=>x.onchange=()=>{chk();if(x.value==='other')$('#cx-o').focus()});$('#cx-o').oninput=chk;
+  $('#cx-ok').onclick=async()=>{const why=val();if(!why)return;const ok=$('#cx-ok');ok.disabled=true;try{await saveThenAsync();await api('api_onlineAction',session.token,o.id,'cancel',why);onSel.delete(o.id);box.classList.remove('on');toast('Order cancelled — the customer sees: '+why);poll()}catch(e){alert(errMsg(e));ok.disabled=false}}}
 async function bundlesDialog(){const box=stBox();$('#stb').innerHTML='<h2>🧺 Shop bundles</h2><div class="empty">Loading…</div>';box.classList.add('on');
   let L;try{L=await api('api_bundles',session.token)}catch(e){$('#stb').innerHTML=`<h2>🧺 Shop bundles</h2><div class="snote">${esc(errMsg(e))}</div><div class="row-end"><button class="btn" data-x>Close</button></div>`;return}
   const P=ST.products||[],pc=c=>P.find(p=>p.code===c),base=b=>Math.round(b.items.reduce((a,i)=>{const p=pc(i.code);return a+(p?(+p.retail||0)*(+i.qty||0):0)},0)*100)/100,
